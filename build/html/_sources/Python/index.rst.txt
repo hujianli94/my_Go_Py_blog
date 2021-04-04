@@ -35,3 +35,4 @@ Python自动化运维
     27.Python3网络爬虫开发实战/index
     28.Python让繁琐的工作自动化/index
     29.疯狂的Python讲义/index
+    30.Django_Vue/index
