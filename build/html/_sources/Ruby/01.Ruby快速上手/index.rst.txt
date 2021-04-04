@@ -1,11 +1,11 @@
 .. two title documentation master file
 
-Ruby
+Ruby快速上手
 ==========================================
 
 .. toctree::
     :maxdepth: 3
-    :numbered: 3
 
-    01.Ruby快速上手/index
+
+    01.Ruby基础语法
 

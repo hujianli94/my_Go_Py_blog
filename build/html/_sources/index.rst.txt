@@ -24,6 +24,7 @@ Devops学院【Python|Go】专栏一
     Go/index
     Python/index
     Go_vs_Python/index
+    Ruby/index
 
 
 

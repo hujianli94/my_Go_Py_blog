@@ -18,5 +18,5 @@ Django学习
     08.玩转Django2.0-admin后台系统
     09.玩转Django2.0-Auth认证系统
     10.Django-RESTful-API基础
-
+    20.Django项目的部署
 

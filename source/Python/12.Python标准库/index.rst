@@ -29,3 +29,4 @@ Python 标准库学习
     20.argparse解析命令行参数
     21.解析XML文档
     22.getopt模块
+    23.pymysql+log+configparser封装
