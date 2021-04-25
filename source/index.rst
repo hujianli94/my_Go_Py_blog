@@ -25,7 +25,6 @@ Devops学院【Python|Go】专栏一
     Python/index
     Go_vs_Python/index
     Ruby/index
-    Ruby/index
     Vue.js+Node.js/index
 
 
