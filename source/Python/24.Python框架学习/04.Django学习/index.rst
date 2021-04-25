@@ -18,5 +18,8 @@ Django学习
     08.玩转Django2.0-admin后台系统
     09.玩转Django2.0-Auth认证系统
     10.Django-RESTful-API基础
+    11.区块链时代与Token登录
+    12.实现优酷和爱奇艺会员的VIP模式.md
+    13.违禁词自审查功能
     20.Django项目的部署
 
