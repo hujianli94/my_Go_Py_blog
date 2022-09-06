@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10.21. Socket网络 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10.22. go标准库和三方库" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html" />
+    <link rel="prev" title="10.20. Go语言常用资料及工具详细汇总" href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">10. 标准库和三方库</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.strings.html">10.1. strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.bytes.html">10.2. bytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.fmt.html">10.3. fmt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Json.html">10.4. Json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.strconv.html">10.5. strconv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.ioutil-bufio.html">10.6. ioutil/bufio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.time.html">10.7. time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.os-path-filepath.html">10.8. os/path/filepath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.regexp.html">10.9. regexp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.log.html">10.10. log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.reflect-unsafe.html">10.11. reflect/unsafe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.unicode.html">10.12. unicode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.flag%E5%92%8Cgo-flags.html">10.13. flag和go-flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.net-url.html">10.14. net/url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.sort.html">10.15. sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.net-http.html">10.16. net/http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.error.html">10.17. error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.template%E6%A8%A1%E6%9D%BF.html">10.18. template模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.%E6%93%8D%E4%BD%9Cmysql.html">10.19. 操作mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html">10.20. Go语言常用资料及工具详细汇总</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">10.21. Socket网络</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tcp">10.21.1. 1.TCP编程</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#udp">10.21.2. 2.UDP编程</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html">10.22. go标准库和三方库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.cobra.html">10.23. cobra</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.viper.html">10.24. viper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.math-rand.html">10.25. math-rand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="26.zap-%E6%97%A5%E5%BF%97%E6%A8%A1%E5%9D%97.html">10.26. zap-日志模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">10. </span>标准库和三方库</a> &raquo;</li>
+      <li><span class="section-number">10.21. </span>Socket网络</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/10.标准库和三方库/21.Socket网络.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#socket" id="id11">Socket网络</a></p>
+<ul>
+<li><p><a class="reference internal" href="#tcp" id="id12">1.TCP编程</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id13">TCP协议</a></p></li>
+<li><p><a class="reference internal" href="#gotcp1" id="id14">1.1 Go语言实现TCP通信示例1</a></p></li>
+<li><p><a class="reference internal" href="#gotcp2" id="id15">1.2 Go语言实现TCP通信示例2</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#udp" id="id16">2.UDP编程</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id7" id="id17">UDP协议</a></p></li>
+<li><p><a class="reference internal" href="#goudp" id="id18">2.1 GO语言实现UDP通信示例</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id19">解决TCP粘包现象</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="socket">
+<h1><a class="toc-backref" href="#id11"><span class="section-number">10.21. </span>Socket网络</a><a class="headerlink" href="#socket" title="Permalink to this headline">¶</a></h1>
+<section id="tcp">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">10.21.1. </span>1.TCP编程</a><a class="headerlink" href="#tcp" title="Permalink to this headline">¶</a></h2>
+<section id="id1">
+<h3><a class="toc-backref" href="#id13">TCP协议</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>TCP/IP(Transmission Control Protocol/Internet Protocol)
+即传输控制协议/网间协议，是一种面向连接（连接导向）的、可靠的、基于字节流的传输层（Transport
+layer）通信协议，因为是面向连接的协议，数据像水流一样传输，会存在黏包问题。</p>
+</section>
+<section id="gotcp1">
+<h3><a class="toc-backref" href="#id14">1.1 Go语言实现TCP通信示例1</a><a class="headerlink" href="#gotcp1" title="Permalink to this headline">¶</a></h3>
+<section id="id2">
+<h4>TCP服务器<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p>TCP服务端程序的处理流程：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1.监听端口
+2.接收客户端请求建立链接
+3.创建goroutine处理链接。
+</pre></div>
+</div>
+<p>tcp_server.go</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;bufio&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io&quot;</span>
+    <span class="s">&quot;net&quot;</span>
+    <span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">tcpAddr</span> <span class="o">*</span><span class="nx">net</span><span class="p">.</span><span class="nx">TCPAddr</span>
+    <span class="nx">tcpAddr</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">ResolveTCPAddr</span><span class="p">(</span><span class="s">&quot;tcp&quot;</span><span class="p">,</span> <span class="s">&quot;127.0.0.1:999&quot;</span><span class="p">)</span>
+    <span class="nx">tcpListener</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">ListenTCP</span><span class="p">(</span><span class="s">&quot;tcp&quot;</span><span class="p">,</span> <span class="nx">tcpAddr</span><span class="p">)</span>
+    <span class="k">defer</span> <span class="nx">tcpListener</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Server ready to read .....&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">tcpConn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tcpListener</span><span class="p">.</span><span class="nx">AcceptTCP</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;accept error:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;A client connected :&quot;</span> <span class="o">+</span> <span class="nx">tcpConn</span><span class="p">.</span><span class="nx">RemoteAddr</span><span class="p">().</span><span class="nx">String</span><span class="p">())</span>
+        <span class="k">go</span> <span class="nx">tcpPipe</span><span class="p">(</span><span class="nx">tcpConn</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">tcpPipe</span><span class="p">(</span><span class="nx">conn</span> <span class="o">*</span><span class="nx">net</span><span class="p">.</span><span class="nx">TCPConn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">ipStr</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">RemoteAddr</span><span class="p">().</span><span class="nx">String</span><span class="p">()</span>
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Disconnected : &quot;</span> <span class="o">+</span> <span class="nx">ipStr</span><span class="p">)</span>
+        <span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="p">}()</span>
+
+    <span class="nx">reader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+    <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">message</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nx">ReadString</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span> <span class="c1">//将数据按照换行符进行读取</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">message</span><span class="p">))</span>
+        <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="nx">msg</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">().</span><span class="nx">String</span><span class="p">()</span> <span class="o">+</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">RemoteAddr</span><span class="p">().</span><span class="nx">String</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot; Server say hello! \n&quot;</span>
+        <span class="nx">b</span> <span class="o">:=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span>
+        <span class="nx">conn</span><span class="p">.</span><span class="nx">Write</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+        <span class="nx">i</span><span class="o">++</span>
+        <span class="k">if</span> <span class="nx">i</span> <span class="p">&gt;</span> <span class="mi">10</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h4>TCP客户端<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>一个TCP客户端进行TCP通信的流程如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">1.</span><span class="n">建立与服务端的链接</span>
+<span class="mf">2.</span><span class="n">进行数据收发</span>
+<span class="mf">3.</span><span class="n">关闭链接</span>
+</pre></div>
+</div>
+<p>tcp_client.go</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;bufio&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io&quot;</span>
+    <span class="s">&quot;net&quot;</span>
+    <span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">tcpAddr</span> <span class="o">*</span><span class="nx">net</span><span class="p">.</span><span class="nx">TCPAddr</span>
+    <span class="nx">tcpAddr</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">ResolveTCPAddr</span><span class="p">(</span><span class="s">&quot;tcp&quot;</span><span class="p">,</span> <span class="s">&quot;127.0.0.1:999&quot;</span><span class="p">)</span>
+    <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">DialTCP</span><span class="p">(</span><span class="s">&quot;tcp&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">tcpAddr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Client connect error !&quot;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">conn</span><span class="p">.</span><span class="nx">LocalAddr</span><span class="p">().</span><span class="nx">String</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot; : Client connected!&quot;</span><span class="p">)</span>
+    <span class="nx">onMessageRecived</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">onMessageRecived</span><span class="p">(</span><span class="nx">conn</span> <span class="o">*</span><span class="nx">net</span><span class="p">.</span><span class="nx">TCPConn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">reader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+    <span class="nx">b</span> <span class="o">:=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">conn</span><span class="p">.</span><span class="nx">LocalAddr</span><span class="p">().</span><span class="nx">String</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot; Say hello to Server ....\n&quot;</span><span class="p">)</span>
+    <span class="nx">conn</span><span class="p">.</span><span class="nx">Write</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">msg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nx">ReadString</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;ReadString&quot;</span><span class="p">)</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+        <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;writing ...&quot;</span><span class="p">)</span>
+
+        <span class="nx">b</span> <span class="o">:=</span><span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">conn</span><span class="p">.</span><span class="nx">LocalAddr</span><span class="p">().</span><span class="nx">String</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot; write data to Server .... \n &quot;</span><span class="p">)</span>
+        <span class="nx">_</span><span class="p">,</span><span class="nx">err</span> <span class="p">=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Write</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="gotcp2">
+<h3><a class="toc-backref" href="#id15">1.2 Go语言实现TCP通信示例2</a><a class="headerlink" href="#gotcp2" title="Permalink to this headline">¶</a></h3>
+<section id="tcp-1">
+<span id="id4"></span><h4>TCP服务器<a class="headerlink" href="#tcp-1" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;bufio&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;net&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// 处理函数</span>
+<span class="kd">func</span> <span class="nx">process</span><span class="p">(</span><span class="nx">conn</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Conn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span> <span class="c1">// 关闭连接</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">reader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+        <span class="kd">var</span> <span class="nx">buf</span> <span class="p">[</span><span class="mi">128</span><span class="p">]</span><span class="kt">byte</span>
+        <span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nx">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:])</span> <span class="c1">// 读取数据</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;read from client failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+        <span class="nx">recvStr</span> <span class="o">:=</span> <span class="nb">string</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:</span><span class="nx">n</span><span class="p">])</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;收到client端发来的数据：&quot;</span><span class="p">,</span> <span class="nx">recvStr</span><span class="p">)</span>
+        <span class="nx">conn</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">recvStr</span><span class="p">))</span> <span class="c1">// 发送数据</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">listen</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Listen</span><span class="p">(</span><span class="s">&quot;tcp&quot;</span><span class="p">,</span> <span class="s">&quot;127.0.0.1:20000&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;listen failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listen</span><span class="p">.</span><span class="nx">Accept</span><span class="p">()</span> <span class="c1">// 建立连接</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;accept failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="p">}</span>
+        <span class="k">go</span> <span class="nx">process</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span> <span class="c1">// 启动一个goroutine处理连接</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<span id="id6"></span><h4>TCP客户端<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;bufio&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;net&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">//客户端</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">Dial</span><span class="p">(</span><span class="s">&quot;tcp&quot;</span><span class="p">,</span> <span class="s">&quot;127.0.0.1:20000&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;err :&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span> <span class="c1">// 关闭连接</span>
+    <span class="nx">inputReader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdin</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">input</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">inputReader</span><span class="p">.</span><span class="nx">ReadString</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span> <span class="c1">// 读取用户输入</span>
+        <span class="nx">inputInfo</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Trim</span><span class="p">(</span><span class="nx">input</span><span class="p">,</span> <span class="s">&quot;\r\n&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">ToUpper</span><span class="p">(</span><span class="nx">inputInfo</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;Q&quot;</span> <span class="p">{</span> <span class="c1">// 如果输入q就退出</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">inputInfo</span><span class="p">))</span> <span class="c1">// 发送数据</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+        <span class="nx">buf</span> <span class="o">:=</span> <span class="p">[</span><span class="mi">512</span><span class="p">]</span><span class="kt">byte</span><span class="p">{}</span>
+        <span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:])</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;recv failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">buf</span><span class="p">[:</span><span class="nx">n</span><span class="p">]))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="udp">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">10.21.2. </span>2.UDP编程</a><a class="headerlink" href="#udp" title="Permalink to this headline">¶</a></h2>
+<section id="id7">
+<h3><a class="toc-backref" href="#id17">UDP协议</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>UDP协议（User Datagram Protocol）中文名称是用户数据报协议，是OSI（Open
+System
+Interconnection，开放式系统互联）参考模型中一种无连接的传输层协议，不需要建立连接就能直接进行数据发送和接收，属于不可靠的、没有时序的通信，但是UDP协议的实时性比较好，通常用于视频直播相关领域。</p>
+</section>
+<section id="goudp">
+<h3><a class="toc-backref" href="#id18">2.1 GO语言实现UDP通信示例</a><a class="headerlink" href="#goudp" title="Permalink to this headline">¶</a></h3>
+<section id="id8">
+<h4>UDP服务端<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;net&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// UDP/server/main.go</span>
+<span class="c1">// UDP server端</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">listen</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">ListenUDP</span><span class="p">(</span><span class="s">&quot;udp&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">net</span><span class="p">.</span><span class="nx">UDPAddr</span><span class="p">{</span>
+        <span class="nx">IP</span><span class="p">:</span>   <span class="nx">net</span><span class="p">.</span><span class="nx">IPv4</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="nx">Port</span><span class="p">:</span> <span class="mi">30000</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;listen failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">listen</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">data</span> <span class="p">[</span><span class="mi">1024</span><span class="p">]</span><span class="kt">byte</span>
+        <span class="nx">n</span><span class="p">,</span> <span class="nx">addr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">listen</span><span class="p">.</span><span class="nx">ReadFromUDP</span><span class="p">(</span><span class="nx">data</span><span class="p">[:])</span> <span class="c1">// 接收数据</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;read udp failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;data:%v addr:%v count:%v\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">[:</span><span class="nx">n</span><span class="p">]),</span> <span class="nx">addr</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+        <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">listen</span><span class="p">.</span><span class="nx">WriteToUDP</span><span class="p">(</span><span class="nx">data</span><span class="p">[:</span><span class="nx">n</span><span class="p">],</span> <span class="nx">addr</span><span class="p">)</span> <span class="c1">// 发送数据</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;write to udp failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h4>UDP客户端<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;net&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// UDP 客户端</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">socket</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nx">DialUDP</span><span class="p">(</span><span class="s">&quot;udp&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">net</span><span class="p">.</span><span class="nx">UDPAddr</span><span class="p">{</span>
+        <span class="nx">IP</span><span class="p">:</span>   <span class="nx">net</span><span class="p">.</span><span class="nx">IPv4</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="nx">Port</span><span class="p">:</span> <span class="mi">30000</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;连接服务端失败，err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">sendData</span> <span class="o">:=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;Hello server&quot;</span><span class="p">)</span>
+    <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">Write</span><span class="p">(</span><span class="nx">sendData</span><span class="p">)</span> <span class="c1">// 发送数据</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;发送数据失败，err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">data</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">4096</span><span class="p">)</span>
+    <span class="nx">n</span><span class="p">,</span> <span class="nx">remoteAddr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">socket</span><span class="p">.</span><span class="nx">ReadFromUDP</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="c1">// 接收数据</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;接收数据失败，err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;recv:%v addr:%v count:%v\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">[:</span><span class="nx">n</span><span class="p">]),</span> <span class="nx">remoteAddr</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id19">解决TCP粘包现象</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>参考资料:</p>
+<p><a class="reference external" href="https://www.bookstack.cn/read/topgoer/a680d3a9bb345056.md">https://www.bookstack.cn/read/topgoer/a680d3a9bb345056.md</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html" class="btn btn-neutral float-left" title="10.20. Go语言常用资料及工具详细汇总" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html" class="btn btn-neutral float-right" title="10.22. go标准库和三方库" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

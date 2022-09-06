@@ -1,0 +1,911 @@
+.. contents::
+   :depth: 3
+..
+
+常见模块
+========
+
+1.sys
+-----
+
+sys模块代表了Python解释器，主要获取和Python解释器相关的信息。
+
+``sys_test.py``
+
+.. code:: python
+
+   import sys
+   # 显示本地字节序的指示符。
+   print(sys.byteorder)
+   # 显示Python解释器有关的版权信息
+   print(sys.copyright)
+   # 显示Python解释器在磁盘上的存储路径。
+   print(sys.executable)
+   # 显示当前系统上保存文件所用的字符集。
+   print(sys.getfilesystemencoding())
+   # 显示Python整数支持的最大值
+   print(sys.maxsize)
+   # 显示Python解释器所在平台
+   print(sys.platform)
+   # 显示当前Python解释器的版本信息。
+   print(sys.version)
+   # 返回当前Python解释器的主版本号。
+   print(sys.winver)
+
+1.1 获取运行参数
+~~~~~~~~~~~~~~~~
+
+``argv_test.py``
+
+.. code:: python
+
+   from sys import argv
+   # 输出argv列表的长度
+   print(len(argv))
+   # 遍历argv列表的每个元素
+   for arg in argv:
+      print(arg)
+
+1.2 动态修改模块加载路径
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+``sys_path_test.py``
+
+使用PYTHONPATH环境变量来添加Python模块的加载路径，但这种方式必须预先设置好，如果需要在程序运行时动态改变Python模块的加载路径，则可以通过\ ``sys.path``\ 属性来实现。
+
+.. code:: python
+
+   import sys
+   # 动态添加g:\fk_ext路径作为模块加载路径
+   sys.path.append('g:\\fk_ext')
+   # 加载g:\fk_ext路径下的hello模块
+   import hello
+
+2.os模块
+--------
+
+os模块代表了程序所在的操作系统，主要用于获取程序运行所在操作系统的相关信息。
+
+``os_test.py``
+
+.. code:: python
+
+   # coding: utf-8
+
+   import os
+   # 显示导入依赖模块的操作系统的名称
+   print(os.name)
+   # 获取PYTHONPATH环境变量的值
+   print(os.getenv('PYTHONPATH'))
+   # 返回当前系统的登录用户名
+   print(os.getlogin())
+   # 获取当前进程ID
+   print(os.getpid())
+   # 获取当前进程的父进程ID
+   print(os.getppid())
+   # 返回当前系统的CPU数量
+   print(os.cpu_count())
+   # 返回路径分隔符
+   print(os.sep)
+   # 返回当前系统的路径分隔符
+   print(os.pathsep)
+   # 返回当前系统的换行符
+   print(os.linesep)
+   # 返回适合作为加密使用的、最多3个字节组成的bytes
+   print(os.urandom(3))
+
+``os_process_test.py``
+
+.. code:: python
+
+   import os
+   # 运行平台上的cmd命令
+   os.system('cmd')
+   # 使用Excel打开g:\abc.xls文件
+   os.startfile('g:\\abc.xls')
+   os.spawnl(os.P_NOWAIT, 'E:\\Tools\\编辑工具\\Notepad++.7.5.6.bin.x64\\notepad++.exe', ' ')
+   # 使用python命令执行os_test.py程序
+   os.execl("D:\\Python\\Python36\\python.exe", " ", 'os_test.py', 'i')
+
+**使用os.system()函数来运行程序时，新进程会取代原有的进程**
+
+**使用os.execl()函数运行新进程之后，会取代原有的进程，因此上面程序将这行代码放在了最后。**
+
+3.random
+--------
+
+random模块主要包含生成伪随机数的各种功能变量和函数。
+
+``random_test.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # @auther:   18793
+   # @Date：    2020/7/8 11:01
+   # @filename: randome_test.py
+   # @Email:    1879324764@qq.com
+   # @Software: PyCharm
+   import random
+
+   # 生成0.0~1.0的伪随机浮点数
+   print(random.random())      #0.10155538675214837
+
+   # 生成2.5~10.0的伪随机浮点数
+   print(random.uniform(2.5, 10.0))    #3.5492183599026705
+
+   # 生成呈指数分布的伪随机浮点数
+   print(random.expovariate(1 / 5))    #4.235653896852343
+
+   # 生成0到9的伪随机整数
+   print(random.randrange(10))         #9
+
+   # 生成0到100的随机偶数          
+   print(random.randrange(0, 101, 2))  #2
+
+   # 随机抽取一个元素
+   print(random.choice(['Python', 'Java', 'Swift']))   #Swift
+
+   # 对元素进行随机排列
+   book_list = ['Python', 'Java', 'Swift']     
+   random.shuffle(book_list)
+   print(book_list)                            #['Python', 'Java', 'Swift']
+
+   # 随机抽取4个独立的元素
+   print(random.sample([10, 20, 30, 40, 50], k=4))     #[50, 10, 40, 30]
+
+``random_test2.py``
+
+.. code:: python
+
+
+   import random
+   import collections
+
+   # 指定随机抽取6个元素，各元素被抽取的权重（概率）不同
+   print(random.choices(['Python', 'Swift', 'Kotlin'], [5, 5, 1], k=6))
+   # 下面模拟从52张扑克牌中抽取20张
+   # 在被抽到的20张牌中，牌面为10（包括J、Q、K）的牌占多大比例
+   # 生成一个16个tens（代表10）和36个low_cards(代表其他牌)的集合
+   deck = collections.Counter(tens=16, low_cards=36)
+   # 从52张牌中随机抽取20张
+   seen = random.sample(list(deck.elements()), k=20)
+   # 统计tens元素有多少个，再除以20
+   print(seen.count('tens') / 20)
+
+4.time
+------
+
+time模块主要包含各种提供日期、时间功能的类和函数。
+
+.. code:: python
+
+   import time
+   # 将当前时间转换为时间字符串
+   print(time.asctime())
+   # 将指定时间转换时间字符串，时间元组的后面3个元素没有设置
+   print(time.asctime((2018, 2, 4, 11, 8, 23, 0, 0 ,0))) # Mon Feb  4 11:08:23 2018
+   # 将以秒数为代表的时间转换为时间字符串
+   print(time.ctime(30)) # Thu Jan  1 08:00:30 1970
+   # 将以秒数为代表的时间转换为struct_time对象。
+   print(time.gmtime(30)) 
+   # 将当前时间转换为struct_time对象。
+   print(time.gmtime()) 
+   # 将以秒数为代表的时间转换为代表当前时间的struct_time对象
+   print(time.localtime(30))
+   # 将元组格式的时间转换为秒数代表的时间
+   print(time.mktime((2018, 2, 4, 11, 8, 23, 0, 0 ,0))) # 1517713703.0
+   # 返回性能计数器的值
+   print(time.perf_counter())
+   # 返回当前进程使用CPU的时间
+   print(time.process_time())
+   #time.sleep(10)
+   # 将当前时间转换为指定格式的字符串
+   print(time.strftime('%Y-%m-%d %H:%M:%S'))
+   st = '2018年3月20日'
+   # 将指定时间字符串恢复成struct_time对象。
+   print(time.strptime(st, '%Y年%m月%d日'))
+   # 返回从1970年1970年1月1日0点整到现在过了多少秒。
+   print(time.time())
+   # 返回本地时区的时间偏移，以秒为单位
+   print(time.timezone) # 在国内东八区输出-28800
+
+5.JSON支持
+----------
+
+JSON是一种轻量级、跨平台、跨语言的数据交换格式，JSON格式被广泛应用于各种语言的数据交换中。
+
+JSON的全称是JavaScript Object
+Notation，即JavaScript对象符号，是一种轻量级的数据交换格式。
+
+``encode_test.py``
+
+.. code:: python
+
+   import json
+   # 将Python对象转JSON字符串（元组会当成数组）
+   s = json.dumps(['yeeku', {'favorite': ('coding', None, 'game', 25)}])
+   print(s) # ["yeeku", {"favorite": ["coding", null, "game", 25]}]
+   # 简单的Python字符串转JSON
+   s2 = json.dumps("\"foo\bar")
+   print(s2) #"\"foo\bar"
+   # 简单的Python字符串转JSON
+   s3 = json.dumps('\\')
+   print(s3) #"\\"
+   # Python的dict对象转JSON，并对key排序
+   s4 = json.dumps({"c": 0, "b": 0, "a": 0}, sort_keys=True)
+   print(s4) #{"a": 0, "b": 0, "c": 0}
+   # 将Python列表转JSON，
+   # 并指定JSON分隔符：逗号和冒号之后没有空格（默认有空格）
+   s5 = json.dumps([1, 2, 3, {'x': 5, 'y': 7}], separators=(',', ':'))
+   # 输出的JSON字符串中逗号和冒号之后没有空格
+   print(s5) # '[1,2,3,{"4":5,"6":7}]'
+   # 指定indent为4，意味着转换的JSON字符串有缩进
+   s6 = json.dumps({'Python': 5, 'Kotlin': 7}, sort_keys=True, indent=4)
+   print(s6)
+   # 使用JSONEncoder的encode方法将Python转JSON
+   s7 = json.JSONEncoder().encode({"names": ("孙悟空", "齐天大圣")})
+   print(s7) # {"names": ["\u5b59\u609f\u7a7a", "\u9f50\u5929\u5927\u5723"]}
+   f = open('a.json', 'w')
+   # 使用dump()函数将转换得到JSON字符串输出到文件
+   json.dump(['Kotlin', {'Python': 'excellent'}], f)
+
+``decode_test.py``
+
+.. code:: python
+
+   import json
+
+   # 将JSON字符串恢复成Python列表
+   result1 = json.loads('["yeeku", {"favorite": ["coding", null, "game", 25]}]')
+   print(result1)  # ['yeeku', {'favorite': ['coding', None, 'game', 25]}]
+   # 将JSON字符串恢复成Python字符串
+   result2 = json.loads('"\\"foo\\"bar"')
+   print(result2)  # "foo"bar
+
+
+   # 定义一个自定义的转化函数
+   def as_complex(dct):
+       if '__complex__' in dct:
+           return complex(dct['real'], dct['imag'])
+       return dct
+
+
+   # 使用自定义的恢复函数
+   # 自定义回复函数将real数据转成复数的实部，将imag转成复数的虚部
+   result3 = json.loads('{"__complex__": true, "real": 1, "imag": 2}', \
+                        object_hook=as_complex)
+   print(result3)  # (1+2j)
+   f = open('a.json')
+   # 从文件流恢复JSON列表
+   result4 = json.load(f)
+   print(result4)  # ['Kotlin', {'Python': 'excellent'}]
+
+Python支持很多JSON所不支持的类型，比如复数、矩阵等，如果直接使用dumps()或dump()函数进行转换，程序肯定会出问题。
+
+此时就需要开发者对JSONEncoder类进行扩展，通过这种扩展完成从Python特殊类型到JSON类型的转换。
+
+.. code:: python
+
+   import json
+
+
+   # 定义JSONEncoder的子类
+   class ComplexEncoder(json.JSONEncoder):
+       def default(self, obj):
+           # 如果要转换的对象是复数类型，程序负责处理
+           if isinstance(obj, complex):
+               return {"__complex__": 'true', 'real': obj.real, 'imag': obj.imag}
+           # 对于其他类型，还使用JSONEncoder的默认处理
+           return json.JSONEncoder.default(self, obj)
+
+
+   s1 = json.dumps(2 + 1j, cls=ComplexEncoder)
+   print(s1)  # '{"__complex__": "true", "real": 2.0, "imag": 1.0}'
+
+   s2 = ComplexEncoder().encode(2 + 1j)
+   print(s2)  # '{"__complex__": "true", "real": 2.0, "imag": 1.0}'
+
+一旦扩展了JSONEncode的子类之后，程序有两种方式来使用自定义的子类。
+
+● 在dumps()或dump()函数中通过cls属性指定使用JSONEncoder的自定义子类。
+
+● 直接使用JSONEncode的自定义子类的encode()方法来执行转换。
+
+6.正则表达式
+------------
+
+正则表达式（Regular
+Expression）用于描述一种字符串匹配的模式（Pattern），它可用于检查一个字符串是否包含某个子串，也可用于从字符串中提取匹配的子串，或者对字符串中匹配的子串执行替换操作。
+
+::
+
+
+   >>> import re
+   >>> re.__all__
+   ['match', 'fullmatch', 'search', 'sub', 'subn', 'split', 'findall', 'finditer', 'compile', 'purge', 'template', 'escape', 'error', 'Pattern', 'Match', 'A', 'I', 'L', 'M', 'S', 'X', 'U', 'ASCII', 'IGNORECASE', 'LOCALE', 'MULTILINE', 'DOTALL', 'VERBOSE', 'UNICODE']
+
+常用函数：
+
+::
+
+   ● re.compile(pattern, flags=0)：该函数用于将正则表达式字符串编译成_sre.SRE_Pattern对象，该对象代表了正则表达式编译之后在内存中的对象，它可以缓存并复用正则表达式字符串。如果程序需要多次使用同一个正则表达式字符串，则可考虑先编译它。
+
+   ● re.match(pattern, string, flags=0)：尝试从字符串的开始位置来匹配正则表达式，如果从开始位置匹配不成功，match()函数就返回None。其中pattern参数代表正则表达式；string代表被匹配的字符串；flags则代表正则表达式的匹配旗标。该函数返回_sre.SRE_Match对象，该对象包含的span(n)方法用于获取第n+1个组的匹配位置，group(n)方法用于获取第n+1个组所匹配的子串。
+
+   ● re.search(pattern, string, flags=0)：扫描整个字符串，并返回字符串中第一处匹配pattern的匹配对象。该函数也返回_sre.SRE_Match对象。
+
+match()与search()的区别在于：match()必须从字符串开始处就匹配，但search()则可以所搜整个字符串。
+
+``match_test.py``
+
+.. code:: python
+
+   import re
+   m1 = re.match('www', 'www.fkit.org')# 开始位置可以匹配
+   print(m1.span())  # span返回匹配的位置
+   print(m1.group()) # group返回匹配的组
+   print(re.match('fkit', 'www.fkit.com')) # 开始位置匹配不到，返回None
+   m2 = re.search('www', 'www.fkit.org') # 开始位置可以匹配
+   print(m2.span())
+   print(m2.group())
+   m3 = re.search('fkit', 'www.fkit.com') # 中间位置可以匹配，返回Match对象
+   print(m3.span())
+   print(m3.group())
+
+● re.findall(pattern, string,
+flags=0)：扫描整个字符串，并返回字符串中所有匹配pattern的子串组成的列表。其中pattern参数代表正则表达式；string代表被匹配的字符串；flags则代表正则表达式的匹配旗标。
+
+● re.finditer(pattern,
+string,flags=0)：扫描整个字符串，并返回字符串中所有匹配pattern的子串组成的迭代器，迭代器的元素是_sre.SRE_Match对象。
+
+findall()、finditer()和search()函数的区别：search()只返回字符串中第一处匹配pattern的子串，而findall()和finditer()则返回字符串中所有匹配pattern的子串。
+
+``find_test.py``
+
+.. code:: python
+
+   import re
+   # 返回所有匹配pattern的子串组成的列表, 忽略大小写
+   print(re.findall('fkit', 'FkIt is very good , Fkit.org is my favorite' , re.I))
+   # 返回所有匹配pattern的子串组成的迭代器, 忽略大小写
+   it = re.finditer('fkit', 'FkIt is very good , Fkit.org is my favorite' , re.I)
+   for e in it:
+       print(str(e.start()) + "-->" + e.group())
+
+● re.fullmatch(pattern, string,
+flags=0)：该函数要求整个字符串匹配pattern，如果匹配则返回包含匹配信息的_sre.SRE_Match对象，否则返回None。
+
+.. code:: python
+
+   import re
+   m1 = re.fullmatch('www', 'www')# 开始位置可以匹配
+   print(m1)
+   print(m1.group())
+
+● re.sub(pattern, repl, string, count=0,
+flags=0)：该函数用于将string字符串中所有匹配pattern的内容替换成repl；repl即可是被替换的字符串，也可是一个函数。count参数控制最多替换多少次，如果指定count为0，则表示全部替换。
+
+``sub_test.py``
+
+.. code:: python
+
+   import re
+   my_date = '2008-08-18'
+   # 将my_date字符串里中画线替换成斜线
+   print(re.sub(r'-', '/' , my_date))
+   # 将my_date字符串里中画线替换成斜线，只替换一次
+   print(re.sub(r'-', '/' , my_date, 1))
+
+   # 在匹配的字符串前后添加内容
+   def fun(matched):
+       # matched就是匹配对象，通过该对象的group()方法可获取被匹配的字符串
+       value = "《疯狂" + (matched.group('lang')) + "讲义》"
+       return value
+   s = 'Python很好，Kotlin也很好'
+   # 将s里面的英文单词（用re.A旗标控制）进行替换
+   # 使用fun函数指定替换的内容
+   print(re.sub(r'(?P<lang>\w+)', fun, s, flags=re.A))
+
+● re.split(pattern, string, maxsplit=0,
+flags=0)：使用pattern对string进行分割，该函数返回分割得到的多个子串组成的列表。其中maxsplit参数控制最多分割多少次。
+
+.. code:: python
+
+   import re
+   # 使用逗号对字符串进行分割
+   print(re.split(', ', 'fkit, fkjava, crazyit'))
+   # 输出：['fkit', 'fkjava', 'crazyit']
+   # 指定只分割1次，被切分成2个子串
+   print(re.split(', ', 'fkit, fkjava, crazyit', 1))
+   # 输出：['fkit', 'fkjava, crazyit']
+   # 使用a进行分割
+   print(re.split('a', 'fkit, fkjava, crazyit'))
+   # 输出：['fkit, fkj', 'va, crazyit']
+   # 使用x进行分割，没有匹配内容，则不会执行分割
+   print(re.split('x', 'fkit, fkjava, crazyit'))
+   # 输出：['fkit, fkjava, crazyit']
+
+
+   #print(re.split('\W+', ' runoob, runoob, runoob.'))
+   #['', ' ', 'runoob', ', ', 'runoob', ', ', 'runoob', '.', '']
+   #re.split('\W+', ' runoob, runoob, runoob.', 1) 
+   #['', 'runoob, runoob, runoob.']
+   # 
+   #>>> re.split('a*', 'hello world')   # 对于一个找不到匹配的字符串而言，split 不会对其作出分割
+   #['hello world']
+
+● re.purge()：清除正则表达式缓存。
+
+●
+re.escape(pattern)：对模式中除ASCII字符、数值、下划线（_）之外的其他字符进行转义。
+
+``escape_test.py``
+
+.. code:: python
+
+   import re
+   # 对模式中特殊字符进行转义
+   print(re.escape(r'www.crazyit.org is good, i love it!'))
+   # 输出：www\.crazyit\.org\ is\ good\,\ i\ love\ it\!
+   print(re.escape(r'A-Zand0-9?'))
+   # 输出：A\-Zand0\-9\?
+
+search()、match()、fullmatch()、findall()、finditer()方法都可以额外指定pos和endpos两个参数，用于指定只处理目标字符串从pos开始到endpos结束之间的子串。
+
+\_sre.SRE_Match对象包含了如下方法和属性：
+
+::
+
+   ● match.group([group1,...])：获取该匹配对象中指定组所匹配的字符串。
+
+   ● match.__getitem__(g)：这是match.group(g)的简化写法。由于match对象提供了__getitem__()方法，因此程序可使用match[g]来代替match.group(g)。
+
+   ● match.groups(default=None)：返回match对象中所有组所匹配的字符串组成的元组。
+
+   ● mtach.groupdict(default=None)：返回match对象中所有组所匹配的字符串组成的字典。
+
+   ● match.start([group])：获取该匹配对象中指定组所匹配的字符串的开始位置。
+
+   ● match.end([group])：获取该匹配对象中指定组所匹配的字符串的结束位置。
+
+   ● match.span([group])：获取该匹配对象中指定组所匹配的字符串的开始位置和结束位置，该方法相当于同时返回start()和end()方法的返回值。
+
+   ● match.pos：该属性返回传给正则表达式对象的search()、match()等方法的pos参数。
+
+   ● match.endpos：该属性返回传给正则表达式对象的search()、match()等方法的endpos参数。
+
+   ● match.lastindex:该属性返回最后一个匹配的捕获组的整数索引。如果没有组匹配，该属性返回None。
+
+   ● match.lastgroup：该属性返回最后一个匹配的捕获组的名字；如果改组没有名字或根本没有组匹配，该属性返回None。
+
+   ● match.re：该属性返回执行正则表达式匹配时所用的正则表达式。
+
+   ● match.string：该属性返回执行正则表达式匹配时所用的字符串。
+
+旗标：
+
+::
+
+   ● re.A或re.ASCII：该旗标控制\w,\W,\b,\B, \d, \D, \s和\S只匹配ASCII字符，而不匹配所有的Unicode字符。也可以在正则表达式中使用(?a)行内旗标来代表。
+
+   ● re.DEBUG：显示编译正则表达式的Debug信息。没有行内旗标。
+
+   ● re.I或re.IGNORECASE：使用正则表达式匹配时不区分大小写。对应于正则表达式中的(?i)行内旗标。
+
+   ● re.L或re.LOCALE：根据当前区域设置使用正则表达式匹配时不区分大小写。该旗标只能对byte模式起作用，对应于正则表达式中的(?L)行内旗标。
+
+   ● re.M或re.MULTILINE：多行模式的旗标。当指定该旗标后，"^"能匹配字符串的开头和每行的开头（紧跟字啊每一个换行符的后面）；“$”能匹配字符串的末尾和每行的末尾（在每一个换行符之前）。在默认情况下，"^"只能匹配字符串的开头，"$"只能匹配字符串的结尾，或者匹配到字符串默认的换行符（如果有）之前。对应于正则表达式中的(?m)行内旗标。
+
+   ● re.S或re.DOTALL：让点（.)能匹配包括换行符在内的所有字符，如果不指定该旗标，则点(.）能匹配不包括换行符的所有字符。对应于正则表达式中的(?s)行内旗标。
+
+   ● re.U或re.Unicode：该旗标控制\w, \W, \b, \B, \d, \D, \s和\S能匹配所有的Unicode字符。这个旗标在python3.x中完全是多余的，因为python3.x默认就是匹配所有Unicode字符。
+
+   ● re.X或re.VERBOSE：通过该旗标允许分行书写正则表达式，也允许为正则表达式添加注释，从而提高正则表达式的可读性。对应于正则表达式中的(?x)行内旗标。
+
+多行模式书写正则表达式，例子
+
+.. code:: python
+
+   import re
+
+   a = re.compile(r"""020          # 广州的区号
+                       \-          # 中间的短横线
+                       \d{8}""", re.X)  # 8个数值
+   b = re.compile(r"020\-\d{8}")
+
+   hu_match = a.match("020-23123234")
+   print(hu_match)
+   print(hu_match.group())     #020-23123234
+
+
+   hu_match2 = b.match("020-11233245")
+   print(hu_match2)
+   print(hu_match2.group())    #020-11233245
+
+正则匹配模式参考文献
+
+https://www.cnblogs.com/nickchen121/p/10808645.html
+
+正则表达式的子表达式（组）支持如下用法：
+
+::
+
+   ● (exp)：匹配exp表达式并捕获成一个自动命名的组，后面可通过“\1”引用第一个捕获组所匹配的子串，以此类推。
+
+   ● (?P<name>exp):匹配exp表达式并捕获成命名组，该组的名字为name。后面可以通过(?P=name)来引用前面捕获的组。
+
+   ● (?P=name)：引用name命名组所匹配的子串。
+
+   ● (?:exp)：匹配exp表达式并且不捕获。这种组与（exp）的区别在于它不是捕获组的，因此不能通过\1、\2等来引用。
+
+   ● (?<=exp)：括号中的子模式必须出现在匹配内容的左侧，但exp不作为匹配的一部分。
+
+   ● (?=exp)：括号中的字母是必须出现字啊匹配内容的右侧，但exp不作为匹配的一部分。
+
+   ● (?<!exp)：括号中的子模式必须不出现在匹配内容的左侧，但exp不作为匹配的一部分。其实它是(?<=exp)的逆向表达。
+
+   ● (?!exp)：括号中的子模式必须不出现在匹配内容的右侧，但exp不作为匹配的一部分。其实他是(?=exp)的逆向表达。
+
+   ● (?#comment)：注释组。"?#"后的内容是注释，不影响正则表达式本身。
+
+   ● (?aiLmsux)： 旗标组，用于为整个正则表达式添加行内旗标，可同时指定一个或多个旗标。
+
+   ● (?imsx-imsx:exp)：只对当前组起作用的旗标。
+
+**贪婪和非贪婪匹配**
+
+所谓贪婪模式，指的是表达式中的模式会尽可能多地匹配字符。
+
+.. code:: python
+
+   import re
+
+   tanlan = re.search(r'@.+\.', 'hujianli@qq.com.cn')
+   print(tanlan.group())       #@qq.com.
+
+   feitanlan = re.search(r'@.+?\.', 'hujianli@qq.com.cn')
+   print(feitanlan.group())    #@qq.
+
+正则表达式\ ``r'@.+\.'``
+,表示匹配@符号和点号之间的全部内容。@和点号之间用的是\ ``.+``\ ，其中\ ``.``\ 可代表任意字符，此时是贪婪模式。\ ``.+``\ 会尽可能多地进行匹配，只要它最后有一个“.”结尾即可。所以匹配到了\ ``@qq.com.``
+
+只要添加一个英文问号，贪婪模式就变成了非贪婪模式。称为勉强模式，指的是尽可能少地匹配字符串。
+
+7.容器相关类
+------------
+
+7.1 set和frozenset
+~~~~~~~~~~~~~~~~~~
+
+set集合两大特性：
+
+::
+
+   * set不记录元素的添加顺序
+   * set元素不允许重复
+
+set是可变容器，程序可以改变容器中的元素，frozenset是不可变版本，它的元素是不可变的。
+
+::
+
+   set1 = [e for e in dir(set) if not e.startswith("_")]
+   print(set1)
+   """
+   ['add', 'clear', 'copy', 'difference', 'difference_update', 'discard', 'intersection', 'intersection_update', 'isdisjoint', 'issubset', 'issuperset', 'pop', 'remove', 'symmetric_difference', 'symmetric_difference_update', 'union', 'update']
+   """
+
+下面演示set集合的方法的用法
+
+.. code:: python
+
+   # 使用花括号构建set集合
+   c = {'白骨精'}
+   # 添加元素
+   c.add("孙悟空")
+   c.add(6)
+   print("c集合的元素个数为:" , len(c)) # 输出3
+   # 删除指定元素
+   c.remove(6)
+   print("c集合的元素个数为:" , len(c)) # 输出2
+   # 判断是否包含指定字符串
+   print("c集合是否包含'孙悟空'字符串:" , ("孙悟空" in c)) # 输出True
+   c.add("轻量级Java EE企业应用实战")
+   print("c集合的元素：" , c)
+   # 使用set()函数（构造器）来创建set集合
+   books = set()
+   books.add("轻量级Java EE企业应用实战")
+   books.add("疯狂Java讲义")
+   print("books集合的元素：" , books)
+   # issubset()方法判断是否为子集合
+   print("books集合是否为c的子集合？", books.issubset(c)) # 输出False
+   # issubset()方法与<=运算符效果相同
+   print("books集合是否为c的子集合？", (books <= c)) # 输出False
+   # issuperset()方法判断是否为父集合
+   # issubset和issuperset其实就是倒过来判断
+   print("c集合是否完全包含books集合？", c.issuperset(books)) # 输出False
+   # issuperset()方法与>=运算符效果相同
+   print("c集合是否完全包含books集合？", (c >= books)) # 输出False
+   # 用c集合减去books集合里的元素，不改变c集合本身
+   result1 = c - books
+   print(result1)
+
+   # difference()方法也是对集合做减法，与用-执行运算的效果完全一样
+   result2 = c.difference(books)
+   print(result2)
+
+   # 用c集合减去books集合里的元素，改变c集合本身
+   c.difference_update(books)
+   print("c集合的元素：" , c)
+
+   # 删除c集合里的所有元素
+   c.clear()
+   print("c集合的元素：" , c)
+
+   # 直接创建包含元素的集合
+   d = {"疯狂Java讲义", '疯狂Python讲义', '疯狂Kotlin讲义'}
+   print("d集合的元素：" , d)
+
+
+   # 计算两个集合的交集，不改变d集合本身
+   inter1 = d & books
+   print(inter1)
+   # intersection()方法也是获取两个集合的交集，与用&执行运算的效果完全一样
+   inter2 = d.intersection(books)
+   print(inter2)
+   # 计算两个集合的交集，改变d集合本身
+   d.intersection_update(books)
+   print("d集合的元素：" , d)
+   # 将range对象包装成set集合
+   e = set(range(5))
+   f = set(range(3, 7))
+   print("e集合的元素：" , e)
+   print("f集合的元素：" , f)
+   # 对两个集合执行异或运算
+   xor = e ^ f
+   print('e和f执行xor的结果：', xor)
+   # 计算两个集合的并集，不改变e集合本身
+   un = e.union(f)
+   print('e和f执行并集的结果：', un)
+   # 计算两个集合的并集，改变e集合本身
+   e.update(f)
+   print('e集合的元素：', e)
+
+frozenset的方法和set集合的同名方法的功能完全相同。
+
+frozenset的作用主要有两点。
+
+::
+
+   * 当集合元素不需要改变时，使用frozenset代替set更安全
+   * 当某些API需要不可变对象时，必须用frozenset代替set。例如dict的key对象。set本身元素必须是不可变的。
+
+.. code:: python
+
+   s = set()
+   frozen_s = frozenset('Kotlin')
+   # 为set集合添加frozenset
+   s.add(frozen_s)
+   print('s集合的元素：', s)
+   sub_s = {'Python'}
+   # 为set集合添加普通set集合，程序报错
+   s.add(sub_s)        # 报错
+
+7.2 双端队列（deque）
+~~~~~~~~~~~~~~~~~~~~~
+
+在队列的队头和队尾进行存取元素。
+
+``deque_stack.py``
+
+.. code:: python
+
+   from collections import deque
+   stack = deque(('Kotlin', 'Python'))
+   # 元素入栈
+   stack.append('Erlang')
+   stack.append('Swift')
+   print('stack中的元素：' , stack)
+   # 元素出栈，后添加的元素先出栈
+   print(stack.pop())
+   print(stack.pop())
+   print(stack)
+
+7.3 Python的堆操作
+~~~~~~~~~~~~~~~~~~
+
+python并没有提供“堆”这种数据类型，它是直接把列表当成堆处理的。python提供的heapq包中有一些函数，当程序用这些函数来操作列表时，该列表就会表现出“堆”的行为。
+
+``heapq_test.py``
+
+.. code:: python
+
+   from heapq import *
+   my_data = list(range(10))
+   my_data.append(0.5)
+   # 此时my_data依然是一个list列表
+   print('my_data的元素：', my_data)
+
+   # 对my_data应用堆属性
+   heapify(my_data) 
+   print('应用堆之后my_data的元素：', my_data)
+   heappush(my_data, 7.2)
+   print('添加7.2之后my_data的元素：', my_data)
+   # 弹出堆中最小的元素
+   print(heappop(my_data)) # 0
+   print(heappop(my_data)) # 0.5
+   print('弹出两个元素之后my_data的元素：', my_data)
+
+   # 弹出最小元素，压入指定元素
+   print(heapreplace(my_data, 8.1))
+   print('执行replace之后my_data的元素：', my_data)
+   print('my_data中最大的3个元素：', nlargest(3, my_data))
+   print('my_data中最小的4个元素：', nsmallest(4, my_data))
+
+当程序要获取列表中最大的n个元素，或者最小的n个元素时，使用堆能缓存列表的排序结果，因此具有很好的性能。
+
+8.Collections下的容器支持
+-------------------------
+
+8.1 ChainMap对象
+~~~~~~~~~~~~~~~~
+
+ChainMap使用链的方式将多个dict“链”在一起，从而允许程序可直接获取任意一个dict所包含的key对应的value。
+
+ChainMap相当于把多个dict合并成一个大的dict，但实际上底层并未真正合并这些dict，因此程序无须调用多个update()方法将多个dict进行合并。
+
+ChainMap允许有重复的key，排在链前面的dict中的key具有更高的优先级。
+
+``ChainMap_test.py``
+
+.. code:: python
+
+   from collections import ChainMap
+   # 定义3个dict对象
+   a = {'Kotlin': 90, 'Python': 86}
+   b = {'Go': 93, 'Python': 92}
+   c = {'Swift': 89, 'Go': 87}
+   # 将3个dict对象链在一起，就像变成了一个大的dict
+   cm = ChainMap(a, b , c)     
+   print(cm)          # ChainMap({'Kotlin': 90, 'Python': 86}, {'Go': 93, 'Python': 92}, {'Go': 87, 'Swift': 89})
+   # 获取Kotlin对应的value
+   print(cm['Kotlin']) # 90
+   # 获取Python对应的value
+   print(cm['Python']) # 86
+   # 获取Go对应的value
+   print(cm['Go']) # 93
+
+``ChainMap_test2.py``
+
+.. code:: python
+
+   from collections import ChainMap
+   import os, argparse
+   # 定义默认参数
+   defaults = {'color': '蓝色', 'user': 'yeeku'}
+   # 创建程序参数解析器
+   parser = argparse.ArgumentParser()
+   # 为参数解析器添加-u（--user）和-c（--color）参数
+   parser.add_argument('-u', '--user')
+   parser.add_argument('-c', '--color')
+   # 解析运行程序的参数
+   namespace = parser.parse_args()
+   # 将程序参数转换成dict
+   command_line_args = {k:v for k, v in vars(namespace).items() if v}
+   # 将command_line_args(解析程序参数而来)、os.environ(环境变量)、defaults链成ChainMap
+   combined = ChainMap(command_line_args, os.environ, defaults)
+   # 获取color对应的value
+   print(combined['color'])
+   # 获取user对应的value
+   print(combined['user'])
+   # 获取PYTHONPATH对应的value
+   print(combined['PYTHONPATH'])
+
+.. code:: python
+
+   >python ChainMap_test3.py -c red -u hujianli
+   red
+   hujianli
+
+   >python ChainMap_test3.py
+   蓝色
+   yeeku
+
+8.2 Counter对象
+~~~~~~~~~~~~~~~
+
+自动统计容器中各元素出现的次数。Counter的本质是一个特殊的dict，只不过它的key都是其所包含的元素，而它的value则记录了该key出现的次数。
+
+程序可通过任何可迭代对象参数来创建Counter对象，此时Counter将会自动统计各元素出现的次数，并以元素为Key，出现次数为value来构建Counter对象；程序也能以dict为参数来构建Counter对象；还能通过关键字参数来构建Counter对象。
+
+``Counter_test.py``
+
+.. code:: python
+
+   from collections import Counter
+   # 创建空的Counter对象
+   c1 = Counter()
+   # 以可迭代对象创建Counter对象
+   c2 = Counter('hannah')
+   print(c2)
+   print(c2["h"])
+   print(c2["n"])
+   # 以可迭代对象创建Counter对象
+   c3 = Counter(['Python', 'Swift', 'Swift', 'Python', 'Kotlin', 'Python'])
+   print(c3)
+   # 以dict来创建Counter对象
+   c4 = Counter({'red': 4, 'blue': 2})
+   print(c4)
+   # 使用关键字参数的语法创建Counter
+   c5 = Counter(Python=4, Swift=8)
+   print(c5)
+
+事实上，Counter继承了dict类，因此它完全可调用dict所支持的方法，此外，Counter还提供了如下三个常用的方法。
+
+-  elements(): 该方法返回该Counter所包含的全部元素组成的迭代器。
+-  most_common([n]):该方法返回Counter中出现最多的n个元素
+-  subtract([iterable-or-mapping]):该方法计算Counter的减法，其实就是计算减去各元素出现的次数。
+
+``Counter_test2.py``
+
+.. code:: python
+
+   from collections import Counter
+
+   # 创建Counter对象
+   cnt = Counter()
+   # 访问并不存在的key，将输出该key的次数为0.
+   print(cnt['Python'])  # 0
+   for word in ['Swift', 'Python', 'Kotlin', 'Kotlin', 'Swift', 'Go']:
+       cnt[word] += 1
+   print(cnt)
+   # 只访问Counter对象的元素
+   print(list(cnt.elements()))
+   # 将字符串（迭代器）转换成Counter
+   chr_cnt = Counter('abracadabra')
+   # 获取出现最多的3个字母
+   print(chr_cnt.most_common(3))  # [('a', 5), ('b', 2), ('r', 2)]
+   c = Counter(a=4, b=2, c=0, d=-2)
+   d = Counter(a=1, b=2, c=3, d=4)
+   # 用Counter对象执行减法，其实就是减少各元素的出现次数
+   c.subtract(d)
+   print(c)  # Counter({'a': 3, 'b': 0, 'c': -3, 'd': -6})
+   e = Counter({'x': 2, 'y': 3, 'z': -4})
+   # 调用del删除key-value对，会真正删除该key-value对
+   del e['y']
+   print(e)
+   # 访问'w'对应的value，'w'没有出现过，因此返回0
+   print(e['w'])  # 0
+   # 删除e['w']，删除该key-value对
+   del e['w']
+   # 再次访问'w'对应的value，'w'还是没有，因此返回0
+   print(e['w'])  # 0
+
+8.3 defaultdict对象
+~~~~~~~~~~~~~~~~~~~
+
+defaultdict是dict的子类，因此defaultdict也可被当成dict来使用。它与dict最大的区别在于：如果程序试图根据不存在的key来访问dict中对应的value，则会引发KeyError异常，而default则可以提供一个default_factory属性，该属性所指定的函数负责为不存在的key来生成value。
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   # @auther:   18793
+   # @Date：    2020/8/11 14:37
+   # @filename: charp01.py
+   # @Email:    1879324764@qq.com
+   # @Software: PyCharm
+
+   from collections import defaultdict
+
+   my_dict = {}
+   # 使用int作为defaultdict的default_factory
+   # 当key不存在时，将会返回int函数的返回值
+   my_defaultdict = defaultdict(int)
+   print(my_defaultdict['a'])  # 0
+   print(my_dict['a'])  # KeyError异常
+
+参考文献：
+
+https://blog.csdn.net/zhouyong80/article/details/102637845

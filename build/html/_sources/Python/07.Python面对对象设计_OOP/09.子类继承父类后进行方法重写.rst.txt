@@ -1,0 +1,285 @@
+.. contents::
+   :depth: 3
+..
+
+子类继承父类后方法重写
+======================
+
+::
+
+   子类继承父类之后可修改父类的方法，通过同名的方法，就覆盖了父类的方法
+
+用代码来理解
+------------
+
+代码示例 1
+~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   class fangfa1:
+       def __init__(self):
+           pass
+
+       def speak(self):
+           print("hujianli say .....")
+
+
+   class Fangfa2(fangfa1):
+       def __init__(self):
+           pass
+
+       def speak(self):
+           """
+           方法重载，子类和父类有相同的方法时，子类默认会修改掉父类的方法
+           :return:
+           """
+           print("xiaojian  say ......")
+
+
+   if __name__ == '__main__':
+       hu = Fangfa2()
+       hu.speak()
+
+代码示例 2
+~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   '''
+   class ClassName(基类):
+       pass
+   '''
+
+   class Fruit:
+       color = '绿色'    #类属性
+
+       def harvest(self,color):
+           print('水果是: ', color, '的！')
+           print('水果已经收获.....')
+           print('水果原来是: ', Fruit.color)    #输出类属性
+
+   class Apple(Fruit):
+       color = '红色'
+
+       def __init__(self):
+           print('我是Apple...')
+
+       def harvest(self,color):
+           '''
+           方法的重写
+           :param color:
+           :return:
+           '''
+           print('苹果！')
+           print('苹果已经收获.....')
+           print('苹果原来是: ', Fruit.color)    #输出类属性
+
+   class Orange(Fruit):
+       color = '橙色'
+
+       def __init__(self):
+           print('我是Orange...')
+
+       def harvest(self,color):
+           '''
+           方法的重写
+           :param color:
+           :return:
+           '''
+           print('橘子！')
+           print('橘子已经收获.....')
+           print('橘子原来是: ', Fruit.color)    #输出类属性
+
+   apple = Apple()
+   apple.harvest(apple.color)
+   print()
+   orange = Orange()
+   orange.harvest(orange.color)
+
+使用未绑定的方法调用被重写的方法
+--------------------------------
+
+代码示例
+~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/13 23:09
+   # filename: 使用未绑定的方法调用被重写的方法.py
+   class BaseClass:
+       def foo(self):
+           print("父类中定义的foo方法")
+
+   class SubClass(BaseClass):
+       # 重写父类的foo方法
+       def foo(self):
+           print("子类中重写父类的foo方法")
+
+       def bar(self):
+           print("执行bar方法")
+
+           #直接执行foo方法，将会调用子类重写之后的foo()方法
+           self.foo()
+
+           #使用类名调用实例方法(未绑定方法)调用父类被重写的方法
+           BaseClass.foo(self)
+
+   if __name__ == '__main__':
+       sc = SubClass()
+       sc.bar()
+
+输出信息
+
+::
+
+   执行bar方法
+   子类中重写父类的foo方法
+   父类中定义的foo方法
+
+使用super()函数进行修改重写父类的方法
+-------------------------------------
+
+.. _代码示例-1-1:
+
+代码示例 1
+~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   class Bird(object):
+       def chirp(self):
+           print("make sound")
+
+
+   class Chicken(Bird):
+       def chirp(self):
+           super(Chicken, self).chirp()
+           print("ji")
+
+
+   if __name__ == '__main__':
+       print("第一次实例化".center(100, "="))
+       bird = Bird()
+       bird.chirp()
+
+       print("第二次实例化".center(100, "="))
+       summer = Chicken()      #调用被覆盖的方法
+       summer.chirp()
+
+.. code:: python
+
+   __metaclass__ = type
+
+   class Person:
+       def __init__(self):
+           self.height = 160
+
+       def about(self,name):
+           print("{} is about {}".format(name,self.height))
+
+   class Girl(Person):
+       def __init__(self):
+           self.breast = 90
+           # Person.__init__(self)
+           super(Girl, self).__init__()   #继承父类的构造方法
+
+       def about(self,name):
+           print("{} is a hot girl ,she is about {} height is {}".format(name, self.height, self.breast))
+           super(Girl, self).about(name)   #继承父类的方法
+
+
+   if __name__ == '__main__':
+       hu = Girl()
+       hu.about("wangxiaomei")
+
+使用super函数调用父类的构造方法
+-------------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/13 23:17
+   # filename: 使用super函数调用父类的构造方法.py
+   class Employee:
+       def __init__(self, salary):
+           """
+           父类构造方法
+           :param salary:员工工资
+           """
+           self.salary = salary
+
+       def work(self):
+           print("我是胡建力，我的工资是:【{}】".format(self.salary))
+
+
+   class Customer:
+       def __init__(self, favorite, address):
+           self.favorite = favorite
+           self.address = address
+
+       def info(self):
+           print("我是一名顾客，我的职业是:【{}】，我的地址是:【{}】".format(self.favorite, self.address))
+
+
+   class Manager(Employee, Customer):
+       # 重写父类的构造方法
+       def __init__(self, salary, favorite, address):
+           print("-------- Manager的构造方法 ------------")
+           # super().__init__(salary)
+           super(Manager, self).__init__(salary)
+           Customer.__init__(self, favorite, address)
+
+
+   if __name__ == '__main__':
+       # 创建Manager对象
+       m = Manager(25000, "IT产品", "北京")
+       m.work()
+       m.info()
+
+输出信息
+
+::
+
+   -------- Manager的构造方法 ------------
+   我是胡建力，我的工资是:【25000】
+   我是一名顾客，我的职业是:【IT产品】，我的地址是:【北京】
+
+类中的私有方法
+--------------
+
+.. code:: python
+
+
+   class Private(object):
+       def __init__(self):
+           pass
+
+       def __foo(self):
+           print("@@@@这是一个私有的方法@@@@@.")
+
+       def get_foo(self):
+           print("首先，我是一个公有的方法")
+           print("开始调用私有方法")
+           self.__foo()
+           print("公有方法和私有方法结束")
+
+   if __name__ == '__main__':
+       hu = Private()
+       print("开始调用公有方法：")
+       hu.get_foo()
+       print("开始调用私有方法：")
+       print("查看类中的所有方法：")
+       print(dir(hu))
+       hu._Private__foo()

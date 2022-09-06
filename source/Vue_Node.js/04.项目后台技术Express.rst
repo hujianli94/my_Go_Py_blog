@@ -1,0 +1,750 @@
+.. contents::
+   :depth: 3
+..
+
+项目后台技术Express
+===================
+
+1 Express应用程序生成器
+-----------------------
+
+Express就是一款支持前后端分离方式的开发框架。
+
+Express是一款基于Node.js平台的Web应用开发框架，也是JavaScript
+Web应用开发框架中最适合新手的一款极简开发框架。
+
+打开命令行管理工具，输入如下命令安装express-generator。
+
+.. code:: shell
+
+   $ npm install express-generator -g
+
+安装成功后，使用express命令可以进行项目操作。express命令有不同的参数，例如，使用-h查看帮助信息
+
+::
+
+   C:\Users\18793>express -h
+
+     Usage: express [options] [dir]
+
+     Options:
+
+           --version        output the version number
+       -e, --ejs            add ejs engine support
+           --pug            add pug engine support
+           --hbs            add handlebars engine support
+       -H, --hogan          add hogan.js engine support
+       -v, --view <engine>  add view <engine> support (dust|ejs|hbs|hjs|jade|pug|twig|vash) (defaults to jade)
+           --no-view        use static html instead of view engine
+       -c, --css <engine>   add stylesheet <engine> support (less|stylus|compass|sass) (defaults to plain css)
+           --git            add .gitignore
+       -f, --force          force on non-empty directory
+       -h, --help           output usage information
+
+不通过手动方式建立JavaScript文件，而直接采用命令行的方式新建Express应用。
+
+.. code:: shell
+
+   $ express --no-view myapp
+
+即通过命令行搭建了一个完整的项目框架，也为使用者提供了后续的操作提示。
+
+::
+
+   $ tree
+   .
+   ├── app.js
+   ├── bin
+        └── www
+   ├── package.json
+   ├── public
+             ├── images
+   │         ├── index.html
+   │         ├── javascripts
+   │         └── stylesheets
+   │         └── style.css
+   └── routes
+       ├── index.js
+       └── users.js
+
+使用npm install命令安装依赖项，此时获得一个可运行的项目框架，
+
+::
+
+   npm install
+
+等到依赖项安装完毕，接下来通过如下命令启动项目。
+
+::
+
+   D:\0项目\vue202104\myapp>set DEBUG=myapp:* & npm start
+
+   > myapp@0.0.0 start D:\0项目\vue202104\myapp
+   > node ./bin/www
+
+     myapp:server Listening on port 3000 +0ms
+
+注意：在不同的操作系统中启动项目的命令不同。
+
+在mac OS、UNIX或Linux的发行版中，启动命令是
+
+::
+
+   DEBUG =myapp:* npm start
+
+上述命令在本机的3000端口启动了一个服务，通过浏览器访问http://localhost:3000
+
+2 Express提供的路由
+-------------------
+
+Express提供了路由，通过定义路由，可以设计不同的URI地址，可以支持HTTP的各个不同方法（包括GET、POST和其他请求方式）。路由的基本定义如下：
+
+::
+
+   app.get('/', function(req, res) {
+     res.send('Hello World!');
+   });
+
+上述代码定义了项目的根路由，当访问路径是localhost时（使用GET方式），执行第2个参数中的方法，即向请求输出一句“Hello
+World！”
+
+除了HTTP的几种常见请求方式外，Express还提供了一种可以捕获所有请求的方法app.all()，它会在所有该地址的请求前执行。
+
+::
+
+   app.all('/secret', function(req, res, next) {
+     console.log('Accessing the secret section ...')
+     next()    //pass control to the next handler
+   });
+
+Express定义的路由地址支持字符串模式和正则表达式。也就是说，对于如下形式的路由，以a开头并以b结尾的任何地址的GET请求都会被执行。
+
+::
+
+   app.get('/a*b', function(req, res) {
+     res.send('Hello World!');
+   });
+
+路由的路径可以传递参数。在定义路径时，通过“:”标记来确定参数的名称，之后可以通过res参数中的params对象获取该参数，代码如下：
+
+::
+
+   app.get('/users/:userId/books/:booksId', function(req, res) {
+     res.send(req.params);
+   });
+
+上述代码的路由路径中包含两个参数：一个参数代表用户的ID，命名为userId；另一个参数是获取书本的ID，命名为bookId。这两个参数都会被用户的请求（Request）所包含，可以通过Request.params对象获取这两个参数传递的值。
+
+示例：使用生成器创建新的项目
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+打开位于routes文件夹中的index.js，在其中增加新代码，具体如下：
+
+::
+
+   var express = require('express');
+   var router = express.Router();
+
+   /* GET home page. */
+   router.get('/', function(req, res, next) {
+     res.render('index', { title: 'Express' });
+   });
+
+   // 响应相关请求
+   router.get('/username/:username/say/:sayText',function (req,res) {
+     // req为请求 res为响应
+     res.send(req.params.username + "说：" + req.params.sayText)
+   })
+
+   module.exports = router;
+
+通过命令启动该项目，当在浏览器中访问http://localhost:3000/username/tom/say/Hello页面时，会显示路径携带参数处理后的结果:
+
+::
+
+   tom说：Hello
+
+Express框架还为接口开发者提供了传输JSON的方式：Response.json或Response.jsonp。可以通过访问该接口获取数据，代码如下：
+
+::
+
+   router.get("/json", function (req,res) {
+       // 返回json数据
+       let data = {
+           name: "Tom",
+           say: "Hello"
+       }
+       res.json(data)
+   })
+
+访问http://localhost:3000/json最终的返回效果如下
+
+::
+
+   {"name":"Tom","say":"Hello"}
+
+Response的方法
+~~~~~~~~~~~~~~
+
+================ ================================
+方法             说明
+================ ================================
+res.download()   下载一个文件
+res.end()        结束一个请求的过程
+res.json()       返回一个json串
+res.jsonp()      以JSONp的形式返回一个JSON
+res.redirect()   重定向一个页面，页面跳转
+res.reder()      渲染一个模板视图
+res.send()       以各种形式返回一个任意的数据类型
+res.sendFile()   发送一个文件流
+res.sendStatus() 定义一个返回的状态和代码
+================ ================================
+
+3 使用Express托管静态文件
+-------------------------
+
+Express项目无论是否使用模板渲染文件，都会涉及静态文件，如图像、CSS文件或JavaScript等。配置这些Express中的静态资源文件，需要使用express.static对象的内置中间件函数。以下代码就是将public目录下的图片、CSS文件和JavaScript文件对外开放，可以直接访问。
+
+::
+
+   // 开放public目录
+   router.use(express.static('public'))
+
+如果需要使用多个文件夹作为静态资源文件夹，可以多次调用中间件函数。静态资源还可以用“别名”的方式开放文件夹，代码如下：
+
+::
+
+   // 原本定义的public目录为静态资源目录
+   app.use(express.static(path.join(__dirname, 'public')));
+
+   // 定义的image目录为静态图片资源目录
+   app.use(express.static(path.join(__dirname, 'image')));
+
+   // 赋予别名
+   app.use('/static', express.static(path.join(__dirname, 'public')))
+
+Express图片展示
+
+具体方法如下：
+
+（1）新建Express工程，安装该项目的依赖项，编辑app.js文件，代码如下：
+
+::
+
+   var express = require('express');
+   var path = require('path');
+   var cookieParser = require('cookie-parser');
+   var logger = require('morgan');
+
+   var indexRouter = require('./routes/index');
+   var usersRouter = require('./routes/users');
+
+   var app = express();
+
+   app.use(logger('dev'));
+   app.use(express.json());
+   app.use(express.urlencoded({ extended: false }));
+   app.use(cookieParser());
+   // 原本定义的public目录为静态资源目录
+   app.use(express.static(path.join(__dirname, 'public')));
+
+   // 定义的image目录为静态图片资源目录
+   app.use(express.static(path.join(__dirname, 'image')));
+
+   // 赋予别名
+   app.use('/static', express.static(path.join(__dirname, 'public')))
+
+   app.use('/', indexRouter);
+   app.use('/users', usersRouter);
+
+   module.exports = app;
+
+（2）在public文件夹中放入图片，并且在项目中创建image文件夹，在其中也放入相同的图片。
+
+（3）运行该项目，可以通过如下地址访问添加的这张图片。
+
+-  http://localhost:3000/1.png
+-  http://localhost:3000/images/1.png
+-  http://localhost:3000/static/images/1.png
+
+..
+
+   注意：这里的路径采用path.join(__dirname,
+   ‘public’)的形式，是为了保证目录的可用性，如果不采用这样的路径形式，就必须采用相对路径的形式。
+
+4 Express和数据库交互
+---------------------
+
+4.1 Node.js与MongoDB集成
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+（1）对于安装MongoDB数据库时用到的中间件，官方推荐的是mongodb包，执行如下命令进行安装
+
+::
+
+   npm install mongodb --save
+
+（2）使用如下命令启动MongoDB
+
+::
+
+   @echo off
+
+   CLS
+   set str=%cd%
+   :echo %str%
+
+   :Start mongodb
+   echo "Start Mongodb ....."
+   cd %str%
+   start mongod -dbpath ../data
+   :pause
+
+..
+
+   注意：启动MongoDB时应当将mongodb包的存放路径更改为安装路径，并在-depath参数后指定生成的数据库的存储位置。
+
+（3）新建一个项目文件，安装其依赖包，安装成功后在app.js中更新代码，将连接数据库的代码加入其中，具体代码如下：
+
+::
+
+   var express = require('express');
+   var path = require('path');
+   var cookieParser = require('cookie-parser');
+   var logger = require('morgan');
+
+   var indexRouter = require('./routes/index');
+   var usersRouter = require('./routes/users');
+
+   var app = express();
+
+   app.use(logger('dev'));
+   app.use(express.json());
+   app.use(express.urlencoded({extended: false}));
+   app.use(cookieParser());
+   // 原本定义的public目录为静态资源目录
+   app.use(express.static(path.join(__dirname, 'public')));
+   // 定义的image目录为静态图片资源目录
+   app.use(express.static(path.join(__dirname, 'image')));
+   // 赋予别名
+   app.use('/static', express.static(path.join(__dirname, 'public')))
+
+   app.use('/', indexRouter);
+   app.use('/users', usersRouter);
+
+   var MongoClient = require('mongodb').MongoClient
+
+   MongoClient.connect('mongodb://localhost:27017/animals', function (err, client) {
+       (err, client)
+       {
+           if (err) {
+               console.log("Connection Error ")
+           }else {
+               console.log("Connection success")
+           }
+       }
+
+   })
+
+   module.exports = app;
+
+（4）使用命令行启动该项目，输出内容
+
+::
+
+     myapp:server Listening on port 3000 +0ms
+   Connection success
+
+4.1.1 使用对象模型驱动连接MongoDB
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+使用对象模型驱动连接MongoDB。这需要另一个相关的依赖包mongoose，该包提供了编写MongoDB验证和业务逻辑等功能，通过数据对象的形式处理数据。
+
+在Express中使用mongoose操作数据库。具体方法如下：
+
+（1）创建项目，安装相应的依赖项，然后执行如下命令安装mongoose包。
+
+::
+
+   npm install mongoose - save
+
+（2）安装成功后，在代码中引用mongodb包，修改项目的app.js文件，代码如下：
+
+::
+
+   var express = require('express');
+   var path = require('path');
+   var cookieParser = require('cookie-parser');
+   var logger = require('morgan');
+
+   var indexRouter = require('./routes/index');
+   var usersRouter = require('./routes/users');
+
+   var app = express();
+
+   app.use(logger('dev'));
+   app.use(express.json());
+   app.use(express.urlencoded({ extended: false }));
+   app.use(cookieParser());
+   app.use(express.static(path.join(__dirname, 'public')));
+
+   // getting-started.js
+   var mongoose = require('mongoose');
+   // 返回一个持续的链接状态
+   mongoose.connect('mongodb://localhost:27017/animals');
+
+   var db = mongoose.connection;
+   // 监控是否出现错误
+   db.on('error', console.error.bind(console, 'connection error:'));
+   //
+   db.once('open', function() {
+       // we're connected!
+       console.log("mongoose connect successful!")
+   });
+   app.use('/', indexRouter);
+   app.use('/users', usersRouter);
+
+   module.exports = app;
+
+（3）使用命令启动项目，在MongoDB开启状态下，连接成功的效果如下所示。
+
+此时便可以通过操作数据对象的形式对数据库进行插入和删除操作了。
+
+::
+
+   D:\nodejs\node.exe D:\Django_drf\myapp\bin\www
+     myapp:server Listening on port 3000 +0ms
+   mongoose connect successful!
+
+..
+
+   总结：对象模型驱动就是将MongoDB这样的NoSQL数据库，以类似于MySQL的方式进行操作。下一节将介绍如何定义一个数据模型。
+
+4.1.2 如何定义模型类
+^^^^^^^^^^^^^^^^^^^^
+
+数据模型（Model）在传统的MVC开发模式中是非常重要的一个组成部分，代表该数据本身的“模型”。对于MongoDB这样的NoSQL型数据库来说，本质上没有必要设计专用的数据模型，甚至使用数据模型可能会导致性能下降，但是数据模型化的真正作用是使开发过程更加工程化，同时还能减少开发者的工作量。
+
+   注意：数据集定义方式可能会根据数据库或语言、框架的不同而不同，并不是一套固定的写法。
+
+mongoose也支持数据模型定义，但MongoDB中没有表的定义，而是采用Schema。mongoose中的所有数据操作都通过Schema实现，
+
+每一个Schema都会映射至一个MongoDB的collection（数据集）中，代码如下：
+
+::
+
+   var Schema = mongoose.Schema;
+
+   var studentSchema = new Schema(
+       {
+           name: String,
+           stuStaff: Number,
+           sex: Number
+       });
+
+数据模型是通过Schema()编译的构造函数，通过Model的定义可以将数据库的所有操作生成document，代码如下：
+
+::
+
+   var Student = mongoose.model("student", studentSchema)
+   var st1 = new Student({
+       name: "张三",
+       stuStaff: "1213232",
+       sex: 1
+   })
+
+   st1.save(function (e) {
+       if (e) return e
+   })
+
+上述代码完成的是对student的存储。
+
+mngodb中查询到存储的student表内容如下：
+
+::
+
+   /* 1 */
+   {
+       "_id" : ObjectId("61ab02430d9c9bf5534a4b27"),
+       "name" : "张三",
+       "stuStaff" : 1213232,
+       "sex" : 1,
+       "__v" : 0
+   }
+
+4.2 Node.js与Redis集成
+~~~~~~~~~~~~~~~~~~~~~~
+
+工程项目中使用Redis一般是为了提高系统的I/O吞吐量，优化性能。
+
+Redis是常驻内存的数据库，对于海量数据的存储并不合适，所以Redis的经典应用场景是一些数据量较少、查询频率较高的环境。
+
+使用Redis时需要安装Node.js，命令如下：
+
+::
+
+   npm install redis@3.0.2 --save
+
+Redis不需要指定数据的格式，只要使用set()方法将键/值对存入数据库，使用get()方法通过键获取对应的值即可。
+
+示例
+
+连接本地的Redis数据库（密码设置为123.com），添加一个键为Hello、值为Hello
+Redis的键-值对。通过get()方法获取该值并打印到控制台中。get()方法需要传入一个回调函数，完整代码如下：
+
+``index.js``
+
+::
+
+   var redis = require('redis');
+   // 连接数据库，默认本地6379，无密码
+   var client = redis.createClient(6379, '127.0.0.1');
+   //添加键值为hello=>Hello Redis
+   client.set('hello', 'Hello Redis');
+   // 使用键进行值的获取
+   client.get('hello', function (err, v) {
+       if (err) {
+           console.log(err)
+       } else {
+           console.log(v)
+       }
+       //关闭数据库连接
+       client.end(true);
+   })
+
+``package.json``
+
+::
+
+   {
+     "name": "myredis",
+     "version": "0.0.0",
+     "private": true,
+     "scripts": {
+       "start": "node ./bin/www"
+     },
+     "dependencies": {
+       "cookie-parser": "~1.4.4",
+       "debug": "~2.6.9",
+       "express": "~4.16.1",
+       "http-errors": "~1.6.3",
+       "morgan": "~1.9.1",
+       "pug": "2.0.0-beta11",
+       "redis": "^3.0.2"           #使用此版本的插件，使用高版本会有问题
+     }
+   }
+
+执行效果如下所示
+
+::
+
+   D:\nodejs\node.exe D:\Django_drf\myredis\bin\www
+     myredis:server Listening on port 3000 +0ms
+   Hello Redis
+
+4.3 Node.js与MySQL集成
+~~~~~~~~~~~~~~~~~~~~~~
+
+   参考一下菜鸟教程即可
+
+   https://www.runoob.com/nodejs/nodejs-mysql.html
+
+5 Express高级应用
+-----------------
+
+5.1 Express中的中间件
+~~~~~~~~~~~~~~~~~~~~~
+
+在一些新的Web框架中，经常会出现“中间件”的概念。中间件是介于应用系统和系统软件之间的一类软件，它使用系统软件提供的基础服务（功能），衔接网络上应用系统的各个部分，达到资源共享、功能共享的目的。
+
+中间件可以做很多事情，例如对所有请求的日志进行记录，类似于记录日志，这种功能拥有一定的通用性，但又不是逻辑主程序的组成部分，这类通用且非业务逻辑的功能适合使用中间件进行处理。
+
+不仅如此，中间件也可以用于身份验证。例如传统的用户登录状态的判定，需要在服务器的Session中存放一些该用户的信息，用户在访问某些需要权限控制的路由时通过Session查看是否登录，该逻辑操作也可以使用中间件进行判断。中间件仅仅查询用户是否登录（Session是否存在且没有过期），如果登录，则执行主程序，如果没有登录，则阻止用户，这样就无须在所有的路由中判断用户的状态了
+
+编写一个简单的中间件，命名为checkUser，提供用户请求信息的控制台打印功能，最终完成的代码如下：
+
+::
+
+   var express = require('express');
+   var app = express.Router();
+
+   // 编写中间件，用于打印用户的头信息
+   var checkUser = function (req, res, next) {
+     console.log(req.headers)
+     next()
+   }
+   //全局使用中间件
+   app.use(checkUser)
+   app.get('/', function (req, res) {
+     res.send('Hello World!')
+   })
+
+   module.exports = app;
+
+运行程序，当用户进行路由访问时，自动打印用户的头信息，效果如下：
+
+::
+
+   D:\nodejs\node.exe D:\Django_drf\myredis\bin\www
+     myredis:server Listening on port 3000 +0ms
+   {
+     host: '127.0.0.1:3000',
+     connection: 'keep-alive',
+     'cache-control': 'max-age=0',
+     'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+     'sec-ch-ua-mobile': '?0',
+     'sec-ch-ua-platform': '"Windows"',
+     'upgrade-insecure-requests': '1',
+     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36',
+     accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+     'sec-fetch-site': 'none',
+     'sec-fetch-mode': 'navigate',
+     'sec-fetch-user': '?1',
+     'sec-fetch-dest': 'document',
+     'accept-encoding': 'gzip, deflate, br',
+     'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+     cookie: 'csrftoken=DFGYRPlMPs1Xc4rjhafoSwbMNavOzQTMJ8xQQvPa7ITwf8BI81fHT61VMk5eilPv',
+     'if-none-match': 'W/"c-Lve95gjOVATpfV8EL5X4nxwjKHE"'
+   }
+
+针对上例，如果使用如下代码，则表示整个App中的所有路由均使用checkUser中间件。
+
+::
+
+   //全局使用中间件
+   app.use(checkUser)
+
+*局部使用中间件*
+
+但是某些中间件并不需要所有的路由都使用，例如用户登录状态的检测，不是所有的页面都要进行检测，这类中间件可以通过路由指定。
+
+例如下面的代码，/user/:id路由中的所有请求URL均调用checkLogin中间件，而其他的路由则不调用
+
+.. code:: javascript
+
+   var express = require('express')
+   var app = express()
+
+   // 编写中间件，用于打印用户的头信息
+   var checkUser = function (req, res, next) {
+       console.log(req.headers)
+       next()
+   }
+   //全局使用中间件
+   app.use(checkUser)
+   //新的中间件，用来检测用户的登录
+   var checkLogin = function (req, res, next) {
+       if (req.params.id === '1') {
+           console.log("用户登录成功")
+           next()
+       } else {
+           console.log("用户未登录")
+           res.send("error")
+       }
+   }
+   //对于路由调用中间件
+   app.use('/user/:id', checkLogin)
+
+   // 路由定义
+   app.get('/', function (req, res) {
+       res.send('Hello World!')
+   })
+
+   // 新的路由定义
+   app.get('/user/:id', function (req, res) {
+       res.send('Hello' + req.params.id)
+   })
+   module.exports = app;
+
+上述代码定义了新的路由’/user/:id’，它通过GET方式传递一个id参数，该参数使用req.params.id来获取。在中间件中，如果id不是字符串1（这里使用了严格相等），则不将该请求发送至路由处理，而是直接返回error错误信息，并且在控制台打印用户登录失败提示。如果id参数是正确的，则执行next()将请求下发至路由处理，返回的信息是Hello字符串加上该参数。
+
+-  访问根目录“/”时打印用户的头信息，不执行checkLogin中间件
+-  如果访问http://localhost:3000/user/2，则返回用户请求头文件的同时打印登录失败的提示
+-  如果将上述连接中的id参数改为1即访问http://localhost:3000/user/1地址，则返回正常的内容，并且提示登录成功
+
+5.2 Express错误处理
+~~~~~~~~~~~~~~~~~~~
+
+Node.js中出现的错误可以采用try…catch语句进行处理，格式如下：
+
+::
+
+   try {
+       // 可能出现错误的操作
+   } catch (err) {
+       // 发送错误时的处理
+   }
+
+如果对每一个特定的错误都进行处理，无疑会出现非常多的冗余代码，所以一般采用统一的方式处理错误。
+
+Express提供了非常方便的错误处理方式：中间件。Express会捕获所有可能出现的错误，\ *确保所有的错误都通过错误处理中间件来处理*\ 。
+
+中间件不一定非要处于用户请求与逻辑处理的中间层，在所有的Express路由处理中包含第3个参数next，该参数用于调用执行完中间件的逻辑代码之后的下一个中间件。如果用于错误处理，自然也可以将产生的错误传递给错误处理中间件。
+
+Express提供了一个\ **内置的方法**\ 用来处理可能出现的任何错误，其代码如下：
+
+.. code:: javascript
+
+   function errorHandler(err, req, res, next) {
+       if (res.headersSent) {
+           return next(err)
+       }
+       res.status(500)
+       res.render('error', { error: err })
+   }
+
+在某些业务需求中，JavaScript可以自行实例化一个Error()抛出错误，这种方式多用于某些敏感且危险的操作，通过主动抛出错误的方式停止业务流程，宕机也是一种及时的止损。
+
+.. code:: javascript
+
+   var express = require('express')
+   var app = express()
+
+
+   app.get('/', function (req, res, next) {
+       // 新建错误
+       try {
+           // 主动抛出错误，返回500错误
+           throw new Error('抛出一个错误')
+       } catch (err) {
+           next(err)
+       }
+   })
+   module.exports = app;
+
+这样就可以调用默认的统一错误处理函数即errorHandler()函数，返回一个服务器错误，状态码为500
+
+Express中的错误处理可以依赖于自身的错误处理函数，下面的代码使用throw抛出一个错误：
+
+.. code:: javascript
+
+   var express = require('express')
+   var app = express()
+
+
+   app.get('/', function (req, res, next) {
+       // 新建错误
+       try {
+           // 主动抛出错误，下面进行捕获,返回提示信息
+           throw new Error('抛出一个错误')
+       } catch (err) {
+           next(err)
+       }
+   })
+
+   app.use((err, req, res, next) => {
+       res.send('Something broke!')
+   })
+
+   module.exports = app;
+
+上述代码并不返回状态码为500的服务器错误，只是返回一个简单的提示语句。
+
+   需要注意的是，在错误处理中间件中，使用next()函数可以传递错误，这个错误会传递给默认的错误处理函数。
+
+小结
+----
+
+介绍了Express中数据库的连接操作，主要涉及三种常用的数据库：MongoDB和Redis、Mysql。
+
+NoSQL型数据库提供了性能更优的扩展功能，开发者无须纠结于传统的数据库设计和各类范式。

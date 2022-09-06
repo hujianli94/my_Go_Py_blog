@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>19.6. Ansible入门与playbook实战 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="19.7. Saltstack安装使用入门（自己总结）" href="05.Saltstack%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8.html" />
+    <link rel="prev" title="19.5. 批量运维管理器Fabric" href="03.%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8Fabric.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">19. Python自动化运维最佳实践</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E4%BF%A1%E6%81%AF%E6%A8%A1%E5%9D%97%E8%AF%A6%E8%A7%A3.html">19.1. 系统基础信息模块详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01.%E7%B3%BB%E7%BB%9F%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8pexpect.html">19.2. 系统批量运维管理器pexpect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html">19.3. 业务服务监控详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%B3%BB%E7%BB%9F%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8paramiko.html">19.4. 系统批量运维管理器paramiko</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8Fabric.html">19.5. 批量运维管理器Fabric</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">19.6. Ansible入门与playbook实战</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ansible">19.6.1. 关于Ansible</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ansible-ssh">19.6.2. Ansible SSH工作机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">19.6.3. 安装Ansible</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#expetssh-key">19.6.4. 使用expet来批量分发ssh-key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">19.6.5. Ansible与正则</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ad-hocansible">19.6.6. 通过Ad-Hoc研究Ansible的并发特性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">19.6.7. Ansible常用的核心模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">19.6.8. 列出组的主机</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">19.6.9. 远程命令模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#command">19.6.10. command模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#copy">19.6.11. copy模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stat">19.6.12. stat模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-url">19.6.13. get_url模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">19.6.14. yum模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cron">19.6.15. cron模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mount">19.6.16. mount模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#service">19.6.17. service模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sysctl">19.6.18. sysctl包管理模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user">19.6.19. user模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#group">19.6.20. group模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file">19.6.21. file模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setup">19.6.22. setup模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">19.6.23. ansible速度优化</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ansibleyaml">19.6.24. ansible配合YAML使用</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#roles">19.6.25. Roles介绍</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">19.6.26. Ansible的内置变量参数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">19.6.27. 创建roles时的注意事项</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ansible-galaxy">19.6.28. Ansible 的Galaxy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#playbook1-ansibletomcat">19.6.29. Playbook实战1：Ansible部署Tomcat企业实战</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ansiblewindows">19.6.30. Ansible管理windows实践</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="05.Saltstack%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8.html">19.7. Saltstack安装使用入门（自己总结）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html">19.8. 业务服务监控详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.Supervisor%E5%9C%A8Devops%E5%B7%A5%E4%BD%9C%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8.html">19.9. Supervisor在Devops工作中的应用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E7%BD%91%E9%A1%B5%E8%87%AA%E5%8A%A8%E5%8C%96%E5%BC%80%E5%8F%91.html">19.10. 网页自动化开发</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.Conda%E5%88%9B%E5%BB%BApython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83.html">19.11. Conda创建python虚拟环境</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">19. </span>Python自动化运维最佳实践</a> &raquo;</li>
+      <li><span class="section-number">19.6. </span>Ansible入门与playbook实战</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/20.Python自动化运维最佳实践/04.Ansible入门与playbook实战.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#ansibleplaybook" id="id19">Ansible入门与playbook实战</a></p>
+<ul>
+<li><p><a class="reference internal" href="#ansible" id="id20">关于Ansible</a></p></li>
+<li><p><a class="reference internal" href="#ansible-ssh" id="id21">Ansible SSH工作机制</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id22">安装Ansible</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pip" id="id23">PIP方式</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id24">源码安装方式</a></p></li>
+<li><p><a class="reference internal" href="#yum" id="id25">YUM方式</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#expetssh-key" id="id26">使用expet来批量分发ssh-key</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id27">Ansible与正则</a></p></li>
+<li><p><a class="reference internal" href="#ad-hocansible" id="id28">通过Ad-Hoc研究Ansible的并发特性</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id29">Ansible常用的核心模块</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id30">Ansible常用模块汇总</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id6" id="id31">列出组的主机</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id32">远程命令模块</a></p></li>
+<li><p><a class="reference internal" href="#command" id="id33">command模块</a></p></li>
+<li><p><a class="reference internal" href="#copy" id="id34">copy模块</a></p></li>
+<li><p><a class="reference internal" href="#stat" id="id35">stat模块</a></p></li>
+<li><p><a class="reference internal" href="#get-url" id="id36">get_url模块</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id37">yum模块</a></p></li>
+<li><p><a class="reference internal" href="#cron" id="id38">cron模块</a></p></li>
+<li><p><a class="reference internal" href="#mount" id="id39">mount模块</a></p></li>
+<li><p><a class="reference internal" href="#service" id="id40">service模块</a></p></li>
+<li><p><a class="reference internal" href="#sysctl" id="id41">sysctl包管理模块</a></p></li>
+<li><p><a class="reference internal" href="#user" id="id42">user模块</a></p></li>
+<li><p><a class="reference internal" href="#group" id="id43">group模块</a></p></li>
+<li><p><a class="reference internal" href="#file" id="id44">file模块</a></p></li>
+<li><p><a class="reference internal" href="#setup" id="id45">setup模块</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id46">ansible速度优化</a></p></li>
+<li><p><a class="reference internal" href="#ansibleyaml" id="id47">ansible配合YAML使用</a></p>
+<ul>
+<li><p><a class="reference internal" href="#apache" id="id48">示例：部署Apache服务</a></p></li>
+<li><p><a class="reference internal" href="#tomcat" id="id49">示例：安装tomcat软件</a></p></li>
+<li><p><a class="reference internal" href="#block" id="id50">Block块</a></p></li>
+<li><p><a class="reference internal" href="#includes" id="id51">动态Includes</a></p></li>
+<li><p><a class="reference internal" href="#playbooks-includes" id="id52">playbooks Includes使用技巧</a></p></li>
+<li><p><a class="reference internal" href="#ansiblenode-js" id="id53">实战一：Ansible部署Node.js企业实践</a></p></li>
+<li><p><a class="reference internal" href="#drupallamp" id="id54">实战二：Drupal基于LAMP的自动化部署</a></p></li>
+<li><p><a class="reference internal" href="#ansible-playbook" id="id55">Ansible Playbook拓展</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#roles" id="id56">Roles介绍</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id14" id="id57">多重变量定义</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id15" id="id58">Ansible的内置变量参数</a></p>
+<ul>
+<li><p><a class="reference internal" href="#roleshandlers" id="id59">Roles技巧之Handlers：动态变更</a></p></li>
+<li><p><a class="reference internal" href="#rolesfiles" id="id60">Roles技巧之Files：文件传输</a></p></li>
+<li><p><a class="reference internal" href="#rolestemplates" id="id61">Roles技巧之Templates：模板替换</a></p></li>
+<li><p><a class="reference internal" href="#rolesfilestemplates" id="id62">Roles中Files和Templates的区别</a></p></li>
+<li><p><a class="reference internal" href="#jinja2" id="id63">Jinja2模板可以实现高度自定义</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id16" id="id64">创建roles时的注意事项</a></p>
+<ul>
+<li><p><a class="reference internal" href="#ansiblejinja2nginx" id="id65">Ansible结合Jinja2生成Nginx配置</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#ansible-galaxy" id="id66">Ansible 的Galaxy</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id17" id="id67">Ansible 部署示例大全：</a></p></li>
+<li><p><a class="reference internal" href="#id18" id="id68">Ansible中文权威指南</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#playbook1-ansibletomcat" id="id69">Playbook实战1：Ansible部署Tomcat企业实战</a></p></li>
+<li><p><a class="reference internal" href="#ansiblewindows" id="id70">Ansible管理windows实践</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="ansibleplaybook">
+<h1><a class="toc-backref" href="#id19"><span class="section-number">19.6. </span>Ansible入门与playbook实战</a><a class="headerlink" href="#ansibleplaybook" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><em>参考文献</em></p></li>
+</ul>
+<p><a class="reference external" href="https://yq.aliyun.com/articles/493215?spm=a2c4e.11153940.blogcont307685.17.4e655529C63dwk">Ansible入门与playbook实战</a></p>
+<section id="ansible">
+<h2><a class="toc-backref" href="#id20"><span class="section-number">19.6.1. </span>关于Ansible</a><a class="headerlink" href="#ansible" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Ansible是⼀种批量、⾃动部署⼯具，不仅可以批量，还可以⾃动。
+它主要基于ssh进⾏通信，不要求客户端(被控制端)安装ansible
+
+Ansible是新出现的自动化运维工具，基于Python开发，
+集合了众多运维工具（puppet、cfengine、chef、func、fabric）的优点。
+实现了批量系统配置、批量程序部署、批量运行命令等功能。
+Ansible是基于模块工作的，本身没有批量部署的能力。
+真正具有批量部署的是Ansible所运行的模块，Ansible只是提供一种框架。
+</pre></div>
+</div>
+</section>
+<section id="ansible-ssh">
+<h2><a class="toc-backref" href="#id21"><span class="section-number">19.6.2. </span>Ansible SSH工作机制</a><a class="headerlink" href="#ansible-ssh" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Ansible执行命令时，通过其底层传输连接模块，将一个或数个文件，或者定义一个Play或Command命令传输到远程服务器/tmp目录的临时文件，并在远程执行这些Play/Comand命令，然后删除这些临时文件，同时回传整体命令执行结果。这一系列操作在未来的Ansible版本中会越来越简单、直接，同时快速、稳定、安全。
+</pre></div>
+</div>
+<p>通过了解其工作机制及其一直以来秉承的去中心化思想，我们可以总结，Ansible是非C/S架构，自身没有Client端，其主要特点如下。</p>
+<p>❑无客户端，只需安装SSH、Python即可，其中Python建议版本为2.6.6以上。</p>
+<p>❑基于OpenSSH通信，底层基于SSH协议（Windows基于PowerShell）。</p>
+<p>❑支持密码和SSH认证，因可通过系统账户密码认证或公私钥认证，所以整个过程简单、方便、安全。建议使用公私钥方式认证，因为密码认证方式的密码需明文写配置文件，虽然配置文件可加密，但会增加Ansible使用的复杂度。</p>
+<p>❑支持Windows，但仅支持客户端，服务端必须是Linux系统。</p>
+<p>❑Clear（简易）:YAML语法，Python语言编写，易于管理，API简单明了；❑Fast（敏捷）：快速学习，设置简单，无需任何第三方软件；</p>
+<p>❑Complete（全面）：配置管理、应用部署、任务编排等功能集于一身，丰富的内置模块满足日常功能所需；</p>
+<p>❑Efficient（高效）：没有额外软件包消耗系统性能；</p>
+<p>❑Secure（安全）：没有客户端，底层基于OpenSSH，保证通信的安全可靠性。</p>
+</section>
+<section id="id1">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">19.6.3. </span>安装Ansible</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<section id="pip">
+<h3><a class="toc-backref" href="#id23">PIP方式</a><a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h3>
+<p>Ansible底层也是基于Python编写，所以可以通过PIP方式安装Ansible。</p>
+<p>步骤1：安装python-pip及python-devel程序包。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 安装python-pip程序包及python-devel</span>
+yum -y install python-pip python-devel
+</pre></div>
+</div>
+<p>步骤2：安装Ansible服务。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>PIP改为国内镜像源下载
+
+  清华：https://pypi.tuna.tsinghua.edu.cn/simple/
+  阿里云：http://mirrors.aliyun.com/pypi/simple/
+  中国科技大学 https://pypi.mirrors.ustc.edu.cn/simple/
+  华中理工大学：http://pypi.hustunique.com/
+  山东理工大学：http://pypi.sdutlinux.org/
+  豆瓣：http://pypi.douban.com/simple/
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 安装前确保服务器的gcc、glibc开发环境均已安装，系统几乎所有的软件包编译环境均基于gcc。</span>
+yum -y install gcc glibc-devel zlib-devel rpm-build openssl-devel
+<span class="c1"># 升级PIP至最新版本</span>
+pip install --upgrade pip
+
+<span class="c1">#PIP改为国内镜像源下载ansible</span>
+pip install ansible -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+</pre></div>
+</div>
+<p>如果想配置成默认的源，方法如下：</p>
+<p>需要创建或修改配置文件（一般都是创建），</p>
+<p><code class="docutils literal notranslate"><span class="pre">linux的文件在~/.pip/pip.conf，</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">windows在%HOMEPATH%\pip\pip.ini</span></code></p>
+<p>修改内容为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="n">index</span><span class="o">-</span><span class="n">url</span> <span class="o">=</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">pypi</span><span class="o">.</span><span class="n">douban</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">simple</span>
+<span class="p">[</span><span class="n">install</span><span class="p">]</span>
+<span class="n">trusted</span><span class="o">-</span><span class="n">host</span><span class="o">=</span><span class="n">pypi</span><span class="o">.</span><span class="n">douban</span><span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+<p>这样在使用pip来安装时，会默认调用该镜像。</p>
+<p>如下其他验证安装是否成功的方式也一样，均可执行ansible–version验证。</p>
+</section>
+<section id="id2">
+<h3><a class="toc-backref" href="#id24">源码安装方式</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>yum install git –y <span class="o">&amp;&amp;</span> git clone git:// github.com/ansible/ansible.git –recursive
+
+// 切换至程序包目录
+<span class="nb">cd</span> ./ansible
+// 执行env-setup脚本，安装Ansible软件包
+<span class="nb">source</span> ./hacking/env-setup
+</pre></div>
+</div>
+</section>
+<section id="yum">
+<h3><a class="toc-backref" href="#id25">YUM方式</a><a class="headerlink" href="#yum" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>安装⽅法有多种，可以下载源码后编译安装，可以从git上获取资源安装，也可以rpm包安装。rpm安装需要配置
+epel源。
+
+经测试，CentOS 6上安装ansible <span class="m">2</span>.3版本有可能会⾮常慢，需要将ansible执⾏的结果使⽤重定向或者-t选项保存
+到⽂件中，下次执⾏才会快。
+cat <span class="s">&lt;&lt;eof&gt;&gt;/etc/yum.repos.d/my.repo</span>
+<span class="s">[epel]</span>
+<span class="s">name=epel</span>
+<span class="s">baseurl=http://mirrors.aliyun.com/epel/7Server/x86_64/</span>
+<span class="s">enable=1</span>
+<span class="s">gpgcheck=0</span>
+<span class="s">eof</span>
+</pre></div>
+</div>
+<p>或者</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>修改yum源:
+    wget -O CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+    wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+</pre></div>
+</div>
+<p>登陆并修改/etc/ssh/sshd_config</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PasswordAuthentication</span> <span class="n">no改为PasswordAuthentication</span> <span class="n">yes并保存</span>
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>yum list ansible
+yum install ansible -y
+
+<span class="o">[</span>root@hujianli-linux ansible<span class="o">]</span><span class="c1"># pwd</span>
+/etc/ansible
+
+
+<span class="o">[</span>root@hujianli-linux ansible<span class="o">]</span><span class="c1"># ll</span>
+-rw-r--r--. <span class="m">1</span> root root <span class="m">20269</span> 10月  <span class="m">9</span> <span class="m">09</span>:34 ansible.cfg
+-rw-r--r--. <span class="m">1</span> root root  <span class="m">1016</span> 10月  <span class="m">9</span> <span class="m">09</span>:34 hosts
+drwxr-xr-x. <span class="m">2</span> root root     <span class="m">6</span> 10月  <span class="m">9</span> <span class="m">09</span>:34 roles
+
+
+配置被管理的主机
+
+Ansible通过读取默认主机清单 /etc/ansible/hosts文件，修改主机与组配置后，可同时连接到多个被管理主机上
+执行任务，比如定义一个websrvs组，包含3台主机的IP地址。
+<span class="c1"># 先备份Ansible的host文件</span>
+cp -r /etc/ansible/hosts<span class="o">{</span>,._bak<span class="o">}</span>
+cat &gt;/etc/ansible/hosts <span class="s">&lt;&lt;-EOF</span>
+<span class="s">## green.example.com</span>
+<span class="s">## blue.example.com</span>
+<span class="s">## 192.168.100.1</span>
+<span class="s">## 192.168.100.10</span>
+<span class="s">172.16.72.28</span>
+<span class="s">172.16.72.29</span>
+<span class="s">172.16.72.4</span>
+
+<span class="s"># Ex 2: A collection of hosts belonging to the &#39;webservers&#39; group</span>
+
+<span class="s">## [webservers]</span>
+<span class="s">## alpha.example.org</span>
+<span class="s">## beta.example.org</span>
+<span class="s">## 192.168.1.100</span>
+<span class="s">## 192.168.1.110</span>
+<span class="s">[webservers]</span>
+<span class="s">172.16.72.28</span>
+<span class="s">172.16.72.29</span>
+<span class="s">172.16.72.4</span>
+
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>分发密钥设置免密登录</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1">#生成SSH秘钥的连接</span>
+在主控端主机（SN2013-08-020）创建密钥，执行：ssh-keygen-t
+rsa，有询问直接按回车键即可，将在/root/.ssh/下生成一对密钥，其中
+id_rsa为私钥，id_rsa.pub为公钥（需要下发到被控主机用户.ssh目录，同时要求重命名成authorized_keys文件）
+
+<span class="c1"># ssh-keygen -t rsa</span>
+<span class="c1"># ssh-copy-id root@&lt;client_ip&gt; -p 22</span>
+
+<span class="c1"># 或者生成自定义的rsa key认证</span>
+ssh-keygen  -N <span class="s2">&quot;&quot;</span> -b <span class="m">4096</span> -t rsa -C <span class="s2">&quot;stanley@magedu.com&quot;</span> -f /root/.ssh/stanley.rsa
+
+// 为本机添加密钥认证
+ssh-copy-id –i /root/.ssh/stanley.rsa root@localhost
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>root@hujianli-linux ansible<span class="o">]</span><span class="c1"># ansible-doc -s yum</span>
+<span class="c1">#列出yum模块的描述信息和操作动作</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="expetssh-key">
+<h2><a class="toc-backref" href="#id26"><span class="section-number">19.6.4. </span>使用expet来批量分发ssh-key</a><a class="headerlink" href="#expetssh-key" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 安装expect、vim</span>
+yum -y install expect vim wget
+</pre></div>
+</div>
+<p>auto_sshcopyid.exp</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># expect脚本</span>
+<span class="c1"># cat auto_sshcopyid.exp</span>
+<span class="c1">#!/usr/bin/expect</span>
+<span class="nb">set</span> timeout <span class="m">10</span>
+<span class="nb">set</span> user_hostname <span class="o">[</span>lindex <span class="nv">$argv</span> <span class="m">0</span><span class="o">]</span>
+<span class="nb">set</span> password <span class="o">[</span>lindex <span class="nv">$argv</span> <span class="m">1</span><span class="o">]</span>
+spawn ssh-copy-id <span class="nv">$user_hostname</span>
+expect <span class="o">{</span>
+<span class="s2">&quot;(yes/no)?&quot;</span>
+<span class="o">{</span>
+send <span class="s2">&quot;yes\n&quot;</span>
+expect <span class="s2">&quot;*password: &quot;</span> <span class="o">{</span> send <span class="s2">&quot;</span><span class="nv">$password</span><span class="s2">\n&quot;</span> <span class="o">}</span>
+<span class="o">}</span>
+<span class="s2">&quot;*password: &quot;</span> <span class="o">{</span> send <span class="s2">&quot;</span><span class="nv">$password</span><span class="s2">\n&quot;</span> <span class="o">}</span>
+<span class="o">}</span>
+expect eof
+</pre></div>
+</div>
+<p>sshkey.sh</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/usr/bin/env bash
+#usage:xxx
+#scripts_name:xxx.sh
+# author：xiaojian
+PWD=$(pwd)
+#ip=`echo -n &quot;$(seq -s &quot;,&quot; 3 30)&quot; | xargs -d &quot;,&quot; -i echo 172.16.72.{}`
+declare -A projects=(
+    [aget1]=&quot;172.16.72.28&quot;
+    [aget2]=&quot;172.16.72.29&quot;
+    [aget3]=&quot;172.16.72.4&quot;)
+password=&quot;admin#123&quot;
+#user_host=`awk &#39;{print $3}&#39; /root/.ssh/id_rsa.pub`
+for project in ${!projects[@]};do
+    client=&quot;${projects[${project}]}&quot;
+#    echo $client
+    ${PWD}/auto_sshcopyid.exp root@$client $password &amp;&gt;&gt;/tmp/a.log
+    if [ &quot;$?&quot; -eq 0 ]; then
+        ssh root@$client &quot;echo $client ssh Remote communication is ok! &quot;
+    fi
+done
+</pre></div>
+</div>
+<p>或者使用python脚本</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/11/8 13:23</span>
+<span class="c1"># filename: sshkey.py</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="n">IP_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;172.16.72.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">30</span><span class="p">)]</span>
+<span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pexpect</span> <span class="kn">import</span> <span class="n">pxssh</span>
+    <span class="kn">import</span> <span class="nn">pexpect</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s2">&quot;pip install pexpect&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/dev/null&quot;</span><span class="p">))</span>
+    <span class="kn">from</span> <span class="nn">pexpect</span> <span class="kn">import</span> <span class="n">pxssh</span>
+    <span class="kn">import</span> <span class="nn">pexpect</span>
+
+<span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+<span class="n">passwd</span> <span class="o">=</span> <span class="s2">&quot;admin#123&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">task</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">IP_list</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">pxssh</span><span class="o">.</span><span class="n">pxssh</span><span class="p">()</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">passwd</span><span class="p">)</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="s1">&#39;ssh-copy-id -i /root/.ssh/id_rsa.pub root@&#39;</span> <span class="o">+</span> <span class="n">ip</span><span class="p">)</span>
+            <span class="c1"># 将pexpect的输入输出信息写到mylog.txt文件中</span>
+            <span class="n">fout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;mylog.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="n">fout</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">([</span><span class="s1">&#39;password:&#39;</span><span class="p">])</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;admin#123&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[32m【</span><span class="si">{}</span><span class="s2">】 Key registration successful!</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[32m Key transfer completed </span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">task</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>通过ssh连接到另一个平台，进行相关cmd操作：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/12/1 11:44</span>
+<span class="c1"># filename: sshkey01.py</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+
+
+<span class="k">def</span> <span class="nf">sshe</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">passwd</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ssh</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+        <span class="n">ssh</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+        <span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">passwd</span><span class="p">)</span>
+        <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="se">\t</span><span class="s2">OK</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+        <span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="se">\t</span><span class="s2"> Error</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">sshe</span><span class="p">(</span><span class="s2">&quot;192.168.1.1&quot;</span><span class="p">,</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="s2">&quot;admin#123&quot;</span><span class="p">,</span> <span class="s2">&quot;hostname;ifconfig&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>或者使用ansible自动推送密钥</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span> <span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">2</span> <span class="n">批量分发公钥</span>
+
+<span class="c1"># 参考文献</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">my</span><span class="o">.</span><span class="n">oschina</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">attacker</span><span class="o">/</span><span class="n">blog</span><span class="o">/</span><span class="mi">679618</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id27"><span class="section-number">19.6.5. </span>Ansible与正则</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>重启webservers组所有主机的httpd服务</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ansible webservers -m yum -a <span class="s2">&quot;name=httpd state=latest&quot;</span>
+
+ansible webservers -m service -a <span class="s2">&quot;name=httpd state=restarted&quot;</span>
+</pre></div>
+</div>
+<p>(1)All（全量）匹配</p>
+<p>匹配所有主机，all或*号功能相同，如检测所有主机存活情况。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ansible all -m ping
+ansible <span class="s2">&quot;*&quot;</span> -m ping
+</pre></div>
+</div>
+<p>(2)逻辑或（or）匹配</p>
+<p>如果我们希望同时对多个组同时执行，互相之间用“:”（冒号）分割即可。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>webserver1:webserver2
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ansible <span class="s2">&quot;webserver1:webserver2&quot;</span> -m ping
+</pre></div>
+</div>
+<p>(3)逻辑非(!)匹配</p>
+<p>逻辑非用感叹号（! ）表示，主要针对多重条件的匹配规则，使用方式如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>// 所有在webserver1组但不在webserver2组的主机
+webserver1:!webserver2
+</pre></div>
+</div>
+<p>（4）逻辑与（&amp;）</p>
+<p>匹配和逻辑非一样，逻辑与也主要针对多重条件的匹配规则，只是逻辑上的判断不同。逻辑与使用&amp;表示，请看如下示例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">所有在webserver1组和webserver2组同时存在的主机</span>
+<span class="n">webserver1</span><span class="p">:</span><span class="o">&amp;</span><span class="n">webserver2</span>
+</pre></div>
+</div>
+<p>（5)多条件组合Ansible同样支持多条件的复杂组合，</p>
+<p>该情况企业应用不多，这里做简单举例说明。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>web1:web2:&amp;db1:!db2
+</pre></div>
+</div>
+<p>（6）模糊匹配*通配符在Ansible表示0个或多个任意字符，主要应用于一些模糊规则匹配，在平时的使用中应用频率非常高，请参考如下示例：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>webserver*
+web*:db1
+</pre></div>
+</div>
+<p>（7）域切割</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>用得少，这里不介绍
+</pre></div>
+</div>
+<p>（8）正则匹配Ansible同样完整支持正则匹配功能，“～”开始表示正则匹配。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>~<span class="o">(</span>web<span class="p">|</span>db<span class="o">)</span>.*<span class="se">\.</span>example<span class="se">\.</span>com
+</pre></div>
+</div>
+<p>检测beta.example.com、web.example.com、green.example.com、beta.example.org、web.
+example.org、green.example.org的存活，使用如下匹配模式：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ansible <span class="s2">&quot;~(beta|web|green)\.example\.(com|org)&quot;</span> -m ping
+</pre></div>
+</div>
+</section>
+<section id="ad-hocansible">
+<h2><a class="toc-backref" href="#id28"><span class="section-number">19.6.6. </span>通过Ad-Hoc研究Ansible的并发特性</a><a class="headerlink" href="#ad-hocansible" title="Permalink to this headline">¶</a></h2>
+<p>Ansible和Ansible-playbook默认会fork
+5个线程并发执行命令，但在实际工作中，如果主机数量众多，Ansible并发5个线程是远不能满足企业所需的</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ansible webservers -m ping -f <span class="m">2</span>
+</pre></div>
+</div>
+<p>这里Ansible为我们提供了便捷的选项，-f指定线程数，如-f
+1表示并发启动一个线程，-f
+10则表示同时启动10个线程并发执行命令。其实查看源码可知，Ansible使用multiprocessing管理多线程。</p>
+<p>单台主机的性能始终有限，建议并发数配置的CPU核数偶数倍就好。如4Cores
+8GB的服务器，建议最多并发20个线程。</p>
+<p>ansible-doc命令后跟[options]参数或[模块名]，显示模块用法说明，具体示例如下：</p>
+<hr class="docutils" />
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>// 列出支持的模块
+ansible-doc –l
+// 模块功能说明
+ansible-doc ping
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id29"><span class="section-number">19.6.7. </span>Ansible常用的核心模块</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<section id="id5">
+<h3><a class="toc-backref" href="#id30">Ansible常用模块汇总</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://www.cnblogs.com/syy1757528181/p/13069043.html">https://www.cnblogs.com/syy1757528181/p/13069043.html</a></p>
+</section>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id31"><span class="section-number">19.6.8. </span>列出组的主机</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span> <span class="n">webservers</span> <span class="o">--</span><span class="nb">list</span>
+  <span class="n">hosts</span> <span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="mf">172.16</span><span class="o">.</span><span class="mf">60.178</span>
+    <span class="mf">172.16</span><span class="o">.</span><span class="mf">60.226</span>
+    <span class="mf">172.16</span><span class="o">.</span><span class="mf">60.9</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id32"><span class="section-number">19.6.9. </span>远程命令模块</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 检测服务器存活</span>
+ansible all -m ping
+ansible webservers -m <span class="nb">command</span> -a <span class="s2">&quot;free -m&quot;</span>
+ansible webservers -a <span class="s2">&quot;df -Th&quot;</span>
+
+// 以bruce用户执行ping存活检测
+ansible all -m ping -u bruce
+
+// 以bruce sudo至root执行ping存活检测
+ansible all -m ping -u bruce --sudo
+
+// 以bruce sudo至batman用户执行ping存活检测
+ansible all -m ping -u bruce --sudo --sudo-user batman
+
+
+ansible webservers -m script -a <span class="s2">&quot;/home/test.sh 12 34&quot;</span>
+ansible webservers -m shell -a <span class="s2">&quot;/home/test.sh&quot;</span>
+
+<span class="c1">## shell 模块</span>
+ansible-doc -s shell
+
+<span class="c1">#创建用户后，无交互式给用户设置密码</span>
+ansible dbservers -m user -a <span class="s1">&#39;name=user1&#39;</span>
+ansible dbservers -m shell -a <span class="s1">&#39;echo &quot;123.com&quot;|passwd user1 --stdin&#39;</span>
+ansible webservers -m shell -a <span class="s2">&quot;/home/test.sh 12 22&quot;</span>
+
+<span class="c1">## script模块</span>
+<span class="c1"># ansible-doc -s script</span>
+<span class="c1">#创建一个本地脚本，复制到被管理主机上运行,本地创建test.sh脚本</span>
+ansible dbservers -m script -a <span class="s1">&#39;test.sh&#39;</span>
+ansible webservers -m script -a <span class="s2">&quot;/home/test.sh 12 34&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="command">
+<h2><a class="toc-backref" href="#id33"><span class="section-number">19.6.10. </span>command模块</a><a class="headerlink" href="#command" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="m">1</span><span class="o">)</span>功能
+<span class="c1">#&quot;-m&quot;指定模块名称，&quot;-a&quot;⽤于为模块指定各模块参数</span>
+<span class="c1">#Ansible管理工具使用-m 选项来指定使用模块，默认使用command模块，即 -m选项省略时会运行此模块，用于在被管理主机上运行命令。</span>
+
+<span class="o">(</span><span class="m">2</span><span class="o">)</span>示例
+ansible <span class="m">192</span>.168.1.108 -m <span class="nb">command</span> -a <span class="s1">&#39;date&#39;</span>
+
+<span class="c1">#使用被管理中的主机分类运行</span>
+ansible webservers -m <span class="nb">command</span> -a <span class="s1">&#39;date&#39;</span>
+
+ansible dbservers -m <span class="nb">command</span> -a <span class="s1">&#39;date&#39;</span>
+
+<span class="c1">#所有主机清单中的主机上运行</span>
+ansible all -m <span class="nb">command</span> -a <span class="s1">&#39;date&#39;</span>
+
+<span class="c1">#若省略-m 选项，默认运行command模块</span>
+ansible all -a <span class="s1">&#39;tail -l /etc/passwd&#39;</span>
+
+<span class="c1">#安装Django。</span>
+ansible app -m pip -a <span class="s2">&quot;name=django state=present&quot;</span>
+
+<span class="c1"># 检查Django安装是否正常</span>
+ansible app -m <span class="nb">command</span> -a <span class="s2">&quot;python -c &#39;import django; print django.get_version()&#39;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="copy">
+<h2><a class="toc-backref" href="#id34"><span class="section-number">19.6.11. </span>copy模块</a><a class="headerlink" href="#copy" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>（1）功能
+实现主控端向目标主机拷贝文件，类似于scp的功能。
+
+（2）例子
+以下示例实现拷贝/home/test.sh文件至webserver组目标主机/tmp/目
+录下，并更新文件属主及权限（可以单独使用file模块实现权限的修
+改，格式为：path<span class="o">=</span>/etc/foo.conf <span class="nv">owner</span><span class="o">=</span>foo <span class="nv">group</span><span class="o">=</span>foo <span class="nv">mode</span><span class="o">=</span><span class="m">0644</span>）。
+
+<span class="c1">#Ansible 中的copy模块用于实现文件复制和批量下发文件，src来定义本地源文件路径，使用dest定义被管理主机文件路径，使用content定义信息内容来生成目标文件</span>
+ansible-doc -s copy
+
+ansible webservers -m copy -a <span class="s2">&quot;src=/home/test.sh dest=/tmp/ owner=root group=root mode=0755&quot;</span>
+ansible dbservers -m copy -a <span class="s1">&#39;src=/etc/fstab dest=/tmp/fstab.ansible owner=root mode=640&#39;</span>
+
+<span class="c1">#将“Hello Ansible Hi Ansible”写入管理主机的/tmp/test.ansible文件中</span>
+ansible dbservers -m copy -a <span class="s1">&#39;content=&quot;Hello Ansible Hi Ansible&quot; dest=/tmp/test.ansible&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="stat">
+<h2><a class="toc-backref" href="#id35"><span class="section-number">19.6.12. </span>stat模块</a><a class="headerlink" href="#stat" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>（1）功能
+获取远程文件状态信息，包括atime、ctime、mtime、md5、uid、gid等信息
+（2）例子
+ansible webservers -m stat -a &quot;path=/etc/sysctl.conf&quot;
+</pre></div>
+</div>
+</section>
+<section id="get-url">
+<h2><a class="toc-backref" href="#id36"><span class="section-number">19.6.13. </span>get_url模块</a><a class="headerlink" href="#get-url" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>（1）功能
+实现在远程主机下载指定URL到本地，支持sha256sum文件校验
+（2）例子
+ansible webservers -m get_url -a &quot;url=http://www.baidu.com dest=/tmp/index.html mode=0440 force=yes&quot;
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id37"><span class="section-number">19.6.14. </span>yum模块</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1">#Ansible中的yum模块负责在被管理的主机数安装与卸载软件包，前提是在每个节点配置自己的YUM仓库，name指定要安装的软件包</span>
+<span class="c1">#带上软件包的版本号，state指定安装软件包的状态，present、latest用来表示安装，absent表示卸载</span>
+ansible-doc -s yum
+
+（1）功能
+Linux平台软件包管理操作，常见有yum、apt管理方式。
+
+（2）例子
+Ubuntu系统
+ansible webservers -m apt -a <span class="s2">&quot;pkg=curl state=latest</span>
+
+<span class="s2">#安装zsh软件包</span>
+<span class="s2">ansible dbservers -m yum -a &#39;name=zsh&#39;</span>
+
+<span class="s2">#卸载zsh软件包</span>
+<span class="s2">ansible dbservers -m yum -a &#39;name=zsh,state=absent&#39;</span>
+
+<span class="s2">ansible webservers -m yum -a &quot;</span><span class="nv">name</span><span class="o">=</span>curl <span class="nv">state</span><span class="o">=</span>latest<span class="s2">&quot;</span>
+
+<span class="s2">#Redis安装命令：</span>
+<span class="s2">ansible db-m yum -a &quot;</span><span class="nv">name</span><span class="o">=</span>redis <span class="nv">state</span><span class="o">=</span>present<span class="s2">&quot;。</span>
+
+<span class="s2">#Redis安装检查：</span>
+<span class="s2">ansible db-m command -a &quot;</span>redis-cli--version<span class="s2">&quot;。</span>
+
+<span class="s2"># 安装MariaDB-server</span>
+<span class="s2">ansible db -m yum -a &quot;</span><span class="nv">name</span><span class="o">=</span>MariaDB-server <span class="nv">state</span><span class="o">=</span>present<span class="s2">&quot;</span>
+
+<span class="s2"># #安装MySQL-python和python-setuptools依赖包。</span>
+<span class="s2">ansible app -m yum -a &quot;</span><span class="nv">name</span><span class="o">=</span>MySQL-python <span class="nv">state</span><span class="o">=</span>present<span class="s2">&quot;</span>
+<span class="s2">ansible app -m yum -a &quot;</span><span class="nv">name</span><span class="o">=</span>python-setuptools <span class="nv">state</span><span class="o">=</span>present<span class="s2">&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="cron">
+<h2><a class="toc-backref" href="#id38"><span class="section-number">19.6.15. </span>cron模块</a><a class="headerlink" href="#cron" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="m">1</span><span class="o">)</span>功能
+<span class="c1">#Ansible中的cron模块用于定义任务计划，其中有两种状态，(state):present表示添加(省略状态时默认使用),absent表示移除。</span>
+<span class="o">[</span>root@hujianli-linux ansible<span class="o">]</span><span class="c1"># ansible-doc -s cron      #查看cron模块的描述信息和操作动作</span>
+
+（2）例子
+<span class="c1">#添加计划任务</span>
+ansible dbservers -m cron -a <span class="s1">&#39;minute=&quot;*/10&quot; job=&quot;/bin/echo hello&quot; name=&quot;test cron job&quot;&#39;</span>
+<span class="m">192</span>.168.1.108 <span class="p">|</span> <span class="nv">CHANGED</span> <span class="o">=</span>&gt; <span class="o">{</span>
+    <span class="s2">&quot;changed&quot;</span>: true,
+    <span class="s2">&quot;envs&quot;</span>: <span class="o">[]</span>,
+    <span class="s2">&quot;jobs&quot;</span>: <span class="o">[</span>
+        <span class="s2">&quot;test cron job&quot;</span>
+    <span class="o">]</span>
+
+<span class="c1">#查看crontab计划任务</span>
+ansible dbservers -a <span class="s1">&#39;crontab -l&#39;</span>
+<span class="m">192</span>.168.1.108 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+<span class="c1">#Ansible: test cron job</span>
+*/10 * * * * /bin/echo hello
+
+<span class="c1">#移除计划任务</span>
+ansible dbservers -m cron -a <span class="s1">&#39;minute=&quot;*/10&quot; job=&quot;/bin/echo hello&quot; name=&quot;test cron job&quot; state=absent&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="mount">
+<h2><a class="toc-backref" href="#id39"><span class="section-number">19.6.16. </span>mount模块</a><a class="headerlink" href="#mount" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>（1）功能
+远程主机分区挂载
+
+（2）例子
+ansible webservers -m mount -a <span class="s2">&quot;name=/mnt/data src=/dev/sd0 fstype=ext3 opts=ro state=present&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="service">
+<h2><a class="toc-backref" href="#id40"><span class="section-number">19.6.17. </span>service模块</a><a class="headerlink" href="#service" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>（1）功能
+远程主机系统服务管理。
+<span class="o">[</span>root@hujianli-linux ~<span class="o">]</span><span class="c1"># ansible-doc -s service #查看service模块的描述</span>
+
+<span class="c1">#在 Ansible中使用service模块来控制管理服务器的运行状态，enable表示是否开机自启动， 值为true或者false，使用name来定义服务名称</span>
+使用state指定服务状态，取值为started、stoped、restarted
+
+
+（2）示例
+ansible webservers -m service -a <span class="s2">&quot;name=nginx state=stopped&quot;</span>
+ansible webservers -m service -a <span class="s2">&quot;name=nginx state=restarted&quot;</span>
+ansible webservers -m service -a <span class="s2">&quot;name=nginx state=reloaded&quot;</span>
+
+<span class="c1">#安装httpd服务</span>
+ansible webservers -m yum -a <span class="s2">&quot;name=httpd state=latest&quot;</span>
+
+<span class="c1">#查看httpd服务的状态</span>
+ansible dbservers -a <span class="s1">&#39;service httpd status&#39;</span>
+<span class="c1">#查看http服务开机启动状态</span>
+ansible dbservers -a <span class="s1">&#39;chkconfig httpd status&#39;</span>
+
+<span class="c1">#设置httpd服务为开机自启动</span>
+ansible dbservers -m service -a <span class="s1">&#39;enable=ture name=httpd state=started&#39;</span>
+
+ansible webservers -m service -a <span class="s2">&quot;name=nginx state=stopped&quot;</span>
+ansible webservers -m service -a <span class="s2">&quot;name=nginx state=restarted&quot;</span>
+ansible webservers -m service -a <span class="s2">&quot;name=nginx state=reloaded&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="sysctl">
+<h2><a class="toc-backref" href="#id41"><span class="section-number">19.6.18. </span>sysctl包管理模块</a><a class="headerlink" href="#sysctl" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>（1）功能
+远程Linux主机sysctl配置。
+
+sysctl模块用于远程主机sysctl的配置
+sysctl模块可以在更改配置之后执行/sbin/sysctl –p
+ansible-doc sysctl
+
+<span class="o">(</span><span class="m">2</span><span class="o">)</span>示例
+<span class="c1">#在/etc/sysctl.conf中将vm.swappiness设置为5</span>
+ansible webservers -m sysctl -a <span class="s2">&quot;name=vm.swappiness value=5 state=present sysctl_file=/etc/sysctl.conf&quot;</span>
+
+<span class="c1"># 查看是否替换成功</span>
+<span class="o">[</span>root@hu-k8s-portworx-master ssh_ansible<span class="o">]</span><span class="c1"># ansible webservers -m command -a &quot;tail -1 /etc/sysctl.conf&quot;</span>
+<span class="m">172</span>.16.72.28 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+vm.swappiness<span class="o">=</span><span class="m">5</span>
+
+<span class="m">172</span>.16.72.29 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+vm.swappiness<span class="o">=</span><span class="m">5</span>
+
+<span class="m">172</span>.16.72.4 <span class="p">|</span> CHANGED <span class="p">|</span> <span class="nv">rc</span><span class="o">=</span><span class="m">0</span> &gt;&gt;
+vm.swappiness<span class="o">=</span><span class="m">5</span>
+
+<span class="c1">#从/etc/sysctl.conf中删除vm.swappiness条目</span>
+ansible webservers -m sysctl -a <span class="s2">&quot;name=vm.swappiness state=absent sysctl_file=/etc/sysctl.conf&quot;</span>
+
+<span class="c1">#支持ipv4的路由转发（路径与Centos版本有关）</span>
+ansible webservers -m sysctl -a <span class="s2">&quot;name=net.ipv4.ip_forward value=1 sysctl_set=yes</span>
+<span class="s2">sysctl_file=/usr/lib/sysctl.d/50-default.conf&quot;</span>
+
+<span class="c1"># 在文件中设置ip转发并在必要时重新加载</span>
+ansible webservers -m sysctl -a <span class="s2">&quot;name=net.ipv4.ip_forward value=1 sysctl_set=yes</span>
+<span class="s2">state=present reload=yes sysctl_file=/usr/lib/sysctl.d/50-default.conf&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="user">
+<h2><a class="toc-backref" href="#id42"><span class="section-number">19.6.19. </span>user模块</a><a class="headerlink" href="#user" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="m">1</span><span class="o">)</span>功能
+<span class="c1">#Ansible中的user模块用于创建新用户和更改、删除已存在的用户。其中name选项用来这么创建的用户名称。</span>
+远程主机系统用户管理。
+
+<span class="o">(</span><span class="m">2</span><span class="o">)</span>示例
+<span class="c1">#创建用户</span>
+ansible dbservers -m user -a <span class="s1">&#39;name=&quot;user1&quot;&#39;</span>
+
+<span class="c1">#该场景中我们可以掌握如下技能点。</span>
+<span class="m">1</span>）groups设定：groups<span class="o">=</span>用户组1，用户组2……
+<span class="m">2</span>）增量添加属组：append<span class="o">=</span>yes
+<span class="m">3</span>）表明属组状态为新建：state<span class="o">=</span>present
+
+ansible db -m user -a <span class="s2">&quot;name=dba shell=/bin/bash groups=admins,dbagroup append=yes home=/home/dba/ state=present&quot;</span>
+
+<span class="c1">#设置系统用户tom的密码为redhat123。</span>
+ansible db -m user -a <span class="s2">&quot;name=tom shell=/bin/bash password=to46pW3GOukvA update_password=always&quot;</span>
+
+<span class="c1">#删除用户</span>
+ansible dbservers -m user -a <span class="s1">&#39;name=&quot;user1&quot; state=absent&#39;</span>
+ansible db -m user -a <span class="s2">&quot;name=dba state=absent remove=yes&quot;</span>
+
+
+
+<span class="c1">######## windows 用户管理 ###########</span>
+
+<span class="c1">#新增用户stanley，密码为magedu@123，属组为Administrators。</span>
+ansible windows -m win_user -a <span class="s2">&quot;name=stanley passwd=magedu@123 group=Administrators&quot;</span>
+
+<span class="c1">######## 应用层用户管理 ####################</span>
+
+<span class="c1">#新增MySQL用户stanley，设置登录密码为magedu@bj，对zabbix.*表有ALL权限</span>
+ansible db -m mysql_user -a <span class="s1">&#39;login_host=localhost login_password=magedu login_user=root name=stanley password=magedu@bj priv=zabbix.*:ALL state=present&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="group">
+<h2><a class="toc-backref" href="#id43"><span class="section-number">19.6.20. </span>group模块</a><a class="headerlink" href="#group" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="m">1</span><span class="o">)</span>功能
+<span class="c1">#Ansible中的group模块用于对用户组进行管理</span>
+ansible-doc -s group
+
+（2）例子
+<span class="c1">#创建mysql组，将mysql用户添加到mysql组中</span>
+ansible dbservers -m group -a <span class="s1">&#39;name=mysql gid=306 system=yes&#39;</span>
+
+ansible dbservers -m user -a <span class="s1">&#39;name=mysql uid=306 system=yes group=mysql&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="file">
+<h2><a class="toc-backref" href="#id44"><span class="section-number">19.6.21. </span>file模块</a><a class="headerlink" href="#file" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="m">1</span><span class="o">)</span>功能
+<span class="c1">#Ansible中使用file模块来设置文件属性，path指定文件路径，sec指定源文件路径，使用name或dest来替换创建文件的符号链接</span>
+ansible-doc -s file
+
+<span class="o">(</span><span class="m">2</span><span class="o">)</span>例子
+<span class="c1">#设置管理主机文件/tmp/fstab.ansible 所属住为mysql，所属组为mysql，权限为644</span>
+ansible dbservers -m file -a <span class="s2">&quot;owner=mysql group=mysql mode=644 path=/tmp/fstab.ansible&quot;</span>
+
+
+
+<span class="c1">#设置文件/tmp/fstab.link 为文件/tmp/fstab.ansible的链接文件</span>
+ansible dbservers -m file -a <span class="s1">&#39;path=/tmp/fstab.link src=/tmp/fstab.ansible state=link&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="setup">
+<h2><a class="toc-backref" href="#id45"><span class="section-number">19.6.22. </span>setup模块</a><a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">(</span><span class="m">1</span><span class="o">)</span>功能
+在 Ansible中使用setup模块收集、查看被管理主机的facts，每个被管理主机在接收并允许管理命令之前，都会将自己的
+相关信息（操作系统版本、IP地址等）发送给控制主机
+ansible-doc -s setup
+
+<span class="o">(</span><span class="m">2</span><span class="o">)</span>例子
+ansible dbservers -m setup <span class="p">|</span> grep <span class="s2">&quot;ansible_python_version&quot;</span>
+
+<span class="c1"># setup模块来获取对应主机上面的所有可用的Facts信息,运行playbook时会自动加载这些facts</span>
+<span class="c1"># Ansible在执行Playbook任务之前会收集远程主机Facts信息</span>
+ansible services -m setup<span class="p">|</span>grep ansible_python_version
+
+<span class="c1">#在实际应用当中，运用得比较多的Facts变量有ansible_os_family、ansible_hostname、ansible_memtotal_mb等，这些变量通常会被拿来用作when语句的判断条件，来决定下一步的操作。</span>
+</pre></div>
+</div>
+<p>ansible常用模块参考文章：</p>
+<p><a class="reference external" href="https://www.cnblogs.com/yuncong/p/10533209.html">ansible常用模块</a></p>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id46"><span class="section-number">19.6.23. </span>ansible速度优化</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>参考文献</p>
+<blockquote>
+<div><p>ansible速度优化</p>
+<p><a class="reference external" href="https://www.jianshu.com/p/e20a4583e593">https://www.jianshu.com/p/e20a4583e593</a></p>
+<p>Ansible系列(七)：执行过程分析、异步模式和速度优化</p>
+<p><a class="reference external" href="https://www.cnblogs.com/f-ck-need-u/p/7580170.html#1-1-ansible">https://www.cnblogs.com/f-ck-need-u/p/7580170.html#1-1-ansible</a>-</p>
+<p><strong>Ansible系列</strong></p>
+<p><a class="reference external" href="https://www.cnblogs.com/f-ck-need-u/p/7576137.html#ansible">https://www.cnblogs.com/f-ck-need-u/p/7576137.html#ansible</a></p>
+</div></blockquote>
+</section>
+<section id="ansibleyaml">
+<h2><a class="toc-backref" href="#id47"><span class="section-number">19.6.24. </span>ansible配合YAML使用</a><a class="headerlink" href="#ansibleyaml" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="m">1</span>、playbook的核心元素
+hosts : playbook配置文件作用的主机
+tasks: 任务列表
+variables: 变量
+templates:包含模板语法的文本文件
+handlers :由特定条件触发的任务
+roles :用于层次性、结构化地组织playbook。roles 能够根据层次型结构自动装载变量文件、tasks以及handlers等
+
+
+<span class="m">2</span>、playbook运行方式
+ansible-playbook --check 只检测可能会发生的改变,但不真执行操作
+ansible-playbook --list-hosts 列出运行任务的主机
+ansible-playbook --syntax-check playbook.yaml 语法检测
+ansible-playbook -t TAGS_NAME playbook.yaml 只执行TAGS_NAME任务
+
+
+
+// Ansible-playbook新增的功能参数如下：
+·--list-tags：列出所有可用的tags。
+·--list-tasks：列出所有即将被执行的任务。
+·--skip-tags<span class="o">=</span>SKIP_TAGS：跳过指定的tags任务。
+·--start-at-task<span class="o">=</span>START_AT_TASK：从第几条任务开始执行。
+·--step：逐步执行Playbook定义的任务，并经人工确认后继续执行下一步任务。
+·--syntax-check：检查Playbook中的语法书写。
+·-t TAGS，--tags<span class="o">=</span>TAGS：指定执行该tags的任务。
+
+//在yaml中打标签
+<span class="c1"># 最简洁的写法</span>
+tags: <span class="o">[</span><span class="s1">&#39;one&#39;</span>, <span class="s1">&#39;two&#39;</span>, <span class="s1">&#39;three&#39;</span><span class="o">]</span>
+<span class="c1"># 最清晰的写法</span>
+tags:
+    - one
+    - two
+    - three
+
+<span class="c1">#如果您只想运行一个非常长的剧本的“配置”和“包”部分，您可以在命令行上使用该选项：--tags</span>
+$ ansible-playbook example.yml --tags <span class="s2">&quot;configuration,packages&quot;</span>
+
+<span class="c1">#另一方面，如果要在没有某些标记任务的情况下运行playbook ，可以使用命令行选项：--skip-tags</span>
+$ ansible-playbook example.yml --skip-tags <span class="s2">&quot;packages&quot;</span>
+ansible-playbook playbook.yaml
+
+
+<span class="c1">#inventory（主机清单），主机清单中将被管理主机进行分组命名</span>
+<span class="c1">#默认主机清单为/etc/ansible/hosts,例如：</span>
+
+<span class="o">[</span>dbservers<span class="o">]</span>
+db1.example.org
+db2.example.org:2222
+
+<span class="c1">#如果主机名遵循类似的命名规则，则可以使用列表的方式标示各个主机</span>
+<span class="o">[</span>webservers<span class="o">]</span>
+www<span class="o">[</span><span class="m">01</span>:05<span class="o">]</span>.example.org
+
+<span class="o">[</span>dbservers<span class="o">]</span>
+db-<span class="o">[</span>a:f<span class="o">]</span>.example.org
+
+<span class="c1">#如果不配置SSH秘钥认证，可以这样对管理主机进行认证</span>
+vim /etc/ansible/hosts
+<span class="o">[</span>wbservers<span class="o">]</span>
+<span class="m">192</span>.168.1.110 <span class="nv">ansible_ssh_user</span><span class="o">=</span>root <span class="nv">ansible_ssh_pass</span><span class="o">=</span><span class="m">123</span>.com
+
+<span class="c1">#基础配置yml，关闭iptables、关闭selinux、</span>
+cat test.yml
+---
+- hosts: dbservers
+  user: root
+  tasks:
+  - name: no selinux
+    action: <span class="nb">command</span> /usr/sbin/setenforce <span class="m">0</span>
+
+  - name: no iptables
+    action: service <span class="nv">name</span><span class="o">=</span>iptables <span class="nv">state</span><span class="o">=</span>stopped
+
+  - name: made up task just to show variables work here
+    action: <span class="nb">command</span> /bin/echo release is
+
+
+
+<span class="c1">#安装部署httpd服务-version1</span>
+<span class="o">[</span>root@hujianli-linux ansible<span class="o">]</span><span class="c1"># cat httpd01.yml</span>
+---
+- hosts: dbservers
+  remote_user: root
+  tasks:
+  - name: install httpd
+    yum: <span class="nv">name</span><span class="o">=</span>httpd <span class="nv">state</span><span class="o">=</span>present
+  - name: install configure file
+    copy: <span class="nv">src</span><span class="o">=</span>httpd.conf <span class="nv">dest</span><span class="o">=</span>/etc/httpd/conf/
+  - name: start httpd service
+    service: <span class="nv">name</span><span class="o">=</span>httpd <span class="nv">state</span><span class="o">=</span>started
+
+<span class="c1">#测试playbook</span>
+ansible-playbook --check httpd01.yml
+
+<span class="c1">#执行Playbook时，哪些主机将会受影响，则使用--list-hosts选项</span>
+ansible-playbook <span class="m">2</span>-services.yml --list-hosts
+
+<span class="c1">#运行playbook</span>
+ansible-playbook httpd01.yml
+
+<span class="c1">#ubuntu中安装nginx</span>
+<span class="o">[</span>root@hujianli-linux ansible<span class="o">]</span><span class="c1"># cat install_nginx.yml</span>
+---
+- hosts: dbservers
+  tasks:
+    - name: Installs nginx web server
+      apt: <span class="nv">pkg</span><span class="o">=</span>nginx <span class="nv">state</span><span class="o">=</span>installed <span class="nv">update_cache</span><span class="o">=</span><span class="nb">true</span>
+      notify:
+        - start nginx
+
+  handlers:
+    - name: start nginx
+      service: <span class="nv">name</span><span class="o">=</span>nginx <span class="nv">state</span><span class="o">=</span>started
+
+<span class="c1">#执行批量安装nginx</span>
+ansible-playbook install_nginx.yml
+</pre></div>
+</div>
+<p><strong>Ansible-playbook：其他选项技巧</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>·--inventory<span class="o">=</span>PATH（-i PATH）：指定inventory文件，默认文件是/etc/ansible/hosts。
+
+·--verbose（-v）：显示详细输出，也可以使用-vvvv显示精确到每分钟的输出。
+
+·--extra-vars<span class="o">=</span>VARS（-e VARS）：定义在Playbook使用的变量，格式为：<span class="s2">&quot;key=value，key=value&quot;</span>。
+
+·--forks<span class="o">=</span>NUM（-f NUM）：指定并发执行的任务数，默认为5，根据服务器性能，调大这个值可提高Ansible执行效率。
+
+·--connection<span class="o">=</span>TYPE（-c TYPE）：指定连接远程主机的方式，默认为SSH，设为local时，则只在本地执行Playbook，建议不做修改。
+
+·--check：检测模式，Playbook中定义的所有任务将在每台远程主机上进行检测，但并不直正执行。
+</pre></div>
+</div>
+<p>一个playbook的示例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="o">-</span> <span class="n">host</span><span class="p">:</span> <span class="n">app</span>
+<span class="nb">vars</span><span class="p">:</span>
+  <span class="n">http_port</span><span class="p">:</span> <span class="mi">80</span>
+  <span class="n">max_cllients</span><span class="p">:</span> <span class="mi">200</span>
+
+  <span class="n">remote_user</span><span class="p">:</span> <span class="n">root</span>
+
+<span class="c1"># 注意一个name只能包括一个task</span>
+<span class="n">task</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">yum</span> <span class="n">install</span> <span class="n">apache</span>
+    <span class="n">yum</span><span class="p">:</span> <span class="n">pkg</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">latest</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">write</span> <span class="n">the</span> <span class="n">apache</span> <span class="n">config</span> <span class="n">file</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">src</span><span class="o">=/</span><span class="n">srv</span><span class="o">/</span><span class="n">httpd</span><span class="o">.</span><span class="n">j2</span> <span class="n">dest</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">httpd</span><span class="o">.</span><span class="n">conf</span>
+    <span class="n">notify</span><span class="p">:</span> <span class="n">restart</span> <span class="n">apache</span>      <span class="c1">#触发重启</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ensure</span> <span class="n">apache</span> <span class="ow">is</span> <span class="n">running</span>
+    <span class="n">service</span><span class="p">:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">started</span>
+
+<span class="c1">#触发器</span>
+<span class="n">handlers</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">restart</span> <span class="n">apache</span>
+    <span class="n">service</span><span class="p">:</span> <span class="n">name</span><span class="o">=</span><span class="n">httpd</span> <span class="n">state</span><span class="o">=</span><span class="n">restarted</span>
+</pre></div>
+</div>
+<p>shell与ansible的互相转换 <code class="docutils literal notranslate"><span class="pre">apache.sh</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># !/bin/bash</span>
+<span class="c1"># 安装Apache</span>
+yum install --quiet -y httpd httpd-devel
+<span class="c1"># 复制配置文件</span>
+cp /path/to/config/httpd.conf /etc/httpd/conf/httpd.conf
+cp/path/to/httpd-vhosts.conf /etc/httpd/conf/httpd-vhosts.conf
+<span class="c1"># 启动Apache，并设置开机启动</span>
+service httpd start
+chkconfig httpd on
+</pre></div>
+</div>
+<p>将上述Shell脚本转换为一个完整的Playbook后，内容如以下代码所示：</p>
+<p><code class="docutils literal notranslate"><span class="pre">apache2.yml</span></code></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">all</span>
+  <span class="nt">tasks</span><span class="p">:</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;安装Apache&quot;</span>
+     <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yum install --quiet -y httpd httpd-devel</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;复制配置文件&quot;</span>
+     <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cp /tmp/httpd.conf /etc/httpd/conf/httpd.conf</span>
+     <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cp /tmp/httpd-vhosts.conf /etc/httpd/conf/httpd-vhosts.conf</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;启动Apache，并设置开机启动&quot;</span>
+     <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">service httpd start</span>
+     <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">chkconfig httpd on</span>
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># ansible-playbook ./playbook.yml</span>
+</pre></div>
+</div>
+<section id="apache">
+<h3><a class="toc-backref" href="#id48">示例：部署Apache服务</a><a class="headerlink" href="#apache" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">all</span>    <span class="c1">#所有主机</span>
+  <span class="nt">sudo</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>     <span class="c1">#告诉Ansible通过sudo来运行相应命令，这样所有命令将会以root身份执行。</span>
+
+  <span class="nt">tasks</span><span class="p">:</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">安装Apache</span>
+     <span class="nt">yum</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name={{ item }} state=present</span>
+     <span class="nt">with_items</span><span class="p">:</span>
+         <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+         <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">httpd-devel</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">复制配置文件</span>
+     <span class="nt">copy</span><span class="p">:</span>
+       <span class="nt">src</span><span class="p">:</span> <span class="s">&quot;{{</span><span class="nv"> </span><span class="s">item.src</span><span class="nv"> </span><span class="s">}}&quot;</span>
+       <span class="nt">dest</span><span class="p">:</span> <span class="s">&quot;{{</span><span class="nv"> </span><span class="s">item.dest</span><span class="nv"> </span><span class="s">}}&quot;</span>
+       <span class="nt">owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+       <span class="nt">group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+       <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0644</span>
+     <span class="nt">with_items</span><span class="p">:</span>
+       <span class="p p-Indicator">-</span> <span class="p p-Indicator">{</span>
+<span class="nt">           src</span><span class="p">:</span> <span class="s">&quot;/tmp/httpd.conf&quot;</span><span class="p p-Indicator">,</span>
+<span class="nt">           dest</span><span class="p">:</span> <span class="s">&quot;/etc/httpd/conf/httpd.conf&quot;</span> <span class="p p-Indicator">}</span>
+       <span class="p p-Indicator">-</span> <span class="p p-Indicator">{</span>
+<span class="nt">           src</span><span class="p">:</span> <span class="s">&quot;/tmp/httpd-vhosts.conf&quot;</span><span class="p p-Indicator">,</span>
+<span class="nt">       dest</span><span class="p">:</span> <span class="s">&quot;/etc/httpd/conf/httpd-vhosts.conf&quot;</span>
+         <span class="p p-Indicator">}</span>
+   <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">检查Apache运行状态，并设置开机启动</span>
+     <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=httpd state=started enabled=yes</span>
+</pre></div>
+</div>
+</section>
+<section id="tomcat">
+<h3><a class="toc-backref" href="#id49">示例：安装tomcat软件</a><a class="headerlink" href="#tomcat" title="Permalink to this headline">¶</a></h3>
+<p>创建vars.yml文件和tomcat.yml文件，在同一目录下 vars.yml</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="o">---</span>
+<span class="c1">#软件包下载路径</span>
+<span class="n">download_dir</span><span class="p">:</span> <span class="o">/</span><span class="n">tmp</span>
+<span class="c1">#tomcat版本</span>
+<span class="n">tomcat_version</span><span class="p">:</span> <span class="mf">8.0</span><span class="o">.</span><span class="mi">35</span>
+<span class="c1">#tomcat安装路径</span>
+<span class="n">tomcat_dir</span><span class="p">:</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">tomcat</span>
+<span class="c1">#solr安装路径</span>
+<span class="n">solr_dir</span><span class="p">:</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">solr</span>
+<span class="c1">#solr版本号</span>
+<span class="n">solr_version</span><span class="p">:</span> <span class="mf">6.1</span><span class="o">.</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>tomcat.yml</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="o">-</span> <span class="n">hosts</span><span class="p">:</span> <span class="nb">all</span>
+  <span class="n">vers_files</span><span class="p">:</span>
+    <span class="o">-</span> <span class="nb">vars</span><span class="o">.</span><span class="n">yml</span>
+
+<span class="n">task</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">发送JDK软件包和配置文件到远程主机</span>
+    <span class="n">copy</span><span class="p">:</span> <span class="s2">&quot;src={{item.src}} dest={{item.dest}}&quot;</span>
+    <span class="n">with_items</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">src</span><span class="p">:</span> <span class="s2">&quot;./jdk-8u11-linux-x64.tar.gz&quot;</span>
+        <span class="n">dest</span><span class="p">:</span> <span class="s2">&quot;/tmp&quot;</span>
+      <span class="o">-</span> <span class="n">src</span><span class="p">:</span> <span class="s2">&quot;./java.sh&quot;</span>
+        <span class="n">dest</span><span class="p">:</span> <span class="s2">&quot;/etc/profile.d/&quot;</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">创建java安装目录</span>
+    <span class="n">command</span><span class="p">:</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">java</span>
+
+  <span class="o">................</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">创建tomcat安装目录</span>
+    <span class="n">command</span><span class="p">:</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="p">{{</span><span class="n">tomcat_dir</span><span class="p">}}</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">添加运行tomcat所需的普通用户</span>
+    <span class="n">user</span><span class="p">:</span> <span class="s2">&quot;name=tomcat shell=/sbin/nologin&quot;</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">下载tomcat软件包</span>
+    <span class="n">get_url</span><span class="p">:</span>
+      <span class="n">url</span><span class="p">:</span> <span class="n">file</span><span class="p">:</span><span class="o">///</span><span class="n">tmp</span><span class="o">/</span><span class="n">afile</span><span class="o">.</span><span class="n">txt</span>
+      <span class="n">dest</span><span class="p">:</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">afilecopy</span><span class="o">.</span><span class="n">txt</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">解压tomcat软件包</span>
+    <span class="n">command</span><span class="p">:</span> <span class="n">tar</span> <span class="o">-</span><span class="n">C</span> <span class="p">{{</span><span class="n">tomcat_dir</span><span class="p">}}</span> <span class="o">-</span><span class="n">xvf</span> <span class="o">............</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">发送配置文件到远程主机</span>
+    <span class="n">copy</span><span class="p">:</span> <span class="s2">&quot;src=./tomcat.conf dest=/etc/init/tomcat.conf&quot;</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">重载配置文件</span>
+    <span class="n">command</span><span class="p">:</span> <span class="n">initctl</span> <span class="n">reload</span><span class="o">-</span><span class="n">configuretion</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">下载solr软件包</span>
+    <span class="n">ger_url</span><span class="p">:</span>
+      <span class="o">..........</span>
+
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">创建安装目录</span>
+    <span class="o">............</span>
+</pre></div>
+</div>
+</section>
+<section id="block">
+<h3><a class="toc-backref" href="#id50">Block块</a><a class="headerlink" href="#block" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">web</span>
+  <span class="nt">tasks</span><span class="p">:</span>
+      <span class="c1"># Install and configure Apache on RedHat/CentOS hosts.</span>
+      <span class="p p-Indicator">-</span> <span class="nt">block</span><span class="p">:</span>
+          <span class="p p-Indicator">-</span> <span class="nt">yum</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=httpd state=present</span>
+          <span class="p p-Indicator">-</span> <span class="nt">template</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf</span>
+          <span class="p p-Indicator">-</span> <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=httpd state=started enabled=yes</span>
+      <span class="nt">when</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible_os_family == &#39;RedHat&#39;</span>
+      <span class="nt">sudo</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+
+      <span class="c1"># Install and configure Apache on Debian/Ubuntu hosts.</span>
+      <span class="p p-Indicator">-</span> <span class="nt">block</span><span class="p">:</span>
+          <span class="p p-Indicator">-</span> <span class="nt">apt</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=apache2 state=present</span>
+          <span class="p p-Indicator">-</span> <span class="nt">template</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">src=httpd.conf.j2 dest=/etc/apache2/apache2.conf</span>
+          <span class="p p-Indicator">-</span> <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=apache2 state=started enabled=yes</span>
+      <span class="nt">when</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ansible_os_family == &#39;Debian&#39;</span>
+      <span class="nt">sudo</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+</pre></div>
+</div>
+<p>块功能用来处理任务的异常</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tasks</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">block</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Shell script to connect the app to a monitoring service.</span>
+        <span class="nt">script</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">monitoring-connect.sh</span>
+        <span class="nt">rescue</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">只有脚本报错时才执行</span>
+          <span class="nt">debug</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">msg=&quot;There was an error in the block.&quot;</span>
+        <span class="nt">always</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">无论结果如何都执行</span>
+          <span class="nt">debug</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">msg=&quot;This always executes.&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="includes">
+<h3><a class="toc-backref" href="#id51">动态Includes</a><a class="headerlink" href="#includes" title="Permalink to this headline">¶</a></h3>
+<p>tasks/tasks01.yml</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">web</span>
+
+<span class="nt">task</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">check if extra_tasks.yml is present</span>
+    <span class="c1">#判断文件是否存在，并获取返回值</span>
+    <span class="nt">stat</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">path=extras/extra-task.yml</span>
+    <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">extra_task_file</span>
+    <span class="nt">connection</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">local</span>
+</pre></div>
+</div>
+<p>tasks/main.yml</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># 只有当extra_task_file文件存在时，加载</span>
+<span class="p p-Indicator">-</span> <span class="nt">include</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">tasks01.yml</span>
+  <span class="nt">when</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">extra_task_file.stat.exists</span>
+</pre></div>
+</div>
+</section>
+<section id="playbooks-includes">
+<h3><a class="toc-backref" href="#id52">playbooks Includes使用技巧</a><a class="headerlink" href="#playbooks-includes" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">all</span>
+  <span class="nt">remote_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+
+  <span class="nt">tasks</span><span class="p">:</span>
+      <span class="p p-Indicator">[</span><span class="nv">...</span><span class="p p-Indicator">]</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">include</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">web.yml</span> <span class="c1"># 引用web.yml playbook</span>
+<span class="p p-Indicator">-</span> <span class="nt">include</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">db.yml</span> <span class="c1"># 引用db.yml playbook</span>
+</pre></div>
+</div>
+<p>好处：如果需要执行全部命令时，只要通过一条命令执行主playbook文件即可。如果针对某个功能变更，只需要修改或执行对应的playbook文件</p>
+</section>
+<section id="ansiblenode-js">
+<h3><a class="toc-backref" href="#id53">实战一：Ansible部署Node.js企业实践</a><a class="headerlink" href="#ansiblenode-js" title="Permalink to this headline">¶</a></h3>
+<p>添加第三方源</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># !/bin/bash</span>
+<span class="c1"># 导入 Remi GPG 密钥</span>
+wget http://rpms.famillecollet.com/RPM-GPG-KEY-remi <span class="se">\</span>
+-O /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-remi
+
+<span class="c1"># 安装 Remi源</span>
+rpm -Uvh --quiet <span class="se">\</span>
+http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+
+<span class="c1"># 安装EPEL源</span>
+yum install epel-release
+
+<span class="c1"># 安装 Node.js (npm + 和它的依赖关系)</span>
+yum --enablerepo<span class="o">=</span>epel install npm
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">install_nodejs.yml</span></code></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">all</span>
+  <span class="nt">remote_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+
+  <span class="nt">tasks</span><span class="p">:</span>
+<span class=" -Error"> </span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">导入 Remi GPG 密钥</span>
+   <span class="nt">rpm_key</span><span class="p">:</span> <span class="s">&quot;key={{</span><span class="nv"> </span><span class="s">item</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">state=present&quot;</span>
+   <span class="nt">with_items</span><span class="p">:</span>
+     <span class="p p-Indicator">-</span> <span class="s">&quot;http://rpms.famillecollet.com/RPM-GPG-KEY-remi&quot;</span>
+ <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install Remi repo.</span>
+   <span class="nt">command</span><span class="p">:</span> <span class="s">&quot;rpm</span><span class="nv"> </span><span class="s">-Uvh</span><span class="nv"> </span><span class="s">--force</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">item.href</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">creates={{</span><span class="nv"> </span><span class="s">item.creates</span><span class="nv"> </span><span class="s">}}&quot;</span>
+   <span class="nt">with_items</span><span class="p">:</span>
+     <span class="p p-Indicator">-</span> <span class="nt">href</span><span class="p">:</span> <span class="s">&quot;http://rpms.famillecollet.com/enterprise/remi-release-6.rpm&quot;</span>
+       <span class="nt">creates</span><span class="p">:</span> <span class="s">&quot;/etc/yum.repos.d/remi.repo&quot;</span>
+
+ <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">安装Remi源</span>
+ <span class=" -Error"> </span><span class="nt">yum</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=epel-release state=present</span>
+
+ <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">关闭防火墙</span>
+   <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=iptables state=stopped</span>
+
+ <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">安装NodeJS和npm</span>
+   <span class="nt">yum</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=npm state=present enablerepo=epel</span>
+
+ <span class=" -Error"> </span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">使用Taobao的npm源</span>
+    <span class="nt">command</span><span class="p">:</span> <span class="p p-Indicator">&gt;</span>
+      <span class="no">npm config set registry https://registry.npm.taobao.org</span>
+
+ <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">关闭npm的https</span>
+   <span class="nt">command</span><span class="p">:</span> <span class="p p-Indicator">&gt;</span>
+      <span class="no">npm config set strict-ssl false</span>
+
+ <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">安装Forever(用于启动Node.js app)</span>
+   <span class="nt">npm</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=forever global=yes state=latest</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">确保 Node.js app的目录存在</span>
+  <span class="nt">file</span><span class="p">:</span> <span class="s">&quot;path={{</span><span class="nv"> </span><span class="s">node_apps_location</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">state=directory&quot;</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">拷贝Node.js app整个目录到目标主机</span>
+  <span class="nt">copy</span><span class="p">:</span> <span class="s">&quot;src=app</span><span class="nv"> </span><span class="s">dest={{</span><span class="nv"> </span><span class="s">node_apps_location</span><span class="nv"> </span><span class="s">}}&quot;</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">安装package.json文件中定义的依赖关系</span>
+  <span class="nt">npm</span><span class="p">:</span> <span class="s">&quot;path={{</span><span class="nv"> </span><span class="s">node_apps_location</span><span class="nv"> </span><span class="s">}}/app&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="drupallamp">
+<h3><a class="toc-backref" href="#id54">实战二：Drupal基于LAMP的自动化部署</a><a class="headerlink" href="#drupallamp" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">playbook.yml</span></code></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">all</span>
+  <span class="nt">vars_files</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">vars.yml</span>
+
+<span class="nt">pre_tasks</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Update apt cache if needed.</span>
+    <span class="c1">#我们将得用apt模块来更新APT缓存，同时设置缓存有效期为3600秒</span>
+      <span class="nt">apt</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update_cache=yes cache_valid_time=3600</span>
+
+<span class="nt">tasks</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;安装用来管理ATP源的工具&quot;</span>
+      <span class="nt">apt</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name={{ item }} state=present</span>
+      <span class="nt">with_items</span><span class="p">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python-apt</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python-pycurl</span>
+
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;添加包含5.5版本PHP的ondrej源&quot;</span>
+      <span class="nt">apt_repository</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">repo=&#39;ppa:ondrej/php5&#39; update_cache=yes</span>
+
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;安装Apache、MySQL、PHP，以及依赖关系&quot;</span>
+      <span class="nt">apt</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name={{ item }} state=present</span>
+      <span class="nt">with_items</span><span class="p">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">curl</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">sendmail</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache2</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php5</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php5-common</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php5-mysql</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php5-cli</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php5-curl</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php5-gd</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php5-dev</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php5-mcrypt</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php-apc</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php-pear</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python-mysqldb</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mysql-server</span>
+
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;关闭防火墙（因为本项目仅供本地开发使用）&quot;</span>
+      <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=ufw state=stopped</span>
+
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="s">&quot;启动Apache、MySQL及PHP&quot;</span>
+      <span class="nt">service</span><span class="p">:</span> <span class="s">&quot;name={{</span><span class="nv"> </span><span class="s">item</span><span class="nv"> </span><span class="s">}}</span><span class="nv"> </span><span class="s">state=started</span><span class="nv"> </span><span class="s">enabled=yes&quot;</span>
+          <span class="nt">with_items</span><span class="p">:</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache2</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mysql</span>
+<span class=" -Error"> </span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Enable Apache rewrite module (required for Drupal).</span>
+ <span class=" -Error"> </span><span class="nt">apache2_module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=rewrite state=present</span>
+  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">restart apache</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">在Apache中为Drupal添加virtualhost</span>
+  <span class="nt">template</span><span class="p">:</span>
+      <span class="nt">src</span><span class="p">:</span> <span class="s">&quot;templates/drupal.dev.conf.j2&quot;</span>
+      <span class="nt">dest</span><span class="p">:</span> <span class="s">&quot;/etc/apache2/sites-available/{{</span><span class="nv"> </span><span class="s">domain</span><span class="nv"> </span><span class="s">}}.dev.conf&quot;</span>
+      <span class="nt">owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+      <span class="nt">group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+      <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0644</span>
+  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">restart apache</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">在sites-enabled目录中添加Drupal所需配置文件的符号链接</span>
+  <span class="nt">file</span><span class="p">:</span>
+      <span class="nt">src</span><span class="p">:</span> <span class="s">&quot;/etc/apache2/sites-available/{{</span><span class="nv"> </span><span class="s">domain</span><span class="nv"> </span><span class="s">}}.dev.conf&quot;</span>
+      <span class="nt">dest</span><span class="p">:</span> <span class="s">&quot;/etc/apache2/sites-enabled/{{</span><span class="nv"> </span><span class="s">domain</span><span class="nv"> </span><span class="s">}}.dev.conf&quot;</span>
+      <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">link</span>
+  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">restart apache</span>
+</pre></div>
+</div>
+<p>Handlers是Playbook中一种特殊的任务类型，我们通过在任务末尾使用notify选项加Handlers的名称，来触发对应名称下Handlers中定义的任务。在本例中，我们将在Apache配置完成后，或Apache配置文件变动过后，使用notify：restart
+apache来调用handler重启Apache服务。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">handlers</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">restart apache</span>
+      <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=apache2 state=restarted</span>
+</pre></div>
+</div>
+<p>……..</p>
+</section>
+<section id="ansible-playbook">
+<h3><a class="toc-backref" href="#id55">Ansible Playbook拓展</a><a class="headerlink" href="#ansible-playbook" title="Permalink to this headline">¶</a></h3>
+<section id="handlers">
+<h4>Handlers<a class="headerlink" href="#handlers" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1">#实现了一个任务同时调用多个Handlers。</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Rebuild application configuration.</span>
+  <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/opt/app/rebuild.sh</span>
+  <span class="nt">notify</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">restart apache</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">restart memcached</span>
+
+<span class="nt">handlers</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">restart apache</span>
+      <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=apache2 state=restarted</span>
+
+<span class="c1">#实现Handlers调用Handlers</span>
+<span class="nt">handlers</span><span class="p">:</span>
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">restart apache</span>
+      <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=apache2 state=restarted</span>
+      <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">restart memcached</span>
+
+    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">restart memcached</span>
+      <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">name=memcached state=restarted</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h4>环境变量<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<p>使用lineinfile模块直接修改远程用户的~/.bash_profile文件</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">为远程主机上的用户指定环境变量</span>
+  <span class="nt">lineinfile</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dest=~/.bash_profile regexp=^ENV_VAR= line=ENV_VAR=value</span>
+</pre></div>
+</div>
+<p>为了再后续的任务中使用此前定义过的变量，可以使用register选项来将环境变量存储到自定义的变量中去。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">为远程主机上的用户指定环境变量</span>
+  <span class="nt">lineinfile</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dest=~/.bash_profile regexp=^ENV_VAR= line=ENV_VAR=value</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">获取刚刚指定的环境变量，并将其保存到自定义变量foo中</span>
+  <span class="nt">shell</span><span class="p">:</span> <span class="s">&#39;source</span><span class="nv"> </span><span class="s">~/.bash_profile</span><span class="nv"> </span><span class="s">&amp;&amp;</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">$ENV_VAR&#39;</span>
+  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">打印出环境变量</span>
+  <span class="nt">debug</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">msg=&quot;The variable is {{ foo.stdout }}&quot;</span>
+</pre></div>
+</div>
+<p>“source~/.bash_profile”命令重读了环境变量配置文件，这样就能确保我们接下来获取的是最新生效的环境变量。在某些情况下，若所有任务都运行在一个持久的或准高速缓存的SSH会话上的话，如果不重读环境变量配置文件，那么我们所定义的新环境变量ENV_VAR可能就不会生效。</p>
+<p>Linux同样也使用文件/etc/environment来读取环境变量，所以我们也可以使用如下方法来指定远程主机上用户的环境变量。</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add a global environment variable.</span>
+  <span class="nt">lineinfile</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dest=/etc/environment regexp=^ENV_VAR= line=ENV_VAR=value</span>
+  <span class="nt">sudo</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">yes</span>
+</pre></div>
+</div>
+<p>为一个下载任务设置http代理。最简单的情况，我们可以这样实现：</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">使用指定的代理服务器下载文件</span>
+<span class="n">get_url</span><span class="p">:</span> <span class="n">url</span><span class="o">=</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="n">dest</span><span class="o">=~/</span><span class="n">Downloads</span><span class="o">/</span>
+<span class="n">environment</span><span class="p">:</span>
+<span class="n">http_proxy</span><span class="p">:</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">-</span><span class="n">proxy</span><span class="p">:</span><span class="mi">80</span><span class="o">/</span>
+</pre></div>
+</div>
+</section>
+<section id="register">
+<h4>变量注册器register<a class="headerlink" href="#register" title="Permalink to this headline">¶</a></h4>
+<p>我们在之前的注册变量那节讲过，任何一个任务都可以注册一个变量用来存储其运行结果，该注册变量在随后的任务中将像其他普通变量一样被使用。</p>
+<p>大部分情况下，我们使用注册器用来接收shell命令的返回结果，结果中包含标准输出（stdout）和错误输出（stderr）。使用下面一段代码即可调用注册器来获取shell命令的返回结果。</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">shell</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_command_here</span>
+  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_command_result</span>
+</pre></div>
+</div>
+</section>
+<section id="when">
+<h4>when语句和注册变量配合使用<a class="headerlink" href="#when" title="Permalink to this headline">¶</a></h4>
+<p>当when语句和注册变量结合起来的时候，其功能将更为强大。举例来说，我们想检查一个应用的运行状态，并判断返回的状态值，当状态为“ready”时，再执行下一步操作。任务代码如下：</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my-app --status</span>
+  <span class="nt">register</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">myapp_result</span>
+<span class="p p-Indicator">-</span> <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">do-something-to-my-app</span>
+  <span class="nt">when</span><span class="p">:</span> <span class="s">&quot;&#39;ready&#39;</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">myapp_result.stdout&quot;</span>
+</pre></div>
+</div>
+<p>这个例子稍显刻意，但是它展示了when语句和注册变量结合的基本用法。下面我们再来看一个实际生产中的例子。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>- command: my-app --status
+  register: myapp_result
+- command: do-something-to-my-app
+  when: &quot;&#39;ready&#39; in myapp_result.stdout&quot;
+这个例子稍显刻意，但是它展示了when语句和注册变量结合的基本用法。下面我们再来看一个实际生产中的例子。
+# From our Node.js playbook - register a command&#39;s output, then see
+# if the path to our app is in the output. Start the app if it&#39;s
+# not present.
+# 这是从Node.js项目中摘取的一段代码，使用注册器保存命令运行结果，并对其进行判断
+- command: forever list
+  register: forever_list
+- command: forever start /path/to/app/app.js
+  when: &quot;forever_list.stdout.find(&#39;/path/to/app/app.js&#39;) == -1&quot;
+# 以下代码取自之前的Node.js安装的Playbook，使用注册变量保存命令的执行结果，然后通过注册变量判断结果中是否包含我们App的路径，如果不包含，就启用我们的App
+  when: ping_hosts
+# 如果所在的分支不在git的分支列表中，就运行git-cleanup.sh脚本
+- command: chdir=/path/to/project git branch
+  register: git_branches
+- command: /path/to/project/scripts/git-cleanup.sh
+  when: &quot;(is_app_server == true) and (&#39;interesting-branch&#39; not in git_branches.
+  stdout)&quot;
+# 如果当前PHP版本为7.0，就执行PHP降级操作
+- shell: php --version
+  register: php_version
+- shell: yum -y downgrade php*
+  when: &quot;&#39;7.0&#39; in php_version.stdout&quot;
+# 如果远程主机的hosts文件不存在，就传一个文件file过去
+- stat: path=/etc/hosts
+  register: hosts_file
+- copy: src=path/to/local/file dest=/path/to/remote/file
+  when: hosts_file.stat.exists == false
+</pre></div>
+</div>
+</section>
+<section id="ignore-errors">
+<h4>ignore_errors条件判断<a class="headerlink" href="#ignore-errors" title="Permalink to this headline">¶</a></h4>
+<p>在有些情况下，一些必须运行的命令或脚本会报一些错误，而这些错误并不一定真的说明有问题，但是经常会给接下来要运行的任务造成困扰，甚至直接导致Playbook运行中断。</p>
+<p>这时候，我们可以在相关任务中添加<code class="docutils literal notranslate"><span class="pre">ignore_errors：true</span></code>来屏蔽所有错误信息，Ansible也将视该任务运行成功，不再报错，这样就不会对接下来要运行的任务造成额外困扰。但是要注意的是，我们不应过度依赖ignore_errors，因为它会隐藏所有的报错信息，而应该把精力集中在寻找报错的原因上面，这样才能从根本上解决问题。</p>
+</section>
+<section id="id11">
+<h4>任务委托<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p>默认情况下，Ansible的所有任务都是在我们指定的机器上面运行的，当在一个独立的群集环境中配置时，这并没有什么问题。而在有些情况下，比如给某台服务器发送通知或向监控服务器中添加被监控主机，这个时候任务就需要在<strong>特定的主机上运行</strong>，而非一开始指定的所有主机。此时就需要用到Ansible的任务委托功能。</p>
+<p>使用<code class="docutils literal notranslate"><span class="pre">delegate_to</span></code>关键字便可以配置任务在指定的机器上执行，而其他任务还是在hosts关键字配置的所有机器上运行，当到了这个关键字所在的任务时，就<strong>使用委托的机器运行。</strong>而facts还适用于当前的host，下面我们演示一个例子，使用Munin在监控服务器中添加一个被监控主机。</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+    <span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">webservers</span>
+      <span class="nt">tasks</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add server to Munin monitoring configuration.</span>
+        <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">monitor-server webservers {{ inventory_hostname }}</span>
+        <span class="nt">delegate_to</span><span class="p">:</span> <span class="s">&quot;{{</span><span class="nv"> </span><span class="s">monitoring_master</span><span class="nv"> </span><span class="s">}}&quot;</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>由本例可以看出，我们虽然在Playbook开头指定了操作对象是所有webservers，但是添加监控对象这一任务却只需要在监控服务器上运行，所以我们就使用了delegate_to来指定运行此任务的主机。</p>
+<p>如果我们想将一个任务在Ansible服务器本地运行，除了将任务委托给127.0.0.1之外，还可以全用local_action方法来完成。看下面两个功能一模一样的例子：</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Remove server from load balancer.</span>
+  <span class="nt">command</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">remove-from-lb {{ inventory_hostname }}</span>
+  <span class="nt">delegate_to</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">127.0.0.1</span>
+
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Remove server from load balancer.</span>
+  <span class="nt">local_action</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">command remove-from-lb {{ inventory_hostname }}</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>任务暂停<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<p>在有些情况下，一些任务的运行需要等待一些状态的恢复，比如某一台主机或者应用刚刚重启，我们需要等待它上面的某个端口开启，此时我们就不得不将正在运行的任务暂停，直到其状态满足我们需求。先来看下面的例子：</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Wait for webserver to start.</span>
+  <span class="nt">local_action</span><span class="p">:</span>
+      <span class="nt">module</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">wait_for</span>
+      <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">webserver1</span>
+      <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">80</span>
+      <span class="nt">delay</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
+      <span class="nt">timeout</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">300</span>
+      <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">started</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>本例中我们结合前面所讲的local_action方法和wait_for模块来完成了任务的暂停操作。这个任务将会每10s检查一次主机webserver1上面的80端口是否开启，如果超过300s，80端口仍未开启，将会返回失败信息。</p>
+<p>总结一下，Ansible的wait_for模块常用于如下一些场景中：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>·使用选项host、port、timeout的组合来判断一段时间内主机的端口是否可用；
+
+·使用path选项（可结合search_regx选项进行正则匹配）和timeout选项来判断某个路径下的文件是否存在；
+
+·使用选项host、port和stat选项的drained值来判断一个给定商品的活动连接数是否被耗尽；
+
+·使用delay选项来指定在timeout时间内进行检测的时间间隔，时间单位为秒。
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h4>交互式提示<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<p>在少数情况下，Ansible任务运行的过程中需要用户输入一些数据，这些数据要么比较私密不方便保存，或者数据是动态的，不同用户有不同的需求，比如输入用户自己的账号和密码或者输入不同的版本号会触发不同的后续操作等。Ansible的vars_prompt关键字就是用来处理上述这种与用户交互的情况的。</p>
+<p>我们先来看一个例子：我们需要用户提供自己的账号和密码来登录自己的网络账户，并且可以给用户以适当的文字提示。代码如下所示：</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="o">-</span> <span class="n">hosts</span><span class="p">:</span> <span class="nb">all</span>
+  <span class="n">vars_prompt</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">share_user</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="s2">&quot;What is your network username?&quot;</span>
+  <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">share_pass</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="s2">&quot;What is your network password?&quot;</span>
+    <span class="n">private</span><span class="p">:</span> <span class="n">yes</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="roles">
+<h2><a class="toc-backref" href="#id56"><span class="section-number">19.6.25. </span>Roles介绍</a><a class="headerlink" href="#roles" title="Permalink to this headline">¶</a></h2>
+<p>层次化，结构化地组织Playbook，使用角色（roles），可以根据层次结构自动装载变量文件，tasks以及handlers等
+roles就是将变量、文件、任务、模块及处理器设置于单独的目录中，便捷地使用它们</p>
+<p>第一种创建方式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="n">ansible_playbooks</span><span class="o">/</span><span class="n">roles</span><span class="o">/</span><span class="p">{</span><span class="n">websrvs</span><span class="p">,</span><span class="n">dbsrvs</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">tasks</span><span class="p">,</span><span class="n">files</span><span class="p">,</span><span class="n">templates</span><span class="p">,</span><span class="n">meta</span><span class="p">,</span><span class="n">handlers</span><span class="p">,</span><span class="nb">vars</span><span class="p">}</span>
+<span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="n">ansible_playbooks</span><span class="o">/</span><span class="n">group_vars</span><span class="o">/</span>
+<span class="n">touch</span> <span class="n">ansible_playbooks</span><span class="o">/</span><span class="n">group_vars</span><span class="o">/</span><span class="nb">vars</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">touch</span> <span class="n">ansible_playbooks</span><span class="o">/</span><span class="n">hosts</span>
+</pre></div>
+</div>
+<p>一个大型项目级别的目录框架就创建完毕。如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[root@pxe-server ~]# tree ansible_playbooks/
+ansible_playbooks/
+├── group_vars
+│    └── vars.yml                 // 全局变量
+|   hosts
+└── roles
+    ├── dbsrvs                      // dbsrvs应用目录
+    │    ├── files
+    │    ├── handlers
+    │    ├── meta
+    │    ├── tasks
+    │    ├── templates
+    │    └── vars
+    └── websrvs                     // websrvs应用目录
+        ├── files                   // 安装包、配置文件、脚本文件目录
+        ├── handlers                // 触发器配置文件目录
+        ├── meta
+        ├── tasks                   // 各项任务目录
+        ├── templates               // 配置模板文件目录 支持j2格式
+        └── vars                    //
+
+17 directories, 0 files
+
+# 注：files、templates、tasks：所有文件、模板都可以放在这里，放在这里最大的好处是不用指定绝对路径
+</pre></div>
+</div>
+<p>第二种创建方式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>- 创建roles目录
+mkdir -p /ansible/roles
+cd /ansible/roles
+ansible-galaxy init backup
+ansible-galaxy init nfs
+ansible-galaxy init web
+ansible-galaxy init lb
+ansible-galaxy init db
+ansible-galaxy init prometheus
+ansible-galaxy init prometheus_db
+ansible-galaxy init prometheus_web
+
+- 查看roles目录下的ansible文件路径
+tree /ansible/roles/backup
+/ansible/roles/backup/
+├── defaults                    存放自定义的变量值
+│   └── main.yml
+├── files                       放置压缩包,使用文件
+├── handlers                    执行剧本文件的目录
+│   └── main.yml
+├── meta
+│   └── main.yml
+├── README.md
+├── tasks                       执行文件存放的目录
+│   └── main.yml
+├── templates                   分发的模板文件的目录,模板文件中可以设置变量信息
+├── tests
+│   ├── inventory
+│   └── test.yml
+└── vars
+    └── main.yml
+
+8 directories, 8 files
+</pre></div>
+</div>
+<p>参考文献</p>
+<blockquote>
+<div><p><a class="reference external" href="https://blog.csdn.net/Yosigo_/article/details/117826510">ansible剧本
+一键执行负载均衡+Keepalived+web集群+mysql+redis+NFS+Rsync数据同步+Prometheus+Grafana监控数控库和web集群</a></p>
+</div></blockquote>
+<section id="id14">
+<h3><a class="toc-backref" href="#id57">多重变量定义</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p>变量除了可以在Inventory中一并定义，也可以独立于Inventory文件之外单独存储到YAML格式的配置文件中，这些文件通常以.yml、.yaml、.json为后缀或者无后缀。变量通常从如下4个位置检索：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>·Inventory配置文件（默认/etc/ansible/hosts）
+
+·Playbook中vars定义的区域
+
+·Roles中vars目录下的文件
+
+·Roles同级目录group_vars和hosts_vars目录下的文件
+</pre></div>
+</div>
+<blockquote>
+<div><p>对于变量的读取，Ansible遵循如上优先级顺序，因此大家设置变量时尽量沿用同一种方式，以方便维护人员管理。</p>
+</div></blockquote>
+<p>假如foosball主机同属于raleigh和webservers组，那么其变量在如下文件中设置均有效：</p>
+<hr class="docutils" />
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>/etc/ansible/group_vars/raleigh <span class="c1"># can optionally end in &#39;.yml&#39;, &#39;.yaml&#39;, or &#39;.json&#39;</span>
+
+/etc/ansible/group_vars/webservers
+
+/etc/ansible/host_vars/foosball
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id15">
+<h2><a class="toc-backref" href="#id58"><span class="section-number">19.6.26. </span>Ansible的内置变量参数</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<p>ansible内置了很多其他参数，用于指定其交互方式，如下列举了部分重要参数：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ansible_host：使用主机的名称去连接，可以使用别名
+ansible_port：如果默认不是22的话，要定义ssh的端口号
+ansible_user：默认ssh连接用户
+ansible_ssh_pass：默认ssh 连接的passwd（不要在这里出现明文密码，而是要使用vault）
+ansible_ssh_private_key_file：连接时使用私钥文件。如果不想使用ssh代理的话，可以有多个密钥
+ansible_ssh_common_args：该设置将总是为sftp,scp,ssh附加到命令行，可用于为某个主机或组配置ProxyCommand
+ansible_sftp_extra_args：该设置将sftp附加到命令行
+ansible_scp_extra_args：该设置将scp附加到命令行
+ansible_ssh_extra_args：该设置将ssh附件到命令行
+ansible_ssh_pipelining：决定是否使用ssh 管道，它将覆盖ansible.cfg中的pipelining设置
+
+
+<span class="c1"># 2.2版本后的特性.</span>
+ansible_ssh_executable：这个设置将覆盖使用系统ssh的默认行为。它将覆盖ansible.cfg中的ssh_executable设置
+使用特权命令（如sudo）
+
+ansible_become：允许升级权限，相当于 ansible_sudo 或者 ansible_su
+ansible_become_method：允许设置特殊权限的方法
+ansible_become_user：允许设置特殊权限的用户，相当于 ansible_sudo_user 或者 ansible_su_user
+ansible_become_pass：允许设置特殊权限的密码（不要在这里直接输入明文），相当于 ansible_sudo_pass 或者 ansible_su_pass
+</pre></div>
+</div>
+<p>可以参考下面文献：</p>
+<p><a class="reference external" href="http://www.ansible.com.cn/docs/intro_inventory.html#group-variables">http://www.ansible.com.cn/docs/intro_inventory.html#group-variables</a></p>
+<p><a class="reference external" href="https://ansible.leops.cn/basic/Variables/">https://ansible.leops.cn/basic/Variables/</a></p>
+<p>使用Roles重构后目录结构如下（使用tree命令返回的结果）：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fab2ansible
+├── group_vars
+│   └── all
+├── roles
+│   ├── git
+│   │   ├── files
+│   │   │   └── main.yml
+│   │   ├── tasks
+│   │   │   ├── create_dir.yml
+│   │   │   ├── git_checkout.yml
+│   │   │   ├── main.yml
+│   │   │   └── static_git_pull.yml
+│   │   └── vars
+│   │       └── main.yml
+│   └── user
+│       ├── tasks
+│       │   ├── main.yml
+│       │   └── user-config.yml
+│       └── vars
+│           └── main.yml
+└── userconf.yml
+</pre></div>
+</div>
+<img alt="../../_images/ansible00001.jpg" src="../../_images/ansible00001.jpg" />
+<p>group_vars目录下的文件定义Roles中调用的变量，Roles对应调用该目录同名文件中定义的变量，<strong>文件名为all的文件定义的变量针对所有Roles生效。</strong></p>
+<section id="roleshandlers">
+<h3><a class="toc-backref" href="#id59">Roles技巧之Handlers：动态变更</a><a class="headerlink" href="#roleshandlers" title="Permalink to this headline">¶</a></h3>
+<p>Handlers通常和Notify搭配使用，当（文件、进程、返回等）状态有变化时，Notify会通过Handlers做指定的变更。</p>
+<p>请看示例example.yml：</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">site</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">webservers</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">fooservers</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">roles</span><span class="o">/</span>
+    <span class="n">common</span><span class="o">/</span>
+        <span class="n">files</span><span class="o">/</span>
+        <span class="n">templates</span><span class="o">/</span>
+        <span class="n">tasks</span><span class="o">/</span>
+        <span class="n">handlers</span><span class="o">/</span>
+        <span class="nb">vars</span><span class="o">/</span>
+        <span class="n">defaults</span><span class="o">/</span>
+        <span class="n">meta</span><span class="o">/</span>
+    <span class="n">webservers</span><span class="o">/</span>
+        <span class="n">files</span><span class="o">/</span>
+        <span class="n">templates</span><span class="o">/</span>
+        <span class="n">tasks</span><span class="o">/</span>
+        <span class="n">handlers</span><span class="o">/</span>
+        <span class="nb">vars</span><span class="o">/</span>
+        <span class="n">defaults</span><span class="o">/</span>
+        <span class="n">meta</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>了解了Roles支持的功能集和调用方式后，我们再来了解这些功能集的含义。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>·roles/x/handlers/main.yml：所有包括其中的handlers将被执行。
+
+·roles/x/vars/main.yml：所有包括在其中的变量将在roles中生效。
+
+·roles/x/meta/main.yml：roles所有依赖将被正常登入。
+
+·roles/x/{files，templates，tasks}/（dir depends on task）：所有文件、模板都可存放在这里，放在这里最大的好处是不用指定绝对路径。
+</pre></div>
+</div>
+<p>接下来，我们通过如下案例来学习Handlers的应用场景。</p>
+<p>案例场景 ：当Apache的配置文件发生变化时重启Apache进程。</p>
+<p>步骤1 ：编排Roles目录结构如下。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>roles/apache/
+├── handlers
+│   └── main.yml
+└── tasks
+    ├── restart.yml
+    └── main.yml
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>目录结构需按要求编排，不得随意变更名称。</p>
+<p>步骤2 ：编辑roles/apache/handers/main.yml的内容如下。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="c1"># sleep 10s</span>
+<span class="c1">#</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">restart</span> <span class="n">apache</span>
+  <span class="n">Service</span><span class="p">:</span> <span class="n">name</span><span class="o">=</span><span class="n">apache</span> <span class="n">state</span><span class="o">=</span><span class="n">restarted</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>该YML要实现的功能非常简单：重启Apache进程。</p>
+<p>步骤3 ：编辑roles/apache/tasks/restart.yml内容如下。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">transfer</span> <span class="n">apache</span> <span class="n">config</span>
+      <span class="n">copy</span><span class="p">:</span> <span class="n">src</span><span class="o">=</span><span class="n">httpd</span><span class="o">.</span><span class="n">conf</span> <span class="n">dest</span><span class="o">=/</span><span class="n">opt</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">httpd</span><span class="o">.</span><span class="n">conf</span>
+      <span class="n">notify</span><span class="p">:</span>
+          <span class="o">-</span> <span class="n">restart</span> <span class="n">apache</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>该YML功能为更新Apache配置文件，如配置文件有变化则重启Apache。</p>
+</section>
+<section id="rolesfiles">
+<h3><a class="toc-backref" href="#id60">Roles技巧之Files：文件传输</a><a class="headerlink" href="#rolesfiles" title="Permalink to this headline">¶</a></h3>
+<p>Files和Templates均用于Ansible文件处理，两者主要区别是：Files（不是file模块）目录下的文件无需写绝对路径即可将文件传输至远程主机；Templates目录下的文件以Jinja2渲染，且传输文件至远程主机的同时支持预定义变量替换</p>
+<p>步骤1 ：编排目录结构如下。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>file.yml
+roles/example/
+├── files
+│   ├── MAGEDU.PPT
+│   └── STANLEY.PPT
+├── tasks
+│   ├── file.yml
+│   └── main.yml
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">./file.yml</span></code>内容如下：</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="c1"># 该playbook是整个项目的调度入口</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.37.142</span>
+  <span class="nt">remote_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="nt">gather_facts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+
+  <span class="nt">roles</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="nt">role</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">example</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">./roles/example/tasks/file.yml</span></code>内容如下：</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">file change example</span>
+  <span class="c1"># copy: src=MAGEDU.PPT  dest=/data/magedu.ppt owner=stanley group=stanley</span>
+  <span class="nt">copy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">src={{ item.src }}  dest=/data/{{ item.dest }} owner=stanley group=stanley</span>
+  <span class="nt">with_items</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="p p-Indicator">{</span><span class="nt"> src</span><span class="p">:</span> <span class="s">&#39;MAGEDU.PPT&#39;</span><span class="p p-Indicator">,</span><span class="nt"> dest</span><span class="p">:</span> <span class="s">&#39;magedu.ppt&#39;</span> <span class="p p-Indicator">}</span>
+      <span class="p p-Indicator">-</span> <span class="p p-Indicator">{</span><span class="nt"> src</span><span class="p">:</span> <span class="s">&#39;STANLEY.PPT&#39;</span><span class="p p-Indicator">,</span><span class="nt"> dest</span><span class="p">:</span> <span class="s">&#39;stanley.ppt&#39;</span> <span class="p p-Indicator">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">./roles/example/tasks/main.ym</span></code>l内容如下：</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+
+<span class="o">-</span> <span class="n">include</span><span class="p">:</span> <span class="n">file</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>步骤4 ：传输文件到远程主机并修改文件名为英文小写。</p>
+<p>在roles目录同级目录下执行命令：</p>
+<hr class="docutils" />
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ansible-playbook file.yml
+</pre></div>
+</div>
+</section>
+<section id="rolestemplates">
+<h3><a class="toc-backref" href="#id61">Roles技巧之Templates：模板替换</a><a class="headerlink" href="#rolestemplates" title="Permalink to this headline">¶</a></h3>
+<p>Templates常被用作传输文件，同时支持预定义变量替换。因Templates由Jinja2渲染格式。</p>
+<p>步骤1 ：编排目录如下。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>template.yml
+roles/template/
+├── tasks
+│   ├── main.yml
+│   └── template.yml
+├── templates
+│   └── order.j2
+└── vars
+    └── main.yml
+</pre></div>
+</div>
+<p>步骤2 ：依次编辑tempates.yml（和roles目录同级）任务总调度文件。</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="c1"># 该playbook是整个项目的调度入口</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.37.142</span>
+  <span class="nt">remote_user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="nt">gather_facts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+
+  <span class="nt">roles</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="nt">role</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">template</span>
+</pre></div>
+</div>
+<p>步骤3
+：依次编辑<code class="docutils literal notranslate"><span class="pre">roles/template/tasks/{main.yml，template.yml}</span></code>任务定义文件。</p>
+<p>编辑main.yml内容如下：</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+
+<span class="o">-</span> <span class="n">include</span><span class="p">:</span> <span class="n">template</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>main.yml可通过Include灵活引用所需的功能组件，不仅是当前目录下的YML，也可以是其他Roles下的YML。</p>
+<p>编辑template.yml内容如下：</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">tempalte transfer example</span>
+  <span class="nt">template</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">src=order.j2 dest=/data/{{ PROJECT }}/order.conf</span>
+</pre></div>
+</div>
+<p>{{PROJECT}}的变量引用方式即本节伊始提到的Jinja2格式。源文件是order.j2，远程目录及目的文件名分别是/data/{{PROJECT}}/和order.conf。</p>
+<p>步骤4 ：编辑roles/template/templates/order.j2，定义模板文件。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">project</span><span class="p">:</span> <span class="p">{{</span> <span class="n">PROJECT</span> <span class="p">}}</span>
+<span class="n">switch</span><span class="p">:</span> <span class="p">{{</span> <span class="n">SWITCH</span> <span class="p">}}</span>
+<span class="n">dbport</span><span class="p">:</span> <span class="p">{{</span> <span class="n">DBPORT</span> <span class="p">}}</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>步骤5 ：编辑roles/template/vars/main.yml，定义变量。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="n">PROJECT</span><span class="p">:</span> <span class="s2">&quot;JAVA&quot;</span>
+<span class="n">SWITCH</span><span class="p">:</span> <span class="s2">&quot;ON&quot;</span>
+<span class="n">DBPORT</span><span class="p">:</span> <span class="s2">&quot;3306&quot;</span>
+</pre></div>
+</div>
+<p>步骤6 ：我们来执行命令并看下返回及结果。</p>
+<p>执行命令：</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ansible-playbook template.yml</span>
+</pre></div>
+</div>
+</section>
+<section id="rolesfilestemplates">
+<h3><a class="toc-backref" href="#id62">Roles中Files和Templates的区别</a><a class="headerlink" href="#rolesfilestemplates" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Files：用于文件处理，文件无需写绝对路径即可将文件传输至远程主机</p></li>
+<li><p>Templates目录下文件以Jinja2渲染，且传输文件至远程主机的同时支持预定义变量替换。通常引用替换变量的的格式为
+{{variable}}。</p></li>
+</ul>
+</section>
+<section id="jinja2">
+<h3><a class="toc-backref" href="#id63">Jinja2模板可以实现高度自定义</a><a class="headerlink" href="#jinja2" title="Permalink to this headline">¶</a></h3>
+<p>语法不进行扩展，语法和shell语法类似</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">Jinja2</span> <span class="n">For循环</span>
+<span class="o">-</span> <span class="n">Jinja2</span> <span class="k">if</span> <span class="n">条件</span>
+<span class="o">-</span> <span class="n">Jinja2</span> <span class="n">多值合并</span>
+<span class="o">-</span> <span class="n">Jinja2</span> <span class="n">default</span><span class="p">()</span><span class="n">设定</span>
+</pre></div>
+</div>
+<p>Handlers、Files、Templates的使用，这些在平时的工作中我们都会频繁应用到，需深入掌握。</p>
+</section>
+</section>
+<section id="id16">
+<h2><a class="toc-backref" href="#id64"><span class="section-number">19.6.27. </span>创建roles时的注意事项</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>（1） 目录名同角色名的定义
+（2） 目录结构有固定格式
+       1）files: 静态文件；
+       2）templates: Jinja2模板文件；
+       3）tasks: 至少有一个main.yml文件,定义各tasks；
+       4）handlers: 至少有一个main.yml文件，定义各handlers；
+       5）vars: 至少有一个main.yml文件，定义变量；
+       6）meta: 定义依赖关系等信息
+ (3) 在roles之外，通过site.yml定义Playbook，额外也可以有其他的yml
+</pre></div>
+</div>
+<section id="ansiblejinja2nginx">
+<h3><a class="toc-backref" href="#id65">Ansible结合Jinja2生成Nginx配置</a><a class="headerlink" href="#ansiblejinja2nginx" title="Permalink to this headline">¶</a></h3>
+<p>案例场景 ：为2台Nginx Proxy、1台Nginx Web通过一套模板生成对应的配置。</p>
+<p>步骤1 ：编排目录如下。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>nginxconf.yml
+roles/nginxconf/
+├── tasks
+│   ├── file.yml
+│   └── main.yml
+├── templates
+│   └── nginx.conf.j2
+└── vars
+    └── main.yml
+</pre></div>
+</div>
+<p>步骤2 ：编辑nginxconf
+role的tasks调度文件roles/nginxconf/tasks/{file.yml，main.yml}。</p>
+<p>编辑file.yml，定义nginxconf role的一个功能集（一个文件一个功能集）。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">nginx</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">j2</span> <span class="n">tempalte</span> <span class="n">transfer</span> <span class="n">example</span>
+  <span class="n">template</span><span class="p">:</span> <span class="n">src</span><span class="o">=</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">j2</span> <span class="n">dest</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">nginx</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">template</span>
+</pre></div>
+</div>
+<p>编辑<code class="docutils literal notranslate"><span class="pre">main.yml</span></code>，定义任务功能集合、nginxconf role功能集入口。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+
+<span class="o">-</span> <span class="n">include</span><span class="p">:</span> <span class="n">file</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>步骤3 ：这是最重要的一步，定义nginxconf
+role的模板文件<code class="docutils literal notranslate"><span class="pre">roles/nginxconf/templates/nginx.conf.j2</span></code>，该模板的灵活性将直接影响Ansible-playbook的代码行数和整体Playbook的灵活性健壮性，该模板文件将被替换变量后生成最终的Nginx配置文件。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>{% if nginx_use_proxy %}
+{% for proxy in nginx_proxies %}
+upstream {{ proxy.name }} {
+    # server 127.0.0.1:{{ proxy.port }};
+    server {{ ansible_eth0.ipv4.address }}:{{ proxy.port }};
+}
+{% endfor %}
+{% endif %}
+server {
+    listen 80;
+    server_name {{ nginx_server_name }};
+    access_log off;
+    error_log /dev/null crit;
+    rewrite ^ https:// $server_name$request_uri? permanent;
+}
+server {
+    listen 443 ssl;
+    server_name {{ nginx_server_name }};
+    ssl_certificate /etc/nginx/ssl/{{ nginx_ssl_cert_name }};
+    ssl_certificate_key /etc/nginx/ssl/{{ nginx_ssl_cert_key }};
+
+    root {{ nginx_web_root }};
+    index index.html index.html;
+
+{% if nginx_use_auth %}
+    auth_basic            &quot;Restricted&quot;;
+    auth_basic_user_file  /etc/nginx/{{project_name}}.htpasswd;
+{% endif %}
+
+{% if nginx_use_proxy %}
+{% for proxy in nginx_proxies %}
+
+    location {{ proxy.location }} {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto http;
+        proxy_set_header X-Url-Scheme $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+        proxy_redirect off;
+        proxy_pass http://{{ proxy.name }};
+        break;
+    }
+{% endfor %}
+{% endif %}
+
+{% if nginx_server_static %}
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+{% endif %}
+}
+</pre></div>
+</div>
+<p>步骤4 ：编辑nginxconf
+role的变量文件<code class="docutils literal notranslate"><span class="pre">roles/nginxconf/vars/main.yml</span></code>。</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+
+<span class="nt">nginx_server_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">www.magedu.com</span>
+<span class="nt">nginx_web_root</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/opt/magedu/</span>
+<span class="nt">nginx_proxies</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">suspicious</span>
+    <span class="nt">location</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">2368</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">suspicious-api</span>
+    <span class="nt">location</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/api</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3000</span>
+</pre></div>
+</div>
+<p>该变量文件需要关注的是nginx_proxies定义的变量组，其下的变量列表通过for循环读取后可以通过“.”来引用，即如下proxy.name这样的引用方式。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="o">%</span> <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="n">nginx_proxies</span> <span class="o">%</span><span class="p">}</span>
+
+<span class="n">upstream</span> <span class="p">{{</span> <span class="n">proxy</span><span class="o">.</span><span class="n">name</span> <span class="p">}}</span> <span class="p">{</span>
+    <span class="c1"># server 127.0.0.1:{{ proxy.port }};</span>
+</pre></div>
+</div>
+<p>步骤5 ：编辑总调度文件nginxconf.yml。</p>
+<hr class="docutils" />
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Nginx Proxy Server&#39;s Conf Dynamic Create</span>
+  <span class="nt">hosts</span><span class="p">:</span> <span class="s">&quot;192.168.37.130:192.168.37.158&quot;</span>
+  <span class="nt">vars</span><span class="p">:</span>
+      <span class="nt">nginx_use_proxy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+      <span class="nt">nginx_ssl_cert_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ifa.crt</span>
+      <span class="nt">nginx_ssl_cert_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ifa.key</span>
+      <span class="nt">nginx_use_auth</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+      <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">suspicious</span>
+      <span class="nt">nginx_server_static</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="nt">gather_facts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+
+  <span class="nt">roles</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="p p-Indicator">{</span><span class="nt"> role</span><span class="p">:</span> <span class="nv">nginxconf</span> <span class="p p-Indicator">}</span>
+
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Nginx WebServer&#39;s Conf Dynamic Create</span>
+  <span class="nt">hosts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.37.159</span>
+  <span class="nt">vars</span><span class="p">:</span>
+      <span class="nt">nginx_use_proxy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+      <span class="nt">nginx_ssl_cert_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ifa.crt</span>
+      <span class="nt">nginx_ssl_cert_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ifa.key</span>
+      <span class="nt">nginx_use_auth</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+      <span class="nt">project_name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">suspicious</span>
+      <span class="nt">nginx_server_static</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+  <span class="nt">gather_facts</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">no</span>
+
+  <span class="nt">roles</span><span class="p">:</span>
+      <span class="p p-Indicator">-</span> <span class="p p-Indicator">{</span><span class="nt"> role</span><span class="p">:</span> <span class="nv">nginxconf</span> <span class="p p-Indicator">}</span>
+</pre></div>
+</div>
+<p>在nginxconf.yml文件中，同样我们也定义nginx_use_proxy、nginx_ssl_cert_name、nginx_ssl_cert_key、nginx_use_auth、project_name、nginx_server_static等变量，同时不同类型的主机定义的不同变量生成的配置文件也不尽相同，Ansible的灵活性可见一斑。</p>
+<p>步骤6 ：验证结果。</p>
+<p>执行命令如下：</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="n">nginxconf</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>然后登录到NginxWeb192.168.37.159查看/etc/nginx/nginx.conf.template配置文件，类似如下输出表示达到我们的预期。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>server {
+    listen 80;
+    server_name www.magedu.com;
+    access_log off;
+    error_log /dev/null crit;
+    rewrite ^ https:// $server_name$request_uri? permanent;
+}
+
+server {
+    listen 443 ssl;
+    server_name www.magedu.com;
+    ssl_certificate /etc/nginx/ssl/ifa.crt;
+    ssl_certificate_key /etc/nginx/ssl/ifa.key;
+    root /opt/magedu/;
+    index index.html index.html;
+
+}
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>同理，登录到NginxProxy主机，查看其中一台Proxy的nginx.conf.template配置，类似如下输出表示达到我们的预期。</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>upstream suspicious {
+    # server 127.0.0.1:2368;
+    server 192.168.37.130:2368;
+}
+
+upstream suspicious-api {
+    # server 127.0.0.1:3000;
+    server 192.168.37.130:3000;
+}
+
+server {
+    listen 80;
+    server_name www.magedu.com;
+    access_log off;
+    error_log /dev/null crit;
+
+    rewrite ^ https:// $server_name$request_uri? permanent;
+}
+
+server {
+    listen 443 ssl;
+    server_name www.magedu.com;
+
+    ssl_certificate /etc/nginx/ssl/ifa.crt;
+    ssl_certificate_key /etc/nginx/ssl/ifa.key;
+
+    root /opt/magedu/;
+    index index.html index.html;
+
+
+    auth_basic            &quot;Restricted&quot;;
+    auth_basic_user_file  /etc/nginx/suspicious.htpasswd;
+
+    location / {
+
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto http;
+        proxy_set_header X-Url-Scheme $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+        proxy_redirect off;
+
+        proxy_pass http://suspicious;
+        break;
+
+    }
+
+    location /api {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto http;
+        proxy_set_header X-Url-Scheme $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+        proxy_redirect off;
+
+        proxy_pass http://suspicious-api;
+        break;
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>同样的模板，通过简单的if和变量设置，就可以完成不同类型主机的Nginxconf配置，所以在了解Ansible强大的模板功能的同时，也显示出模板质量的重要性。</p>
+</section>
+</section>
+<section id="ansible-galaxy">
+<h2><a class="toc-backref" href="#id66"><span class="section-number">19.6.28. </span>Ansible 的Galaxy</a><a class="headerlink" href="#ansible-galaxy" title="Permalink to this headline">¶</a></h2>
+<p>在ansible-galaxy上，我们可以上传和下载Roles，这里也是优秀Roles的聚集地，下载地址为<a class="reference external" href="https://galaxy.ansible.com/">https://galaxy.ansible.com</a>
+。</p>
+<p><strong>参考文献：</strong></p>
+<p><a class="reference external" href="https://blog.csdn.net/monster_warm/article/details/103220614">playbook部署zabbix–角色</a></p>
+<section id="id17">
+<h3><a class="toc-backref" href="#id67">Ansible 部署示例大全：</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<p>Ansible的官方Role分享平台</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 重要的网站说3遍</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">galaxy</span><span class="o">.</span><span class="n">ansible</span><span class="o">.</span><span class="n">com</span><span class="o">/</span>
+
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">galaxy</span><span class="o">.</span><span class="n">ansible</span><span class="o">.</span><span class="n">com</span><span class="o">/</span>
+
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">galaxy</span><span class="o">.</span><span class="n">ansible</span><span class="o">.</span><span class="n">com</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Ansible官方应用部署的例子</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">ansible</span><span class="o">/</span><span class="n">ansible</span><span class="o">-</span><span class="n">examples</span>
+</pre></div>
+</div>
+</section>
+<section id="id18">
+<h3><a class="toc-backref" href="#id68">Ansible中文权威指南</a><a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://www.ansible.com.cn/index.html">http://www.ansible.com.cn/index.html</a></p>
+</section>
+</section>
+<section id="playbook1-ansibletomcat">
+<h2><a class="toc-backref" href="#id69"><span class="section-number">19.6.29. </span>Playbook实战1：Ansible部署Tomcat企业实战</a><a class="headerlink" href="#playbook1-ansibletomcat" title="Permalink to this headline">¶</a></h2>
+<p>参考文献：</p>
+<p><a class="reference external" href="https://github.com/stanleylst/ansibleUI/tree/master/Chapter_04/4.8">https://github.com/stanleylst/ansibleUI/tree/master/Chapter_04/4.8</a></p>
+<p><a class="reference external" href="https://ansible.leops.cn/basic/Variables/">https://ansible.leops.cn/basic/Variables/</a></p>
+</section>
+<section id="ansiblewindows">
+<h2><span class="section-number">19.6.30. </span><a class="reference external" href="https://www.cnblogs.com/kingleft/p/6391652.html">Ansible管理windows实践</a><a class="headerlink" href="#ansiblewindows" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.cnblogs.com/Dev0ps/p/10026908.html">https://www.cnblogs.com/Dev0ps/p/10026908.html</a></p>
+<p><a class="reference external" href="https://www.cnblogs.com/bigdevilking/p/10670170.html">https://www.cnblogs.com/bigdevilking/p/10670170.html</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="03.%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8Fabric.html" class="btn btn-neutral float-left" title="19.5. 批量运维管理器Fabric" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="05.Saltstack%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8.html" class="btn btn-neutral float-right" title="19.7. Saltstack安装使用入门（自己总结）" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

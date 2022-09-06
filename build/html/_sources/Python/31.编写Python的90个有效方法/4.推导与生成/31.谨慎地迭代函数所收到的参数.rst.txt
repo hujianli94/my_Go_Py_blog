@@ -1,0 +1,148 @@
+.. contents::
+   :depth: 3
+..
+
+谨慎地迭代函数所收到的参数
+==========================
+
+如果函数接受的参数是个包含许多对象的列表，那么这份列表有可能要迭代多次。
+
+例如，我们要分析美国得克萨斯州的游客数量。原始数据保存在一份列表中，其中的每个元素表示每年有多少游客到这个城市旅游（单位是百万）。我们现在要统计每个城市的游客数占游客总数的百分比。为了求出这份数据，笔者编写了一个归一化函数normalize，它先把列表里的所有元素加起来求出游客总数，然后，分别用每个城市的游客数除以游客总数计算出该城市在总数据中所占的百分比。
+
+.. code:: python
+
+   def normalize(numbers):
+       total = sum(numbers)
+       result = []
+       for value in numbers:
+           percent = 100 * value / total
+           result.append(percent)
+       return result
+
+   visits = [15,35,80]
+   percentages = normalize(visits)
+   print(percentages)
+   """
+   [11.538461538461538, 26.923076923076923, 61.53846153846154]
+   """
+
+为了应对规模更大的数据，我们现在需要让程序能够从文件中读取信息，并假设得克萨斯州所有城市的游客数都放在这份文件中。笔者决定用生成器实现，因为这样做可以让我们把同样的功能套用在其他数据上面，例如分析全世界（而不仅仅是得克萨斯一州）各城市的游客数。
+
+那些场合的数据量与内存用量可能会比现在大得多
+
+.. code:: python
+
+   def read_visits(data_path):
+       with open(data_path) as f:
+           for line in f:
+               yield int(line)
+
+   it = read_visits("my_numbers.txt")
+   print(list(it))
+   print(list(it))
+   """
+   [15, 35, 80]
+   []
+   """
+
+有一个办法传入一条lambda表达式，让这个表达式去调用read_visits生成器函数。这样normalize_func每次向get_iter索要迭代器时，程序都会给出一个新的迭代器。
+
+.. code:: python
+
+   def normalize_func(get_iter):
+       total = sum(get_iter())     # New iterator
+       result = []
+       for value in get_iter():    # New iterator
+           percent = 100 * value / total
+           result.append(percent)
+       return result
+
+   def read_visits(data_path):
+       with open(data_path) as f:
+           for line in f:
+               yield int(line)
+
+   path = "my_numbers.txt"
+   percentages = normalize_func(lambda:read_visits(path))
+   print(percentages)
+   assert sum(percentages) == 100.0
+   """
+   [11.538461538461538, 26.923076923076923, 61.53846153846154]
+   """
+
+这样做虽然可行，但传入这么一个lambda表达式显得有点儿生硬。要想用更好的办法解决这个问题，可以新建一种容器类，让它实现迭代器协议（iteratorprotocol）。
+
+.. code:: python
+
+   def normalize(numbers):
+       total = sum(numbers)
+       result = []
+       for value in numbers:
+           percent = 100 * value / total
+           result.append(percent)
+       return result
+
+   class ReadVisits:
+       def __init__(self,data_path):
+           self.data_path = data_path
+       
+       def __iter__(self):
+           with open(self.data_path) as f:
+               for line in f:
+                   yield int(line)
+                   
+   path = "my_numbers.txt"
+   visits = ReadVisits(path)
+   percentages = normalize(visits)
+   print(percentages)
+   assert sum(percentages) == 100.0
+   """
+   [11.538461538461538, 26.923076923076923, 61.53846153846154]
+   """
+
+这样做为什么可行呢？因为normalize函数里面的sum会触发ReadVisits.__iter__，让系统分配一个新的迭代器对象给它。
+
+接下来，normalize通过for循环计算每项数据占总值的百分比时，又会触发__iter__，于是系统会分配另一个迭代器对象。
+
+这些迭代器各自推进，其中一个迭代器把数据耗尽，并不会影响其他迭代器。
+
+所以，在每一个迭代器上面遍历，都可以分别看到一套完整的数据。这种方案的唯一缺点，就是多次读取输入数据。
+
+还有一种写法。collections.abc内置模块里定义了名为Iterator的类，它用在isinstance函数中，可以判断自己收到的参数是不是这种实例。如果是，就抛出异常
+
+::
+
+   from collections.abc import Iterator
+
+   def normalize(numbers):
+       if isinstance(numbers,Iterator):
+           raise TypeError("Must supply a container")
+           
+       total = sum(numbers)
+       result = []
+       for value in numbers:
+           percent = 100 * value / total
+           result.append(percent)
+       return result
+
+   visits = [15,35,80]
+   percentages = normalize(visits)
+   print(percentages)
+   assert sum(percentages) == 100.0
+   """
+   [11.538461538461538, 26.923076923076923, 61.53846153846154]
+   """
+
+..
+
+   要点:
+
+   函数和方法如果要把收到的参数遍历很多遍，那就必须特别小心。因为如果这些参数为迭代器，那么程序可能得不到预期的值，从而出现奇怪的效果。
+
+   Python的迭代器协议确定了容器与迭代器应该怎样跟内置的__iter__及__next__函数、for循环及相关的表达式交互。
+
+   要想让自定义的容器类型可以迭代，只需要把__iter__方法实现为生成器即可。
+
+   可以把值传给__iter__函数，检测它返回的是不是那个值本身。
+
+   如果是，就说明这是个普通的迭代器，而不是一个可以迭代的容器。另外，也可以用内置的isinstance函数判断该值是不是collections.abc.Iterator类的实例。

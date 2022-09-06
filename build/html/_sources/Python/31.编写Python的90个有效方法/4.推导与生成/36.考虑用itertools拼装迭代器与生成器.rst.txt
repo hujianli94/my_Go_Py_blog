@@ -1,0 +1,118 @@
+.. contents::
+   :depth: 3
+..
+
+考虑用itertools拼装迭代器与生成器
+=================================
+
+Python内置的itertools模块里有很多函数，可以用来安排迭代器之间的交互关系。
+
+**连接多个迭代器**
+
+内置的itertools模块有一些函数可以把多个迭代器连成一个使用。
+
+**chain**
+
+chainchain可以把多个迭代器从头到尾连成一个迭代器。
+
+.. code:: python
+
+   import itertools
+
+   it = itertools.chain([1, 2, 3], [4, 5, 6])
+   print(list(it))
+   '''
+   [1, 2, 3, 4, 5, 6]
+   '''
+
+**repeat**
+
+repeat可以制作这样一个迭代器，它会不停地输出某个值。调用repeat时，也可以通过第二个参数指定迭代器最多能输出几次。
+
+.. code:: python
+
+   it = itertools.repeat("hello",10)
+   for i in it:
+       print(i)
+
+**cycle**
+
+cycle可以制作这样一个迭代器，它会循环地输出某段内容之中的各项元素。
+
+.. code:: python
+
+   it = itertools.cycle([1, 2])
+   result = [next(it) for _ in range(10)]
+   print(result)
+   '''
+   [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+   '''
+
+**tee**
+
+tee可以让一个迭代器分裂成多个平行的迭代器，具体个数由第二个参数指定。如果这些迭代器推进的速度不一致，那么程序可能要用大量内存做缓冲，以存放进度落后的迭代器将来会用到的元素。
+
+.. code:: python
+
+   it1, it2, it3 = itertools.tee(['frist', 'second'], 3)
+   print(list(it1))
+   print(list(it2))
+   print(list(it3))
+   '''
+   ['frist', 'second']
+   ['frist', 'second']
+   ['frist', 'second']
+   '''
+
+**zip_longest**
+
+此函数使迭代器聚合每个迭代的元素，如果迭代长度不均匀，则缺少的值将被填充为\ ``fillvalue``\ 。迭代继续，直到最长的迭代耗尽。
+
+::
+
+   itertools.zip_longest(*iterables, fillvalue=None)
+
+.. code:: python
+
+   colors = ['red', 'orange', 'yellow', 'green', 'blue']
+   data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+   for each in itertools.zip_longest(colors, data, fillvalue=None):
+       print(each)
+       
+   '''
+   ('red', 1)
+   ('orange', 2)
+   ('yellow', 3)
+   ('green', 4)
+   ('blue', 5)
+   (None, 6)
+   (None, 7)
+   (None, 8)
+   (None, 9)
+   (None, 10)
+   '''
+
+..
+
+   更多内容参考：
+
+   itertools模块中提供了近20个迭代器工具函数，主要分为3类：
+
+   （1）无限迭代器：永无止境地输出迭代对象的每个元素，如果迭代对象的元素有限，就会重复输出。
+
+   （2）迭代短序列：根据设定的判断条件进行迭代对象的元素输出控制，即在迭代过程中控制是否输出当前元素。
+
+   （3）组合迭代序列：将多个迭代对象的元素按照一定规则进行合并或排列等操作，使多个迭代对象合并成一个迭代对象。
+
+   有关itertools模块的迭代器工具函数，本书就不再详细讲述了，有兴趣的读者可以查阅官方文档：https://docs.python.org/3/library/itertools.html。
+
+   Python itertools指南
+
+   https://ansheng.me/python-itertools-guide/
+
+   要点：
+
+   itertools包里面有三套函数可以拼装迭代器与生成器，它们分别能够连接多个迭代器，过滤源迭代器中的元素，以及用源迭代器中的元素合成新元素。
+
+   通过help(itertools)查看文档，了解这些函数所支持的其他参数，以及许多更为高级的函数和实用的代码范例。

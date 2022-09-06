@@ -1,0 +1,158 @@
+.. contents::
+   :depth: 3
+..
+
+常量-恒定不变的值
+=================
+
+常量表示起来非常简单，如下面的代码：
+
+.. code:: go
+
+   const pi = 3.1415926
+   const e = 2.78281
+
+多个变量一起声明，类似的，常量也可以多个一起声明。如下：
+
+.. code:: go
+
+   const (
+       const pi = 3.1415926
+       const e = 2.78281
+   )
+
+常量因为在编译期确定，所以可以用于数组声明，如下的代码：
+
+.. code:: go
+
+   const size = 4
+   var arr [size]int
+
+枚举 — 一组常量值
+-----------------
+
+GO语言中没有枚举，可以使用常量配合iota模拟枚举。
+
+``第一个 iota 等于 0，每当 iota 在新的一行被使用时，它的值都会自动加 1；``
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   const (
+       Unknown = 0
+       Female  = 1
+       Male    = 2
+       a       = 10
+       b
+       c
+       d = iota
+       e = iota
+       f = iota
+       j
+       h
+       m
+   )
+
+   func main() {
+       fmt.Println(Unknown, Female, Male)
+       fmt.Println(a, b, c)
+       fmt.Println(d, e, f)
+       fmt.Println(j, h, m)
+   }
+
+
+   /*
+   0 1 2
+   10 10 10
+   6 7 8
+   9 10 11
+   */
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   type Weapon int         // 将int定义为Weapon类型，本质是一个int一样。
+
+   const (
+       Arrow Weapon = iota     // 开始生成枚举值，默认为0开始，常量值自动生成
+       Shuriken
+       Shufiken
+       SniperRifle
+       Rifle
+       Blower
+   )
+
+   func main() {
+       fmt.Println(Arrow, Shuriken, Shufiken, SniperRifle, Rifle, Blower)
+       //使用枚举类型并赋初值
+       var weapon  Weapon = Blower
+       fmt.Println(weapon)
+   }
+
+
+   //0 1 2 3 4 5
+   //5
+
+使用iota做一些强大的枚举常量值生成器，如下
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   const (
+       FlagNone = 1 << iota
+       FlagRed
+       FlagGreen
+       FlagBlue
+   )
+
+   func main() {
+       fmt.Printf("%d %d %d\n", FlagRed, FlagGreen, FlagBlue)      //2 4 8   每一次值左移一位的结果
+       fmt.Printf("%b %b %b\n", FlagRed, FlagGreen, FlagBlue)      //10 100 1000  二进制格式输出
+   }
+
+将枚举值转换为字符串
+--------------------
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   //声明芯片类型
+   type ChipType int
+
+   const (
+       None ChipType = iota // 从0开始每行值加1
+       CPU
+       GPU
+   )
+
+   // 定义ChipType类型的方法返回字符串
+   func (c ChipType) String() string {
+       switch c {
+       case None:
+           return "None"
+       case CPU:
+           return "CPU"
+       case GPU:
+           return "GPU"
+       }
+       return "N/A"
+   }
+
+   func main() {
+       fmt.Printf("%s %d", CPU, CPU)
+
+   }
+
+   //CPU 1

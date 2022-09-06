@@ -1,0 +1,134 @@
+.. contents::
+   :depth: 3
+..
+
+工厂模式自动注册
+================
+
+本例利用包的init特性，将cls1和cls2两个包注册到工厂，使用字符串创建这两个注册好的结构实例。
+
+目录结构如下：
+
+::
+
+   ├── clafactory
+   │   ├── base
+   │   │   └── factory.go
+   │   ├── cls1
+   │   │   └── reg.go
+   │   ├── cls2
+   │   │   └── reg.go
+   │   └── main.go
+
+类工厂 ``clafactory/base/factory.go``
+
+.. code:: go
+
+   package base
+
+   // 类接口
+   type Class interface {
+       Do()
+   }
+
+   var (
+       // 保存注册好的工厂信息
+       factoryByName = make(map[string]func() Class)
+   )
+
+   // 注册一个类生成工厂
+   func Register(name string, factory func() Class) {
+       factoryByName[name] = factory
+   }
+
+   // 根据名称创建对应的类
+   func Create(name string) Class {
+       if f, ok := factoryByName[name]; ok {
+           return f()
+       }else {
+           panic("name not found")
+       }
+   }
+
+类1及注册代码 ``clafactory/cls1/reg.go``
+
+.. code:: go
+
+   package cls1
+
+   import (
+       "fmt"
+       "github.com/go_study02/02.package/clafactory/base"
+   )
+
+   // 定义类1
+   type Class1 struct {
+   }
+
+   // 实现Class接口
+   func (c *Class1) Do() {
+       fmt.Println("Class1")
+   }
+   func init() {
+       // 在启动时注册类1工厂
+       base.Register("Class1", func() base.Class {
+           return new(Class1)
+       })
+   }
+
+类2及注册代码 ``clafactory/cls2/reg.go``
+
+.. code:: go
+
+   package cls2
+
+   import (
+       "fmt"
+       "github.com/go_study02/02.package/clafactory/base"
+   )
+
+   // 定义类2
+   type Class2 struct {
+   }
+
+   // 实现Class接口
+   func (c *Class2) Do() {
+       fmt.Println("Class2")
+   }
+
+   func init() {
+       // 在启动时注册类2工厂
+       base.Register("Class2", func() base.Class {
+           return new(Class2)
+       })
+   }
+
+类工程主流程 ``clafactory/main.go``
+
+.. code:: go
+
+   package main
+
+   import (
+       "github.com/go_study02/02.package/clafactory/base"
+       _ "github.com/go_study02/02.package/clafactory/cls1"
+       _ "github.com/go_study02/02.package/clafactory/cls2"
+   )
+
+   func main() {
+       // 根据字符串动态创建一个Class1实例
+       c1 := base.Create("Class1")
+       c1.Do()     //Class1
+
+       // 根据字符串动态创建一个Class2实例
+       c2 := base.Create("Class2")
+       c2.Do()     //Class2
+   }
+
+执行下面的指令进行编译：
+
+.. code:: shell
+
+   export GOPATH=/home/davy/golangbook/code
+   go install chapter08/clsfactory
+   $GOPATH/bin/clsfactory

@@ -1,0 +1,139 @@
+.. contents::
+   :depth: 3
+..
+
+手写一个三级菜单
+================
+
+1.需求分析
+----------
+
+::
+
+   思路：
+
+   湖北省的市：字典中的
+   定义3个字典，用于存储
+
+   {序列-键：市名}
+   shiqu_dir = {}
+   {序列-键：县}
+   xian_dir ={}
+   {序列-键：街道}
+   jiedao_dir = {}
+   函数将序列和键一一对应。
+   for number,key in enumerate(Hbei_map.keys())  获取序列键和市名存储到 市名字典
+
+   用一个列表 chose = [] 来存储所选择的市--县程-街道
+   chose[0],chose[1],chose[2]最后使用切片返回
+
+   中间输入全部使用的判断方式for循环： for k,v in xxx.items():
+   　　　　　　　　　　　　　　　　　　　　　if input == k：
+   让用户只能输入序列中的数字。使用判断语句：
+   　　if int(input) not in 字典.keys():
+       　　print("您输入了非法的序列,请输入一下序列 {}".format(shiqu_list))
+
+2.代码示例
+----------
+
+.. code:: python
+
+   # -*- coding: utf-8 -*-
+   __author__ = 'hujianli'
+   import sys
+   Hbei_map = {
+       "武汉市":{
+           "江岸区":["上海街","大智街","一元街","车站街","四唯街","永清街","球场街","西马街","台北街","劳动街","花桥街","后湖街","谌家矶街"],
+            "硚口区":["易家墩街道","韩家墩街道","宗关街道","汉水桥街道","宝丰街道","荣华街道","崇仁街道","汉中街道"],
+            "武昌区":["积玉桥街道","杨园街道","徐家棚街道","新河街道"]
+       },
+
+       "荆州市":{
+           "沙市区":["黄石港","崇文街道","解放路街道"],
+           "荆州区":["城南街道","西城街道","东城街道","马山镇","川店镇"],
+           "松滋市":["新江口镇","南海镇","八宝镇","陈店镇"],
+           "公安县":["斗湖堤镇","埠河镇","杨家厂镇","斑竹垱镇"],
+           "监利县":["容城镇","白螺镇","朱河镇"]
+
+       },
+       "孝感市":{
+           "孝南区":["肖港镇","书院街道","车站街道","新华街道"],
+           "应城市":["城中街道","城北街道","杨河镇","三合镇"],
+           "安陆市":["李店镇","巡店镇","雷公镇","陈店乡"],
+
+       },
+   }
+   # print(Hbei_map["孝感市"]["应城市"])
+   shiqu_dir = {}
+   xian_dir ={}
+   jiedao_dir = {}
+
+   def jiance(name):
+       if len(name) == 0:
+           sys.exit("\033[31;1m选择不能为空，清重新输入~~\033[0m")
+       elif shiqu == "quit" or shiqu == "exit":
+           sys.exit("\033[31;1m 退出程序，三级菜单退出~~ \033[0m")
+       else:
+           return True
+
+   print("==============================================================================================================")
+   print("湖北省下面的市区如下： ")
+   for number,key in enumerate(Hbei_map.keys()):
+       print(str(number+1) + ": " + str(key))
+       shiqu_dir[number+1] = key
+
+   chose = []
+   shiqu_list = [x+1 for x in range(len(shiqu_dir.keys()))]
+
+   while True:
+       print("==========================================================================================================")
+       shiqu = input("请输入您要查询的市区所对应的序列号,输入exit或者quit自动会退出.：")
+       jiance(shiqu)
+       if int(shiqu) not in shiqu_dir.keys():
+           print("您输入了非法的序列,请输入一下序列 {}".format(shiqu_list))
+       else:
+           for keys,vlaue in shiqu_dir.items():
+               if int(shiqu) == keys:
+                   chose = []
+                   chose.append(vlaue)
+                   print("================================================================================================")
+                   print("该市区下面的县级市或者片区域，县城列表如下：")
+
+                   for number,keys_xian in enumerate(Hbei_map[vlaue].keys()):
+                       print(str(number+1)+ ":" + str(keys_xian))
+                       xian_dir[number+1] = keys_xian
+
+                   while True:
+                       print("=============================================================================================")
+                       xian = input("请输入要查询的县城所对应的序列号，quit/exit退出： ")
+                       jiance(xian)
+                       xian_list = [x+1 for x in range(len(xian_dir.keys()))]
+                       if int(xian) not in xian_dir.keys():
+                            print("您输入了非法的序列,请输入一下序列 {}".format(xian_list))
+                       else:
+                           for k,v in xian_dir.items():
+                               if int(xian) == k:
+                                   chose.append(v)
+
+                           jiedao_li = Hbei_map[chose[0]][chose[1]]
+                           for k,v in enumerate(jiedao_li):
+                               print(str(k+1) + ": " + str(v))
+                               jiedao_dir[k+1] = v
+
+                           while True:
+                               print("=====================================================================================")
+                               jiedao = input("请输入街道所对应的序列号 退出请输入quit/exit： ")
+                               jiance(jiedao)
+                               jiedao_list = [x+1 for x in range(len(jiedao_dir.keys()))]
+                               if int(jiedao) not in jiedao_dir.keys():
+                                   print("您输入了非法的序列,请输入一下序列 {}".format(jiedao_list))
+                               else:
+                                   for k,v in jiedao_dir.items():
+                                       if int(jiedao) == k:
+                                           chose.append(v)
+                                           print("=================================================================================")
+                                           print("\033[35;1m你选择的市：%s 县城是：%s 街道是：%s\033[0m"%(chose[0],chose[1],chose[2]))
+                                           print("===================================================================================")
+                               break
+                           break
+           break

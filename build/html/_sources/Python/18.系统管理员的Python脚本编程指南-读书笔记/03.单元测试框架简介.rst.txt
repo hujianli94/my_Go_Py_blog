@@ -1,0 +1,199 @@
+.. contents::
+   :depth: 3
+..
+
+单元测试框架简介
+================
+
+学习大纲：
+
+-  单元测试框架简介
+
+-  创建单元测试任务
+
+1 什么是 unittest
+-----------------
+
+::
+
+    unittest 是Python中的单元测试框架。它支持多种任务，如测试夹具（test fixture）、编写测试用例（test case）、将测试用例聚合到测试套件中，以及运行测试等。
+
+   与unittest 相关的有以下4个主要概念。
+
+   测试夹具：用于执行一个或多个测试用例的准备和清理工具。
+
+   测试用例：单独的测试用例。使用unittest 的TestCase 基类，可以创建新的测试用例。
+
+   测试套件：包括一组测试用例或测试套件，或两者都有。用于一次执行多个测试用例。
+
+   测试运行器：执行测试用例，并向用户输出信息。
+
+   我们在 Python 脚本中导入 unittest 模块，该模块包含用来创建测试用例的TestCase 基类。
+
+   我们可以用方法来实现各个测试用例，这些方法的名称以“test”一词开头。这样测试运行器就会知道哪些方法用于实现测试用例。
+
+
+
+        测试夹具：一个或多个用例执行前的准备和执行后的清理工具
+
+        测试用例：单独的测试用例，继承 TestCase 基类
+
+        测试套件：一组测试用例或测试套件，或者都有
+
+        测试运行器：执行用例，输出信息
+
+创建单元测试
+~~~~~~~~~~~~
+
+创建两个脚本，一个代表普通的脚本程序，而另一个包含测试代码。
+
+``arithmetic.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   # @auther:   18793
+   # @Date：    2021/8/11 14:08
+   # @filename: arithmetic.py
+   # @Email:    1879324764@qq.com
+   # @Software: PyCharm
+   def add_num(x, y):
+       return x + y
+
+
+   def sub_num(x, y):
+       return x - y
+
+
+   def mul_num(x, y):
+       return x * y
+
+
+   def div_numbers(x, y):
+       return (x / y)
+
+上面的脚本包含 4 个函数：\ ``add_numbers`` 、\ ``sub_numbers``
+、\ ``mul_numbers`` 和\ ``div_numbers`` 。接下来以\ ``add_numbers``
+函数为例编写测试用例。
+
+创建一个名为\ ``test_addition.py`` 脚本
+
+.. code:: python
+
+   import unittest
+   import arithmetic
+
+
+   class MyTestCase(unittest.TestCase):
+       def test_something(self):
+           self.assertEqual(True, False)
+
+       # 测试整数
+       def test_add_number(self):
+           sum = arithmetic.add_num(50, 50)
+           self.assertEqual(sum, 100)
+
+       # 测试浮点数
+       def test_add_num_float(self):
+           sum = arithmetic.add_num(10.50, 20.50)
+           self.assertEqual(sum, 31)
+
+       # 测试字符串
+       def test_add_string(self):
+           sum = arithmetic.add_num("hello", "world")
+           self.assertEqual(sum, "helloworld")
+
+
+   if __name__ == '__main__':
+       unittest.main()
+
+现在运行\ ``test_addition.py`` 测试脚本，查看运行此脚本后得到的结果。
+
+按如下所示运行脚本，就会获得以下输出。
+
+::
+
+   Ran 1 test in 0.007s
+
+   OK
+
+这里显示了\ ``OK`` ，代表测试成功。
+
+2.单元测试中的常用方法
+----------------------
+
+使用\ ``unittest``
+模块时，我们可以在脚本使用一些常用方法，这些方法如下所示。
+
+-  ``assertEqual()`` 和\ ``assertNotEqual()`` ：检查是否达到预期结果。
+-  ``assertTrue()`` 和\ ``assertFalse()`` ：检查一个表达式的布尔值。
+-  ``assertRaises()`` ：检查是否触发了特定异常。
+-  ``setUp()`` 和\ ``tearDown()`` ：定义之前和之后执行的指令。
+
+我们也可以在命令行中使用\ ``unittest``
+模块。按如下方法运行上一个测试脚本。
+
+::
+
+   $ python -m unittest test_addition.py
+   ....
+   ----------------------------------------------------------------------
+   Ran 4 tests in 0.001s
+
+   OK
+
+创建一个\ ``if_example.py`` 脚本
+
+.. code:: python
+
+   #!/usr/bin/env python
+
+
+   def check_if():
+       a = int(input("Enter a number:"))
+       if a == 10:
+           print("a is equal 100")
+       else:
+           print("a is not equal 100")
+       return a
+
+然后创建一个\ ``test_if.py`` 测试脚本
+
+.. code:: python
+
+   import unittest
+   import checkif
+
+
+   class MyTestCase(unittest.TestCase):
+       def test_if(self):
+           result = checkif.check_if()
+           self.assertEqual(result, 100)
+
+
+   if __name__ == '__main__':
+       unittest.main()
+
+运行测试脚本
+
+.. code:: shell
+
+   $ python -m unittest test_if.py
+   Enter a number
+
+
+   100
+
+
+   a is equal to 100
+
+
+
+   ----------------------------------------------------------------------
+
+
+   Ran 1 test in 1.912s
+
+
+   OK

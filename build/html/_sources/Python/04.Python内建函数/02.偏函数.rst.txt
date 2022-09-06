@@ -1,0 +1,111 @@
+.. contents::
+   :depth: 3
+..
+
+偏函数
+======
+
+当函数的参数个数太多，需要简化时，
+使用functools.partial可以创建一个新的函数，
+这个新函数可以固定住原函数的部分参数，从而在调用时更简单。简化了传参的过程
+
+::
+
+   from functools import partial, wraps
+
+
+   def add(x, y):
+       return x + y
+
+
+   # 给函数的参数绑定一个默认值
+   add1 = partial(add, 3)
+   x1 = add(3, 9)
+   print(x1)       #12
+
+   x = add1(9)
+   print(x)       #12
+
+偏函数代码示例
+--------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/12/22 13:08
+   # filename: 偏函数的使用.py
+   '''
+   偏函数通过将任意数量(顺序)的参数， 转化为另一个带有剩余参数的函数对象,从而实现了截取函数功能(偏向)的效果。
+   在实际应用中,可以使用一个原函数,然后将其封装多个偏函数,在调用函数时全部调用偏函数。这样的代码可读性提升了很多。
+
+   '''
+   from functools import partial
+
+
+   def recoder(strname, age):
+       print("姓名：{} 年龄: {}".format(strname, age))
+
+
+   Garfun = partial(recoder, strname="hujiali")
+   Garfun(age=22)
+
+@wraps 消除装饰器带来的副作用
+-----------------------------
+
+当函数被装饰完后,对函数的名字属性再赋一次值,将函数的名称恢复过来。
+这样就可以避免出现装饰完后函数名字变化的现象。
+
+::
+
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/10/29 18:55
+   # filename: test4.py、
+   from functools import wraps
+
+   def decorator1(func):
+       @wraps(func)                # 消除装饰器带来的副作用。
+       def wrapper(*args, **kwargs):
+           """
+           :param args:可变位置参数
+           :param kwargs: 关键字参数
+           :return:
+           """
+           func(*args, **kwargs)  # func = house
+           print("铺地板")
+           print("刷漆")
+
+       return wrapper
+
+
+   @decorator1
+   def house():
+       """
+       我是house函数，
+       :return:
+       """
+       print("---------->毛坯房")
+
+
+   house()
+
+   # print(house.__name__)     # 此时出现的是装饰器的名称和文档注释
+   # print(house.__doc__)
+
+   print(house.__name__)
+   print(house.__doc__)
+
+
+   '''
+   ---------->毛坯房
+   铺地板
+   刷漆
+   house
+
+       我是house函数，
+       :return:
+       

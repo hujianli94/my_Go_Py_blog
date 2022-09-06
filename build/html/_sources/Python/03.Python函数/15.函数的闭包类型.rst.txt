@@ -1,0 +1,171 @@
+.. contents::
+   :depth: 3
+..
+
+函数的闭包类型
+==============
+
+函数的闭包
+----------
+
+延迟求和
+
+.. code:: python
+
+
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   #闭包可以实现将参数传递给一个函数，并不立即运行，已达到延迟求值的目的
+
+   def delay_fun(x,y):
+       def caculator():
+           return x + y
+       return caculator
+
+   if __name__ == '__main__':
+       print("返回一个求和的函数,并不立即求和。")
+       msun = delay_fun(3,4)
+       print()
+       print("调用求和：")
+       print(msun())
+
+输出结果
+
+::
+
+   返回一个求和的函数,并不立即求和。
+
+   调用求和：
+   7
+
+闭包泛型函数
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   def line(a,b):
+       def aline(x):
+           return a*x + b
+       return aline            #泛型函数中可使用不同的a、b的值
+
+   if __name__ == '__main__':
+       line23 = line(2, 3)      #a、b值分别为4、5的一次函数
+       line50 = line(5, 0)      #a、b值分别为5、0的一次函数
+       print(line23(4))
+       print(line50(2))
+
+输出结果
+
+::
+
+   11
+   10
+
+代码示例1
+~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/17 23:31
+   # filename: 函数类型.py
+   def calcylate(option):
+       multiple = 2
+
+       # 定义加函数
+       def add(a, b):
+           return (a + b) * multiple
+
+       # 定义减函数
+       def sub(a, b):
+           return (a - b) * multiple
+
+       if option == "+":
+           return add
+       elif option == "-":
+           return sub
+       else:
+           return
+
+
+   if __name__ == '__main__':
+       f1 = calcylate("+")
+       f2 = calcylate("-")
+       print(type(f1))
+       print(f1(1, 2))
+       print(f2(3, 1))
+
+输出结果
+
+::
+
+   <class 'function'>
+   6
+   4
+
+使用函数作为返回值
+~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/13 16:16
+   # filename: 使用函数作为返回值.py
+   def get_math_func(type):
+       # 定义一个计算平方的局部函数
+       def square(n):
+           return n * n
+
+       # 计算立方
+       def cube(n):
+           return n * n * n
+
+       # 计算阶乘
+       def factorial(n):
+           result = 1
+           for index in range(2, n + 1):
+               result *= index
+           return result
+
+       # 返回局部函数
+       if type == "square":
+           return square
+       if type == "cube":
+           return cube
+       else:
+           return factorial
+
+
+   if __name__ == '__main__':
+       math_func = get_math_func("cube")  # 得到cube函数
+       print(math_func(6))
+       math_func2 = get_math_func("square")  # 得到square函数
+       print(math_func2(8))
+       math_func3 = get_math_func("other")  # 得到factorial函数
+       print(math_func3(5))
+
+输出结果
+
+::
+
+   216
+   64
+   120
+
+使用lambda表达式来替换函数中的局部函数
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+       if type == "square":
+           return lambda n: n * n
+       if type == "cube":
+           return lambda n: n * n * n
+       else:
+           return lambda n: (1 + n) * n / 2

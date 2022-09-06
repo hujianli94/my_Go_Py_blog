@@ -1,0 +1,251 @@
+.. contents::
+   :depth: 3
+..
+
+文本处理和正则表达式
+====================
+
+学习大纲
+
+-  文本包装。
+-  正则表达式。
+-  Unicode字符串。
+
+1. 文本包装
+-----------
+
+textwrap\ ``模块用于格式化文本和包装文本，该模块主要提供5个函数：``\ wrap()\ ``、``\ fill()\ ``、``\ dedent()\ ``、``\ indent()\ ``和``\ shorten()
+
+1.1 wrap()函数
+~~~~~~~~~~~~~~
+
+``wrap()``
+函数用于将整个文本段落包装到单个字符串中，并输出由行组成的列表。
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import textwrap
+
+   sample_string = '''Python is an interpreted high-level programming language
+   for general-purpose programming. Created by Guido van Rossum and first
+   released in 991, Python has a design philosophy that emphasizes code
+   readability, notably using significant whitespace.'''
+
+   w = textwrap.wrap(sample_string, width=30)
+   print(w)
+
+1.2 fill()函数
+~~~~~~~~~~~~~~
+
+``fill()`` 函数与\ ``wrap()``
+函数的工作方式类似，不同之处在于它的返回值是一个包含换行符的字符串，而不是列表。
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import textwrap
+
+   sample_string = '''Python is an interpreted high-level programming language
+   for general-purpose programming. Created by Guido van Rossum and first
+   released in 991, Python has a design philosophy that emphasizes code
+   readability, notably using significant whitespace.'''
+
+   w = textwrap.fill(sample_string, width=10)
+   print(w)
+
+1.3 dedent()函数
+~~~~~~~~~~~~~~~~
+
+``dedent()`` 是\ ``textwrap``
+模块的另一个函数，使用此函数可将每一行的前导空格删除。
+
+函数语法如下所示。
+
+::
+
+   textwrap.dedent(text)
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import textwrap
+
+   str1 = '''
+               Hello Python World \tThis is Python 101
+               Scripting language\n
+               Python is an interpreted high-level programming language for
+               general-purpose programming.'''
+
+   print("Original: \n", str1)
+
+   print()
+
+   t = textwrap.dedent(str1)
+   print("Dedented: \n", t)
+
+1.4 indent()函数
+~~~~~~~~~~~~~~~~
+
+``indent()`` 函数用于将指定前缀添加到文本中选定行的开头。
+
+函数语法如下所示。
+
+::
+
+   textwrap.indent(text，prefix)
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import textwrap
+
+   str1 = """Python is an interpreted high-level 
+   programming language for general - purpose
+   programming.Created by Guido van Rossum and first released in 1991, \n\nPython
+   has a design philosophy that emphasizes code readability, notably using significant whitespace.
+   """
+
+   w = textwrap.fill(str1, width=30)
+
+   i = textwrap.indent(w, '*')
+
+   print(i)
+
+1.5 shorten()函数
+~~~~~~~~~~~~~~~~~
+
+``textwrap`` 模块的\ ``shorten()``
+函数按指定宽度截取文本，例如创建内容摘要或文本预览，就可以使用\ ``shorten()``
+函数。使用\ ``shorten()``
+函数后，文本中的所有连续空格都将替换为单个空格。
+
+函数语法如下所示。
+
+::
+
+   textwrap.shorten(text, width)
+
+           >>> textwrap.shorten("Hello  world!", width=12)
+           'Hello world!'
+           >>> textwrap.shorten("Hello  world!", width=11)
+           'Hello [...]'
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import textwrap
+
+   str1 = """Python is an interpreted high-level 
+   programming language for general - purpose
+   programming.Created by Guido van Rossum and first released in 1991, \n\nPython
+   has a design philosophy that emphasizes code readability, notably using significant whitespace.
+   """
+
+   s = textwrap.shorten(str1, width=30)
+
+   print(s)
+
+2.正则表达式
+------------
+
+此章节省略，之前整理了太多。爬虫章节里面也整理过
+
+3. Unicode字符串
+----------------
+
+Python中的字符串类型实际上是Unicode字符串，而不是字节序列。
+
+::
+
+   print ('\u2713')
+   ✓
+   print ('\u2724')
+   ✤
+   print ('\u2750')
+   ❐
+   print ('\u2780')
+   ➀
+
+3.1 Unicode代码点
+~~~~~~~~~~~~~~~~~
+
+Python有一个强大的内置函数\ ``ord()``
+，用于获取给定字符的Unicode代码点。
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   # @auther:   18793
+   # @Date：    2021/8/30 11:19
+   # @filename: code2021-unicode.py
+   # @Email:    1879324764@qq.com
+   # @Software: PyCharm
+
+   str1 = u'office'
+   for char in str1:
+       print('U+%04x' % ord(char))
+
+   print("-----------------------------------------")
+
+   str2 = '开源中国'
+   for char in str2:
+       print('U+%04x' % ord(char))
+
+3.2 编码
+~~~~~~~~
+
+从Unicode代码点到字节序列的转换称为编码（encoding）。下面是一个Unicode代码点编码的示例程序。
+
+.. code:: python
+
+   # 编码
+   enc_str = type(str1.encode('utf-8'))
+   print(enc_str)
+
+3.3. 解码
+~~~~~~~~~
+
+.. code:: python
+
+   # 解码
+   str = bytes('Office', encoding='utf-8')
+   dec_str = str.decode('utf-8')
+   print(dec_str)
+
+3.4 避免UnicodeDecodeError
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+如果字节序列无法解码为Unicode代码点，程序就会抛出UnicodeDecodeError
+。为了避免这种异常，我们可以将replace 、backslashreplace 或ignore
+作为decode() 函数中的error参数
+
+::
+
+   str = b"\xaf"
+   str.decode('utf-8', "replace")
+   print(str)
+   str.decode('utf-8', "backslashreplace")
+   print(str)
+   str.decode('utf-8', "ignore")
+   print(str)
+
+总结
+----
+
+我们学习了\ ``textwrap`` 模块，该模块用于格式化和包装文本。
+
+其中学习了\ ``textwrap`` 模块的\ ``wrap()`` 、\ ``fill()``
+、\ ``dedent()`` 、\ ``indent()`` 和\ ``shorten()``
+函数。然后学习了正则表达式，使用它可以定义一组规则，匹配我们想要的字符串。还了解了\ ``re``
+模块的4个函数：\ ``match()`` 、\ ``search()`` 、\ ``findall()``
+和\ ``sub()`` 。
+
+最后学习了\ ``Unicode`` 字符串，以及如何在\ ``Python``
+中输出\ ``Unicode`` 字符串。

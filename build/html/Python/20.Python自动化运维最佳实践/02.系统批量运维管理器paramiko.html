@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>19.4. 系统批量运维管理器paramiko &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="19.5. 批量运维管理器Fabric" href="03.%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8Fabric.html" />
+    <link rel="prev" title="19.3. 业务服务监控详解" href="02.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">19. Python自动化运维最佳实践</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E4%BF%A1%E6%81%AF%E6%A8%A1%E5%9D%97%E8%AF%A6%E8%A7%A3.html">19.1. 系统基础信息模块详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01.%E7%B3%BB%E7%BB%9F%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8pexpect.html">19.2. 系统批量运维管理器pexpect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html">19.3. 业务服务监控详解</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">19.4. 系统批量运维管理器paramiko</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#python">19.4.1. 使用 Python 远程登陆服务器的最佳实践</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8Fabric.html">19.5. 批量运维管理器Fabric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Ansible%E5%85%A5%E9%97%A8%E4%B8%8Eplaybook%E5%AE%9E%E6%88%98.html">19.6. Ansible入门与playbook实战</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.Saltstack%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8.html">19.7. Saltstack安装使用入门（自己总结）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html">19.8. 业务服务监控详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.Supervisor%E5%9C%A8Devops%E5%B7%A5%E4%BD%9C%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8.html">19.9. Supervisor在Devops工作中的应用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E7%BD%91%E9%A1%B5%E8%87%AA%E5%8A%A8%E5%8C%96%E5%BC%80%E5%8F%91.html">19.10. 网页自动化开发</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.Conda%E5%88%9B%E5%BB%BApython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83.html">19.11. Conda创建python虚拟环境</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">19. </span>Python自动化运维最佳实践</a> &raquo;</li>
+      <li><span class="section-number">19.4. </span>系统批量运维管理器paramiko</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/20.Python自动化运维最佳实践/02.系统批量运维管理器paramiko.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#paramiko" id="id1">系统批量运维管理器paramiko</a></p>
+<ul>
+<li><p><a class="reference internal" href="#python" id="id2">使用 Python 远程登陆服务器的最佳实践</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="paramiko">
+<h1><a class="toc-backref" href="#id1"><span class="section-number">19.4. </span>系统批量运维管理器paramiko</a><a class="headerlink" href="#paramiko" title="Permalink to this headline">¶</a></h1>
+<section id="python">
+<h2><a class="toc-backref" href="#id2"><span class="section-number">19.4.1. </span>使用 Python 远程登陆服务器的最佳实践</a><a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://juejin.im/post/6844904078057668615">https://juejin.im/post/6844904078057668615</a></p>
+<p>pip安装</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">paramiko</span>
+<span class="n">easy_install</span> <span class="n">paramiko</span>
+</pre></div>
+</div>
+<p>源码安装</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># yum -y install python-devel</span>
+<span class="c1"># wget http://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/pycrypto-2.6.tar.gz</span>
+<span class="c1"># tar -zxvf pycrypto-2.6.tar.gz</span>
+<span class="c1"># cd pycrypto-2.6</span>
+<span class="c1"># python setup.py install</span>
+<span class="c1"># cd ..</span>
+<span class="c1"># wget https：//pypi.python.org/packages/source/e/ecdsa/ecdsa-0.10.tar.gz --no-check-certificate</span>
+<span class="c1"># tar -zxvf ecdsa-0.10.tar.gz</span>
+<span class="c1"># cd ecdsa-0.10</span>
+<span class="c1"># python setup.py install</span>
+<span class="c1"># cd ..</span>
+<span class="c1"># wget https：//github.com/paramiko/paramiko/archive/v1.12.2.tar.gz</span>
+<span class="c1"># tar -zxvf v1.12.2.tar.gz</span>
+<span class="c1"># cd paramiko-1.12.2/</span>
+<span class="c1"># python setup.py install</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">paramiko使用密码登录ssh方式</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/17 18:18</span>
+<span class="c1"># filename: 01.使用密码登录ssh方式1.py</span>
+
+<span class="kn">import</span> <span class="nn">paramiko</span>
+
+<span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;192.168.0.103&#39;</span>
+<span class="n">username</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>
+<span class="n">password</span><span class="o">=</span><span class="s1">&#39;admin#123&#39;</span>
+<span class="n">paramiko</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="s1">&#39;syslogin.log&#39;</span><span class="p">)</span>
+
+<span class="n">ssh</span><span class="o">=</span><span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">load_system_host_keys</span><span class="p">()</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span><span class="n">port</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span><span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span><span class="n">compress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">stdin</span><span class="p">,</span><span class="n">stdout</span><span class="p">,</span><span class="n">stderr</span><span class="o">=</span><span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s1">&#39;free -m&#39;</span><span class="p">)</span>
+<span class="nb">print</span> <span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">stdin</span><span class="p">,</span><span class="n">stdout</span><span class="p">,</span><span class="n">stderr</span><span class="o">=</span><span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s1">&#39;ifconfig| grep inet|head -1|awk -F</span><span class="se">\&#39;</span><span class="s1"> </span><span class="se">\&#39;</span><span class="s1"> </span><span class="se">\&#39;</span><span class="s1">{print $2}</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span> <span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">paramiko实现文件上传、下载、创建、删除</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/17 18:32</span>
+<span class="c1"># filename: 02.实现文件上传、下载、创建、删除.py</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+
+<span class="n">username</span> <span class="o">=</span> <span class="s1">&#39;root&#39;</span>
+<span class="n">password</span> <span class="o">=</span> <span class="s1">&#39;admin#123&#39;</span>
+<span class="n">hostname</span> <span class="o">=</span> <span class="s1">&#39;192.168.0.103&#39;</span>
+<span class="n">port</span> <span class="o">=</span> <span class="mi">22</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">Transport</span><span class="p">((</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+    <span class="n">sftp</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SFTPClient</span><span class="o">.</span><span class="n">from_transport</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="c1"># 上传文件</span>
+    <span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s1">&#39;/home/python-scripts/02.高级篇/02.系统批量运维管理器paramiko/syslogin.log&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;/home/syslogin.log&#39;</span><span class="p">)</span>
+    <span class="c1"># 下载文件</span>
+    <span class="n">sftp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/home/vagrant_2.2.4_x86_64.rpm&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;/home/python-scripts/02.高级篇/02.系统批量运维管理器paramiko/vagrant_2.2.4_x86_64.rpm&#39;</span><span class="p">)</span>
+
+    <span class="c1"># 创建目录</span>
+    <span class="n">sftp</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s2">&quot;/home/python-scrpts&quot;</span><span class="p">,</span> <span class="mi">0775</span><span class="p">)</span>  <span class="c1"># 创建目录</span>
+    <span class="c1"># 删除目录</span>
+    <span class="n">sftp</span><span class="o">.</span><span class="n">rmdir</span><span class="p">(</span><span class="s1">&#39;/home/test1&#39;</span><span class="p">)</span>
+
+    <span class="c1"># 文件重命名</span>
+    <span class="n">sftp</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;/home/aaaa&#39;</span><span class="p">,</span> <span class="s1">&#39;/home/aaaa_bak&#39;</span><span class="p">)</span>
+
+    <span class="c1"># 打印文件信息</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">sftp</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="s1">&#39;/home/apache-tomcat-8.5.37.tar.gz&#39;</span><span class="p">))</span>
+    <span class="c1"># 打印目录列表</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">sftp</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;/home&#39;</span><span class="p">))</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>应用示例</p>
+<p><code class="docutils literal notranslate"><span class="pre">实现自动密钥登录方式</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;192.168.1.21&#39;</span>
+<span class="n">username</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>
+<span class="n">paramiko</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="s1">&#39;syslogin.log&#39;</span><span class="p">)</span>
+
+<span class="n">ssh</span><span class="o">=</span><span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">load_system_host_keys</span><span class="p">()</span>
+<span class="n">privatekey</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;/home/key/id_rsa&#39;</span><span class="p">)</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">RSAKey</span><span class="o">.</span><span class="n">from_private_key_file</span><span class="p">(</span><span class="n">privatekey</span><span class="p">)</span>
+
+<span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span><span class="n">pkey</span> <span class="o">=</span> <span class="n">key</span><span class="p">)</span>
+<span class="n">stdin</span><span class="p">,</span><span class="n">stdout</span><span class="p">,</span><span class="n">stderr</span><span class="o">=</span><span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s1">&#39;free -m&#39;</span><span class="p">)</span>
+<span class="nb">print</span> <span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>堡垒机示例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span><span class="o">,</span><span class="nn">time</span>
+
+<span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;192.168.1.21&quot;</span>
+<span class="n">username</span><span class="o">=</span><span class="s2">&quot;root&quot;</span>
+<span class="n">password</span><span class="o">=</span><span class="s2">&quot;SKJh935yft#&quot;</span>
+
+<span class="n">blip</span><span class="o">=</span><span class="s2">&quot;192.168.1.23&quot;</span>
+<span class="n">bluser</span><span class="o">=</span><span class="s2">&quot;root&quot;</span>
+<span class="n">blpasswd</span><span class="o">=</span><span class="s2">&quot;SKJh935yft#&quot;</span>
+
+<span class="n">port</span><span class="o">=</span><span class="mi">22</span>
+<span class="n">passinfo</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">s password: &#39;</span>
+<span class="n">paramiko</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="s1">&#39;syslogin.log&#39;</span><span class="p">)</span>
+
+<span class="n">ssh</span><span class="o">=</span><span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">blip</span><span class="p">,</span><span class="n">username</span><span class="o">=</span><span class="n">bluser</span><span class="p">,</span><span class="n">password</span><span class="o">=</span><span class="n">blpasswd</span><span class="p">)</span>
+
+<span class="c1">#new session</span>
+<span class="n">channel</span><span class="o">=</span><span class="n">ssh</span><span class="o">.</span><span class="n">invoke_shell</span><span class="p">()</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">buff</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;ssh &#39;</span><span class="o">+</span><span class="n">username</span><span class="o">+</span><span class="s1">&#39;@&#39;</span><span class="o">+</span><span class="n">hostname</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="ow">not</span> <span class="n">buff</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">passinfo</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">9999</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span><span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="s1">&#39;Error info:</span><span class="si">%s</span><span class="s1"> connection time.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="n">buff</span> <span class="o">+=</span> <span class="n">resp</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">buff</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;yes/no&#39;</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;yes</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">buff</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">password</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">buff</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="n">buff</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;# &#39;</span><span class="p">):</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">9999</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">passinfo</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="s1">&#39;Error info: Authentication failed.&#39;</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="n">buff</span> <span class="o">+=</span> <span class="n">resp</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;ifconfig</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">buff</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">while</span> <span class="n">buff</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;# &#39;</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">9999</span><span class="p">)</span>
+        <span class="n">buff</span> <span class="o">+=</span> <span class="n">resp</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="s2">&quot;error info:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<span class="nb">print</span> <span class="n">buff</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">堡垒机模式下的远程文件上传</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span><span class="o">,</span><span class="nn">time</span>
+
+<span class="n">hostname</span><span class="o">=</span><span class="s2">&quot;192.168.1.21&quot;</span>
+<span class="n">username</span><span class="o">=</span><span class="s2">&quot;root&quot;</span>
+<span class="n">password</span><span class="o">=</span><span class="s2">&quot;SKJh935yft#&quot;</span>
+
+<span class="n">blip</span><span class="o">=</span><span class="s2">&quot;192.168.1.23&quot;</span>
+<span class="n">bluser</span><span class="o">=</span><span class="s2">&quot;root&quot;</span>
+<span class="n">blpasswd</span><span class="o">=</span><span class="s2">&quot;SKJh935yft#&quot;</span>
+
+<span class="n">tmpdir</span><span class="o">=</span><span class="s2">&quot;/tmp&quot;</span>
+<span class="n">remotedir</span><span class="o">=</span><span class="s2">&quot;/data&quot;</span>
+<span class="n">localpath</span><span class="o">=</span><span class="s2">&quot;/home/nginx_access.tar.gz&quot;</span>
+<span class="n">tmppath</span><span class="o">=</span><span class="n">tmpdir</span><span class="o">+</span><span class="s2">&quot;/nginx_access.tar.gz&quot;</span>
+<span class="n">remotepath</span><span class="o">=</span><span class="n">remotedir</span><span class="o">+</span><span class="s2">&quot;/nginx_access_hd.tar.gz&quot;</span>
+
+<span class="n">port</span><span class="o">=</span><span class="mi">22</span>
+<span class="n">passinfo</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">s password: &#39;</span>
+<span class="n">paramiko</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">log_to_file</span><span class="p">(</span><span class="s1">&#39;syslogin.log&#39;</span><span class="p">)</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">Transport</span><span class="p">((</span><span class="n">blip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+<span class="n">t</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">bluser</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">blpasswd</span><span class="p">)</span>
+<span class="n">sftp</span> <span class="o">=</span><span class="n">paramiko</span><span class="o">.</span><span class="n">SFTPClient</span><span class="o">.</span><span class="n">from_transport</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">localpath</span><span class="p">,</span> <span class="n">tmppath</span><span class="p">)</span>
+<span class="n">sftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="n">ssh</span><span class="o">=</span><span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">blip</span><span class="p">,</span><span class="n">username</span><span class="o">=</span><span class="n">bluser</span><span class="p">,</span><span class="n">password</span><span class="o">=</span><span class="n">blpasswd</span><span class="p">)</span>
+
+<span class="c1">#new session</span>
+<span class="n">channel</span><span class="o">=</span><span class="n">ssh</span><span class="o">.</span><span class="n">invoke_shell</span><span class="p">()</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">buff</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;scp &#39;</span><span class="o">+</span><span class="n">tmppath</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">username</span><span class="o">+</span><span class="s1">&#39;@&#39;</span><span class="o">+</span><span class="n">hostname</span><span class="o">+</span><span class="s1">&#39;:&#39;</span><span class="o">+</span><span class="n">remotepath</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="ow">not</span> <span class="n">buff</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">passinfo</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">9999</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span><span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="s1">&#39;Error info:</span><span class="si">%s</span><span class="s1"> connection time.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="n">buff</span> <span class="o">+=</span> <span class="n">resp</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">buff</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;yes/no&#39;</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;yes</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">buff</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">password</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">buff</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="n">buff</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;# &#39;</span><span class="p">):</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">9999</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">passinfo</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="s1">&#39;Error info: Authentication failed.&#39;</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="n">buff</span> <span class="o">+=</span> <span class="n">resp</span>
+
+<span class="nb">print</span> <span class="n">buff</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">ssh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>代码示例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="n">ip_address</span> <span class="o">=</span> <span class="s2">&quot;192.168.2.106&quot;</span>
+<span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;student&quot;</span>
+<span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;training&quot;</span>
+<span class="n">ssh_client</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+<span class="n">ssh_client</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+<span class="n">ssh_client</span><span class="o">.</span><span class="n">load_system_host_keys</span><span class="p">()</span>
+<span class="n">ssh_client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">ip_address</span><span class="p">,</span>\
+            <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Successful connection&quot;</span><span class="p">,</span> <span class="n">ip_address</span><span class="p">)</span>
+<span class="n">ssh_client</span><span class="o">.</span><span class="n">invoke_shell</span><span class="p">()</span>
+<span class="n">remote_connection</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s1">&#39;cd Desktop; mkdir work</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">remote_connection</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s1">&#39;mkdir test_folder</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="c1">#print( remote_connection.read() )</span>
+<span class="n">ssh_client</span><span class="o">.</span><span class="n">close</span>
+</pre></div>
+</div>
+<p>ssh的代码示例</p>
+<p><code class="docutils literal notranslate"><span class="pre">logger.py</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">logger.py: provides logging methods</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># from python lib</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="k">class</span> <span class="nc">Log</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Singleton class to create log object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;instance&#39;</span><span class="p">):</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instance</span>
+
+    <span class="k">def</span> <span class="nf">initialise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logfile</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;qcs&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">propagate</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+
+        <span class="c1"># create stream handler</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">logfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">))</span>
+        <span class="n">sh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+
+        <span class="c1"># create formatter</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># add formatter to sh</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+        <span class="n">sh</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+        <span class="c1"># add sh to logger</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">sh</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">()&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Module loaded successfully&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;USE_ROBOT_LOGGER&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">libs.log.logger</span> <span class="kn">import</span> <span class="n">Log</span>
+
+        <span class="n">log</span> <span class="o">=</span> <span class="n">Log</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">log</span> <span class="o">=</span> <span class="n">Log</span><span class="p">()</span>
+
+    <span class="c1"># some sample tests</span>
+    <span class="n">logfile</span> <span class="o">=</span> <span class="s2">&quot;test_log.log&quot;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">initialise</span><span class="p">(</span><span class="n">logfile</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m not using any logger&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;This is info line&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This is debug line&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is error line&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ssh_lib.py</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther: 18793</span>
+<span class="c1"># Date：2021/11/26 10:13</span>
+<span class="c1"># filename: ssh_lib.py</span>
+<span class="c1"># from python lib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">pexpect</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># from external lib</span>
+<span class="kn">from</span> <span class="nn">scp</span> <span class="kn">import</span> <span class="n">SCPClient</span>
+
+<span class="c1"># from qcs-automation libs</span>
+<span class="kn">from</span> <span class="nn">libs.log</span> <span class="kn">import</span> <span class="n">Log</span>
+
+<span class="c1"># create log object</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">Log</span><span class="p">()</span>
+
+
+<span class="c1"># username = sys.argv[1]</span>
+
+
+<span class="k">class</span> <span class="nc">SshConn</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 一个ssh的类 &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ip_address</span> <span class="o">=</span> <span class="n">ip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_init_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initiate ssh connection</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">set_missing_host_key_policy</span><span class="p">(</span><span class="n">paramiko</span><span class="o">.</span><span class="n">AutoAddPolicy</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_address</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+                              <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="s1">&#39;ssh </span><span class="si">{}</span><span class="s1">@</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+                                                     <span class="bp">self</span><span class="o">.</span><span class="n">ip_address</span><span class="p">))</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">([</span><span class="n">pexpect</span><span class="o">.</span><span class="n">TIMEOUT</span><span class="p">,</span> <span class="s1">&#39; (yes/no)?&#39;</span><span class="p">])</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;yes&#39;</span><span class="p">)</span>
+            <span class="c1"># This sleep will help for pexpect to work</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unable to connect remote server&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">execute_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute command</span>
+<span class="sd">        :param cmd: Command to be executed</span>
+<span class="sd">        :return: return tuple of (stdout, stderr)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">cmd</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_init_connection</span><span class="p">()</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Executing command: </span><span class="si">{}</span><span class="s2"> on </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span>
+                                                          <span class="bp">self</span><span class="o">.</span><span class="n">ip_address</span><span class="p">))</span>
+            <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">stdoutbuffer</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">stdout</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">stderrbuffer</span> <span class="o">=</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">stderr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">recv_exit_status</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">stdout</span> <span class="o">=</span> <span class="n">stdoutbuffer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">stderr</span> <span class="o">=</span> <span class="n">stderrbuffer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Command status: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">status</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">stdout</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(),</span> <span class="n">stderr</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unable to connect remote server </span><span class="si">{}</span><span class="s2">&quot;</span> \
+                      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_address</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;SSH session not active&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Restablising connection on </span><span class="si">{}</span><span class="s2">&quot;</span> \
+                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_address</span><span class="p">))</span>
+                <span class="c1"># re-establish connection and execute the command</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_init_connection</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">execute_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">scp_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scp files/dir from SSH server</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_connection</span><span class="p">()</span>
+        <span class="n">scp</span> <span class="o">=</span> <span class="n">SCPClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">get_transport</span><span class="p">(),</span> <span class="n">buff_size</span><span class="o">=</span><span class="mi">16384</span><span class="p">,</span> <span class="n">socket_timeout</span><span class="o">=</span><span class="mf">15.0</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">scp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">remotepath</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">preserve_times</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hit exception while scp_get from </span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2"> on </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">remotepath</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_address</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">scp_put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scp files/dir to SSH server</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_connection</span><span class="p">()</span>
+        <span class="n">scp</span> <span class="o">=</span> <span class="n">SCPClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">get_transport</span><span class="p">())</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">scp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">,</span> <span class="n">recursive</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hit exception while scp_put from </span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2"> on </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_address</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">copy_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        copy file to remote server</span>
+<span class="sd">        :param localpath: local path of the file</span>
+<span class="sd">        :param remotepath: path where file should get copied</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_init_connection</span><span class="p">()</span>
+            <span class="n">sftp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">open_sftp</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">sftp</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">remotepath</span><span class="p">))</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;File exists </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">remotepath</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Copying file </span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">localpath</span><span class="p">,</span> <span class="n">remotepath</span><span class="p">))</span>
+                <span class="n">sftp</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">localpath</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">remotepath</span><span class="p">))</span>
+            <span class="n">sftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Connection Error: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Module loaded successfully.&quot;</span><span class="p">)</span>
+    <span class="n">logfile</span> <span class="o">=</span> <span class="s2">&quot;test_log.log&quot;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">initialise</span><span class="p">(</span><span class="n">logfile</span><span class="p">)</span>
+    <span class="n">hu</span> <span class="o">=</span> <span class="n">SshConn</span><span class="p">(</span><span class="s2">&quot;172.16.60.236&quot;</span><span class="p">,</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="s2">&quot;admin#123&quot;</span><span class="p">)</span>
+    <span class="c1"># 复制文件到本地</span>
+    <span class="n">hu</span><span class="o">.</span><span class="n">copy_command</span><span class="p">(</span><span class="s2">&quot;./test_log.log&quot;</span><span class="p">,</span> <span class="s2">&quot;/home/tst_log.log&quot;</span><span class="p">)</span>
+    <span class="c1"># 在远程环境执行命令</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">hu</span><span class="o">.</span><span class="n">execute_command</span><span class="p">(</span><span class="s2">&quot;hostname&quot;</span><span class="p">))</span>
+    <span class="c1"># 从远程拷贝文件到本地</span>
+    <span class="n">hu</span><span class="o">.</span><span class="n">scp_get</span><span class="p">(</span><span class="s2">&quot;/home/go_muke&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># 从本地上传文件到远程</span>
+    <span class="n">hu</span><span class="o">.</span><span class="n">scp_put</span><span class="p">(</span><span class="s2">&quot;/home/aaa&quot;</span><span class="p">,</span> <span class="s2">&quot;/home/&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html" class="btn btn-neutral float-left" title="19.3. 业务服务监控详解" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03.%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8Fabric.html" class="btn btn-neutral float-right" title="19.5. 批量运维管理器Fabric" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

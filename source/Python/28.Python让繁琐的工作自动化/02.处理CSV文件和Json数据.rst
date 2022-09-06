@@ -1,0 +1,439 @@
+.. role:: raw-latex(raw)
+   :format: latex
+..
+
+.. contents::
+   :depth: 3
+..
+
+02.处理CSV文件和Json数据
+========================
+
+csv模块
+-------
+
+示例文件
+
+``example.csv``
+
+在文本编辑器中输入文本，并保存为example.csv
+
+::
+
+   4/5/2015 13:34,Apples,73
+   4/5/2015 3:41,Cherries,85
+   4/6/2015 12:46,Pears,14
+   4/8/2015 8:59,Oranges,52
+   4/10/2015 2:07,Apples,152
+   4/10/2015 18:10,Bananas,23
+   4/10/2015 2:40,Strawberries,98
+
+Reader对象
+----------
+
+::
+
+   import csv
+
+   exampleFile = open("example.csv")
+   exampleReader = csv.reader(exampleFile)
+   exampleData = list(exampleReader)
+   print(exampleData)
+   print(exampleData[0][0])
+   print(exampleData[0][1])
+   print(exampleData[0][2])
+   print(exampleData[1][1])
+   print(exampleData[6][1])
+
+在for循环中，从Reader对象读取数据
+---------------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/23 15:34
+   # filename: sample01.py
+   import csv
+
+   exampleFile = open("example.csv")
+   exampleReader = csv.reader(exampleFile)
+   for row in exampleReader:
+       print("Row #" + str(exampleReader.line_num) + " " + str(row))
+
+Writer对象
+----------
+
+如果你在 open()中忘记了 newline=’’关键字参数，CSV 文件将有两倍行距
+
+::
+
+   import csv
+
+   outputFile = open("output.csv", "w", newline="")
+   outputWriter = csv.writer(outputFile)
+   outputWriter.writerow(['spam', 'eggs', 'bacon', 'ham'])
+   outputWriter.writerow(['Hello, world!', 'eggs', 'bacon', 'ham'])
+   outputWriter.writerow([1, 2, 3.141592, 4])
+   outputFile.close()
+
+delimiter 和 lineterminator 关键字参数
+--------------------------------------
+
+::
+
+   import csv
+
+   csvFile = open("example2.tsv", "w", newline="")
+   csvWriter = csv.writer(csvFile, delimiter='\t', lineterminator="\n\n")
+   csvWriter.writerow(['apples', 'oranges', 'grapes'])
+   csvWriter.writerow(['eggs', 'bacon', 'ham'])
+   csvWriter.writerow(['spam', 'spam', 'spam', 'spam', 'spam', 'sapm'])
+   csvFile.close()
+
+输出example2.tsv信息如下：
+
+::
+
+   apples  oranges grapes
+
+   eggs    bacon   ham
+
+   spam    spam    spam    spam    spam    sapm
+
+传入 delimeter=‘:raw-latex:`\t'`和
+lineterminator=’:raw-latex:`\n`:raw-latex:`\n`’，这将单元格之间的字符改变为制表符，
+将行之间的字符改变为两个换行符。然后我们调用writerow()三次，得到3 行。
+
+项目：从 CSV 文件中删除表头
+---------------------------
+
+思路：
+
+::
+
+   • 找出当前工作目录中的所有 CSV 文件。
+   • 读取每个文件的全部内容。
+   • 跳过第一行，将内容写入一个新的 CSV 文件。
+   在代码层面上，这意味着该程序需要做到以下几点：
+   • 循环遍历从 os.listdir()得到的文件列表，跳过非 CSV 文件。
+   • 创建一个 CSV Reader 对象，读取该文件的内容，利用 line_num 属性确定要跳过哪一行。
+   • 创建一个 CSV Writer 对象，将读入的数据写入新文件。
+   针对这个项目，打开一个新的文件编辑器窗口，并保存为removeCsvHeader.py。
+
+第1步:循环遍历每个CSV文件
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/23 15:34
+   # filename: sample01.py
+   import csv
+   import os
+
+   os.makedirs("headerRemoved", exist_ok=True)
+
+   for csvFilename in os.listdir("."):
+       # 跳过不是.csv结尾的文件
+       if not csvFilename.endswith(".csv"):
+           continue
+       print("Removing header from " + csvFilename + "...")
+
+       # TODO: Read the CSV file in (skipping first row).
+
+       # TODO: Write out the CSV file.
+
+第2步:读入CSV文件
+~~~~~~~~~~~~~~~~~
+
+::
+
+       ---snip---
+       
+       # TODO: Read the CSV file in (skipping first row).
+       csvRows = []
+       csvFileObj = open(csvFilename)
+       readerObj = csv.reader(csvFileObj)
+       for row in readerObj:
+           if readerObj.line_num == 1:
+               continue        # 跳过第一行
+           csvRows.append(row)
+       csvFileObj.close()
+
+   # TODO: Write out the CSV file.
+
+第3步:写入CSV文件，没有第一行
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+       ---snip---
+       # TODO: Write out the CSV file.
+       csvFileObj = open(os.path.join("headerRemoved", csvFilename), "w", newline="")
+       csvWriter = csv.writer(csvFileObj)
+       for row in csvRows:
+           csvWriter.writerow(row)
+       csvFileObj.close()
+
+整合代码
+~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/23 15:34
+   # filename: sample01.py
+   import csv
+   import os
+
+   os.makedirs("headerRemoved", exist_ok=True)
+
+   for csvFilename in os.listdir("."):
+       # 跳过不是.csv结尾的文件
+       if not csvFilename.endswith(".csv"):
+           continue
+       print("Removing header from " + csvFilename + "...")
+
+       csvRows = []
+       csvFileObj = open(csvFilename)
+       readerObj = csv.reader(csvFileObj)
+       for row in readerObj:
+           if readerObj.line_num == 1:
+               continue  # 跳过第一行
+           csvRows.append(row)
+       csvFileObj.close()
+
+       csvFileObj = open(os.path.join("headerRemoved", csvFilename), "w", newline="")
+       csvWriter = csv.writer(csvFileObj)
+       for row in csvRows:
+           csvWriter.writerow(row)
+       csvFileObj.close()
+
+这个程序应该在每次从 CSV 文件中删除第一行时，打印一个文件名。
+
+类似程序的想法
+--------------
+
+针对 CSV 文件写的程序类似于针对 Excel 文件写的程序，因为它们都是电子表
+格文件。你可以编程完成以下任务：
+
+::
+
+   • 在一个 CSV 文件的不同行，或多个 CSV 文件之间比较数据。
+   • 从 CSV 文件拷贝特定的数据到 Excel 文件，或反过来。
+   • 检查 CSV 文件中无效的数据或格式错误，并向用户提醒这些错误。
+   • 从 CSV 文件读取数据，作为 Python 程序的输入。
+
+Json模块
+--------
+
+用loads()函数读取JSON
+---------------------
+
+``json ----> python 类型``
+
+要将包含JSON 数据的字符串转换为Python 的值，就将它传递给
+json.loads()函数（这个名字的意思是“load string”，而不 是“loads”）。
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/23 16:08
+   # filename: sample01.py
+
+   import json
+   stringOfJsonData = '{"name": "Zophie", "isCat": true, "miceCaught": 0,"felineIQ": null}'
+   jsonDataAsPythonValue = json.loads(stringOfJsonData)
+   print(type(stringOfJsonData))
+   print(type(jsonDataAsPythonValue))
+   print(jsonDataAsPythonValue)
+   print(jsonDataAsPythonValue['name'])
+
+   """
+   <class 'str'>
+   <class 'dict'>
+   {'name': 'Zophie', 'felineIQ': None, 'isCat': True, 'miceCaught': 0}
+   Zophie
+   """
+
+用dumps函数写出JSON
+-------------------
+
+``python ----> json 类型``
+
+``json.dumps()``\ 函数（它表示“dump string”,而不是
+“dumps”）将一个Python值转换成 JSON 格式的数据字符串
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/23 16:08
+   # filename: sample01.py
+
+   import json
+
+   pythonValue = {'isCat': True, 'miceCaught': 0, 'name': 'Zophie', 'felineIQ': None}
+   stringofJsonData = json.dumps(pythonValue)
+   print(type(pythonValue))
+   print(type(stringofJsonData))
+   print(stringofJsonData)
+
+   """
+   <class 'dict'>
+   <class 'str'>
+   {"felineIQ": null, "name": "Zophie", "miceCaught": 0, "isCat": true}
+   """
+
+项目：取得当前的天气数据
+------------------------
+
+要求：
+
+::
+
+   • 从命令行读取请求的位置。
+   • 从 OpenWeatherMap.org下载 JSON 天气数据。
+   • 将 JSON 数据字符串转换成 Python 的数据结构。
+   • 打印今天和未来两天的天气。
+
+思路：
+
+代码需要完成以下任务：
+
+::
+
+   • 连接 sys.argv 中的字符串，得到位置。
+   • 调用 requests.get()，下载天气数据。
+   • 调用 json.loads()，将 JSON 数据转换为 Python 数据结构。
+   • 打印天气预报。
+   针对这个项目，打开一个新的文件编辑器窗口，并保存为 quickWeather.py。• 从命令行读取请求的位置。
+   • 从 OpenWeatherMap.org 下载 JSON 天气数据。
+   • 将 JSON 数据字符串转换成 Python 的数据结构。
+   • 打印今天和未来两天的天气。
+   因此，代码需要完成以下任务：
+   • 连接 sys.argv 中的字符串，得到位置。
+   • 调用 requests.get()，下载天气数据。
+   • 调用 json.loads()，将 JSON 数据转换为 Python 数据结构。
+   • 打印天气预报。
+   针对这个项目，打开一个新的文件编辑器窗口，并保存为 quickWeather.py。
+
+第 1 步：从命令行参数获取位置
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+
+   import json
+   import requests
+   import sys
+
+   if len(sys.argv) < 2:
+       print("Usage: quickWeather.py location")
+       sys.exit()
+
+   location = ' '.join(sys.argv[1:])
+
+   # TODO: Download the JSON data from OpenWeatherMap.org's API.
+
+   # TODO: Load JSON data into a Python variable.
+
+第 2 步:下载 JSON 数据
+~~~~~~~~~~~~~~~~~~~~~~
+
+通过API平台查询到查询天气的API，注意申请自己的KEY。发送get请求时携带key信息。
+
+::
+
+   location = "北京"
+   key = "91536efa9a578f9b33318278dc711eb5"
+   url = 'http://v.juhe.cn/weather/index?format=2&cityname={}&key={}'.format(location, key)
+   response = requests.get(url)
+
+   #以通过调用raise_for_status()来检查错误。如果不发生异常，下载的文本将保存在response.text 中
+   response.raise_for_status()
+   print(response.text)
+
+第3步:加载JSON数据并打印天气
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+response.text 成员变量保存了一个 JSON
+格式数据的大字符串。要将它转换为Python值，就调用\ ``json.loads()``\ 函数。
+
+::
+
+   info = ["时间", "星期", "天气", "温度"]
+   for i in w:
+       week = i['week']
+       weather = i['weather']
+       temperature = i['temperature']
+       data = i['date']
+       info_result = "{0}:{1} {2}:{3} {4}:{5} {6}:{7}".format(info[0], data, info[1], week, info[2], weather, info[3], temperature)
+       print(info_result)
+       print()
+
+.. _整合代码-1:
+
+整合代码
+~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/23 16:18
+   # filename: quickWeather.py
+   import json
+   import requests
+   import sys
+
+   if len(sys.argv) < 2:
+       print("Usage: quickWeather.py location")
+       sys.exit()
+
+   location = ' '.join(sys.argv[1:])
+
+   key = "91536efa9a578f9b33318278dc711eb5"
+   url = 'http://v.juhe.cn/weather/index?format=2&cityname={}&key={}'.format(location, key)
+   response = requests.get(url)
+   response.raise_for_status()
+
+   weatherData = json.loads(response.text)
+   w = weatherData['result']['future']
+
+   info = ["时间", "星期", "天气", "温度"]
+   for i in w:
+       week = i['week']
+       weather = i['weather']
+       temperature = i['temperature']
+       data = i['date']
+       info_result = "{0}:{1} {2}:{3} {4}:{5} {6}:{7}".format(info[0], data, info[1], week, info[2], weather, info[3], temperature)
+       print(info_result)
+       print()
+
+测试:
+
+::
+
+   python quickWeather.py 武汉
+
+   时间:20200323 星期:星期一 天气:多云转晴 温度:13℃~23℃
+
+   时间:20200324 星期:星期二 天气:晴转小雨 温度:14℃~22℃
+
+   时间:20200325 星期:星期三 天气:中雨转小雨 温度:16℃~22℃
+
+   时间:20200326 星期:星期四 天气:小雨 温度:6℃~24℃

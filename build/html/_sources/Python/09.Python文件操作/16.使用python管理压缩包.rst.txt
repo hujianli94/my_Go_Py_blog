@@ -1,0 +1,260 @@
+.. contents::
+   :depth: 3
+..
+
+使用python管理压缩包
+====================
+
+使用tarfile库读取和创建tar包
+----------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/20 10:48
+   # filename: sample01.py
+
+   import tarfile
+
+   with tarfile.open('tarfile_add.tar', "w:gz") as t:
+       for member_info in t.getmembers():
+           print(member_info.name)
+
+创建tar包
+~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/20 10:48
+   # filename: sample01.py
+
+   import tarfile
+   import os
+
+   with tarfile.open('tarfile_add.tar', mode="w") as out:
+       out.add("README.txt")
+
+使用tarfile库读取与创建压缩包
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(1) 读取一个用gzip算法压缩的tar包
+
+::
+
+   with tarfile.open('tarfile_add.tar',mode='r:gz') as out:
+
+(2) 创建一个用bzip2算法压缩的tar包
+
+::
+
+   with tarfile.open('tarfile_add.tar',mode='w:bz2') as out:
+
+备份指定文件到压缩包中
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/20 10:59
+   # filename: sample01.py
+   import os
+   import fnmatch
+   import tarfile
+   import datetime
+
+
+   def is_file_match(filename, patterns):
+       """
+       :param filename:  文件名
+       :param patterns:   匹配跪着
+       :return: True or False
+       """
+       for pattern in patterns:
+           if fnmatch.fnmatch(filename, pattern):
+               return True
+       return False
+
+
+   def find_specific_files(root, patterns=['*'], exclude_dirs=[]):
+       """
+       :param root:  搜索目录
+       :param patterns:  匹配规则，可以多项
+       :param exclude_dirs:   排除目录
+       :return:
+       """
+       for root, dirnames, filenames in os.walk(root):
+           for filename in filenames:
+               if is_file_match(filename, patterns):
+                   yield os.path.join(root, filename)
+           for d in exclude_dirs:
+               if d in dirnames:
+                   dirnames.remove(d)
+
+
+   def main():
+       patterns = ["*.jpg", "*.jpeg", "*.png", "*.tif", "*.tiff"]
+       now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+       filename = "all_images_{0}.tar.gz".format(now)
+       with tarfile.open(filename, "w:gz") as f:
+           for item in find_specific_files(".", patterns):
+               f.add(item)
+
+
+   if __name__ == '__main__':
+       main()
+
+使用zipfile库创建和读取zip压缩包
+--------------------------------
+
+1.读取zip文件
+~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/20 11:10
+   # filename: sample01.py
+   import zipfile
+
+   example_zip = zipfile.ZipFile("sample01.zip")
+   print(example_zip.namelist())
+   # example_zip.extract("sample01.py")
+   # example_zip.extractall(".")
+
+   """
+   ZipFile的常用方法如下：
+       namelist：返回zip文件中包含的所以文件和文件夹的字符串列表
+       extract:从zip文件中提取单个文件
+       extractall:从zip文件中提取所以文件
+   """
+
+2.创建zip文件
+~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/20 11:35
+   # filename: sample01.py
+   import zipfile
+
+   # newZip = zipfile.ZipFile('new.zip', 'w')
+   # newZip.write('spam.txt', compress_type=zipfile.ZIP_DEFLATED)
+   # newZip.close()
+
+
+   with zipfile.ZipFile('new.zip', 'w') as newZip:
+       newZip.write('spam.txt', compress_type=zipfile.ZIP_DEFLATED)
+
+3.将一个文件夹备份到一个ZIP文件
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   import zipfile, os
+
+
+   def backupToZip(folder):
+       # 将目录转换为绝对路径
+       folder = os.path.abspath(folder)
+
+       # 遍历当前目录，看是否已经存在备份文件
+       number = 1
+       while True:
+           zipFilename = os.path.basename(folder) + '_' + str(number) + '.zip'
+           # 如果不存在备份文件，则break 从1 开始备份
+           if not os.path.exists(zipFilename):
+               break
+
+           print("已经存在备份包：%s" % zipFilename)
+           # 否则继续循环遍历
+           number = number + 1
+
+       # 创建新的压缩文件
+       print('Creating %s...' % (zipFilename))
+       backupZip = zipfile.ZipFile(zipFilename, 'w')
+
+       # 遍历目录，将目录中的所有文件添加到压缩包中
+       for foldername, subfolders, filenames in os.walk(folder):
+           print('Adding files in %s...' % (foldername))
+
+           # 添加当前目录的文件到压缩包中
+           backupZip.write(foldername)
+
+           # 将所有文件添加入压缩包中
+           for filename in filenames:
+               newBase = os.path.basename(folder) + '_'
+
+               # 备份文件时，略过备份文件
+               if filename.startswith(newBase) and filename.endswith('.zip'):
+                   continue
+
+               print("add file %s -----" % os.path.join(foldername, filename))
+               backupZip.write(os.path.join(foldername, filename))
+
+       backupZip.close()
+
+       print('Done.')
+
+
+   backupToZip('./')
+
+使用shutil创建和读取压缩包
+--------------------------
+
+shutil创建压缩包
+~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/20 11:41
+   # filename: sample01.py
+   import shutil
+
+   shutil.make_archive("backup", "gztar")
+
+   shutil.make_archive("backup01", "zip")
+
+使用shutil读取压缩包
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   def unpack_archive(filename, extract_dir=None, format=None):
+       """Unpack an archive.
+
+       `filename` is the name of the archive. #压缩包的名称
+
+       `extract_dir` is the name of the target directory, where the archive
+       is unpacked. If not provided, the current working directory is used.        # 压缩以后的保存目录
+
+       `format` is the archive format: one of "zip", "tar", or "gztar". Or any     # 指定压缩包的格式
+       other registered format. If not provided, unpack_archive will use the
+       filename extension and see if an unpacker was registered for that
+       extension.
+       
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/20 11:46
+   # filename: sample02.py
+   import shutil
+
+   shutil.unpack_archive("backup.tar.gz", extract_dir="../")

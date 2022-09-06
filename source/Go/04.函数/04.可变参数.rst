@@ -1,0 +1,192 @@
+.. contents::
+   :depth: 3
+..
+
+可变参数
+========
+
+Go语句的可变参数格式如下：
+
+::
+
+   func 函数名（固定参数列表，v.....T）（返回参数列表）{
+   函数体
+   }
+
+特性如下： ·
+可变参数一般被放置在函数列表的末尾，前面是固定参数列表，当没有固定参数时，所有变量就将是可变参数。
+
+·
+v为可变参数变量，类型为[]T,也就是拥有多个T元素的T类型切片，v和T之间由“…”即3个点组成。
+
+· T 为可变参数的类型，当T为interface{}时。传入的可以是任意类型。
+
+1.所有参数都是可变参数 fmt.Println
+----------------------------------
+
+.. code:: go
+
+   func Println(a ...interface{}) (n int, err error) {
+       return Fprintln(os.Stdout, a...)
+   }
+
+2.部分参数是可变参数 fmt.Printf
+-------------------------------
+
+.. code:: go
+
+   func Printf(format string, a ...interface{}) (n int, err error) {
+       return Fprintf(os.Stdout, format, a...)
+   }
+
+fmt.Printf()函数在调用时，第一个函数始终必须传入字符串，对应的参数是format，后面的参数数量可以变化。
+
+.. code:: go
+
+   fmt.Printf("value %v %f\n", true, math.Pi)
+
+代码示例
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func add_info(s string, n ...int) string {
+       var x int
+       for _, i2 := range n {
+           x += i2
+       }
+       return fmt.Sprintf(s, x)
+   }
+
+   func main() {
+       //println(add_info("sum: %d", 1, 2, 3)) //sum: 6
+       s := []int{1, 2, 3, 4, 5}
+       println(add_info("sum: %d", s...))      //sum: 15           //s...展开s
+   }
+
+3.遍历可变参数，获得每个参数的值
+--------------------------------
+
+.. code:: go
+
+   package main
+
+   import (
+       "bytes"
+       "fmt"
+   )
+
+   // 定义一个函数，参数数量是0~n，类型约束是string
+   func joinStrings(slist ...string) string {
+       //定义一个字节缓冲，快速连接字符串
+       var b bytes.Buffer
+
+       //遍历可变参数列表slist，类型为[]string
+       for _, i2 := range slist {
+           // 将遍历出的字符串连续写入字节数组
+           b.WriteString(i2)
+       }
+
+       // 连接字节数组，组成字符串输出
+       return b.String()
+   }
+
+   func main() {
+       // 输入3个字符，将它们连接成一个字符串
+       fmt.Println(joinStrings("hu ", "jianli ", "ai ", "go and python "))
+       fmt.Println(joinStrings("one ", "two ", "three ", "four ", "five "))
+   }
+
+   /*
+   hu jianli ai go and python
+   one two three four five
+   */
+
+4.获得可变参数的类型–获得每一个参数的类型
+-----------------------------------------
+
+.. code:: go
+
+   package main
+
+   import (
+       "bytes"
+       "fmt"
+   )
+
+   func printTypeValue(slist ...interface{}) string {
+       var b bytes.Buffer
+       // 遍历参数
+       for _, i2 := range slist {
+           // 将interface{}类型格式化为字符串
+           str := fmt.Sprintf("%v", i2)
+           // 先定义一个类型的字符串描述
+           var typeString string
+           // 对s进行类型断言
+           switch i2.(type) {
+           case bool:
+               typeString = "bool"
+           case string:
+               typeString = "string"
+           case int:
+               typeString = "int"
+           }
+           // 写值字符串前缀
+           b.WriteString("value: ")
+           // 写入值
+           b.WriteString(str)
+           // 写入类型前缀
+           b.WriteString(" type: ")
+           //写入类型字符串
+           b.WriteString(typeString)
+           // 写入换行符
+           b.WriteString("\n")
+       }
+       return b.String()
+   }
+
+   func main() {
+       // 将不同类型的变量通过该printTypeValue()打印出来
+       fmt.Println(printTypeValue(100, "str", true))
+   }
+
+
+   /*value: 100 type: int
+   value: str type: string
+   value: true type: bool*/
+
+5.在多个可变参数函数中传递参数
+------------------------------
+
+可变参数变量是一个包含所有参数的切片，如果要在多个可变参数中传递参数，可以在传递时在可变参数变量中默认添加“…”,
+将切片中的元素进行传递，而不是传递可变参数变量本身。
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func raw_print(rawlist ...interface{}) {
+       // 遍历可变参数切片
+       for _, i2 := range rawlist {
+           fmt.Println(i2)
+       }
+   }
+
+   func print(slist ...interface{}) {
+       //将slist可变参数切片完整传递给下一个函数
+       //raw_print(slist...)           // 可变参数使用“...”进行传递与切片间使用append连接是同一个特性。
+       raw_print("fmt",slist)      // fmt [1 2 3]
+   }
+
+   func main() {
+       print(1, 2, 3)
+   }
+
+   //1
+   //2
+   //3

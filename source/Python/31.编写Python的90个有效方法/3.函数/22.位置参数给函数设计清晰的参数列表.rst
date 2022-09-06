@@ -1,0 +1,119 @@
+.. contents::
+   :depth: 3
+..
+
+位置参数给函数设计清晰的参数列表
+================================
+
+让函数接受数量可变的位置参数（positional
+argument），可以把函数设计得更加清晰（这些位置参数通常简称varargs，或者叫作star
+args，因为我们习惯用*args指代）
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther: 18793
+   # Date：2021/10/27 19:09
+   # filename: sample04.py
+
+
+   def log(message, values):
+       if not values:
+           print(message)
+       else:
+           value_str = ", ".join(str(value) for value in values)
+           print(f"{message} {value_str}")
+
+
+   log("My number are", [1, 2])
+   log("Hi there", [])
+
+
+   """
+   My number are 1, 2
+   Hi there
+   """
+
+即便没有值需要填充到信息里面，也必须专门传一个空白的列表进去，这样显得多余，而且让代码看起来比较乱。
+
+最好是能允许调用者把第二个参数留空。在Python里，可以给最后一个位置参数加前缀*，这样调用者就只需要提供不带星号的那些参数，然后可以不再指其他参数，也可以继续指定任意数量的位置参数。函数的主体代码不用改，只修改调用代码即可。
+
+.. code:: python
+
+   def log_2(message, *values):
+       if not values:
+           print(message)
+       else:
+           value_str = ", ".join(str(value) for value in values)
+           print(f"{message} {value_str}")
+
+
+   log_2("My number are", 1, 2)
+   log_2("Hi there")
+
+如果想把已有序列（例如某列表）里面的元素当成参数传给像log这样的参数个数可变的函数（variadic
+function），那么可以在传递序列的时采用*操作符。
+
+这会让Python把序列中的元素都当成位置参数传给这个函数。
+
+.. code:: python
+
+   favorites = [7, 33, 99]
+   log_2("Favorite colors", *favorites)
+
+第一个问题是，程序总是必须先把这些参数转化成一个元组，然后才能把它们当成可选的位置参数传给函数。这意味着，如果调用函数时，把带*操作符的生成器传了过去，那么程序必须先把这个生成器里的所有元素迭代完（以便形成元组），然后才能继续往下执行。
+
+.. code:: python
+
+   def my_generator():
+       for i in range(10):
+           yield i
+
+
+   def my_func(*args):
+       print(args)
+
+
+   it = my_generator()
+   my_func(*it)
+
+接受\ *args参数的函数，适合处理输入值不太多，而且数量可以提前预估的情况。在调用这种函数时，传给*\ args这一部分的应该是许多个字面值或变量名才对。这种机制，主要是为了让代码写起来更方便、读起来更清晰。
+
+.. code:: python
+
+   def log(seq, message, *values):
+       if not values:
+           print(f"{seq}-{message}")
+       else:
+           values_str = ", ".join(str(x) for x in values)
+           print(f"{seq}-{message}:{values_str}")
+
+
+   log(1, "Favorites", 7, 33)
+   log(1, "Hi there")
+   log("Favorutes numbers", 7, 33)
+
+   """
+   1-Favorites:7, 33
+   1-Hi there
+   Favorutes numbers-7:33
+   """
+
+问题在于：第三次调用log函数的那个地方并没有根据新的参数列表传入sequence参数，所以’Favorite
+numbers’就成了sequence参数，7就成了message参数。
+
+这样的bug很难排查，因为程序不会抛出异常，只会采用错误的数据继续运行下去。
+
+为了彻底避免这种漏洞，在给这种*arg函数添加参数时，应该使用只能通过关键字来指定的参数（keyword-only
+argument)。
+
+   要点：
+
+   用def定义函数时，可以通过\ *args的写法让函数接受数量可变的位置参数。*
+
+   *调用函数时，可以在序列左边加上*\ 操作符，把其中的元素当成位置参数传给\ *args所表示的这一部分。*
+
+   *如果*\ 操作符加在生成器前，那么传递参数时，程序有可能因为耗尽内存而崩溃。
+
+   给接受*args的函数添加新位置参数，可能导致难以排查的bug。

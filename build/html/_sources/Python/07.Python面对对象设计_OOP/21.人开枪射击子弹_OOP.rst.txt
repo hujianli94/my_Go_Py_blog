@@ -1,0 +1,141 @@
+.. contents::
+   :depth: 3
+..
+
+人开枪射击子弹_OOP
+==================
+
+分析
+----
+
+::
+
+   '''
+   人
+   类名：Person
+   属性：枪
+   行为：fire
+
+
+   枪
+   类名：Gun
+   属性：bulletBox
+   行为：shoot
+
+
+   弹夹
+   类名：BulletBox
+   属性：bulletCount
+   行为：
+   '''
+
+BulletBox.py
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   class BulletBox(object):
+       def __init__(self,count):
+           self.bulletCount = count
+           
+
+gun.py
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   class Gun(object):
+       def __init__(self, bulletBox):
+           self.bulletBox = bulletBox
+
+       def shoot(self):
+           if self.bulletBox.bulletCount ==0:
+               print("么有子弹了")
+           else:
+               self.bulletBox.bulletCount -=1
+               print("剩余子弹: %d发!" %(self.bulletBox.bulletCount))
+               
+
+person.py
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   class Person(object):
+       def __init__(self, gun):
+           self.gun = gun
+
+       def fire(self):
+           self.gun.shoot()
+
+       def fillBullet(self,count):
+           self.gun.bulletBox.bulletCount = count
+           
+
+main.py
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   from time import sleep
+   import sys
+   from person import Person
+   from gun import Gun
+   from bulletbox import BulletBox
+
+   #弹夹
+   bulletBox = BulletBox(5)
+
+   #枪
+   gun = Gun(bulletBox)
+
+   #人
+   per = Person(gun)
+
+   def viewBar(i):
+       """
+       进度条效果
+       :param i:
+       :return:    """
+       output = sys.stdout
+       for count in range(0, i + 1):
+           second = 0.1
+           sleep(second)
+           output.write('\r开始射击...biu、biu、biu ----->:%.0f%%' % count)
+       output.flush()
+
+
+
+
+
+
+   #人开火
+   per.fire()
+   viewBar(10)
+
+
+   per.fire()
+   viewBar(10)
+
+   per.fire()
+   viewBar(10)
+
+   per.fire()
+   viewBar(10)
+
+   per.fire()
+   viewBar(10)
+
+   per.fire()
+   viewBar(10)
+
+   per.fire()
+   print()
+
+   print("开始上子弹到枪中........")
+   per.fillBullet(10)
+   per.fire()

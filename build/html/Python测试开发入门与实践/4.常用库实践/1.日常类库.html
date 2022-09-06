@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.1. 日常类库 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4.2. 数据存储库" href="2.%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E5%BA%93.html" />
+    <link rel="prev" title="4. 常用库实践" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python测试开发入门与实践</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../1.Python%E5%9F%BA%E7%A1%80/index.html">1. Python基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2.Python%E8%AF%AD%E6%B3%95/index.html">2. Python语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3.Python%E8%BF%9B%E9%98%B6/index.html">3. Python进阶</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">4. 常用库实践</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1. 日常类库</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sys">4.1.1. 1.sys-解释器模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#os">4.1.2. 2.os-操作系统模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getopt">4.1.3. 3.getopt-命令行参数模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#minidom-xml">4.1.4. 4.minidom-XML读写模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#json-json">4.1.5. 5.json-读写JSON模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#openpyxlexcel">4.1.6. 6.openpyxl读写Excel模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#logging">4.1.7. 7.logging-日志模块</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="2.%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E5%BA%93.html">4.2. 数据存储库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3.Web%E7%9B%B8%E5%85%B3%E5%BA%93.html">4.3. Web相关库</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../5.Web%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/index.html">5. Web前端开发基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6.%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5/index.html">6. 测试开发实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7.%E9%99%84%E5%BD%95/index.html">7. 附录</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python测试开发入门与实践</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">4. </span>常用库实践</a> &raquo;</li>
+      <li><span class="section-number">4.1. </span>日常类库</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python测试开发入门与实践/4.常用库实践/1.日常类库.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id6">日常类库</a></p>
+<ul>
+<li><p><a class="reference internal" href="#sys" id="id7">1.sys-解释器模块</a></p></li>
+<li><p><a class="reference internal" href="#os" id="id8">2.os-操作系统模块</a></p></li>
+<li><p><a class="reference internal" href="#getopt" id="id9">3.getopt-命令行参数模块</a></p></li>
+<li><p><a class="reference internal" href="#minidom-xml" id="id10">4.minidom-XML读写模块</a></p></li>
+<li><p><a class="reference internal" href="#json-json" id="id11">5.json-读写JSON模块</a></p></li>
+<li><p><a class="reference internal" href="#openpyxlexcel" id="id12">6.openpyxl读写Excel模块</a></p>
+<ul>
+<li><p><a class="reference internal" href="#excel" id="id13">6.1 读取Excel文件</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id14">6.2 写入 Excel 文件</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id15">6.3 样式设置</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#logging" id="id16">7.logging-日志模块</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id17">7.1 简单使用</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id18">7.2 logging配置</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id6"><span class="section-number">4.1. </span>日常类库</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<section id="sys">
+<h2><a class="toc-backref" href="#id7"><span class="section-number">4.1.1. </span>1.sys-解释器模块</a><a class="headerlink" href="#sys" title="Permalink to this headline">¶</a></h2>
+<p>用于提供对解释器相关的操作</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sys.argv           命令行参数List，第一个元素是程序本身路径
+sys.exit(n)        退出程序，正常退出时exit(0)
+sys.version        获取Python解释程序的版本信息
+sys.maxint         最大的Int值
+sys.path           返回模块的搜索路径，初始化时使用PYTHONPATH环境变量的值
+sys.platform       返回操作系统平台名称
+sys.stdin          输入相关
+sys.stdout         输出相关
+sys.stderror       错误相关
+sys.getdefaultencoding          获取解释器默认字符编码。
+sys.getfilesystemencoding       获取解释器文件系统编码。
+</pre></div>
+</div>
+<p>手写进度条</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">time</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">101</span><span class="p">):</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1">#每一次清空原行。</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s%%</span><span class="s2">  |</span><span class="si">%s</span><span class="s2">|&quot;</span><span class="o">%</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="s1">&#39;#&#39;</span><span class="p">))</span>     <span class="c1">#一共次数除当前次数算进度</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>      <span class="c1">#强制刷新到屏幕</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="os">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">4.1.2. </span>2.os-操作系统模块</a><a class="headerlink" href="#os" title="Permalink to this headline">¶</a></h2>
+<p>os模块用于提供系统级别的操作</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>os.getcwd()                 获取当前工作目录，即当前python脚本工作的目录路径
+os.chdir(&quot;dirname&quot;)         改变当前脚本工作目录；相当于shell下cd
+os.curdir                   返回当前目录: (&#39;.&#39;)
+os.pardir                   获取当前目录的父目录字符串名：(&#39;..&#39;)
+os.makedirs(&#39;dir1/dir2&#39;)    可生成多层递归目录
+os.removedirs(&#39;dirname1&#39;)   若目录为空，则删除，并递归到上一级目录，如若也为空，则删除，依此类推
+os.mkdir(&#39;dirname&#39;)         生成单级目录；相当于shell中mkdir dirname
+os.rmdir(&#39;dirname&#39;)         删除单级空目录，若目录不为空则无法删除，报错；相当于shell中rmdir dirname
+os.listdir(&#39;dirname&#39;)       列出指定目录下的所有文件和子目录，包括隐藏文件，并以列表方式打印
+os.remove()                 删除一个文件
+os.rename(&quot;oldname&quot;,&quot;new&quot;)  重命名文件/目录
+os.stat(&#39;path/filename&#39;)    获取文件/目录信息
+os.sep                      操作系统特定的路径分隔符，win下为&quot;\\&quot;,Linux下为&quot;/&quot;
+os.linesep                  当前平台使用的行终止符，win下为&quot;\t\n&quot;,Linux下为&quot;\n&quot;
+os.pathsep                  用于分割文件路径的字符串
+os.name                     字符串指示当前使用平台。win-&gt;&#39;nt&#39;; Linux-&gt;&#39;posix&#39;
+os.system(&quot;bash command&quot;)   运行shell命令，直接显示
+os.environ                  获取系统环境变量
+os.path.abspath(path)       返回path规范化的绝对路径
+os.path.split(path)         将path分割成目录和文件名二元组返回
+os.path.dirname(path)       返回path的目录。其实就是os.path.split(path)的第一个元素
+os.path.basename(path)      返回path最后的文件名。如何path以／或\结尾，那么就会返回空值。即os.path.split(path)的第二个元素
+os.path.exists(path)        如果path存在，返回True；如果path不存在，返回False
+os.path.isabs(path)         如果path是绝对路径，返回True
+os.path.isfile(path)        如果path是一个存在的文件，返回True。否则返回False
+os.path.isdir(path)         如果path是一个存在的目录，则返回True。否则返回False
+os.path.join(path1[, path2[, ...]])  将多个路径组合后返回，第一个绝对路径之前的参数将被忽略
+os.path.getatime(path)      返回path所指向的文件或者目录的最后存取时间
+os.path.getmtime(path)      返回path所指向的文件或者目录的最后修改时间
+</pre></div>
+</div>
+</section>
+<section id="getopt">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">4.1.3. </span>3.getopt-命令行参数模块</a><a class="headerlink" href="#getopt" title="Permalink to this headline">¶</a></h2>
+<p>此模块帮助脚本解析<code class="docutils literal notranslate"><span class="pre">sys.argv</span></code>中的命令行参数。它支持与Unix
+<code class="docutils literal notranslate"><span class="pre">getopt()</span></code>函数相同的约定（包括“<code class="docutils literal notranslate"><span class="pre">-</span></code>”和“<code class="docutils literal notranslate"><span class="pre">--</span></code>
+’）。类似于GNU软件支持的长选项也可以通过可选的第三个参数使用。</p>
+<p>在脚本中，典型的用法是这样的：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">getopt</span><span class="o">,</span> <span class="nn">sys</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">getopt</span><span class="o">.</span><span class="n">getopt</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="s2">&quot;ho:v&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;help&quot;</span><span class="p">,</span> <span class="s2">&quot;output=&quot;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="n">getopt</span><span class="o">.</span><span class="n">GetoptError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="c1"># print help information and exit:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>  <span class="c1"># will print something like &quot;option -a not recognized&quot;</span>
+        <span class="n">usage</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">o</span> <span class="o">==</span> <span class="s2">&quot;-v&quot;</span><span class="p">:</span>
+            <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">o</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;-h&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">):</span>
+            <span class="n">usage</span><span class="p">()</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">o</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;--output&quot;</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;unhandled option&quot;</span>
+    <span class="c1"># ...</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>注意，通过使用<code class="docutils literal notranslate"><span class="pre">`argparse</span></code> &lt;python/argparse.html#module-argparse&gt;`__模块，可以生成更少代码和更多信息帮助和错误消息的等效命令行界面：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--output&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="c1"># ... do something with args.output ...</span>
+    <span class="c1"># ... do something with args.verbose ..</span>
+</pre></div>
+</div>
+<p>也可以看看</p>
+<ul>
+<li><p>模块<code class="docutils literal notranslate"><span class="pre">`argparse</span></code> &lt;python/argparse.html#module-argparse&gt;`__</p>
+<p>备用命令行选项和参数解析库。</p>
+</li>
+</ul>
+</section>
+<section id="minidom-xml">
+<h2><a class="toc-backref" href="#id10"><span class="section-number">4.1.4. </span>4.minidom-XML读写模块</a><a class="headerlink" href="#minidom-xml" title="Permalink to this headline">¶</a></h2>
+<p>内容更新</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="kn">import</span> <span class="n">parse</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="s1">&#39;test.xml&#39;</span><span class="p">)</span>
+<span class="n">students</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;students&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># 创建一个新的 student 元素节点，并追加到 students 父节点</span>
+<span class="n">student</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">createElement</span><span class="p">(</span><span class="s1">&#39;student&#39;</span><span class="p">)</span>
+<span class="n">students</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">student</span><span class="p">)</span>
+<span class="c1"># 给 student 元素节点设置属性</span>
+<span class="n">student</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;104&#39;</span><span class="p">)</span>
+<span class="n">student</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;许六&#39;</span><span class="p">)</span>
+<span class="n">student</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;21&#39;</span><span class="p">)</span>
+<span class="n">sex</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">createAttribute</span><span class="p">(</span><span class="s1">&#39;sex&#39;</span><span class="p">)</span> <span class="c1"># 创建属性节点</span>
+<span class="n">sex</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;女&#39;</span>
+<span class="n">student</span><span class="o">.</span><span class="n">setAttributeNode</span><span class="p">(</span><span class="n">sex</span><span class="p">)</span>
+<span class="c1"># 创建 subject1 元素节点并追加到 student 父节点</span>
+<span class="n">subject1</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">createElement</span><span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">)</span>
+<span class="n">txt</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">createTextNode</span><span class="p">(</span><span class="s1">&#39;化学&#39;</span><span class="p">)</span> <span class="c1"># 创建文本节点</span>
+<span class="n">subject1</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+<span class="n">student</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">subject1</span><span class="p">)</span>
+<span class="c1"># 创建 subject2 元素节点并插入 subject1 节点前</span>
+<span class="n">subject2</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">createElement</span><span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">)</span>
+<span class="n">txt</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">createCDATASection</span> <span class="p">(</span><span class="s1">&#39;物理&#39;</span><span class="p">)</span> <span class="c1"># 支持转义的文本节点</span>
+<span class="n">subject2</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+<span class="n">student</span><span class="o">.</span><span class="n">insertBefore</span><span class="p">(</span><span class="n">subject2</span><span class="p">,</span> <span class="n">subject1</span><span class="p">)</span>
+<span class="c1"># 保存 XML 内容</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">doc</span><span class="o">.</span><span class="n">writexml</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">addindent</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>修改和删除 XML 节点</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xml.dom.minidom</span> <span class="kn">import</span> <span class="n">parse</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="s1">&#39;test.xml&#39;</span><span class="p">)</span>
+<span class="n">students</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;students&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">last_student</span> <span class="o">=</span> <span class="n">students</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;student&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">students</span><span class="o">.</span><span class="n">removeChild</span><span class="p">(</span><span class="n">last_student</span><span class="p">)</span> <span class="c1"># 删除最后一个 student 节点</span>
+<span class="n">first_student</span> <span class="o">=</span> <span class="n">students</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;student&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">first_student</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;20&#39;</span><span class="p">)</span> <span class="c1"># 修改元素属性值</span>
+<span class="n">first_subject</span> <span class="o">=</span> <span class="n">first_student</span><span class="o">.</span><span class="n">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;subject&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">first_subject</span><span class="o">.</span><span class="n">firstChild</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;体育&#39;</span> <span class="c1"># 修改文本节点内容</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test.xml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">doc</span><span class="o">.</span><span class="n">writexml</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">addindent</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="json-json">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">4.1.5. </span>5.json-读写JSON模块</a><a class="headerlink" href="#json-json" title="Permalink to this headline">¶</a></h2>
+<p>JSON（JavaScript Object
+Notation）是一种轻量级的数据交换格式，它和XML一样，可用于不同系统和程序间的数据传输。与XML相比，JSON更加简单、易学、可读、高效。日常的编程中也会更多地采用JSON格式作为数据传输的首选。</p>
+<p>在Python中可以通过标准库json来进行相关操作，其主要提供的方法如下。</p>
+<ul class="simple">
+<li><p>load——加载指定文件句柄的内容进行反序列化。</p></li>
+<li><p>dump——将指定的Python对象序列化后写入指定的文件句柄中。</p></li>
+<li><p>loads——对指定的字符串进行反序列化。</p></li>
+<li><p>dumps——将指定的Python对象序列化成JSON字符串。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">##### json.loads 将字符串转换为python基本数据类型 列表字典 #####</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="n">l</span> <span class="o">=</span> <span class="s1">&#39;[&quot;nick&quot;,&quot;jenny&quot;,&quot;car&quot;]&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+
+<span class="n">l</span> <span class="o">=</span> <span class="s1">&#39;{&quot;k1&quot;:&quot;nick&quot;,&quot;k2:&quot;:&quot;jenny&quot;}&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+
+<span class="c1">##### json.dumps 将python的数据类型列表字典转换为字符串 ######</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;nick&quot;</span><span class="p">,</span><span class="s2">&quot;jenny&quot;</span><span class="p">,</span><span class="s2">&quot;car&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+
+<span class="n">l</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;k1&quot;</span><span class="p">:</span><span class="s2">&quot;nick&quot;</span><span class="p">,</span><span class="s2">&quot;k2:&quot;</span><span class="p">:</span><span class="s2">&quot;jenny&quot;</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+
+<span class="c1">##### json dump、load 文件相关 #####</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="n">l</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;k1&quot;</span><span class="p">:</span><span class="s2">&quot;nick&quot;</span><span class="p">,</span><span class="s2">&quot;k2:&quot;</span><span class="p">:</span><span class="s2">&quot;jenny&quot;</span><span class="p">}</span>
+<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">))</span>
+
+<span class="n">ret</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="openpyxlexcel">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">4.1.6. </span>6.openpyxl读写Excel模块</a><a class="headerlink" href="#openpyxlexcel" title="Permalink to this headline">¶</a></h2>
+<p>Python中可以操作Excel的模块有很多，如xlrd、xlwt、xlsxwriter、xlutils、openpyxl等。</p>
+<p>并且这些模块都属于第三方库，也就是说在使用之前要进行安装。</p>
+<p>其中，</p>
+<ul class="simple">
+<li><p>xlrd可以读取.xls、.xlsx格式的Excel文件</p></li>
+<li><p>xlwt则只能修改.xls格式的Excel文件</p></li>
+<li><p>xlsxwriter则可以用于修改.xlsx格式的文件</p></li>
+<li><p>xlutils是基于xlrd和xlwt之上的一个封装模块</p></li>
+<li><p>openpyxl同时支持读写.xlsx、.xlsm、.xltm、.xltx文件。</p></li>
+</ul>
+<p>通过上面的介绍可以知道，如果希望同时对.xls和、.xlsx格式的文件进行读写操作，那么至少需要安装3个库。由于各库间的API相似，因此这里仅以openpyxl模块为例进行介绍。</p>
+<p>如果需要读写旧版本Excel文件，可以先把文件转换成新版本的.xlsx格式。</p>
+<p>由于openpyxl不是Python的标准库，所以在使用之前需要进行安装：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install openpyxl
+</pre></div>
+</div>
+<section id="excel">
+<h3><a class="toc-backref" href="#id13">6.1 读取Excel文件</a><a class="headerlink" href="#excel" title="Permalink to this headline">¶</a></h3>
+<p>通过openpyxl模块操作Excel文件的大致流程如下。</p>
+<p>（1）实例化一个Workbook对象（新建、加载已有文件）。</p>
+<p>（2）获取指定的Worksheet对象（新建、指定已有的Worksheet对象）。</p>
+<p>（3）基于Worksheet对象进行操作（读写）。</p>
+<p>（4）保存或退出。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openpyxl</span> <span class="kn">import</span> <span class="n">load_workbook</span>
+
+<span class="n">wb</span> <span class="o">=</span> <span class="n">load_workbook</span><span class="p">(</span><span class="s1">&#39;d:</span><span class="se">\\</span><span class="s1">test.xlsx&#39;</span><span class="p">)</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">active</span>
+<span class="c1"># 遍历全部内容</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ws</span><span class="o">.</span><span class="n">rows</span><span class="p">:</span> <span class="c1"># 遍历全部行</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span> <span class="c1"># 遍历行内全部列</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+<span class="c1"># 遍历 A1 至 C4 区域的内容</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;A1:C4&quot;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3><a class="toc-backref" href="#id14">6.2 写入 Excel 文件</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">openpyxl</span> <span class="kn">import</span> <span class="n">Workbook</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span> <span class="o">=</span> <span class="n">Workbook</span><span class="p">()</span> <span class="c1"># 创建一个新的 Workbook 对象</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span>
+<span class="go">[&#39;Sheet&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span><span class="o">.</span><span class="n">active</span>
+<span class="go">&lt;Worksheet &quot;Sheet&quot;&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span><span class="o">.</span><span class="n">create_sheet</span><span class="p">(</span><span class="s2">&quot;New_Sheet&quot;</span><span class="p">)</span> <span class="c1"># 新建一个 Worksheet 对象</span>
+<span class="go">&lt;Worksheet &quot;New_Sheet&quot;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span><span class="o">.</span><span class="n">copy_worksheet</span><span class="p">(</span><span class="n">wb</span><span class="o">.</span><span class="n">active</span><span class="p">)</span> <span class="c1"># 复制一个 Worksheet 对象</span>
+<span class="go">&lt;Worksheet &quot;Sheet Copy&quot;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span>
+<span class="go">[&#39;Sheet&#39;, &#39;New_Sheet&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span> <span class="o">=</span> <span class="n">wb</span><span class="p">[</span><span class="s1">&#39;Sheet&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span> <span class="c1"># 删除指定的 Worksheet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span>
+<span class="go">[&#39;New_Sheet&#39;]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># 单元格 A1 设值</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span> <span class="s2">&quot;Hello Python&quot;</span><span class="p">)</span> <span class="c1"># 单元格 C6 设值</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="c1"># 在最后一行下追加一行内容</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">):</span> <span class="c1"># 对指定区域进行设值</span>
+<span class="gp">... </span><span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">):</span>
+<span class="gp">... </span><span class="n">ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">j</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;test.xlsx&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id15">6.3 样式设置</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">openpyxl.styles</span> <span class="kn">import</span> <span class="n">Font</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">Alignment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">ws</span><span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="n">Font</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;微软雅黑&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="o">.</span><span class="n">RED</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span>
+<span class="go">italic=True, bold=True)) # 设置字体样式</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="p">[</span><span class="s1">&#39;B1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">alignment</span> <span class="o">=</span> <span class="n">Alignment</span><span class="p">(</span><span class="n">horizontal</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+<span class="go"> # 设置对齐方式</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">row_dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">30</span> <span class="c1"># 设置第 1 行的高度</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">column_dimensions</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">30</span> <span class="c1"># 设置 A 列的宽度</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># 第一种方式</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">merge_cells</span><span class="p">(</span><span class="s1">&#39;A1:A3&#39;</span><span class="p">)</span> <span class="c1"># 合并单元格</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">unmerge_cells</span><span class="p">(</span><span class="s1">&#39;A1:A3&#39;</span><span class="p">)</span> <span class="c1"># 拆分单元格</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 第二种方式</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">merge_cells</span><span class="p">(</span><span class="n">start_row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">start_column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">end_row</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">end_column</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">unmerge_cells</span><span class="p">(</span><span class="n">start_row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">start_column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">end_row</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">end_column</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">openpyxl.drawing.image</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ws</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s1">&#39;A1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;test.xlsx&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>上述示例中图片会被添加到Excel文件中，并且其左上角的坐标会以A1单元格的左上角坐标为锚点。需要注意的是，插入的图片如果大于指定单元格的大小，则会覆盖其他单元格的内容。</p>
+</section>
+</section>
+<section id="logging">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">4.1.7. </span>7.logging-日志模块</a><a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
+<p>logging 模块主要包含以下几个基础类：</p>
+<ol class="arabic simple">
+<li><p>Logger——对外提供日志记录 API 的类。</p></li>
+<li><p>Handler——处理日志记录请求的类，并记录到指定终端上。</p></li>
+<li><p>Filter——用于过滤日志的输出内容。</p></li>
+<li><p>Formatter——指定日志输出的具体格式。</p></li>
+</ol>
+<section id="id4">
+<h3><a class="toc-backref" href="#id17">7.1 简单使用</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1"># 获取默认的logger</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+<span class="c1"># 设置日志等级， 默认为logging.WARNING</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+<span class="c1"># 进行相关类型的日志记录</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;critical&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;warning&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id18">7.2 logging配置</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>logging 模块支持的 4 种配置方式分别如下：</p>
+<ol class="arabic simple">
+<li><p>通过 logging.basicConfig函数设置。</p></li>
+<li><p>通过 logging.config.fileConfig函数设置。</p></li>
+<li><p>通过 logging.config.dictConfig函数设置。</p></li>
+<li><p>通过 logging 的 API 设置。</p></li>
+</ol>
+<section id="logging-basicconfig">
+<h4>1. logging.basicConfig函数设置<a class="headerlink" href="#logging-basicconfig" title="Permalink to this headline">¶</a></h4>
+<p>日志选项配置</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="n">stream</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test.log&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">),</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(name)s</span><span class="s2"> - </span><span class="si">%(lineno)d</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;critical&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;warning&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="logging-config-fileconfig">
+<h4>2. logging.config.fileConfig函数设置<a class="headerlink" href="#logging-config-fileconfig" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">test.conf</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">loggers</span><span class="p">]</span>
+<span class="n">keys</span><span class="o">=</span><span class="n">root</span><span class="p">,</span><span class="n">logger01</span>
+
+<span class="p">[</span><span class="n">handlers</span><span class="p">]</span>
+<span class="n">keys</span><span class="o">=</span><span class="n">fileHandler</span><span class="p">,</span><span class="n">consoleHandler</span>
+
+<span class="p">[</span><span class="n">formatters</span><span class="p">]</span>
+<span class="n">keys</span><span class="o">=</span><span class="n">Formatter01</span>
+
+<span class="p">[</span><span class="n">logger_root</span><span class="p">]</span>
+<span class="n">level</span><span class="o">=</span><span class="n">DEBUG</span>
+<span class="n">handlers</span><span class="o">=</span><span class="n">consoleHandler</span>
+
+<span class="p">[</span><span class="n">logger_logger01</span><span class="p">]</span>
+<span class="n">level</span><span class="o">=</span><span class="n">DEBUG</span>
+<span class="n">handlers</span><span class="o">=</span><span class="n">consoleHandler</span><span class="p">,</span><span class="n">fileHandler</span>
+<span class="n">qualname</span><span class="o">=</span><span class="n">logger01</span>
+<span class="n">propagate</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="p">[</span><span class="n">handler_consoleHandler</span><span class="p">]</span>
+<span class="n">class</span><span class="o">=</span><span class="n">StreamHandler</span>
+<span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,)</span>
+<span class="n">level</span><span class="o">=</span><span class="n">DEBUG</span>
+<span class="n">formatter</span><span class="o">=</span><span class="n">Formatter01</span>
+
+<span class="p">[</span><span class="n">handler_fileHandler</span><span class="p">]</span>
+<span class="n">class</span><span class="o">=</span><span class="n">FileHandler</span>
+<span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;logging.log&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="n">level</span><span class="o">=</span><span class="n">ERROR</span>
+<span class="n">formatter</span><span class="o">=</span><span class="n">Formatter01</span>
+
+<span class="p">[</span><span class="n">formatter_Formatter01</span><span class="p">]</span>
+<span class="nb">format</span><span class="o">=%</span><span class="p">(</span><span class="n">asctime</span><span class="p">)</span><span class="n">s</span> <span class="o">-</span> <span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="n">s</span> <span class="o">-</span> <span class="o">%</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span><span class="n">d</span> <span class="o">-</span> <span class="o">%</span><span class="p">(</span><span class="n">levelname</span><span class="p">)</span><span class="n">s</span> <span class="o">-</span> <span class="o">%</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="n">s</span>
+<span class="n">datefmt</span><span class="o">=%</span><span class="n">Y</span><span class="o">-%</span><span class="n">m</span><span class="o">-%</span><span class="n">d</span> <span class="o">%</span><span class="n">H</span><span class="p">:</span><span class="o">%</span><span class="n">M</span><span class="p">:</span><span class="o">%</span><span class="n">S</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">logging.config</span> <span class="kn">import</span> <span class="n">fileConfig</span>
+
+<span class="n">fileConfig</span><span class="p">(</span><span class="s1">&#39;test.conf&#39;</span><span class="p">)</span> <span class="c1"># 设置日志配置</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span> <span class="c1"># 获取 root Logger</span>
+<span class="n">logger01</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger01&quot;</span><span class="p">)</span> <span class="c1"># 获取 logger01</span>
+<span class="n">root</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;root debug&quot;</span><span class="p">)</span>
+<span class="n">root</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;root error&quot;</span><span class="p">)</span>
+<span class="n">logger01</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;logger01 debug&quot;</span><span class="p">)</span>
+<span class="n">logger01</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;logger01 error&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="logging-config-dictconfig">
+<h4>3. logging.config.dictConfig函数设置<a class="headerlink" href="#logging-config-dictconfig" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dict_conf</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;root&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;handlers&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;consoleHandler&quot;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;loggers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;logger01&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;handlers&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;consoleHandler&quot;</span><span class="p">,</span> <span class="s2">&quot;fileHandler&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;qualname&quot;</span><span class="p">:</span> <span class="s2">&quot;logger01&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;propagate&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;handlers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;consoleHandler&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;logging.StreamHandler&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="s2">&quot;ext://sys.stdout&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;formatter&quot;</span><span class="p">:</span> <span class="s2">&quot;Formatter01&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;fileHandler&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;logging.FileHandler&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;logging.log&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;formatter&quot;</span><span class="p">:</span> <span class="s2">&quot;Formatter01&quot;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;formatters&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;Formatter01&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(name)s</span><span class="s2"> - </span><span class="si">%(lineno)d</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;datefmt&quot;</span><span class="p">:</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">logging.config</span> <span class="kn">import</span> <span class="n">dictConfig</span>
+
+<span class="n">dictConfig</span><span class="p">(</span><span class="n">dict_conf</span><span class="p">)</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+<span class="n">logger01</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger01&quot;</span><span class="p">)</span>
+<span class="n">root</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;root debug&quot;</span><span class="p">)</span>
+<span class="n">root</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;root error&quot;</span><span class="p">)</span>
+<span class="n">logger01</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;logger01 debug&quot;</span><span class="p">)</span>
+<span class="n">logger01</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;logger01 error&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="loggingapi">
+<h4>4. logging的API设置<a class="headerlink" href="#loggingapi" title="Permalink to this headline">¶</a></h4>
+<p>最后一种配置logging的方式是直接调用API来设置，这种方式相对于前面几种方式会更加灵活，可以在任意代码位置根据需要进行日志配置。具体使用示例如下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+<span class="n">root</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="n">logger01</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;logger01&quot;</span><span class="p">)</span>
+<span class="n">logger01</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">logger01</span><span class="o">.</span><span class="n">propagate</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">Formatter01</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(name)s</span><span class="s2"> - </span><span class="si">%(lineno)d</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">Formatter01</span><span class="o">.</span><span class="n">datefmt</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+
+<span class="n">consoleHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+<span class="n">consoleHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">consoleHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">Formatter01</span><span class="p">)</span>
+
+<span class="n">fileHandler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;logging.log&quot;</span><span class="p">)</span>
+<span class="n">fileHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+<span class="n">fileHandler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">Formatter01</span><span class="p">)</span>
+
+<span class="n">root</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">consoleHandler</span><span class="p">)</span>
+<span class="n">logger01</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">consoleHandler</span><span class="p">)</span>
+<span class="n">logger01</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fileHandler</span><span class="p">)</span>
+
+<span class="n">root</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;root debug&quot;</span><span class="p">)</span>
+<span class="n">root</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;root error&quot;</span><span class="p">)</span>
+
+<span class="n">logger01</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;logger01 debug&quot;</span><span class="p">)</span>
+<span class="n">logger01</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;logger01 error&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>上述4种配置方式除了第一种，其他几种都支持复杂的日志配置。</p>
+<p>除了示例中的logging.FileHandler之外，logging模块还提供了很多额外的日志处理器，具体都归档在logging.handlers模块下。</p>
+<p>例如，RotatingFileHandler可以根据文件大小来分割日志并保留指定数量的备份文件；TimedRotatingFileHandler则可以根据时间来分割日志并保留指定数量的备份文件。</p>
+<p>Logger 对象使用</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="4. 常用库实践" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E5%BA%93.html" class="btn btn-neutral float-right" title="4.2. 数据存储库" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

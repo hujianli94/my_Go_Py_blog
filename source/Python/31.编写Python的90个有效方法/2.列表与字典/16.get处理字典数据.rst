@@ -1,0 +1,274 @@
+.. contents::
+   :depth: 3
+..
+
+get处理字典数据
+===============
+
+假设我们要给一家三明治店设计菜单，所以想先确定大家喜欢吃哪些类型的面包。我们定义一个字典，把每种款式的名字和它当前的得票数关联起来。
+
+.. code:: python
+
+   counters = {
+       'pumpernickel': 2,
+       'sourdough': 1,
+   }
+
+如果要记录新的一票。首先要判断对应的键在不在字典里。如果不在，那就把这个键的票数设成0，然后增加所得票数。这需要两次访问这个键，第一次是为了判断它是否在字典里，第二次为了用它来获取对应的值，而且还要做一次赋值。
+下面我们用\ ``if``\ 语句来实现该逻辑。
+
+.. code:: python
+
+   In [6]: counters = {
+      ...:     'pumpernickel': 2,
+      ...:     'sourdough': 1,
+      ...: }
+
+   In [7]: key = 'wheat'
+      ...:
+      ...: if key in counters:
+      ...:     count = counters[key]
+      ...: else:
+      ...:     count = 0
+      ...:
+      ...: counters[key] = count + 1
+      ...:
+      ...:
+
+   In [8]: counters
+   Out[8]: {'pumpernickel': 2, 'sourdough': 1, 'wheat': 1}
+
+这有个办法也能实现相同的功能，就是利用\ ``KeyError``\ 异常。如果程序抛出了这个异常，那说明要获取的键不在字典里。
+这个写法比刚才的简单，因为只需要访问一次键名就可以了。
+
+.. code:: python
+
+   In [9]: key = 'brioche'
+      ...:
+      ...: try:
+      ...:     count = counters[key]
+      ...: except KeyError:
+      ...:     count = 0
+      ...:
+      ...: counters[key] = count + 1
+      ...:
+      ...:
+
+   In [10]: counters
+   Out[10]: {'pumpernickel': 2, 'sourdough': 1, 'wheat': 1, 'brioche': 1}
+
+获取字典中存在的键，或给字典中不存在的键指定默认值，这两种操作非常常见。
+Python的内置字典\ ``dict``\ 提供了\ ``get``\ 方法，可以指定键不存在时返回的默认值。
+这种写法也只需要在查询键值时访问一次键名，然后做一次赋值操作，但要比刚才那种通过\ ``KeyError``\ 实现的方案简单得多。
+
+::
+
+   In [11]: count = counters.get(key, 0)
+       ...: counters[key] = count + 1
+       ...:
+       ...:
+   In [12]: counters
+   Out[12]: {'pumpernickel': 2, 'sourdough': 1, 'wheat': 1, 'brioche': 2}
+
+对于通过\ ``in``\ 表达式与\ ``KeyError``\ 实现的那两种方案来说，确实可以通过各种技巧来简化代码，但不管怎样简化，都无法完全消除重复赋值。所以，优先考虑用\ ``get``\ 方法来实现，因为\ ``in``\ 方案与\ ``KeyError``\ 方案无论如何读比它复杂。
+
+.. code:: python
+
+   if key not in counters:
+       counters[key] = 0
+   counters[key] += 1
+
+   if key in counters:
+       counters[key] += 1
+   else:
+       counters[key] = 1
+
+   try:
+       counters[key] += 1
+   except KeyError:
+       counters[key] = 1
+
+如果字典里保存的数据比较复杂，比如列表，那该怎么办？例如，这次不仅要记录每种面包得的得票数，而且要记录投票的人。那可以像下面这样，把面包的名称(``key``)跟一份列表关联起来，而那份列表指的就是喜欢该面包的人。
+
+.. code:: python
+
+   In [16]: votes = {
+       ...:     'baguette': ['Bob', 'Alice'],
+       ...:     'ciabatta': ['Coco', 'Deb'],
+       ...: }
+       ...:
+       ...: key = 'brioche'
+       ...: who = 'Elmer'
+       ...:
+       ...: if key in votes:
+       ...:     names = votes[key]
+       ...: else:
+       ...:     votes[key] = names = []
+       ...:
+       ...: names.append(who)
+       ...:
+       ...:
+
+   In [17]: names
+   Out[17]: ['Elmer']
+
+   In [18]: votes
+   Out[18]:
+   {'baguette': ['Bob', 'Alice'],
+    'ciabatta': ['Coco', 'Deb'],
+    'brioche': ['Elmer']}
+
+votes[key] = names =
+[]既可以把空白列表赋给names变量，又可以把这份列表与key相关联，这两项操作，只需要一行语句即可表达出来。
+把空白列表(默认值)插入字典后，不需要再用另一条赋值语句给其中的某个元素赋值，一维可以直接在指向这份列表的names变量上调用append方法把投票人的名字添加进去。
+
+还可以利用KeyError异常来实现。
+
+.. code:: python
+
+   In [19]: key = 'rye'
+       ...: who = 'Felix'
+       ...:
+       ...: try:
+       ...:     names = votes[key]
+       ...: except KeyError:
+       ...:     votes[key] = names = []
+       ...:
+       ...: names.append(who)
+       ...:
+       ...:
+
+   In [20]:
+
+   In [20]: votes
+   Out[20]:
+   {'baguette': ['Bob', 'Alice'],
+    'ciabatta': ['Coco', 'Deb'],
+    'brioche': ['Elmer'],
+    'rye': ['Felix']}
+
+同样，这个列子也能通过\ ``get``\ 方法改写。这样的话，如果键存在，只需要访问一次键名；如果不存在，那么还要在\ ``if``\ 块中用键名\ ``key``\ 作为下标赋一次值。
+
+.. code:: python
+
+   In [21]: key = 'wheat'
+       ...: who = 'Gertrude'
+       ...:
+       ...: names = votes.get(key)
+       ...: if names is None:
+       ...:     votes[key] = names = []
+       ...:
+       ...: names.append(who)
+       ...:
+       ...:
+
+   In [22]:
+
+   In [22]: votes
+   Out[22]:
+   {'baguette': ['Bob', 'Alice'],
+    'ciabatta': ['Coco', 'Deb'],
+    'brioche': ['Elmer'],
+    'rye': ['Felix'],
+    'wheat': ['Gertrude']}
+
+这个方案中，无论\ ``votes.get(key)``\ 的结果是不是\ ``None``\ ，都要把这个结果赋给\ ``names``\ 变量，只不过在结果为\ ``None``\ 的时候，还需要在\ ``if``\ 块中做一些处理。这种逻辑用赋值表达式，
+
+.. code:: python
+
+   if (names := votes.get(key)) is None:
+       votes[key] = names = []
+   names.append(who)
+
+``dict``\ 类型提供了\ ``setdefault``\ 方法，能够继续简化代码。
+
+.. code:: python
+
+   key = 'cornbread'
+   who = 'Kirk'
+
+   names = votes.setdefault(key, [])
+   names.append(who)
+
+在字典里面没有这个键时，\ ``setdefault``\ 方法会把默认值直接放到字典里，而不是先给它做副本，然后把副本放到字典中。
+
+.. code:: python
+
+   In [23]: data = {}
+       ...:
+       ...: key = 'foo'
+       ...: value = []
+       ...: data.setdefault(key, value)
+       ...: print('Before:', data)
+       ...: value.append('hello')
+       ...: print('After: ', data)
+       ...:
+       ...:
+   Before: {'foo': []}
+   After:  {'foo': ['hello']}
+
+这意味着每次调用\ ``setdefault``\ 时都要构造一个新的默认值出来。这可能产生较大的性能开销。
+回到之前那个只记录票数而不记录投票人的例子。那个例子为什么不用\ ``setdefault``\ 改写呢？比如，可以这样写：
+
+.. code:: python
+
+   In [24]: key = 'dutch crunch'
+       ...:
+       ...: count = counters.setdefault(key, 0)
+       ...: counters[key] = count + 1
+       ...:
+       ...:
+
+   In [25]:
+
+   In [25]:
+
+   In [25]: counters
+   Out[25]:
+   {'pumpernickel': 2,
+    'sourdough': 1,
+    'wheat': 1,
+    'brioche': 3,
+    'dutch crunch': 1}
+
+这样写的问题是，根本就没必要调用\ ``setdefault``\ ，因为不管字典里有没有这个键，我们都要递增它所对应的值。
+
+::
+
+   count = counters.get(key, 0)
+   counters[key] = count + 1
+
+无论字典里有没有这个键，之前那种get方案只需要一次访问操作与一次赋值操作即可(如上代码，访问key,不存在即返回0，第二行赋值一次。)，而目前的setdefault方案(在字典没有键的情况下)需要一次访问操作与两次赋值操作。
+
+只有在少数几种情况下用setdefault处理缺失的键才是最简短的方式，例如：与键相关的默认值构造起来开销很低且可以变化，而且不用担心异常问题。在这种特殊的场合，可以用这个setdefault方案取代get方案。即便如此，一般也应该优先考虑用defaultdict取代dict。
+
+**在Python中实现真正的Switch-Case语句**
+
+以下是使用字典来模拟开关案例构造的代码
+
+::
+
+   def xswitch(x):
+       return xswitch._system_dict.get(x, None)
+
+   xswitch._system_dict = {'files': 10, 'folders': 5, 'devices': 2}
+
+   print(xswitch('default'))
+   print(xswitch('devices'))
+
+   """
+   None
+   2
+   """
+
+..
+
+   要点:
+
+   有四种办法可以处理键不在字典中的情况：in表达式、KeyError异常、get方法与setdefault方法。
+
+   如果跟键相关联的值是像计数器这样的基本类型，那么get方法就是最好的方案；
+
+   如果是那种构造起来开销比较大，或是容易出异常的类型，那么可以把这个方法与赋值表达式结合起来使用。
+
+   即使看上去最应该使用setdefault方案，也不一定要真的使用setdefault方案，而是可以考虑用defaultdict取代普通的dict。

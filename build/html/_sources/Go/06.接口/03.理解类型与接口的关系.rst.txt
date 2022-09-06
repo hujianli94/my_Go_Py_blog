@@ -1,0 +1,507 @@
+.. contents::
+   :depth: 3
+..
+
+理解类型与接口的关系
+====================
+
+1.一个类型可以实现多个接口
+--------------------------
+
+一个类型可以同时实现多个接口，而接口间彼此独立，不知道对方的实现。
+
+.. code:: go
+
+   type Socket struct {
+   }
+
+   func (c *Socket) Writer(p []byte) (n int, err error) {
+       return 0, nil
+   }
+
+   func (s *Socket) Close() error {
+       return nil
+   }
+
+Socket结构的Writer实现了io.Writer接口：
+
+.. code:: go
+
+   type Writer interface {
+       Write(p []byte) (n int, err error)
+   }
+
+也实现了io.Closer接口:
+
+.. code:: go
+
+   type Closer interface {
+       Close() error
+   }
+
+.. image:: ../../_static/go_interface0001.png
+
+.. code:: go
+
+   func usingWriter(writer io.Writer) {
+       writer.Write(nil)
+   }
+
+   func usingCloser(closer io.Closer) {
+       closer.Close()
+   }
+
+   func main() {
+       // 实例化Socket
+       s := new(Socket)
+       usingWriter(s)
+       usingCloser(s)
+
+   }
+
+usingWriter()和usingCloser()完全独立，互相不知道对方的存在，也不知道自己使用的接口是Socket实现的。
+
+1.1一个类型实现多个接口的示例代码
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+   )
+
+   func main() {
+       var s Sayer
+       var m Move
+
+       var p =People{name:"hujianli"}
+       s = p
+       m = p
+       s.say()
+       m.move()
+       
+   }
+
+   type Sayer interface {
+       say()
+   } 
+
+   type Move interface {
+       move()
+   }
+
+
+   type People struct {
+       name string
+   }
+
+   func (p People) say() {
+       fmt.Printf("%s say hello go go go\n", p.name)
+   }
+
+   func (p People)move() {
+       fmt.Printf("%s begin move.....\n",p.name)
+   }
+
+2.多个类型和实现相同的接口
+--------------------------
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+   )
+
+   // 一个服务需要满足开启和写日志功能
+   type Service interface {
+       Strat()     // 开启服务
+       Log(string) // 日志输出
+   }
+
+   // 日志器
+   type Logger struct {
+   }
+
+   // 实现Service的Log()方法,为Logger添加Log()方法
+   func (g *Logger) Log(string2 string){
+       fmt.Println("log info ............")
+   }
+
+   // 游戏服务
+   type GameService struct {
+       Logger              // 嵌入Logger日志器，以实现日志功能
+   }
+
+   // 实现Service的Start()方法
+   func (g *GameService) Strat() {
+       print("service is running")
+   }
+
+   func main() {
+       var s Service = new(GameService)
+       s.Strat()
+       s.Log("hello")
+   }
+
+s就可以使用Start()方法和Log()方法，其中,Start()由GameService实现，Log()方法由Logger实现。
+
+2.1一个接口的简单示例
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       hu := keyboard{name: "小健的键盘"}
+       fmt.Printf("设备的名称：%s\n", hu.name)
+       hu.strat()
+       hu.end()
+       fmt.Println("------------------------------------------------")
+       fmt.Println("------------------------------------------------")
+
+       // 声明一个USB接口
+       var ints USB
+       m := new(mouse)
+       ints = m
+       ints.strat()
+       ints.end()
+
+       k :=new(keyboard)
+       ints = k
+       ints.strat()
+       ints.end()
+
+   }
+
+
+   // USB接口
+   type USB interface {
+       strat()
+       end()
+   }
+
+   // 键盘结构体
+   type keyboard struct {
+       name string // 键盘名称
+   }
+   // 键盘的方法，实现了接口中定义的方法
+   func (k *keyboard) strat() {
+       fmt.Println("键盘开始工作.敲代码......")
+   }
+   func (k *keyboard) end() {
+       fmt.Println("键盘结束工作")
+   }
+
+
+   // 鼠标结构体，实现了接口中定义的方法
+   type mouse struct {
+       name string
+   }
+
+   func (m *mouse) strat() {
+       fmt.Println("鼠标开始工作.敲代码......")
+   }
+
+   func (m *mouse) end() {
+       fmt.Println("鼠标结束工作")
+   }
+
+3.接口嵌套
+----------
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       var x animal
+       x = cat{name: "吉吉"}
+       x.say()
+       x.move()
+   }
+
+   type Sayer interface {
+       say()
+   }
+
+   type Move interface {
+       move()
+   }
+
+   type animal interface {
+       Sayer
+       Move
+   }
+
+   type cat struct {
+       name string
+   }
+
+   func (c cat) say() {
+       fmt.Println(c.name, "喵喵喵喵")
+   }
+
+   func (c cat) move() {
+       fmt.Println(c.name,"猫会动")
+   }
+
+4.示例:便于扩展输出方式的日志系统
+---------------------------------
+
+搭建一个支持多种写入器的日志系统，可以扩展多种日志写入设备。
+
+1.日志对外接口
+
+logger.go
+
+.. code:: go
+
+   package main
+
+   // 声明日志写入器接口,这个接口可以被外部使用，实现一个日志的输出设备
+   type LogWriter interface {
+       Write(data interface{}) error
+   }
+
+   // 日志器结构，使用writerList记录输出到哪个设备上
+   type Logger struct {
+
+       // 这个日志器用到的日志写入器
+       writerList []LogWriter
+   }
+
+   // 注册一个日志写入器，RegisterWriter()方法将日志写入器（LogWriter）注册到日志器（Logger）中
+   // 注册的意思就是将日志写入器的接口添加到writeList中
+   func (l *Logger) RegisterWriter(writer LogWriter) {
+       l.writerList = append(l.writerList, writer)
+   }
+
+   // 将一个data类型的数据写入到日志
+   func (l *Logger) Log(data interface{}) {
+
+       // 遍历所有注册的写入器
+       for _, writer := range l.writerList {
+
+           // 将日志输出到每一个写入器
+           writer.Write(data)
+       }
+   }
+
+   // 创建日志器的实例
+   func NewLogger() *Logger {
+       return &Logger{}
+   }
+
+2.文件写入器
+
+file.go
+
+.. code:: go
+
+   package main
+
+   import (
+       "errors"
+       "fmt"
+       "os"
+   )
+
+   // 文件写入器
+   type fileWriter struct {
+       file *os.File
+   }
+
+   // 设置文件写入器写入的文件名
+   func (f *fileWriter) SetFile(filename string) (err error) {
+
+       // 如果文件已经打开，关闭前一个文件
+       if f.file != nil {
+           f.file.Close()
+       }
+
+       // 创建一个文件并保存文件句柄
+       f.file, err = os.Create(filename)
+
+       // 如果创建的过程出现错误，则返回错误
+       return err
+   }
+
+   // 实现LogWriter的Write
+   func (f *fileWriter) Write(data interface{}) error {
+
+       // 日志文件可能没有创建成功
+       if f.file == nil {
+
+           // 日志文件没有准备好
+           return errors.New("file not created")
+       }
+
+       // 将数据序列化为字符串
+       str := fmt.Sprintf("%v\n", data)
+
+       // 将数据以字节数组写入到文件
+       _, err := f.file.Write([]byte(str))
+
+       return err
+   }
+
+   // 创建文件写入器实例
+   func newFileWriter() *fileWriter {
+       return &fileWriter{}
+   }
+
+3.命令行写入器
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "os"
+   )
+
+   // 命令行写入器
+   type consoleWriter struct {
+   }
+
+   // 实现LogWriter的Write
+   func (f *consoleWriter) Write(data interface{}) error {
+
+       // 将数据序列化为字符串
+       str := fmt.Sprintf("%v\n", data)
+
+       // 将数据以字节数组写入到命令行
+       _, err := os.Stdout.Write([]byte(str))
+
+       return err
+   }
+
+   // 创建命令行写入器实例
+   func newConsoleWriter() *consoleWriter {
+       return &consoleWriter{}
+   }
+
+4.使用日志
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 创建日志器
+   func createLogger() *Logger {
+
+       // 创建日志器
+       l := NewLogger()
+       // 创建命令行写入器
+       cw := newConsoleWriter()
+       // 注册命令行写入器到日志器
+       l.RegisterWriter(cw)
+
+
+
+       // 创建文件写入器
+       fw := newFileWriter()
+       // 设置文件名
+       if err := fw.SetFile("log.log"); err != nil {
+           fmt.Println(err)
+       }
+       // 注册文件写入器到日志器
+       l.RegisterWriter(fw)
+       return l
+   }
+
+   func main() {
+
+       // 准备日志器
+       l := createLogger()
+
+       // 写一个日志
+       l.Log("hello")
+   }
+
+5.示例:使用接口进行数据的排序
+-----------------------------
+
+.. code:: go
+
+   package main
+
+   type Interface interface {
+       // 3个方法
+       // 获取元素数量
+       Len() int
+       // 判断传入数值大小
+       Less(i, j int) bool
+       // 传入元素位置互换
+       Swap(i, j int)
+   }
+
+6.使用sort.Interface接口进行排序
+--------------------------------
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "sort"
+   )
+
+   // 将[]string定义为MyStringList类型
+   type MyStringList []string
+
+   // 实现sort.Interface接口的获取元素数量方法
+   func (m MyStringList) Len() int {
+       return len(m)
+   }
+
+   // 实现sort.Interface接口的比较元素方法
+   func (m MyStringList) Less(i, j int) bool {
+       return m[i] < m[j]
+   }
+
+   // 实现sort.Interface接口的交换元素方法
+   func (m MyStringList) Swap(i, j int) {
+       m[i], m[j] = m[j], m[i]
+   }
+
+   func main() {
+
+       // 准备一个内容被打乱顺序的字符串切片
+       names := MyStringList{
+           "3. Triple Kill",
+           "5. Penta Kill",
+           "2. Double Kill",
+           "4. Quadra Kill",
+           "1. First Blood",
+       }
+
+       // 使用sort包进行排序
+       sort.Sort(names)
+
+       // 遍历打印结果
+       for _, v := range names {
+           fmt.Printf("%s\n", v)
+       }
+
+   }
+
+::
+
+       var i Interface
+       i = names
+       // 切片总的大小
+       fmt.Println(i.Len())    //5

@@ -1,0 +1,67 @@
+.. contents::
+   :depth: 3
+..
+
+用zip函数同时遍历两个迭代器
+===========================
+
+用Python内置的zip函数来实现。这个函数能把两个或更多的iterator封装成惰性生成器（lazy
+generator）。
+
+每次循环时，它会分别从这些迭代器里获取各自的下一个元素，并把这些值放在一个元组里面。而这个元组可以拆分到for语句里的那些变量之中
+
+.. code:: python
+
+   list1 = ["hujianli1", "hujainili2", "hujianli3"]
+   list2 = [17, 18, 20]
+
+   for i in zip(list1, list2):
+       print(i)
+
+zip每次只从它封装的那些迭代器里面各自取出一个元素，所以即便源列表很长，程序也不会因为占用内存过多而崩溃。但是，如果输入zip的那些列表的长度不一致，那就得小心了。
+
+例如，我给list1列表里又添加了一个名字，但是忘了把它的长度更新到list2列表之中。在这种情况下，用zip同时遍历这两份列表，会产生奇怪的结果。
+
+.. code:: python
+
+   list1 = ["hujianli1", "hujainili2", "hujianli3", "hujianli4"]
+   list2 = [17, 18, 20]
+   for name, num in zip(list1, list2):
+       print(name, num)
+   """
+   hujianli1 17
+   hujainili2 18
+   hujianli3 20
+   """
+
+zip函数本来就是这样设计的：只要其中任何一个迭代器处理完毕，它就不再往下走了。于是，循环的次数实际上等于最短的那份列表所具备的长度。一般情况下，我们都是根据某份列表推导出其他几份列表，然后把这些列表一起封装到zip里面，由于这些列表长度相同，因此不会遇到刚才的问题。
+
+如果无法确定这些列表的长度相同，那就不要把它们传给zip，而是应该传给另一个叫作zip_longest的函数，这个函数位于内置的itertools模块里。
+
+.. code:: python
+
+   import itertools
+
+   list1 = ["hujianli1", "hujainili2", "hujianli3", "hujianli4"]
+   list2 = [17, 18, 20]
+   for name, num in itertools.zip_longest(list1, list2):
+       print(f"{name} {num}")
+
+   """
+   hujianli1 17
+   hujainili2 18
+   hujianli3 20
+   hujianli4 None
+   """
+
+那个值来填补空缺（本例中空缺的为字符串’name’的值），默认的参数值是None。
+
+   要点:
+
+   内置的zip函数可以同时遍历多个迭代器。
+
+   zip会创建惰性生成器，让它每次只生成一个元组，所以无论输入的数据有多长，它都是一个一个处理的。
+
+   如果提供的迭代器的长度不一致，那么只要其中任何一个迭代完毕，zip就会停止。
+
+   如果想按最长的那个迭代器来遍历，那就改用内置的itertools模块中的zip_longest函数。

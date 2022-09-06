@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.6. 手写一个三级菜单 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="2.7. 使用return结束方法" href="07.%E4%BD%BF%E7%94%A8return%E7%BB%93%E6%9D%9F%E6%96%B9%E6%B3%95.html" />
+    <link rel="prev" title="2.5. 实现一个简单的购物车代码" href="05.%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E8%B4%AD%E7%89%A9%E8%BD%A6%E7%9A%84%E4%BB%A3%E7%A0%81.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">2. Python流程控制语句</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E9%80%89%E6%8B%A9%E8%AF%AD%E5%8F%A5.html">2.1. 选择语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.for%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5.html">2.2. for循环语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.while%E5%BE%AA%E7%8E%AF.html">2.3. While循环</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.switch%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88.html">2.4. switch语句替代方案</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E8%B4%AD%E7%89%A9%E8%BD%A6%E7%9A%84%E4%BB%A3%E7%A0%81.html">2.5. 实现一个简单的购物车代码</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.6. 手写一个三级菜单</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">2.6.1. 1.需求分析</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">2.6.2. 2.代码示例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E4%BD%BF%E7%94%A8return%E7%BB%93%E6%9D%9F%E6%96%B9%E6%B3%95.html">2.7. 使用return结束方法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">2. </span>Python流程控制语句</a> &raquo;</li>
+      <li><span class="section-number">2.6. </span>手写一个三级菜单</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/02.Python流程控制语句/06.手写一个三级菜单.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id4">手写一个三级菜单</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id5">1.需求分析</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id6">2.代码示例</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id4"><span class="section-number">2.6. </span>手写一个三级菜单</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<section id="id2">
+<h2><a class="toc-backref" href="#id5"><span class="section-number">2.6.1. </span>1.需求分析</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>思路：
+
+湖北省的市：字典中的
+定义3个字典，用于存储
+
+{序列-键：市名}
+shiqu_dir = {}
+{序列-键：县}
+xian_dir ={}
+{序列-键：街道}
+jiedao_dir = {}
+函数将序列和键一一对应。
+for number,key in enumerate(Hbei_map.keys())  获取序列键和市名存储到 市名字典
+
+用一个列表 chose = [] 来存储所选择的市--县程-街道
+chose[0],chose[1],chose[2]最后使用切片返回
+
+中间输入全部使用的判断方式for循环： for k,v in xxx.items():
+　　　　　　　　　　　　　　　　　　　　　if input == k：
+让用户只能输入序列中的数字。使用判断语句：
+　　if int(input) not in 字典.keys():
+    　　print(&quot;您输入了非法的序列,请输入一下序列 {}&quot;.format(shiqu_list))
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id6"><span class="section-number">2.6.2. </span>2.代码示例</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;hujianli&#39;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">Hbei_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;武汉市&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;江岸区&quot;</span><span class="p">:[</span><span class="s2">&quot;上海街&quot;</span><span class="p">,</span><span class="s2">&quot;大智街&quot;</span><span class="p">,</span><span class="s2">&quot;一元街&quot;</span><span class="p">,</span><span class="s2">&quot;车站街&quot;</span><span class="p">,</span><span class="s2">&quot;四唯街&quot;</span><span class="p">,</span><span class="s2">&quot;永清街&quot;</span><span class="p">,</span><span class="s2">&quot;球场街&quot;</span><span class="p">,</span><span class="s2">&quot;西马街&quot;</span><span class="p">,</span><span class="s2">&quot;台北街&quot;</span><span class="p">,</span><span class="s2">&quot;劳动街&quot;</span><span class="p">,</span><span class="s2">&quot;花桥街&quot;</span><span class="p">,</span><span class="s2">&quot;后湖街&quot;</span><span class="p">,</span><span class="s2">&quot;谌家矶街&quot;</span><span class="p">],</span>
+         <span class="s2">&quot;硚口区&quot;</span><span class="p">:[</span><span class="s2">&quot;易家墩街道&quot;</span><span class="p">,</span><span class="s2">&quot;韩家墩街道&quot;</span><span class="p">,</span><span class="s2">&quot;宗关街道&quot;</span><span class="p">,</span><span class="s2">&quot;汉水桥街道&quot;</span><span class="p">,</span><span class="s2">&quot;宝丰街道&quot;</span><span class="p">,</span><span class="s2">&quot;荣华街道&quot;</span><span class="p">,</span><span class="s2">&quot;崇仁街道&quot;</span><span class="p">,</span><span class="s2">&quot;汉中街道&quot;</span><span class="p">],</span>
+         <span class="s2">&quot;武昌区&quot;</span><span class="p">:[</span><span class="s2">&quot;积玉桥街道&quot;</span><span class="p">,</span><span class="s2">&quot;杨园街道&quot;</span><span class="p">,</span><span class="s2">&quot;徐家棚街道&quot;</span><span class="p">,</span><span class="s2">&quot;新河街道&quot;</span><span class="p">]</span>
+    <span class="p">},</span>
+
+    <span class="s2">&quot;荆州市&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;沙市区&quot;</span><span class="p">:[</span><span class="s2">&quot;黄石港&quot;</span><span class="p">,</span><span class="s2">&quot;崇文街道&quot;</span><span class="p">,</span><span class="s2">&quot;解放路街道&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;荆州区&quot;</span><span class="p">:[</span><span class="s2">&quot;城南街道&quot;</span><span class="p">,</span><span class="s2">&quot;西城街道&quot;</span><span class="p">,</span><span class="s2">&quot;东城街道&quot;</span><span class="p">,</span><span class="s2">&quot;马山镇&quot;</span><span class="p">,</span><span class="s2">&quot;川店镇&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;松滋市&quot;</span><span class="p">:[</span><span class="s2">&quot;新江口镇&quot;</span><span class="p">,</span><span class="s2">&quot;南海镇&quot;</span><span class="p">,</span><span class="s2">&quot;八宝镇&quot;</span><span class="p">,</span><span class="s2">&quot;陈店镇&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;公安县&quot;</span><span class="p">:[</span><span class="s2">&quot;斗湖堤镇&quot;</span><span class="p">,</span><span class="s2">&quot;埠河镇&quot;</span><span class="p">,</span><span class="s2">&quot;杨家厂镇&quot;</span><span class="p">,</span><span class="s2">&quot;斑竹垱镇&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;监利县&quot;</span><span class="p">:[</span><span class="s2">&quot;容城镇&quot;</span><span class="p">,</span><span class="s2">&quot;白螺镇&quot;</span><span class="p">,</span><span class="s2">&quot;朱河镇&quot;</span><span class="p">]</span>
+
+    <span class="p">},</span>
+    <span class="s2">&quot;孝感市&quot;</span><span class="p">:{</span>
+        <span class="s2">&quot;孝南区&quot;</span><span class="p">:[</span><span class="s2">&quot;肖港镇&quot;</span><span class="p">,</span><span class="s2">&quot;书院街道&quot;</span><span class="p">,</span><span class="s2">&quot;车站街道&quot;</span><span class="p">,</span><span class="s2">&quot;新华街道&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;应城市&quot;</span><span class="p">:[</span><span class="s2">&quot;城中街道&quot;</span><span class="p">,</span><span class="s2">&quot;城北街道&quot;</span><span class="p">,</span><span class="s2">&quot;杨河镇&quot;</span><span class="p">,</span><span class="s2">&quot;三合镇&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;安陆市&quot;</span><span class="p">:[</span><span class="s2">&quot;李店镇&quot;</span><span class="p">,</span><span class="s2">&quot;巡店镇&quot;</span><span class="p">,</span><span class="s2">&quot;雷公镇&quot;</span><span class="p">,</span><span class="s2">&quot;陈店乡&quot;</span><span class="p">],</span>
+
+    <span class="p">},</span>
+<span class="p">}</span>
+<span class="c1"># print(Hbei_map[&quot;孝感市&quot;][&quot;应城市&quot;])</span>
+<span class="n">shiqu_dir</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">xian_dir</span> <span class="o">=</span><span class="p">{}</span>
+<span class="n">jiedao_dir</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">def</span> <span class="nf">jiance</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31;1m选择不能为空，清重新输入~~</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">shiqu</span> <span class="o">==</span> <span class="s2">&quot;quit&quot;</span> <span class="ow">or</span> <span class="n">shiqu</span> <span class="o">==</span> <span class="s2">&quot;exit&quot;</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31;1m 退出程序，三级菜单退出~~ </span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==============================================================================================================&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;湖北省下面的市区如下： &quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">number</span><span class="p">,</span><span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Hbei_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+    <span class="n">shiqu_dir</span><span class="p">[</span><span class="n">number</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+
+<span class="n">chose</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">shiqu_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">shiqu_dir</span><span class="o">.</span><span class="n">keys</span><span class="p">()))]</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;==========================================================================================================&quot;</span><span class="p">)</span>
+    <span class="n">shiqu</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入您要查询的市区所对应的序列号,输入exit或者quit自动会退出.：&quot;</span><span class="p">)</span>
+    <span class="n">jiance</span><span class="p">(</span><span class="n">shiqu</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">shiqu</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">shiqu_dir</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;您输入了非法的序列,请输入一下序列 </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shiqu_list</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">keys</span><span class="p">,</span><span class="n">vlaue</span> <span class="ow">in</span> <span class="n">shiqu_dir</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">shiqu</span><span class="p">)</span> <span class="o">==</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">chose</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">chose</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vlaue</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;================================================================================================&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;该市区下面的县级市或者片区域，县城列表如下：&quot;</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">number</span><span class="p">,</span><span class="n">keys_xian</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Hbei_map</span><span class="p">[</span><span class="n">vlaue</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">keys_xian</span><span class="p">))</span>
+                    <span class="n">xian_dir</span><span class="p">[</span><span class="n">number</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">keys_xian</span>
+
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=============================================================================================&quot;</span><span class="p">)</span>
+                    <span class="n">xian</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入要查询的县城所对应的序列号，quit/exit退出： &quot;</span><span class="p">)</span>
+                    <span class="n">jiance</span><span class="p">(</span><span class="n">xian</span><span class="p">)</span>
+                    <span class="n">xian_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xian_dir</span><span class="o">.</span><span class="n">keys</span><span class="p">()))]</span>
+                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">xian</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">xian_dir</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;您输入了非法的序列,请输入一下序列 </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xian_list</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">xian_dir</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">xian</span><span class="p">)</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
+                                <span class="n">chose</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+                        <span class="n">jiedao_li</span> <span class="o">=</span> <span class="n">Hbei_map</span><span class="p">[</span><span class="n">chose</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">chose</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jiedao_li</span><span class="p">):</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                            <span class="n">jiedao_dir</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+                        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=====================================================================================&quot;</span><span class="p">)</span>
+                            <span class="n">jiedao</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入街道所对应的序列号 退出请输入quit/exit： &quot;</span><span class="p">)</span>
+                            <span class="n">jiance</span><span class="p">(</span><span class="n">jiedao</span><span class="p">)</span>
+                            <span class="n">jiedao_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">jiedao_dir</span><span class="o">.</span><span class="n">keys</span><span class="p">()))]</span>
+                            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">jiedao</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">jiedao_dir</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;您输入了非法的序列,请输入一下序列 </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jiedao_list</span><span class="p">))</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">jiedao_dir</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">jiedao</span><span class="p">)</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
+                                        <span class="n">chose</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=================================================================================&quot;</span><span class="p">)</span>
+                                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[35;1m你选择的市：</span><span class="si">%s</span><span class="s2"> 县城是：</span><span class="si">%s</span><span class="s2"> 街道是：</span><span class="si">%s</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">chose</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">chose</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">chose</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;===================================================================================&quot;</span><span class="p">)</span>
+                            <span class="k">break</span>
+                        <span class="k">break</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E8%B4%AD%E7%89%A9%E8%BD%A6%E7%9A%84%E4%BB%A3%E7%A0%81.html" class="btn btn-neutral float-left" title="2.5. 实现一个简单的购物车代码" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.%E4%BD%BF%E7%94%A8return%E7%BB%93%E6%9D%9F%E6%96%B9%E6%B3%95.html" class="btn btn-neutral float-right" title="2.7. 使用return结束方法" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.3. 理解类型与接口的关系 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="6.4. 常见的类型的便捷排序" href="04.%E5%B8%B8%E8%A7%81%E7%9A%84%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BE%BF%E6%8D%B7%E6%8E%92%E5%BA%8F.html" />
+    <link rel="prev" title="6.2. 实现接口的条件" href="02.%E5%AE%9E%E7%8E%B0%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%9D%A1%E4%BB%B6.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">6. 接口</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E5%A3%B0%E6%98%8E%E6%8E%A5%E5%8F%A3.html">6.1. 声明接口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E5%AE%9E%E7%8E%B0%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%9D%A1%E4%BB%B6.html">6.2. 实现接口的条件</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.3. 理解类型与接口的关系</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">6.3.1. 1.一个类型可以实现多个接口</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">6.3.2. 2.多个类型和实现相同的接口</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">6.3.3. 3.接口嵌套</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">6.3.4. 4.示例:便于扩展输出方式的日志系统</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">6.3.5. 5.示例:使用接口进行数据的排序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sort-interface">6.3.6. 6.使用sort.Interface接口进行排序</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E5%B8%B8%E8%A7%81%E7%9A%84%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BE%BF%E6%8D%B7%E6%8E%92%E5%BA%8F.html">6.4. 常见的类型的便捷排序</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%AF%B9%E7%BB%93%E6%9E%84%E4%BD%93%E6%95%B0%E6%8D%AE%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F.html">6.5. 对结构体数据进行排序</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%B5%8C%E5%A5%97%E7%BB%84%E5%90%88.html">6.6. 接口的嵌套组合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E5%9C%A8%E6%8E%A5%E5%8F%A3%E5%92%8C%E7%B1%BB%E5%9E%8B%E9%97%B4%E8%BD%AC%E6%8D%A2.html">6.7. 在接口和类型间转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E7%A9%BA%E6%8E%A5%E5%8F%A3%E7%B1%BB%E5%9E%8B.html">6.8. 空接口类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E6%8E%A5%E5%8F%A3%E7%B1%BB%E5%9E%8B%E5%88%A4%E6%96%AD.html">6.9. 接口类型判断</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.Go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA-FSM.html">6.10. Go语言实现有限状态机-FSM</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93/index.html">10. 标准库和三方库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">6. </span>接口</a> &raquo;</li>
+      <li><span class="section-number">6.3. </span>理解类型与接口的关系</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/06.接口/03.理解类型与接口的关系.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id9">理解类型与接口的关系</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id10">1.一个类型可以实现多个接口</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id11">1.1一个类型实现多个接口的示例代码</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id4" id="id12">2.多个类型和实现相同的接口</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id13">2.1一个接口的简单示例</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id6" id="id14">3.接口嵌套</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id15">4.示例:便于扩展输出方式的日志系统</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id16">5.示例:使用接口进行数据的排序</a></p></li>
+<li><p><a class="reference internal" href="#sort-interface" id="id17">6.使用sort.Interface接口进行排序</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id9"><span class="section-number">6.3. </span>理解类型与接口的关系</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<section id="id2">
+<h2><a class="toc-backref" href="#id10"><span class="section-number">6.3.1. </span>1.一个类型可以实现多个接口</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>一个类型可以同时实现多个接口，而接口间彼此独立，不知道对方的实现。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Socket</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Socket</span><span class="p">)</span> <span class="nx">Writer</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Socket</span><span class="p">)</span> <span class="nx">Close</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Socket结构的Writer实现了io.Writer接口：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Write</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>也实现了io.Closer接口:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Closer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Close</span><span class="p">()</span> <span class="kt">error</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<img alt="../../_images/go_interface0001.png" src="../../_images/go_interface0001.png" />
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">usingWriter</span><span class="p">(</span><span class="nx">writer</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">writer</span><span class="p">.</span><span class="nx">Write</span><span class="p">(</span><span class="kc">nil</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">usingCloser</span><span class="p">(</span><span class="nx">closer</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Closer</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">closer</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 实例化Socket</span>
+    <span class="nx">s</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Socket</span><span class="p">)</span>
+    <span class="nx">usingWriter</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+    <span class="nx">usingCloser</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>usingWriter()和usingCloser()完全独立，互相不知道对方的存在，也不知道自己使用的接口是Socket实现的。</p>
+<section id="id3">
+<h3><a class="toc-backref" href="#id11">1.1一个类型实现多个接口的示例代码</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">s</span> <span class="nx">Sayer</span>
+    <span class="kd">var</span> <span class="nx">m</span> <span class="nx">Move</span>
+
+    <span class="kd">var</span> <span class="nx">p</span> <span class="p">=</span><span class="nx">People</span><span class="p">{</span><span class="nx">name</span><span class="p">:</span><span class="s">&quot;hujianli&quot;</span><span class="p">}</span>
+    <span class="nx">s</span> <span class="p">=</span> <span class="nx">p</span>
+    <span class="nx">m</span> <span class="p">=</span> <span class="nx">p</span>
+    <span class="nx">s</span><span class="p">.</span><span class="nx">say</span><span class="p">()</span>
+    <span class="nx">m</span><span class="p">.</span><span class="nx">move</span><span class="p">()</span>
+
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Sayer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">say</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Move</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">move</span><span class="p">()</span>
+<span class="p">}</span>
+
+
+<span class="kd">type</span> <span class="nx">People</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">People</span><span class="p">)</span> <span class="nx">say</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s say hello go go go\n&quot;</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="nx">People</span><span class="p">)</span><span class="nx">move</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s begin move.....\n&quot;</span><span class="p">,</span><span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">6.3.2. </span>2.多个类型和实现相同的接口</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// 一个服务需要满足开启和写日志功能</span>
+<span class="kd">type</span> <span class="nx">Service</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Strat</span><span class="p">()</span>     <span class="c1">// 开启服务</span>
+    <span class="nx">Log</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span> <span class="c1">// 日志输出</span>
+<span class="p">}</span>
+
+<span class="c1">// 日志器</span>
+<span class="kd">type</span> <span class="nx">Logger</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="c1">// 实现Service的Log()方法,为Logger添加Log()方法</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">Logger</span><span class="p">)</span> <span class="nx">Log</span><span class="p">(</span><span class="nx">string2</span> <span class="kt">string</span><span class="p">){</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;log info ............&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 游戏服务</span>
+<span class="kd">type</span> <span class="nx">GameService</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">Logger</span>              <span class="c1">// 嵌入Logger日志器，以实现日志功能</span>
+<span class="p">}</span>
+
+<span class="c1">// 实现Service的Start()方法</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">g</span> <span class="o">*</span><span class="nx">GameService</span><span class="p">)</span> <span class="nx">Strat</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s">&quot;service is running&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">s</span> <span class="nx">Service</span> <span class="p">=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">GameService</span><span class="p">)</span>
+    <span class="nx">s</span><span class="p">.</span><span class="nx">Strat</span><span class="p">()</span>
+    <span class="nx">s</span><span class="p">.</span><span class="nx">Log</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>s就可以使用Start()方法和Log()方法，其中,Start()由GameService实现，Log()方法由Logger实现。</p>
+<section id="id5">
+<h3><a class="toc-backref" href="#id13">2.1一个接口的简单示例</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">hu</span> <span class="o">:=</span> <span class="nx">keyboard</span><span class="p">{</span><span class="nx">name</span><span class="p">:</span> <span class="s">&quot;小健的键盘&quot;</span><span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;设备的名称：%s\n&quot;</span><span class="p">,</span> <span class="nx">hu</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+    <span class="nx">hu</span><span class="p">.</span><span class="nx">strat</span><span class="p">()</span>
+    <span class="nx">hu</span><span class="p">.</span><span class="nx">end</span><span class="p">()</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;------------------------------------------------&quot;</span><span class="p">)</span>
+
+    <span class="c1">// 声明一个USB接口</span>
+    <span class="kd">var</span> <span class="nx">ints</span> <span class="nx">USB</span>
+    <span class="nx">m</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">mouse</span><span class="p">)</span>
+    <span class="nx">ints</span> <span class="p">=</span> <span class="nx">m</span>
+    <span class="nx">ints</span><span class="p">.</span><span class="nx">strat</span><span class="p">()</span>
+    <span class="nx">ints</span><span class="p">.</span><span class="nx">end</span><span class="p">()</span>
+
+    <span class="nx">k</span> <span class="o">:=</span><span class="nb">new</span><span class="p">(</span><span class="nx">keyboard</span><span class="p">)</span>
+    <span class="nx">ints</span> <span class="p">=</span> <span class="nx">k</span>
+    <span class="nx">ints</span><span class="p">.</span><span class="nx">strat</span><span class="p">()</span>
+    <span class="nx">ints</span><span class="p">.</span><span class="nx">end</span><span class="p">()</span>
+
+<span class="p">}</span>
+
+
+<span class="c1">// USB接口</span>
+<span class="kd">type</span> <span class="nx">USB</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">strat</span><span class="p">()</span>
+    <span class="nx">end</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">// 键盘结构体</span>
+<span class="kd">type</span> <span class="nx">keyboard</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">name</span> <span class="kt">string</span> <span class="c1">// 键盘名称</span>
+<span class="p">}</span>
+<span class="c1">// 键盘的方法，实现了接口中定义的方法</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">k</span> <span class="o">*</span><span class="nx">keyboard</span><span class="p">)</span> <span class="nx">strat</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;键盘开始工作.敲代码......&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">k</span> <span class="o">*</span><span class="nx">keyboard</span><span class="p">)</span> <span class="nx">end</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;键盘结束工作&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="c1">// 鼠标结构体，实现了接口中定义的方法</span>
+<span class="kd">type</span> <span class="nx">mouse</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">mouse</span><span class="p">)</span> <span class="nx">strat</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;鼠标开始工作.敲代码......&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">mouse</span><span class="p">)</span> <span class="nx">end</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;鼠标结束工作&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">6.3.3. </span>3.接口嵌套</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">x</span> <span class="nx">animal</span>
+    <span class="nx">x</span> <span class="p">=</span> <span class="nx">cat</span><span class="p">{</span><span class="nx">name</span><span class="p">:</span> <span class="s">&quot;吉吉&quot;</span><span class="p">}</span>
+    <span class="nx">x</span><span class="p">.</span><span class="nx">say</span><span class="p">()</span>
+    <span class="nx">x</span><span class="p">.</span><span class="nx">move</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Sayer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">say</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Move</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">move</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">animal</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Sayer</span>
+    <span class="nx">Move</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">cat</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="nx">cat</span><span class="p">)</span> <span class="nx">say</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="s">&quot;喵喵喵喵&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="nx">cat</span><span class="p">)</span> <span class="nx">move</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span><span class="s">&quot;猫会动&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id15"><span class="section-number">6.3.4. </span>4.示例:便于扩展输出方式的日志系统</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>搭建一个支持多种写入器的日志系统，可以扩展多种日志写入设备。</p>
+<p>1.日志对外接口</p>
+<p>logger.go</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="c1">// 声明日志写入器接口,这个接口可以被外部使用，实现一个日志的输出设备</span>
+<span class="kd">type</span> <span class="nx">LogWriter</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Write</span><span class="p">(</span><span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span>
+<span class="p">}</span>
+
+<span class="c1">// 日志器结构，使用writerList记录输出到哪个设备上</span>
+<span class="kd">type</span> <span class="nx">Logger</span> <span class="kd">struct</span> <span class="p">{</span>
+
+    <span class="c1">// 这个日志器用到的日志写入器</span>
+    <span class="nx">writerList</span> <span class="p">[]</span><span class="nx">LogWriter</span>
+<span class="p">}</span>
+
+<span class="c1">// 注册一个日志写入器，RegisterWriter()方法将日志写入器（LogWriter）注册到日志器（Logger）中</span>
+<span class="c1">// 注册的意思就是将日志写入器的接口添加到writeList中</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">Logger</span><span class="p">)</span> <span class="nx">RegisterWriter</span><span class="p">(</span><span class="nx">writer</span> <span class="nx">LogWriter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">l</span><span class="p">.</span><span class="nx">writerList</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">writerList</span><span class="p">,</span> <span class="nx">writer</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 将一个data类型的数据写入到日志</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">Logger</span><span class="p">)</span> <span class="nx">Log</span><span class="p">(</span><span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+
+    <span class="c1">// 遍历所有注册的写入器</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">writer</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">l</span><span class="p">.</span><span class="nx">writerList</span> <span class="p">{</span>
+
+        <span class="c1">// 将日志输出到每一个写入器</span>
+        <span class="nx">writer</span><span class="p">.</span><span class="nx">Write</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 创建日志器的实例</span>
+<span class="kd">func</span> <span class="nx">NewLogger</span><span class="p">()</span> <span class="o">*</span><span class="nx">Logger</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Logger</span><span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>2.文件写入器</p>
+<p>file.go</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;errors&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// 文件写入器</span>
+<span class="kd">type</span> <span class="nx">fileWriter</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">file</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
+<span class="p">}</span>
+
+<span class="c1">// 设置文件写入器写入的文件名</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">fileWriter</span><span class="p">)</span> <span class="nx">SetFile</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// 如果文件已经打开，关闭前一个文件</span>
+    <span class="k">if</span> <span class="nx">f</span><span class="p">.</span><span class="nx">file</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">f</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 创建一个文件并保存文件句柄</span>
+    <span class="nx">f</span><span class="p">.</span><span class="nx">file</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+
+    <span class="c1">// 如果创建的过程出现错误，则返回错误</span>
+    <span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+
+<span class="c1">// 实现LogWriter的Write</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">fileWriter</span><span class="p">)</span> <span class="nx">Write</span><span class="p">(</span><span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+
+    <span class="c1">// 日志文件可能没有创建成功</span>
+    <span class="k">if</span> <span class="nx">f</span><span class="p">.</span><span class="nx">file</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+
+        <span class="c1">// 日志文件没有准备好</span>
+        <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;file not created&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 将数据序列化为字符串</span>
+    <span class="nx">str</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%v\n&quot;</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+
+    <span class="c1">// 将数据以字节数组写入到文件</span>
+    <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">str</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+
+<span class="c1">// 创建文件写入器实例</span>
+<span class="kd">func</span> <span class="nx">newFileWriter</span><span class="p">()</span> <span class="o">*</span><span class="nx">fileWriter</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">fileWriter</span><span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>3.命令行写入器</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// 命令行写入器</span>
+<span class="kd">type</span> <span class="nx">consoleWriter</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="c1">// 实现LogWriter的Write</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">consoleWriter</span><span class="p">)</span> <span class="nx">Write</span><span class="p">(</span><span class="nx">data</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+
+    <span class="c1">// 将数据序列化为字符串</span>
+    <span class="nx">str</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%v\n&quot;</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+
+    <span class="c1">// 将数据以字节数组写入到命令行</span>
+    <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">str</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+
+<span class="c1">// 创建命令行写入器实例</span>
+<span class="kd">func</span> <span class="nx">newConsoleWriter</span><span class="p">()</span> <span class="o">*</span><span class="nx">consoleWriter</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">consoleWriter</span><span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>4.使用日志</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="c1">// 创建日志器</span>
+<span class="kd">func</span> <span class="nx">createLogger</span><span class="p">()</span> <span class="o">*</span><span class="nx">Logger</span> <span class="p">{</span>
+
+    <span class="c1">// 创建日志器</span>
+    <span class="nx">l</span> <span class="o">:=</span> <span class="nx">NewLogger</span><span class="p">()</span>
+    <span class="c1">// 创建命令行写入器</span>
+    <span class="nx">cw</span> <span class="o">:=</span> <span class="nx">newConsoleWriter</span><span class="p">()</span>
+    <span class="c1">// 注册命令行写入器到日志器</span>
+    <span class="nx">l</span><span class="p">.</span><span class="nx">RegisterWriter</span><span class="p">(</span><span class="nx">cw</span><span class="p">)</span>
+
+
+
+    <span class="c1">// 创建文件写入器</span>
+    <span class="nx">fw</span> <span class="o">:=</span> <span class="nx">newFileWriter</span><span class="p">()</span>
+    <span class="c1">// 设置文件名</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">fw</span><span class="p">.</span><span class="nx">SetFile</span><span class="p">(</span><span class="s">&quot;log.log&quot;</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">// 注册文件写入器到日志器</span>
+    <span class="nx">l</span><span class="p">.</span><span class="nx">RegisterWriter</span><span class="p">(</span><span class="nx">fw</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">l</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// 准备日志器</span>
+    <span class="nx">l</span> <span class="o">:=</span> <span class="nx">createLogger</span><span class="p">()</span>
+
+    <span class="c1">// 写一个日志</span>
+    <span class="nx">l</span><span class="p">.</span><span class="nx">Log</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">6.3.5. </span>5.示例:使用接口进行数据的排序</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kd">type</span> <span class="nx">Interface</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="c1">// 3个方法</span>
+    <span class="c1">// 获取元素数量</span>
+    <span class="nx">Len</span><span class="p">()</span> <span class="kt">int</span>
+    <span class="c1">// 判断传入数值大小</span>
+    <span class="nx">Less</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span>
+    <span class="c1">// 传入元素位置互换</span>
+    <span class="nx">Swap</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="sort-interface">
+<h2><a class="toc-backref" href="#id17"><span class="section-number">6.3.6. </span>6.使用sort.Interface接口进行排序</a><a class="headerlink" href="#sort-interface" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;sort&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// 将[]string定义为MyStringList类型</span>
+<span class="kd">type</span> <span class="nx">MyStringList</span> <span class="p">[]</span><span class="kt">string</span>
+
+<span class="c1">// 实现sort.Interface接口的获取元素数量方法</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">MyStringList</span><span class="p">)</span> <span class="nx">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 实现sort.Interface接口的比较元素方法</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">MyStringList</span><span class="p">)</span> <span class="nx">Less</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">m</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">&lt;</span> <span class="nx">m</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1">// 实现sort.Interface接口的交换元素方法</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="nx">MyStringList</span><span class="p">)</span> <span class="nx">Swap</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">m</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">m</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">m</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">m</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// 准备一个内容被打乱顺序的字符串切片</span>
+    <span class="nx">names</span> <span class="o">:=</span> <span class="nx">MyStringList</span><span class="p">{</span>
+        <span class="s">&quot;3. Triple Kill&quot;</span><span class="p">,</span>
+        <span class="s">&quot;5. Penta Kill&quot;</span><span class="p">,</span>
+        <span class="s">&quot;2. Double Kill&quot;</span><span class="p">,</span>
+        <span class="s">&quot;4. Quadra Kill&quot;</span><span class="p">,</span>
+        <span class="s">&quot;1. First Blood&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 使用sort包进行排序</span>
+    <span class="nx">sort</span><span class="p">.</span><span class="nx">Sort</span><span class="p">(</span><span class="nx">names</span><span class="p">)</span>
+
+    <span class="c1">// 遍历打印结果</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">names</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">i</span> <span class="n">Interface</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">names</span>
+<span class="o">//</span> <span class="n">切片总的大小</span>
+<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">Len</span><span class="p">())</span>    <span class="o">//</span><span class="mi">5</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02.%E5%AE%9E%E7%8E%B0%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%9D%A1%E4%BB%B6.html" class="btn btn-neutral float-left" title="6.2. 实现接口的条件" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04.%E5%B8%B8%E8%A7%81%E7%9A%84%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BE%BF%E6%8D%B7%E6%8E%92%E5%BA%8F.html" class="btn btn-neutral float-right" title="6.4. 常见的类型的便捷排序" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+.. contents::
+   :depth: 3
+..
+
+可变参数
+========
+
+``*args 接收元祖元素``
+
+``**kargs 接收字典元素``
+
+代码示例1
+---------
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   def coffee(*coffeename):
+       print("\n我喜欢的咖啡有:")
+       for item in coffeename:
+           print(item)
+
+   coffee("蓝山")
+   coffee("蓝山","卡布奇洛","巴西")
+   list1 = ["蓝山", "卡布奇洛", "巴西"]
+
+   coffee(*list1)  #解包用法
+
+代码示例2
+---------
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   def fun_bmi(*name):
+       '''
+       :param name:
+       :param height:
+       :param weight:
+       :return:根据身高和体重计算bmi指数
+       '''
+       for item in name:
+           for args1 in item:
+               name = args1[0]
+               height = args1[1]
+               weight = args1[2]
+               print(name + "的身高" + str(height) + "米\t 体重："+ str(weight) + "千克")
+               bmi = weight/(height*height)        #计算BMI指数，公式为: "体重/身高的平方"
+               print("您的BMI指数为：" + str(bmi))   #输出BMI指数
+               #check身材是否合理
+               print()
+
+               if bmi < 18.5:
+                   print("您的体重过轻~~~@_@")
+               if bmi >=18.5 and bmi <24.9:
+                   print("正常范围，注意保持...")
+               if bmi >=24.9 and bmi <29.9:
+                   print("您的体重过重!!~~@_@~")
+               if bmi>29.9:
+                   print("@_@肥胖。")
+
+   list1 = [["hujianli",1.79,65], ['huxiaojian',1.78,90], ['jianli',1.81,100]]
+   fun_bmi(list1)
+
+代码示例3
+---------
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   def sign(**sign):
+       for key,value in sign.items():
+           print(key,'的星座是:',value)
+       print()
+   dict1 = {"胡建力":'巨蟹座'}
+
+   dict2 = {'小健':"狮子座", '小胡':'双子座', '建力':'巨蟹座'}
+   sign(**dict1)       #解包，收集参数
+   sign(**dict2)
+
+代码示例4
+---------
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   '''
+   如果参数名前加上一个星号，* 表示该餐是一个可变长参数。如果依次将所有的其他变量都赋予值之后，剩下的参数将会收集在
+   一个元祖中，元祖的名称就是前面带星号的参数名
+   '''
+
+   def change_para_num(*tpl):
+       print(type(tpl))
+       print(tpl)
+
+   change_para_num(1)
+   change_para_num(1, 2, 3)
+   print("演示一个同时有三种类型的参数的函数定义及调用".center(100,"*"))
+   def change_para_mum2(*tpl,a,b=0):
+       print("tpl:",tpl)
+       print("a:",a)
+       print("b:",b)
+
+   change_para_mum2(1,2,3,a=5)
+
+   #定义了收集关键字参数的示例
+   def change_para_dct(a,b=0,**adct):
+       print("adct:",adct)     #收集关键字参数到字典中，多余的关键字参数，运行时会被放入adct字典中
+       print("a:",a)
+       print("b:",b)
+
+   change_para_dct(1,k=3,b=2,c=3)
+
+位置参数和可变参数一起使用
+--------------------------
+
+代码示例
+~~~~~~~~
+
+::
+
+   In [3]: def func3(a,b,*args):
+      ...:     print(a,b)
+      ...:     print(*args)
+      ...:
+   In [4]: func3(1,2,666,777)
+   1 2
+   666 777
+
+eg
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/21 16:49
+   # filename: 可变参数2.py
+
+   def show_info(seq=":", **info):
+       print("---------------------info---------------")
+       print("info".center(40, "-"))
+
+       for key, value in info.items():
+           print("{0}{2}{1}".format(key, value, seq))
+
+
+   show_info("-->", name="hujianli", age=18, sex="Man")
+   show_info(name="hujianli2", age=19, sex="Man", seq="-")
+
+   stu_dict = {"name": "xiaojian", "age": "18"}  # 创建字典对象
+   show_info(**stu_dict)
+
+输出信息
+
+::
+
+   ---------------------info---------------
+   ------------------info------------------
+   name-->hujianli
+   sex-->Man
+   age-->18
+   ---------------------info---------------
+   ------------------info------------------
+   name-hujianli2
+   sex-Man
+   age-19
+   ---------------------info---------------
+   ------------------info------------------
+   name:xiaojian
+   age:18
+
+接受任意参数的函数
+------------------
+
+::
+
+   In [1]: def func(*args,**kwargs):
+      ...:     print(args)
+      ...:     print(kwargs)
+      ...:
+   In [2]: func(1,2,3,a=1,b=2,c=3)
+   (1, 2, 3)
+   {'c': 3, 'b': 2, 'a': 1}

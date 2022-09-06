@@ -1,0 +1,407 @@
+.. contents::
+   :depth: 3
+..
+
+列表实现堆和队列
+================
+
+堆栈是指最先进入堆栈的元素最后才输出 — “后进后出”的顺序。
+---------------------------------------------------------
+
+-  栈中的放入和移除操作有统一的称谓——入栈（push）和出栈（pop）。
+   Python没有入栈方法，但可以使用append方法代替
+
+-  pop方法和append方法实现压栈和出栈
+
+.. code:: python
+
+
+   #!/usr/bin/env python
+   #-*- coding:utf-8 -*-
+   __author__ = '18793'
+
+   #堆栈的实现
+   list = ["apple", "grape", "grape"]
+   list.append("orange")
+   print(list)
+   print("弹出的元素: ",list.pop())
+   print(list)
+
+eg
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/8/19 9:27
+   # filename: 自定义堆栈结构.py
+
+   """
+   定义一个堆栈数据结构
+   """
+
+
+   class PyStack():
+       def __init__(self, size=20):
+           self.stack = []  # 用列表创建堆栈
+           self.size = size  # 默认堆栈大小
+           self.top = -1  # 栈顶的位置
+
+       def push(self, element):
+           """
+           向堆栈中推入数据
+           :return:
+           """
+           if self.is_Full():
+               raise myException("Stack is full, unable to push data")
+           else:
+               self.stack.append(element)
+               self.top += 1
+
+       def pop(self):
+           """
+           向堆栈中移除数据
+           :return:
+           """
+           if self.is_Empty():
+               raise myException("Stack is Empty, unable to pop data")
+           else:
+               element = self.stack[-1]
+               self.top = self.top - 1
+               del self.stack[-1]
+               return element
+
+       def is_Empty(self):
+           """
+           判断是否为空栈
+           :return:
+           """
+           if self.top == -1:
+               return True
+           else:
+               return False
+
+       def Top(self):
+           """
+           返回栈顶的位置
+           """
+           return self.top
+
+       def is_Full(self):
+           """
+           判断是否为满栈
+           :return:
+           """
+           if self.top == self.size - 1:
+               return True
+           else:
+               return False
+
+       def clear_Stack(self):
+           """
+           清空堆栈信息
+           :return:
+           """
+           self.stack = []
+           self.top = -1
+
+
+   class myException(Exception):
+       def __init__(self, data):
+           self.data = data
+
+       def __str__(self):
+           return self.data
+
+
+   if __name__ == '__main__':
+       mytest = PyStack()
+       for i in range(10):
+           mytest.push(i)
+       print("栈顶的位置为：{}".format(mytest.Top()))
+       print("开始出栈操作.....")
+       for i in range(10):
+           print(mytest.pop())
+
+       print("清空堆栈.....")
+       mytest.clear_Stack()
+
+       # for i in range(21):   此处将引发异常
+       #     mytest.push(i)
+
+输出结果
+
+::
+
+   9
+   9
+   8
+   7
+   6
+   5
+   4
+   3
+   2
+   1
+   0
+
+队列是指最先进入队列的元素最先输出— “先进先出”的顺序，排队处理流程
+------------------------------------------------------------------
+
+append()、pop() 可以模拟这两个数据结构
+
+列表实现 eg
+
+.. code:: python
+
+   #队列的实现
+   list = ["apple", "grape", "grape"]
+   list.append("orange")
+   print(list)
+   print("弹出的元素: ",list.pop(0))
+   print(list)
+
+队列实现 eg
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/11 16:39
+   # filename: 双端队列.py
+   from collections import deque
+
+   #元素入栈
+   stack = deque(("Kotln", "Python"))
+   stack.append("hujianli01")
+   stack.append("hujianli02")
+   print("stack入栈后的元素: ",stack)
+
+
+   #元素出栈，先进先出
+   print(stack.popleft())
+   print(stack.popleft())
+   print(stack.pop(0))print("stack出栈后的元素:",stack)
+
+   #元素出栈，后进先出
+   print(stack.pop())
+   print(stack.pop())
+   print("stack出栈后的元素:",stack)
+
+队列代码示例
+------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   class PyQueue:
+       # 创建队
+       def __init__(self, size=20):
+           self.queue = []  # 队
+           self.size = size  # 队大小
+           self.end = -1  # 尾队
+
+       def setSize(self, size):
+           # 设置队大小
+           self.size = size
+
+       def In(self, element):
+           # 入队
+           if self.end < self.size - 1:
+               self.queue.append(element)
+               self.end = self.end + 1
+           else:
+               raise QueueException("PyQueueEmpty")
+
+       def Out(self):
+           # 出队
+           if self.end != -1:
+               element = self.queue[0]
+               self.queue = self.queue[1:]
+               self.end = self.end - 1
+               return element
+           else:
+               raise QueueException("PyQueueEmpty")
+
+       def End(self):
+           # 输出尾队
+           return self.end
+
+       def empty(self):
+           # 清除队
+           self.queue = []
+           self.end = -1
+
+
+   class QueueException(Exception):
+       # 自定义异常类
+       def __init__(self, data):
+           self.data = data
+
+       def __str__(self):
+           return self.data
+
+
+   if __name__ == '__main__':
+       queue = PyQueue()
+       print("入队10个元素")
+       for i in range(10):
+           queue.In(i)  # 元素入队
+       print()
+       print("输出队尾的元素：")
+       print(queue.End())  # 输出尾队
+       print()
+       print("出队10个元素")
+       for i in range(10):
+           print(queue.Out())  # 元素出队
+       print()
+       print("入队20个元素")
+       for i in range(20):
+           queue.In(i)  # 元素入队
+       print()
+       print("出队20个元素")
+       for i in range(20):  # 引发异常，队为空队
+           print(queue.Out())
+       print()
+       print("清空队列....")
+       queue.empty()       #清空队
+
+队列的rotate()方法
+------------------
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/11 16:47
+   # filename: 队列的rotate()方法.py
+   from collections import deque
+   q = deque(range(5))
+   print("q中的元素：",q)
+
+   #执行旋转，使之首尾相连
+   q.rotate()
+   print("q中的元素：",q)
+
+   #再次执行旋转，使之首尾相连
+   q.rotate()
+   print("q中的元素：",q)
+
+
+   q中的元素： deque([0, 1, 2, 3, 4])
+   q中的元素： deque([4, 0, 1, 2, 3])
+   q中的元素： deque([3, 4, 0, 1, 2])
+
+双端队列
+--------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/10/28 21:05
+   # filename: 双端队列.py
+   class Deque:
+       def __init__(self):
+           self.item = []
+
+       def isEmpty(self):
+           """
+           :return: 清空队列
+           """
+           return self.item == []
+
+       def addFront(self, item):
+           """
+           :param item: 插入值
+           :return: 在队列尾部插入
+           """
+           self.item.append(item)
+
+       def addRear(self, item):
+           """
+
+           :param item: 插入值
+           :return: 在队列首部插入
+           """
+           self.item.insert(0, item)
+
+       def removeFront(self):
+           """
+           :return: 返回队列尾部值
+           """
+           return self.item.pop()
+
+       def removeRear(self):
+           """
+           :return: 返回队列首部值
+           """
+           return self.item.pop(0)
+
+       def size(self):
+           """
+           :return: 返回队列长度
+           """
+           return len(self.item)
+
+
+   if __name__ == '__main__':
+       hu = Deque()
+       print(hu.isEmpty())
+       hu.addRear(4)
+       hu.addFront("dog")
+       hu.addFront("cat")
+       hu.addFront(True)
+       print(hu.size())
+       print(hu.isEmpty())
+       hu.addRear(8.8)
+       print(hu.removeRear())
+       print(hu.removeFront())
+
+堆的使用
+--------
+
+eg
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/11 17:03
+   # filename: 堆操作.py
+   from heapq import *
+
+   my_data = list(range(10))
+   my_data.append(0.5)
+
+   # my_data依然是一个list列表
+   print("my_data的元素:", my_data)
+
+   # 对my_data应用堆属性
+   heapify(my_data)
+
+   print("应用堆之后my_data的元素: ", my_data)
+   heappush(my_data, 7.2)
+   print("添加7.2之后my_data的元素：", my_data)
+
+   # 弹出最小的元素
+   print(heappop(my_data))
+   print(heappop(my_data))
+   print("弹出两个元素之后my_data的元素：", my_data)
+
+   # 弹出最小的元素，压入指定元素
+   print(heapreplace(my_data, 8.1))
+   print("执行replace之后my_data的元素：", my_data)
+
+   # 获取最大和最小的n个元素
+   print("my_data中最大的3个元素：", nlargest(3, my_data))
+   print("my_data中最小的4个元素：", nsmallest(4, my_data))
+
+当程序要获取列表中最大的n个元素，或者最小的n个元素时，使用堆能缓存列表的排序结果，
+因此具有较好的性能。

@@ -1,0 +1,406 @@
+.. contents::
+   :depth: 3
+..
+
+迭代器
+======
+
+迭代器在Python语言中的应用较为广泛，迭代的意思类似于循环，每一次重复的过程被称为一次迭代的过程，而每一次迭代的结果会被用来作为下一次迭代的初始值。
+
+提供迭代方法的容器称为迭代器，当我们循环序列（如列表、元组、字符串、集合和字典）的时候，实际上是由迭代器完成的。
+
+1.认识迭代器
+------------
+
+假设现有列表[1,2,3,4]，若想把列表的每个元素依次输出，则可以使用for语句执行循环输出，示例代码如下：
+
+.. code:: python
+
+   list1 = [1, 2, 3, 4]
+   for i in list1:
+       print(i)
+
+在Python中，一切皆为对象，列表list1是一个对象，并且它能使用for语句循环输出每个元素，说明它是一个可迭代对象。
+
+可迭代对象并不是指某种具体的数据类型，可以理解为它是可以使用for循环输出的对象，比如列表list是可迭代对象，字典dict是可迭代对象，集合set也是可迭代对象，等等。
+
+判断一个对象是否为\ **可迭代对象**
+
+-  主要看该对象在定义过程中是否定义了方法__iter__()，\ **如果该对象定义了方法__iter__()，它就是一个可迭代对象。**
+
+迭代器有两个核心方法：iter()和next()。
+
+-  iter()方法用于创建迭代器对象；
+
+-  next()用于遍历对象的元素。在遍历字符串、列表或元组对象时经常会用到迭代器，例如：
+
+.. code:: python
+
+   list1 = [1, 2, 3, 4]
+   print("list1的对象类型为:", type(list1))
+
+   l = iter(list1)
+   print("iter(list1)的对象类型为:", type(l))
+   print(next(l))
+   print(next(l))
+   print(next(l))
+   print(next(l))
+   """
+   list1的对象类型为: <class 'list'>
+   iter(list1)的对象类型为: <class 'list_iterator'>
+   1
+   2
+   3
+   4
+   """
+
+除了使用next()输出之外还可以使用for和while输出每个元素
+
+.. code:: python
+
+   list1 = [1, 2, 3, 4]
+   print("list1的对象类型为:", type(list1))
+   l = iter(list1)
+   print("iter(list1)的对象类型为:", type(l))
+   for i in l:
+       print(i)
+
+   l = iter(list1)
+   while 1:
+       try:
+           print(next(l))
+       except:
+           break
+
+2.迭代器与可迭代对象的区别
+--------------------------
+
+-  可迭代对象不一定是迭代器，但迭代器一定是可迭代对象；
+-  对可迭代对象使用iter()会返回迭代器，迭代器则会返回其自身；
+-  每个迭代器的被迭代过程是一次性的，可迭代对象则不一定；
+-  可迭代对象只需要实现__iter__方法，而迭代器要额外实现__next__方法。
+
+3.自定义迭代器
+--------------
+
+只要在类中定义__iter__()和__next__()，那么该类可以视为迭代器类。有了自定义的迭代器类，还要定义一个可迭代的类，在可迭代的类的__iter__()方法里面使用自定义的迭代器类实现迭代过程，详细代码如下：
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther: 18793
+   # Date：2021/11/3 11:34
+   # filename: list_for_iter.py
+
+
+   class MyListIterator:
+       """定义迭代器类，它是MyList可迭代对象的迭代器类"""
+
+       def __init__(self, data):
+           self.data = data
+           self.now = 0
+
+       def __iter__(self):
+           """返回该对象的迭代器类的实例，因为它自己就是迭代器，所以返回self"""
+           return self
+
+       def __next__(self):
+           """迭代器类必须定义的方法"""
+           while self.now < self.data:
+               self.now += 1
+               # 返回当前迭代值
+               return self.now - 1
+           raise StopIteration  # 超出范围抛出异常
+
+
+   class MyList:
+       def __init__(self, num):
+           self.num = num
+
+       def __iter__(self):
+           return MyListIterator(self.num)
+
+
+   my_list = MyList(5)
+   print(type(my_list))
+   my_list_iter = iter(my_list)
+   print(type(my_list_iter))
+
+   for i in my_list_iter:
+       print(i)
+       
+   """
+   <class '__main__.MyList'>
+   <class '__main__.MyListIterator'>
+   0
+   1
+   2
+   3
+   4
+   """
+
+..
+
+   使用dir()函数查看属性 \__getattribute__或者
+   \__next__,说明是个可迭代的对象
+
+   \__iter__() 方法返回对象本身，是for遇见使用迭代器的要求
+
+   \__next__()
+   方法返回容器中下一个元素或数据，当容器中数据用尽时，引发StopIteration异常
+
+3.1 代码示例1
+~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/15 14:03
+   # filename: 实现一个迭代器.py
+   """
+   for循环遍历列表、元祖和字典，属于一个迭代器
+   """
+   '''
+   如果开发者要实现迭代器，只需要实现如下两个方法即可
+
+   __iter__(self):该方法返回一个迭代器（iterator），迭代器必须包含一个__next__()方法，该方法返回迭代器的下一个元素
+
+   __reversed__(self)：该方法主要为内建的reversed()反转函数提供支持，程序调用reversed()函数时，其实就是在使用
+   __reversed__此方法
+   '''
+
+
+   # 实现一个斐波拉契数列 f(n+2)=f(n+1)+f(n)
+
+   class Fibs:
+       def __init__(self, len):
+           self.first = 0
+           self.sec = 1
+           self.__len = len
+
+       # 定义迭代器所需的__next__方法
+       def __next__(self):
+           # 如果__len__属性为0，结束迭代
+           if self.__len == 0:
+               raise StopIteration
+           # 完成数列计算
+           self.first, self.sec = self.sec, self.first + self.sec
+           self.__len -= 1
+           return self.first
+
+       # 定义__iter__方法，该方法返回迭代器
+       def __iter__(self):
+           return self
+
+
+   # 创建Fibs对象
+   fibs = Fibs(10)
+   # print(next(fibs))
+   # print(fibs.__next__())
+   # print(fibs.__next__())
+
+   for i in fibs:
+       print(i, end=" ")
+
+输出信息
+
+::
+
+   1 1 2 3 5 8 13 21 34 55 
+
+.. code:: python
+
+   # 将列表、元祖转换为迭代器
+   my_iter = iter(["千千厥歌", "hu", 'jianli', "python", "java"])
+   #依次获取迭代器的下一个元素
+   # print(my_iter.__next__())
+   # print(my_iter.__next__())
+   # print(my_iter.__next__())
+   # print(my_iter.__next__())
+
+   for i in my_iter:
+       print(i)
+
+..
+
+   提示：
+
+   迭代器每次迭代只会取出当前迭代的数据存储在内存进行读取，上一次迭代的数据会在内存中销毁，并且其他数据不会加载到内存中。
+
+   当数据量太大的时候，这样就能节省内存的开销，提高程序的运行速度，它在大文件的读取、大数据处理和网站大量数据爬取的情况下具有明显的优势。
+
+3.2 代码示例2
+~~~~~~~~~~~~~
+
+.. code:: python
+
+   class Fibs:
+       def __init__(self, n=10):
+           self.a = 0
+           self.b = 1
+           self.n = n      #定义初始化参数n
+
+       def __iter__(self):
+           return self
+
+       def __next__(self):
+           self.a,self.b = self.b, self.a + self.b     #a=b b=a+b
+           if self.a > self.n:         #退出条件
+               raise StopIteration
+           return self.a,self.b
+
+   hu = Fibs(100)
+   for i in hu:
+       print(i)
+
+3.3 代码示例3
+~~~~~~~~~~~~~
+
+.. code:: python
+
+   #自定义迭代器
+   class MyIterator:
+       def __init__(self,x=2,xmax=100):
+           '''
+           定义构造方法，初始化属性
+           '''
+           self.__mul,self.__x = x,x
+           self.__xmax = xmax
+
+       def __iter__(self):
+           """
+           :return:定义迭代器协议方法，返回类本身
+           """
+           return self
+
+       def __next__(self):
+           if self.__x and self.__x != 1:
+               self.__mul *= self.__x
+               if self.__mul <= self.__xmax:
+                   return self.__mul
+               else:
+                   raise StopIteration
+           else:
+               raise StopIteration
+
+   if __name__ == '__main__':
+       myiter = MyIterator()
+       for i in myiter:
+           print("迭代器的数据元素为{}".format(i))
+
+3.4 代码示例4
+~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-】
+   class Counter:
+       '''
+       定义用于计数的类
+       '''
+       def __init__(self,x=0):
+           #定义构造函数，初始化实例属性x
+           self.x = x
+
+   counter = Counter()  #实例化类
+
+   def used_iter():
+       #修改计数类中实例属性的值
+       counter.x +=2
+       return counter.x
+
+   for i in iter(used_iter,8):         #8为哨兵，迭代到8立刻停止
+       print("本次遍历的数值：{}".format(i))
+
+4.使用迭代器读取文件
+--------------------
+
+4.1 读取小文件
+~~~~~~~~~~~~~~
+
+.. code:: python
+
+   def count_digits(fname):
+       """计算文件里包含多少个数字字符"""
+       count = 0
+       with open(fname) as file:
+           for line in file:
+               for s in line:
+                   if s.isdigit():
+                       count += 1
+       return count
+
+4.2 读取大文件
+~~~~~~~~~~~~~~
+
+.. code:: python
+
+   # 方式1
+   def count_digits_v2(fname):
+       """计算文件里包含多少个数字字符，每次读取 8kb"""
+       count = 0
+       block_size = 1024 * 8
+       with open(fname) as file:
+           while True:
+               chunk = file.read(block_size)
+               # 当文件没有更多内容时，read 调用将会返回空字符串 ''
+               if not chunk:
+                   break
+               for s in chunk:
+                   if s.isdigit():
+                       count += 1
+       return count
+
+
+   # 方式2
+   from functools import partial
+   def count_digits_v3(fname):
+       count = 0
+       block_size = 1024 * 8
+       with open(fname) as fp:
+           # 使用 functools.partial 构造一个新的无需参数的函数
+           _read = partial(fp.read, block_size)
+
+           # 利用 iter() 构造一个不断调用 _read 的迭代器
+           for chunk in iter(_read, ''):
+               for s in chunk:
+                   if s.isdigit():
+                       count += 1
+       return count
+
+4.3 读取数字内容的生成器函数
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   from functools import partial
+   def read_file_digits(fp, block_size=1024 * 8):
+       """生成器函数：分块读取文件内容，返回其中的数字字符"""
+       _read = partial(fp.read, block_size)
+       for chunk in iter(_read, ''):
+           for s in chunk:
+               if s.isdigit():
+                   yield s
+                   
+                   
+   def count_digits_v4(fname):
+       """计算文件里包含多少个数字字符，每次读取 8kb"""
+       count = 0
+       with open(fname) as file:
+           for num in read_file_digits(file):
+               count += 1
+       return count
+                   
+       
+   def count_even_groups(fname):
+       """分别统计文件里每个偶数字符出现的个数"""
+       counter = defaultdict(int)
+       with open(fname) as file:
+           for num in read_file_digits(file):
+               if int(num) % 2 == 0:
+                   counter[int(num)] += 1
+       return counter

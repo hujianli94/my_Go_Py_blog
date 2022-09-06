@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>21.26. 爬取酷狗TOP500的数据 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="21.27. 案例：爬取今日头条信息(Ajax)" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E4%BF%A1%E6%81%AF%28Ajax%29.html" />
+    <link rel="prev" title="21.25. 案例：爬取起点中文网数据存到excel中" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%B5%B7%E7%82%B9%E4%B8%AD%E6%96%87%E7%BD%91%E6%95%B0%E6%8D%AE%E5%AD%98%E5%88%B0excel%E4%B8%AD.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">21. Python网络爬虫</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95%E5%A4%8D%E4%B9%A0.html">21.1. 基础语法复习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_1.Python%E7%9A%84%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82.html">21.2. Python的网络请求</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%88%AC%E8%99%AB%E5%8E%9F%E7%90%86%E5%92%8C%E7%BD%91%E9%A1%B5%E7%BB%93%E6%9E%84.html">21.3. 爬虫原理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%88%AC%E8%99%AB%E7%A8%8B%E5%BA%8F.html">21.4. 我的第一个爬虫程序</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">21.5. 正则表达式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.re%E6%A8%A1%E5%9D%97%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95.html">21.6. re模块的常用方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.Lxml%E5%BA%93%E5%92%8CXpath%E8%AF%AD%E6%B3%95.html">21.7. Lxml库和Xpath语法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E4%B8%89%E7%A7%8D%E7%88%AC%E8%99%AB%E6%A8%A1%E5%BC%8F%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94.html">21.8. 3种爬虫模式性能对比</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E4%BD%BF%E7%94%A8API.html">21.9. 使用API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%98%E5%82%A8.html">21.10. 数据的存储</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%88%AC%E8%99%AB.html">21.11. 多进程爬虫</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BD.html">21.12. 异步加载</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.%E8%A1%A8%E5%8D%95%E4%BA%A4%E4%BA%92%E4%B8%8E%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95.html">21.13. 表单交互与模拟登陆</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.Selenium%E6%A8%A1%E6%8B%9F%E6%B5%8F%E8%A7%88%E5%99%A8.html">21.14. Selenium模拟浏览器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.%E6%89%8B%E5%86%99Python%E7%88%AC%E8%99%AB.html">21.15. 手写python爬虫</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.Python%E7%88%AC%E8%99%AB%E9%A1%B9%E7%9B%AE%E5%90%88%E9%9B%86.html">21.16. python爬虫项目合集</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E4%B8%AD%E5%9B%BD%E5%A4%A9%E6%B0%94%E7%BD%91%E5%9B%BE%E7%89%87.html">21.17. 案例：爬取中国天气网图片</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E5%B0%8F%E8%AF%B4.html">21.18. 案例：爬取小说</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1TOP100%E6%8E%92%E8%A1%8C.html">21.19. 案例：爬取猫眼电影TOP100排行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E4%BD%BF%E7%94%A8BeautifulSoup%E7%88%AC%E5%8F%96%E7%A7%9F%E6%88%BF%E4%BF%A1%E6%81%AF.html">21.20. 使用BeautifulSoup爬取租房信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E7%B3%97%E4%BA%8B%E7%99%BE%E7%A7%91%E5%86%85%E5%AE%B9.html">21.21. 爬取糗事百科内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E7%BA%B3%E6%96%AF%E8%BE%BE%E5%85%8B%E8%82%A1%E7%A5%A8%E6%95%B0%E6%8D%AE.html">21.22. 案例：爬取纳斯达克股票数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%82%A1%E7%A5%A8%E7%BD%91%E7%AB%99%E6%95%B0%E6%8D%AE%E8%BD%AC%E4%B8%BAjson.html">21.23. 案例：爬取股票网站数据转为json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%B1%86%E7%93%A3TOP250%E7%9A%84%E7%94%B5%E5%BD%B1%E5%92%8C%E4%B9%A6%E7%B1%8D.html">21.24. 案例：爬取豆瓣TOP250的电影和书籍</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%B5%B7%E7%82%B9%E4%B8%AD%E6%96%87%E7%BD%91%E6%95%B0%E6%8D%AE%E5%AD%98%E5%88%B0excel%E4%B8%AD.html">21.25. 案例：爬取起点中文网数据存到excel中</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">21.26. 爬取酷狗TOP500的数据</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">21.26.1. 代码示例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">21.26.2. 爬取酷狗音乐飙升榜</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E4%BF%A1%E6%81%AF%28Ajax%29.html">21.27. 案例：爬取今日头条信息(Ajax)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">21. </span>Python网络爬虫</a> &raquo;</li>
+      <li><span class="section-number">21.26. </span>爬取酷狗TOP500的数据</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/22.Python网络爬虫/案例：爬取酷狗TOP500的数据.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#top500" id="id4">爬取酷狗TOP500的数据</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id5">代码示例</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id6">输出结果</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id3" id="id7">爬取酷狗音乐飙升榜</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="top500">
+<h1><a class="toc-backref" href="#id4"><span class="section-number">21.26. </span>爬取酷狗TOP500的数据</a><a class="headerlink" href="#top500" title="Permalink to this headline">¶</a></h1>
+<p><strong>网页访问URL地址：</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>https://www.kugou.com/yy/rank/home/2-8888.html?from=rank
+</pre></div>
+</div>
+<p><strong>通过观察URL翻页是通过更换home/后面的数字</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">kugou</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">yy</span><span class="o">/</span><span class="n">rank</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="mi">1</span><span class="n">xxx</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">kugou</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">yy</span><span class="o">/</span><span class="n">rank</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="mi">2</span><span class="n">xxx</span>
+</pre></div>
+</div>
+<section id="id1">
+<h2><a class="toc-backref" href="#id5"><span class="section-number">21.26.1. </span>代码示例</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">time</span>             <span class="c1">#导入相应的库文件</span>
+
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s2">&quot;User-agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 &quot;</span>
+              <span class="s2">&quot;(KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36&quot;</span>
+
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">wb_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">wb_data</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;lxml&#39;</span><span class="p">)</span>
+    <span class="n">ranks</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;span.pc_temp_num&#39;</span><span class="p">)</span>
+    <span class="n">titles</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;div.pc_temp_songlist &gt; ul &gt; li &gt; a&#39;</span><span class="p">)</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;span.pc_temp_tips_r &gt; span&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">rank</span><span class="p">,</span><span class="n">title</span><span class="p">,</span><span class="n">time</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ranks</span><span class="p">,</span><span class="n">titles</span><span class="p">,</span><span class="n">times</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;rank&quot;</span><span class="p">:</span> <span class="n">rank</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="s2">&quot;singer&quot;</span><span class="p">:</span><span class="n">title</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;song&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">title</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]),</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">:</span><span class="n">time</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="p">}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;https://www.kugou.com/yy/rank/home/</span><span class="si">{}</span><span class="s1">-8888.html?from=rank&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">24</span><span class="p">)]</span>      <span class="c1">#构造多页url</span>
+
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="n">get_info</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>   <span class="c1">#循环调用get_info()函数</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>       <span class="c1">#休眠时间1秒</span>
+</pre></div>
+</div>
+<section id="id2">
+<h3><a class="toc-backref" href="#id6">输出结果</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;展展与罗罗 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;5:38&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 沙漠骆驼&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;花姐 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:10&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 夜之光&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;张紫豪 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;4:00&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 可不可以&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;G.E.M.邓紫棋 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:55&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 光年之外&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;李荣浩 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;4:39&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 年少有为&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;6&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;何野 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;4:00&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 天亮以前说再见&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;7&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;贺一航 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;4:49&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 请先说你好&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;8&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;王大毛 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;4:05&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 去年夏天&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;9&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;马良、孙茜茹 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:56&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 往后余生&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;火箭少女101 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:52&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 卡路里&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;11&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;周笔畅 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:30&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 最美的期待&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;221小伙伴 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:36&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 遥远的你 (正式版)&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;13&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;李袁杰 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:40&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 醉千年&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;14&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;G.G(张思源 ) &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:16&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 给陌生的你听&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;15&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;于果 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:37&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 侧脸&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;16&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;于文文 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;4:42&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 体面&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;17&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;胡夏、郁可唯 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;4:36&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 知否知否&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="s1">&#39;18&#39;</span><span class="p">,</span> <span class="s1">&#39;singer&#39;</span><span class="p">:</span> <span class="s1">&#39;Ayo97、阿涵 &#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;3:57&#39;</span><span class="p">,</span> <span class="s1">&#39;song&#39;</span><span class="p">:</span> <span class="s1">&#39; 感谢你曾来过&#39;</span><span class="p">}</span>
+<span class="o">................</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id7"><span class="section-number">21.26.2. </span>爬取酷狗音乐飙升榜</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/10 23:45</span>
+<span class="c1"># filename: 爬取酷狗音乐飙升榜.py</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">使用3种方式爬取酷狗音乐的飙升榜</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.kugou.com/yy/html/rank.html&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">get_html</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;user-agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36&quot;</span>
+    <span class="p">}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">return</span> <span class="n">html</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;request error&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">Re_serach</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    使用re正则抓取酷狗音乐</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">html_info</span> <span class="o">=</span> <span class="n">get_html</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">info1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&lt;li class=&quot; &quot; title=&quot;(.*?)&quot;&gt;&#39;</span><span class="p">)</span>
+    <span class="n">music_html</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&lt;a href=&quot;(.*?)&quot; data-active=&quot;playDwn&quot; data-index=&quot;\d&quot;&#39;</span><span class="p">)</span>
+    <span class="n">music_info_all</span> <span class="o">=</span> <span class="n">info1</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">html_info</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">music_songs</span> <span class="o">=</span> <span class="n">music_html</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">html_info</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">music</span><span class="p">,</span> <span class="n">music_song</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">music_info_all</span><span class="p">,</span> <span class="n">music_songs</span><span class="p">):</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;歌曲排名:&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">music</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;data-index=</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s2">&quot;歌名&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">music</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;data-index=</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;播放链接：&quot;</span><span class="p">:</span> <span class="n">music_song</span>
+        <span class="p">}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">Beautifulsoup_search</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    使用Beautifulsoup抓取酷狗</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">html_info</span> <span class="o">=</span> <span class="n">get_html</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html_info</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+    <span class="n">song_ids</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;#rankWrap &gt; div.pc_temp_songlist.pc_rank_songlist_short &gt; ul &gt; li &gt; a&quot;</span><span class="p">)</span>
+    <span class="c1"># print(song_ids)</span>
+    <span class="c1"># song_ids = soup.select(&quot;#rankWrap &gt; div.pc_temp_songlist.pc_rank_songlist_short &gt; ul &gt; li &gt; a&quot;)</span>
+    <span class="c1"># song_id = re.findall(&quot;\&quot;\d\&quot;&quot;, str(song_id))</span>
+    <span class="n">song_names</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;#rankWrap &gt; div.pc_temp_songlist.pc_rank_songlist_short &gt; ul &gt; li &gt; a&quot;</span><span class="p">)</span>
+    <span class="n">URL_songs</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;#rankWrap &gt; div.pc_temp_songlist.pc_rank_songlist_short &gt; ul &gt; li &gt; a&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">song_id</span><span class="p">,</span> <span class="n">song_name</span><span class="p">,</span> <span class="n">URL_song</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">song_ids</span><span class="p">,</span> <span class="n">song_names</span><span class="p">,</span> <span class="n">URL_songs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;歌曲排行&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">song_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data-index&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;歌曲名称&quot;</span><span class="p">:</span> <span class="n">song_name</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="s2">&quot;歌曲链接&quot;</span><span class="p">:</span> <span class="n">URL_song</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">Xapth_select</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">get_html</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">selector</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+    <span class="n">url_infos</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//*[@id=&quot;rankWrap&quot;]/div[2]&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">urlinfo</span> <span class="ow">in</span> <span class="n">url_infos</span><span class="p">:</span>
+        <span class="n">song_names</span> <span class="o">=</span> <span class="n">urlinfo</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;ul/li/a/text()&#39;</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">urlinfo</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;ul/li/span[3][@ class=&quot;pc_temp_num&quot;]/text()&#39;</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">]</span>
+        <span class="n">idss</span> <span class="o">=</span> <span class="p">[</span><span class="nb">id</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span> <span class="k">if</span> <span class="nb">id</span><span class="p">]</span>
+        <span class="n">song_links</span> <span class="o">=</span> <span class="n">urlinfo</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;ul/li/a/@href&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">songnam</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">song_link</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">song_names</span><span class="p">,</span> <span class="n">idss</span><span class="p">,</span> <span class="n">song_links</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;歌曲名称&quot;</span><span class="p">:</span> <span class="n">songnam</span><span class="p">,</span>
+                <span class="s2">&quot;歌曲排名&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s2">&quot;歌曲链接&quot;</span><span class="p">:</span> <span class="n">song_link</span>
+            <span class="p">}</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># Re_serach(url)</span>
+    <span class="c1"># Beautifulsoup_search(url)</span>
+    <span class="n">Xapth_select</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;郑冰冰 - 渡我不渡她&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/yc2xsff.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;徐子崴 - 我想和你好好的&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/kfura8.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;屈杨 - 有一种悲伤 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydvg058.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;由博文 - Simon (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydvfjce.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;肖蔷 - 无问西东 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydvdx58.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;陈其楠 - 未来 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydvdz1e.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;CPU - 玫瑰玫瑰我爱你 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydvcaa5.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;潘玮柏、SeanT肖恩恩、黄旭 - 爱你3000 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ye02b10.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;田颖 - 寂寞难耐 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydve55d.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;陈小同 - 贫穷或富有 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydveq9f.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;MC Hotdog、张震岳、Creamd、Capper - 改变 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ye02i9e.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;卓玛殷措 - 爱是怀疑 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydwo481.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;孙振宇 - 对他说我愿意 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydvh16d.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;杨和苏KeyNG、SeanT肖恩恩 - Put it up (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/y51r65f.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;豆心 - 一个&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/lru4q16.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;黄旭 - 孤独 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ye07g2f.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;新秀 - 不负 (Live)&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ye07d94.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;于果 - 鸟儿飞&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/xb34d6b.html&#39;</span><span class="p">}</span>
+<span class="p">{</span><span class="s1">&#39;歌曲排名&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;歌曲名称&#39;</span><span class="p">:</span> <span class="s1">&#39;欢子 - 保重&#39;</span><span class="p">,</span> <span class="s1">&#39;歌曲链接&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.kugou.com/song/ydvipe5.html&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%B5%B7%E7%82%B9%E4%B8%AD%E6%96%87%E7%BD%91%E6%95%B0%E6%8D%AE%E5%AD%98%E5%88%B0excel%E4%B8%AD.html" class="btn btn-neutral float-left" title="21.25. 案例：爬取起点中文网数据存到excel中" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E4%BF%A1%E6%81%AF%28Ajax%29.html" class="btn btn-neutral float-right" title="21.27. 案例：爬取今日头条信息(Ajax)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

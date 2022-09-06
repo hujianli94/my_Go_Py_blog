@@ -1,0 +1,473 @@
+.. contents::
+   :depth: 3
+..
+
+自动化常规管理活动
+==================
+
+学习大纲：
+
+-  通过重定向（redirection）、管道（pipe）和文件3种方式接收输入。
+-  在运行时处理密码。
+-  执行外部命令并获取其输出。
+-  在运行时提示输入密码，并验证密码。
+-  读取配置文件。
+-  向脚本添加日志记录和警告代码。
+-  限制CPU和内存的使用量。
+-  启动Web浏览器。
+-  使用\ ``os`` 模块处理目录和文件。
+-  进行备份（使用\ ``rsync`` ）。
+
+1. 通过重定向（redirection）、管道（pipe）和文件3种方式接收输入
+---------------------------------------------------------------
+
+1.1 通过重定向接收输入
+~~~~~~~~~~~~~~~~~~~~~~
+
+``redirection.py``
+
+.. code:: python
+
+   import sys
+
+
+   class Redirection(object):
+       def __init__(self, in_obj, out_obj):
+           self.input = in_obj
+           self.output = out_obj
+
+       def read_line(self):
+           res = self.input.readline()
+           self.output.write(res)
+           return res
+
+
+   if __name__ == '__main__':
+       if not sys.stdin.isatty():
+           sys.stdin = Redirection(in_obj=sys.stdin, out_obj=sys.stdout)
+           a = input('Enter a string: ')
+           b = input('Enter another string: ')
+           print('Entered strings are: ', repr(a), 'and', repr(b))
+
+1.2 通过管道接收输入
+~~~~~~~~~~~~~~~~~~~~
+
+.. code:: shell
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import sys
+
+   for n in sys.stdin:
+       print(int(n.strip()) // 2)
+
+.. code:: shell
+
+   $ echo 15 | python accecp.py
+   7
+   $ echo -e "10\n20\n30"|python accecp.py
+   5
+   10
+   15
+
+1.3 通过文件接收输入
+~~~~~~~~~~~~~~~~~~~~
+
+``accept_by_input_file.py``
+
+.. code:: python
+
+   i = open('sample.txt','r')
+   o = open('sample_output.txt','w')
+   a = i.read()
+   o.write(a)
+
+2. 在运行时处理密码
+-------------------
+
+``paramiko`` 模块是\ ``SSH`` 的Python实现，提供客户端—服务器功能。
+
+::
+
+   pip3 install paramiko
+
+.. code:: python
+
+   import sys
+   import paramiko
+   import time
+
+   ip_address = "192.168.2.106"
+   username = "student"
+   password = "training"
+
+
+   ssh_client = paramiko.SSHClient()
+   ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   ssh_client.load_system_host_keys()
+   ssh_client.connect(hostname=ip_address,username=username, password=password)
+   print("Successful connection", ip_address)
+
+
+   ssh_client.invoke_shell()
+   remote_connection = ssh_client.exec_command('cd Desktop; mkdir work\n')
+   remote_connection = ssh_client.exec_command('mkdir test_folder\n')
+   #print( remote_connection.read() )
+   ssh_client.close
+
+::
+
+   python3 handling_password.py
+
+3. 执行外部命令并获取其输出
+---------------------------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+
+   import subprocess
+   subprocess.call(["touch", "sample.txt"])
+   subprocess.call(["ls"])
+   print("Sample file created")
+   subprocess.call(["rm", "sample.txt"])
+   subprocess.call(["ls"])
+   print("Sample file deleted")
+
+4. 使用subprocess模块捕获输出
+-----------------------------
+
+``capture_output.py``
+
+.. code:: python
+
+   import subprocess
+
+   res = subprocess.run(['ls', '-1'], stdout=subprocess.PIPE,)
+   print('returncode:', res.returncode)
+   print(' {} bytes in stdout:\n{}'.format(len(res.stdout), res.stdout.decode('utf-8')))
+
+5.在运行时提示输入密码，并验证密码
+----------------------------------
+
+``getpass`` 模块处理密码。Python中的\ ``getpass()``
+函数用于提示用户输入密码。当程序通过终端与用户交互时，\ ``getpass``
+模块可以用于处理密码提示
+
+.. code:: python
+
+   #!/usr/bin/env python
+   import getpass
+
+   try:
+       p = getpass.getpass("Enter your password: ")
+   except Exception as e:
+       print("Error", e)
+
+   else:
+       print("Password enterd", p)
+
+对密码进行判断，然后给予提示信息
+
+.. code:: python
+
+   import getpass
+
+   user_name = getpass.getuser()
+   print("User Name : %s" % user_name)
+
+   while True:
+       passwd = getpass.getpass("Enter your Password : ")
+       if passwd == '#pythonworld':
+           print("Welcome!!!")
+           break
+       else:
+           print("The password you entered is incorrect.")
+
+6.读取配置文件
+--------------
+
+``read_simple.ini``
+
+::
+
+   [bug_tracker]
+   url = https://baidu.com
+
+``read_config_file.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   from configparser import ConfigParser
+
+   p = ConfigParser()
+   p.read('read_simple.ini')
+   print(p.get('bug_tracker', 'url'))
+
+``read_many_config_file.py``
+
+.. code:: python
+
+   from configparser import ConfigParser
+
+   import glob
+
+   p = ConfigParser()
+   files = ['hello.ini', 'bye.ini', 'read_simple.ini', 'welcome.ini']
+
+   # read() 方法可以用于接收多个文件。它会检测每个文件，只要该文件存在，就会打开该文件并读取内容。
+   files_found = p.read(files)
+
+   files_missing = set(files) - set(files_found)
+
+   print('Files found:  ', sorted(files_found))
+   print('Files missing:  ', sorted(files_missing))
+
+7.向脚本添加日志记录和警告代码
+------------------------------
+
+一个简单的日志记录的示例程序。创建一个名为\ ``logging_example.py``
+的脚本
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import logging
+
+   LOG_FILENAME = 'log.txt'
+   logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG, )
+   logging.debug('This message should go to the log file')
+
+   with open(LOG_FILENAME, 'rt') as f:
+       prg = f.read()
+       print(prg)
+
+``logging_warnings_codes.py``
+
+.. code:: python
+
+   import logging
+
+   import warnings
+
+   logging.basicConfig(level=logging.INFO, )
+
+   warnings.warn('This warning is not sent to the logs')
+
+   logging.captureWarnings(True)
+
+   warnings.warn('This warning is sent to the logs')
+
+生成警告
+~~~~~~~~
+
+``generate_warnings.py``
+
+``warn()``
+传递了一条警告消息。程序中还使用了一个简单的过滤器，它可以将警告视为错误，以提示我们根据情况解决。
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import warnings
+
+   warnings.simplefilter('error', UserWarning)
+   print('Before')
+
+   warnings.warn('Write your warning message here')
+   print('After')
+
+8.限制CPU和内存的使用量
+-----------------------
+
+``put_cpu_limit.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import resource
+   import sys
+   import signal
+   import time
+
+
+   def time_expired(n, stack):
+       print('EXPIRED :', time.ctime())
+       raise SystemExit('(time ran out)')
+
+
+   signal.signal(signal.SIGXCPU, time_expired)
+   # 调整CPU时间限制
+   soft, hard = resource.getrlimit(resource.RLIMIT_CPU)
+   print('Soft limit starts as  :', soft)
+
+   resource.setrlimit(resource.RLIMIT_CPU, (10, hard))
+   soft, hard = resource.getrlimit(resource.RLIMIT_CPU)
+   print('Soft limit changed to :', soft)
+   print()
+
+   # 在无意义的练习中消耗一些CPU时间
+
+
+   print('Starting:', time.ctime())
+
+   for i in range(200000):
+       for i in range(200000):
+           v = i * i
+
+   print('Exiting :', time.ctime())
+
+9.启动网页浏览器
+----------------
+
+.. code:: python
+
+   import webbrowser
+   webbrowser.open('https://baidu.com')
+
+通过命令行使用Python的\ ``webbrowser`` 模块，命令行模式也支持所有功能。
+
+.. code:: python
+
+   python3 -m webbrowser -n https://www.google.com/
+
+::
+
+   -n ：打开新窗口。
+   -t ：打开新标签页
+
+10.使用os模块处理目录和文件
+---------------------------
+
+10.1 创建目录与删除目录
+~~~~~~~~~~~~~~~~~~~~~~~
+
+``os_dir_example.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import os
+
+   directory_name = "abcd"
+   print("create directory", directory_name)
+
+   if not os.path.exists(directory_name):
+       os.makedirs(directory_name)
+
+   file_name = os.path.join(directory_name, "sample_example.txt")
+   print("create file", file_name)
+
+   with open(file_name, 'wt') as f:
+       f.write("sample example file")
+
+   print("Cleaning up")
+
+   os.unlink(file_name)  # 删除文件
+
+   os.rmdir(directory_name)  # 刪除目录
+
+使用\ ``mkdir()`` 创建目录时，其父目录必须已存在。
+
+如果使用\ ``makedirs()``
+创建目录，则它会创建所有目录，包括不存在的父目录。
+
+``unlink()`` 用于删除文件，\ ``rmdir()`` 用于删除目录。
+
+10.2 检测文件系统的内容
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import os
+   import sys
+
+   print(sorted(os.listdir(sys.argv[1])))
+
+利用\ ``listdir()`` 函数可以列出指定目录中的所有内容。
+
+11. 进行备份(使用rsync)
+-----------------------
+
+``rsync`` 命令用于在本地或远程复制文件和目录，\ ``rsync``
+也可用于数据备份。现在我们创建一个名为\ ``take_backup.py`` 的脚本
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import os
+   import shutil
+   import time
+
+   from sh import rsync
+
+   con_exit = ""
+
+   def check_dir(os_dir):
+       if not os.path.exists(os_dir):
+           print("{} does exists".format(os_dir))
+           exit(1)
+
+
+   def ask_for_confim():
+       ans = input("Do you want to continue? yes/no\n")
+       global con_exit
+       if ans == "yes" or ans == "y":
+           con_exit = 0
+           return con_exit
+       elif ans == "no" or ans == "n":
+           con_exit = 1
+           return con_exit
+       else:
+           print("Answer with yes or no")
+           ask_for_confim()
+
+
+   def delete_fles(ending):
+       for r, d, f in os.walk(backup_dir):
+           for files in f:
+               if files.endswith("." + ending):
+                   os.remove(os.path.join(r, files))
+
+
+   backup_dir = input("Enter directory to backup\n")
+   check_dir(backup_dir)
+   print(backup_dir, "saved.")
+   time.sleep(3)
+
+   backup_to_dir = input("Where to backup?\n")
+   check_dir(backup_to_dir)
+
+   print("Doing the backup now!")
+   ask_for_confim()
+
+   if con_exit == 1:
+       print("Aborting the backup process!")
+       exit(1)
+
+   rsync("-auhv", "--delete", "--exclude=lost+found", "--exclude=/sys", "—exclude=/tmp", "--exclude=/proc",
+         "--exclude=/mnt", "--exclude=/dev", "--exclude=/backup", backup_dir, backup_to_dir)
+
+``rsync`` 命令也可以结合一些选项使用，如下所示。
+
+-  ``-a:`` 存档。
+-  ``-u:`` 更新。
+-  ``-h:`` 显示帮助信息。
+-  ``-v:`` 详细情况。
+-  ``--delete:`` 从接收方删除无关文件。
+-  ``--exclude:`` 排除规则。
+
+总结
+----
+
+我们学习了如何将常规管理任务自动化，通过各种方法接收输入、在运行时提示输入密码、执行外部命令、读取配置文件、在脚本中添加警告、通过脚本以及命令行使用\ ``webbrowser模块``
+、使用\ ``os`` 模块处理文件和目录，并进行备份。

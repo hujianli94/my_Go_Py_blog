@@ -1,0 +1,175 @@
+.. contents::
+   :depth: 3
+..
+
+文件和流
+========
+
+1.stdin
+-------
+
+::
+
+   import sys
+
+   print("Enter number1: ")
+   a = int(sys.stdin.readline())
+
+   print("Enter number2: ")
+   b = int(sys.stdin.readline())
+
+   c = a + b
+   sys.stdout.write("Result: %d " % c)
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/20 11:35
+   # filename: stdin输入.py
+   import sys
+
+
+   # stdin表示流的标准输入，通过流对象stdin读取文件hello.txt的内容
+   sys.stdin = open("hello.txt","r")
+   for line in sys.stdin.readlines():
+       print(line.strip())
+
+输出内容
+
+::
+
+   test0001
+   test0001
+   test0001
+   test0001
+   test0001
+   test0002
+
+2.stdout将输出的内容保存到文件中
+--------------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/20 11:39
+   # filename: stdout输出到控制台.py
+   import sys
+
+
+   # 通过stdout对象重定向输出，把输出的结果保存到文件中
+   sys.stdout = open(r"./hello.txt", "a")
+   print("\n goodbye")
+   sys.stdout.close()
+
+3.stderr记录输出异常信息
+------------------------
+
+``如果hello.txt内容为空，则在error.log中记录异常信息。``
+
+``如果hello.txt内容不为空，则在日志error.log文件中记录正确的信息``
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/20 11:42
+   # filename: stderr记录输出异常信息.py
+   import sys
+   import time
+
+   sys.stderr = open("error.log", "a",encoding="utf-8")
+   f = open(r"./hello.txt", "r")
+   t = time.strftime("%Y-%m-%d %X", time.localtime())
+   context = f.read()
+   if context:
+       sys.stderr.write(t + " " + context)
+   else:
+       raise Exception(t + ' 异常信息')
+
+模拟Java的输入、输出流
+----------------------
+
+``函数FileoutputStrem()把FileinputStrem()读取的内容写入文件hello2.txt中``
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/20 11:53
+   # filename: 模拟Java的输入输出流.py
+
+   def FileinputStrem(filename):
+       """
+       文件输入流
+       :return:
+       """
+       try:
+           f = open(filename)
+           for line in f:
+               for byte in line:
+                   yield byte
+       except StopIteration as e:
+           f.close()
+           return
+
+
+   def FileoutputStrem(inputStream, filename):
+       """
+       文件输出流
+       :return:
+       """
+       try:
+           f = open(filename, "w")
+           while True:
+               byte = inputStream.__next__()
+               f.write(byte)
+       except StopIteration as e:
+           f.close()
+           return
+
+
+   if __name__ == '__main__':
+       FileoutputStrem(FileinputStrem("hello.txt"), "hello2.txt")
+
+浏览文件属性
+------------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/11/9 22:35
+   # filename: 文件属性浏览.py
+
+   def showFileProperties(path):
+       """
+       显示文件的属性，
+       :param path: 文件夹路径
+       :return:
+       """
+       import time, os
+       for root, dirs, files in os.walk(path, True):
+           print("位置：" + root)
+           for filename in files:
+               state = os.stat(os.path.join(root, filename))
+               info = "文件名:" + filename + " "
+               info = info + "\t大小:" + ("%d" % state[-4]) + " "
+               t = time.strftime("%Y-%m-%d %X", time.localtime(state[-1]))
+               info = info + "\t创建时间:" + t + " "
+               t = time.strftime("%Y-%m-%d %X", time.localtime(state[-2]))
+               info = info + "\t最后修改时间:" + t + " "
+               t = time.strftime("%Y-%m-%d %X", time.localtime(state[-3]))
+               info = info + "\t最后访问时间:" + t + " "
+               print(info)
+
+
+   if __name__ == '__main__':
+       path = "D:\\21-DAY-Python\\13.python文件操作/文件和流"
+       showFileProperties(path)

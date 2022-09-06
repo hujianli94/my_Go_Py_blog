@@ -1,0 +1,228 @@
+.. contents::
+   :depth: 3
+..
+
+网络基础
+========
+
+学习大纲： - 套接字。 - http 程序包。 - ftplib 模块。 - urllib 程序包。
+
+1.套接字
+--------
+
+Python的socket模块。套接字是通信的接口，包括本地通信和互联网通信。socket模块有一个socket类，用于处理数据通道，它还包含一些处理网络相关任务的函数。我们要使用socket模块的函数，首先需要导入socket模块。
+
+我们来看如何创建套接字。socket类有一个socket函数，它有两个参数：address_family
+和socket type 。
+
+套接字还可以配置为服务器套接字和客户端套接字。当两个TCP/IP套接字连接后，通信是双向的。现在我们来看客户端—服务器通信的示例程序。首先创建两个脚本：server.py
+和client.py 。
+
+``server.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import socket
+
+   host_name = socket.gethostname()
+   port = 5000
+
+   s_socket = socket.socket()
+   s_socket.bind((host_name, port))
+   s_socket.listen(2)
+   conn, address = s_socket.accept()
+
+   print("Connection from: " + str(address))
+
+   while True:
+       recv_data = conn.recv(1024).decode()
+       if not recv_data:
+           break
+       print("from connected user: " + str(recv_data))
+       recv_data = input(' -> ')
+       conn.send(recv_data.encode())
+   conn.close()
+
+``client.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+
+   import socket
+
+   host_name = socket.gethostname()
+   port = 5000
+   c_socket = socket.socket()
+   c_socket.connect((host_name, port))
+
+   msg = input(" -> ")
+
+   while msg.lower().strip() != 'bye':
+       c_socket.send(msg.encode())
+       recv_data = c_socket.recv(1024).decode()
+       print('Received from server: ' + recv_data)
+       msg = input(" -> ")
+
+   c_socket.close()
+
+如上实现了一个简易的tcp通信客户端与服务器。
+
+2.http程序包
+------------
+
+http 程序包有以下4个模块。
+
+-  http.client ：一个低层次的HTTP客户端。
+-  http.server ：包含基本的HTTP服务器类。
+-  http.cookies ：使用cookie实现状态管理。
+-  http.cookiejar ：该模块提供cookie持久性。
+
+2.1 http.client模块
+~~~~~~~~~~~~~~~~~~~
+
+接下来我们将学习两种HTTP 客户端请求方式：GET 和POST
+。其中包括如何建立HTTP 连接。
+
+首先我们来看建立HTTP
+连接的示例程序。创建一个脚本，命名为make_connection.py
+，并在其中添加以下代码。
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import http.client
+
+   con_obj = http.client.HTTPConnection('Enter_URL_name', 80, timeout=20)
+   print(con_obj)
+
+上面的示例程序与指定URL的端口80建立了连接，并设置了超时时间。
+
+现在我们来看HTTP 的GET 请求方式。下面的示例程序使用GET 请求获取响应
+
+现在我们来看HTTP 的GET 请求方式。下面的示例程序使用GET
+请求获取响应状态码以及响应头列表。创建一个脚本，命名为get_example.py
+，并在其中添加以下代码。
+
+``get_example.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import http.client
+
+   con_obj = http.client.HTTPSConnection("www.baidu.com")
+   con_obj.request("GET", "/")
+   response = con_obj.getresponse()
+
+   print("Status: {}".format(response.status))
+
+   headers_list = response.getheaders()
+   print("Headers: {}".format(headers_list))
+
+   con_obj.close()
+
+程序指定了一个URL，之后使用request()
+检查了连接对象状态，然后获取了一个headers 列表。 headers
+列表包含从服务器返回的数据信息。getheaders() 方法用于获取headers 列表
+
+接下来是一个POST 请求的示例程序，使用HTTP POST
+请求可以向URL对应的网站发送数据。我们创建一个脚本，命名为post_example.py
+，并在其中添加以下代码。 ``post_example.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import http.client
+   import json
+
+   con_obj = http.client.HTTPSConnection('www.httpbin.org')
+   headers_list = {'Content-type': 'application/json'}
+   post_text = {'text': 'Hello World !!'}
+   json_data = json.dumps(post_text)
+   con_obj.request('POST', '/post', json_data, headers_list)
+
+   response = con_obj.getresponse()
+   print(response.read().decode())
+
+上面的示例程序首先创建了一个HTTPSConnection
+对象。接着创建了一个post_text 对象，用于发布消息：Hello World！！ 。
+最后提交一个POST 请求，并收到了网站的响应。
+
+2.2 http.server模块
+~~~~~~~~~~~~~~~~~~~
+
+http.server 。此模块包含实现HTTP 服务器的类，它有两种方法：GET 和HEAD
+。使用此模块可以通过网络共享文件，也可以在任何端口上运行HTTP
+服务器，只需要确保端口号大于1024即可。该模块默认端口号为8000。
+使用http.server 的方法如下所示。
+``shell script python3 -m http.server 9000``
+
+现在打开浏览器并在地址栏中写入localhost:9000
+，然后按Enter键。输出如下所示。
+
+3.ftplib模块
+------------
+
+此模块暂时用的不多，不做扩展。
+
+4.urllib程序包
+--------------
+
+与\ ``http`` 一样，\ ``urllib``
+也是一个包含各种处理URL工具模块的程序包。\ ``Urllib``
+程序包允许开发者通过脚本访问不同网站，它还可以用于下载数据、解析数据和编辑HTTP报头等。
+
+``urllib`` 包含几个模块，如下所示。
+
+-  ``urllib.request`` ：用于打开和读取URL。
+-  ``urllib.error`` ：包含\ ``urllib.request`` 抛出的异常。
+-  ``urllib.parse`` ：用于解析URL。
+-  ``urllib.robotparser`` ：用于解析\ ``robots.txt`` 文件。
+
+本节我们将学习如何使用\ ``urllib`` 打开URL，以及如何读取\ ``HTML``
+文件。下面是一个使用\ ``urllib``
+的简单示例程序。首先导入\ ``urllib.requests``
+，然后将URL存储到变量\ ``X`` ，接着使用\ ``read()``
+函数从URL中读取数据。
+
+创建一个脚本，命名为\ ``url_requests_example.py``
+，并在其中添加以下代码。
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import urllib.request
+
+   x = urllib.request.urlopen('https://www.baidu.com/')
+   print(x.read())
+
+4.1Python urllib响应头
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import urllib.request
+
+   x = urllib.request.urlopen('https://www.baidu.com/')
+   print(x.info())
+
+总结
+----
+
+学习了用于客户端—服务器双向通信的套接字，还了解了3种Internet模块：\ ``http``
+、\ ``ftplib`` 和\ ``urllib`` 。其中，\ ``http``
+程序包中包含客户端模块和服务器模块：\ ``http.client``
+和\ ``http.server`` 。
+
+最后我们使用\ ``ftplib``
+模块从FTP服务器下载了文件，还获取了FTP服务器的欢迎消息并发送了FTP命令。

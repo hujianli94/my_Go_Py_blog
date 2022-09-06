@@ -1,0 +1,163 @@
+.. contents::
+   :depth: 3
+..
+
+使用技巧进阶二
+==============
+
+如何拆分含多种分隔符的字符
+--------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/8/18 22:45
+   # filename: 01.如何拆分含多种分隔符的字符串.py
+
+   s = 'ab;cd|efg|hi,jkl|mn\topq;rst,uvw\txyz'
+
+
+   # 第一种方式
+   def my_split(s, seps):
+       res = [s]
+       for sep in seps:
+           t = []
+           list(map(lambda ss: t.extend(ss.split(sep)), res))
+           res = t
+       return res
+
+
+   s1 = my_split(s, ',;|\t')
+   print(s1)  # ['ab', 'cd', 'efg', 'hi', 'jkl', 'mn', 'opq', 'rst', 'uvw', 'xyz']
+
+   # 第二种方式
+   import re
+
+   s2 = re.split('[,;|\t]+', s)
+   print(s2)  # ['ab', 'cd', 'efg', 'hi', 'jkl', 'mn', 'opq', 'rst', 'uvw', 'xyz']
+
+如何调整字符串中文本的格式
+--------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/8/18 22:49
+   # filename: 02.如何调整字符串中文本的格式.py
+   import re
+
+   # 调整时间显示的格式
+   s = "2019-08-15 23:23:12"
+
+   s1 = re.sub(r'(\d{4})-(\d{2})-(\d{2})',r'\2/\3/\1',s)
+   print(s1)       #08/15/2019 23:23:12
+
+如何将多个小字符串拼接成一个大的字符串
+--------------------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/8/18 22:52
+   # filename: 03.如何将多个小字符串拼接成一个大的字符串.py
+
+   l = ["<11>", "<22>", "<33>", "<44>", "<55>", "<66>", "<77>"]
+
+   # 第一种方式
+   s = ''
+   for x in l:
+       s += x
+   print(s)  # <11><22><33><44><55><66><77>
+
+   # 第二种方式
+   s2 = ''.join(l)
+   print(s2)  # <11><22><33><44><55><66><77>
+
+如何对字符串进行左, 右, 居中对齐
+--------------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/8/18 22:54
+   # filename: 04.如何对字符串进行左, 右, 居中对齐.py
+
+   s = 'abc'
+
+   print(s.ljust(10))  # abc
+   print(s.ljust(10, "*"))  # abc*******
+   print(s.rjust(10))  # abc
+   print(s.rjust(10, "*"))  # *******abc
+   print(s.center(10))  # abc
+   print(s.center(10, "*"))  # ***abc****
+
+   # 把字典以左对齐的形式打印出来
+   d = {
+       "hujianli": "19940722",
+       'name': 'xiaojian',
+       'address': '北京朝阳区',
+       'age': '20'
+   }
+
+   w = max(map(len, d.keys()))  # 计算所有2key中字符最长的是多少
+   print(w)        #8
+
+
+   for k, v in d.items():
+       print(k.ljust(w), ":", v)
+
+   """
+   hujianli : 19940722
+   name     : xiaojian
+   address  : 北京朝阳区
+   age      : 20
+   """
+
+如何去掉字符串中不需要的字符
+----------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/8/18 22:58
+   # filename: 05.05.如何去掉字符串中不需要的字符.py
+
+   s = "    hujianli     "
+   print(s.strip())  # hujianli
+
+   print(s.lstrip())  # hujianli
+
+   print(s.rstrip())  # hujianli
+
+   s1 = '-=+hujianli0001-=-+'
+   print(s1.strip())  # -=+hujianli0001-=-+
+   print(s1.strip('-='))  # +hujianli0001-=-+
+   print(s1.strip("-=+"))  # hujianli0001
+
+   # 删除固定位置，用切片，去掉下面的冒号
+   s2 = 'abc:123'
+   s2 = s2[:3] + s2[4:]
+   print(s2)  # abc123
+
+   # replace
+   s3 = '  abc  123  '
+   s3 = s3.strip()
+   s3 = s3.replace(' ', '')
+   print(s3)  # abc123
+
+   # 正则表达式re.sub()
+   s4 = '  \t  abc  \t  123  \n  '
+   import re
+
+   s4 = re.sub('[ \t\n]', '', s4)
+   print(s4)  # abc123

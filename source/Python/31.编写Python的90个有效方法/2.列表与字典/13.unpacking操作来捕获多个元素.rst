@@ -1,0 +1,147 @@
+.. contents::
+   :depth: 3
+..
+
+unpacking操作来捕获多个元素
+===========================
+
+基本的unpacking操作有一项限制，就是必须提前确定需要拆解的序列的长度。
+例如，销售汽车的时候，我们可能会把每辆车的年龄写到一份列表中，然后按照从大到小的顺序排好。如果试着通过基本的unpacking操作获取其中最旧的两辆车，那么程序运行时就会出现异常。
+
+.. code:: python
+
+   In [34]: car_ages = [0, 9, 4, 8, 7, 20, 19, 1, 6, 15]
+
+   In [35]: car_ages_descending = sorted(car_ages, reverse=True)
+
+   In [36]: oldest, second_oldest = car_ages_descending
+   ---------------------------------------------------------------------------
+   ValueError                                Traceback (most recent call last)
+   <ipython-input-36-fd27ef4bf2c8> in <module>()
+   ----> 1 oldest, second_oldest = car_ages_descending
+
+   ValueError: too many values to unpack (expected 2)
+
+新手经常通过下标与切片来处理这个问题。例如，可以明确通过下标把最旧和第二旧的那两辆车取出来，然后把其余的车放到另一份列表中。
+
+.. code:: python
+
+   In [37]: oldest = car_ages_descending[0]
+       ...: second_oldest = car_ages_descending[1]
+       ...: others = car_ages_descending[2:]
+       ...: print(oldest, second_oldest, others)
+       ...:
+       ...:
+   20 19 [15, 9, 8, 7, 6, 4, 1, 0]
+
+这个问题通过星号表达式(starred
+expresion)来解决更会更好一些，这也是一种unpacking操作，它可以把无法由普通变量接收的那些元素全部囊括进去。
+下面用带星号的unpacking操作改写刚才的代码。
+
+.. code:: python
+
+   In [38]: oldest, second_oldest, *others = car_ages_descending
+       ...: print(oldest, second_oldest, others)
+       ...:
+       ...:
+   20 19 [15, 9, 8, 7, 6, 4, 1, 0]
+
+这样写简短易读，而且不容易出错。
+这种星号表达式可以出现在任意位置，所以它能捕获序列中的任何一段元素。
+
+.. code:: python
+
+   In [39]: oldest, *others, youngest = car_ages_descending
+       ...: print(oldest, youngest, others)
+       ...:
+       ...:
+   20 0 [19, 15, 9, 8, 7, 6, 4, 1]
+
+   In [40]: *others, second_youngest, youngest = car_ages_descending
+       ...: print(youngest, second_youngest, others)
+       ...:
+       ...:
+   0 1 [20, 19, 15, 9, 8, 7, 6, 4]
+
+如果要拆解的结构有多层，那么同一级的不同部分里可以各自出现带星号的unpacking操作。
+但是不推荐这种写法，这里举一个例子
+
+.. code:: python
+
+   In [44]: car_inventory = {'Downtown': ('Silver Shadow', 'Pinto', 'DMC'),'Airport': ('Skyline', 'Viper', 'Gremlin', 'Nov
+       ...: a'),}
+
+   In [45]: car_inventory
+   Out[45]:
+   {'Downtown': ('Silver Shadow', 'Pinto', 'DMC'),
+    'Airport': ('Skyline', 'Viper', 'Gremlin', 'Nova')}
+    
+   In [46]: ((loc1, (best1, *rest1)), (loc2, (best2, *rest2))) = car_inventory.items()
+    
+    In [47]: print(f'Best at {loc1} is {best1}, {len(rest1)} others')
+   Best at Downtown is Silver Shadow, 2 others
+
+   In [48]: print(f'Best at {loc2} is {best2}, {len(rest2)} others')
+   Best at Airport is Skyline, 3 others
+
+带星号的表达式总会形成一份列表实例。如果要拆分的序列里已经没有元素留给它了，那么列表就是空白的。
+
+.. code:: python
+
+   In [53]: short_list = [1, 2]
+
+   In [54]: first, second, *rest = short_list
+
+   In [55]: print(first, second, rest)
+   1 2 []
+
+unpacking操作也可以用在迭代器上，但是这样写与把数据拆分到多个变量里面的那种基本写法相比，并没有太大优势。
+
+.. code:: python
+
+   In [59]: it = iter(range(1,3))
+
+   In [60]: first,second = it
+
+   In [61]: print(f"{first} and {second}")
+   1 and 2
+
+对迭代器做unpacking操作的好处，主要体现在带星号的用法上面，它使迭代器的拆分值更清晰。
+例如，这里有个生成器，每次可以从含有整个一周的汽车订单的CSV文件中取出一行数据。
+
+.. code:: python
+
+   def generate_csv(): 
+       yield ('Date', 'Make' , 'Model', 'Year', 'Price')   
+       for i in range(100):        
+           yield ('2019-03-25', 'Honda', 'Fit' , '2010', '$3400')      
+           yield ('2019-03-26', 'Ford', 'F150' , '2008', '$2400')
+
+我们可以用下标和切片来处理这个生成器所给出的结果，但是这样写需要很多行代码，而且可读性不好。
+
+.. code:: python
+
+   all_csv_rows = list(generate_csv())
+   header = all_csv_rows[0]
+   rows = all_csv_rows[1:]
+   print('CSV Header:', header)
+   print('Row count: ', len(rows))
+
+利用带星号的unpacking操作，我们可以把第一行（表头）单独放在header变量里，同时把迭代器所给出的其余内容合起来表示成rows变量。这样写就清楚多了。
+
+::
+
+   it = generate_csv()
+   header, *rows = it
+   print('CSV Header:', header)
+   print('Row count: ', len(rows))
+
+..
+
+   要点
+
+   拆分数据结构并把其中的数据赋给变量时，可以用带星号的表达式，将结构中无法与普通变量相匹配的内容捕获到一份列表里。
+
+   这种带星号的表达式可以出现在赋值符号左侧的任意位置，它总是会形成一份含有零个或多个值的列表。
+
+   在把列表拆解成互相不重叠的多个部分时，这种带星号的unpacking方式比较清晰，而通过下标与切片来实现的方式则很容易出错。

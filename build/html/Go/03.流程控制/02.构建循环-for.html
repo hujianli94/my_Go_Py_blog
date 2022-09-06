@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3.2. 构建循环-for &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="3.3. 分支选择-switch" href="03.%E5%88%86%E6%94%AF%E9%80%89%E6%8B%A9-switch.html" />
+    <link rel="prev" title="3.1. 条件判断" href="01.%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">3. 流程控制</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD.html">3.1. 条件判断</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">3.2. 构建循环-for</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">3.2.1. 1. for常用遍历方式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">3.2.2. 2.for初始语句-开始循环时执行的语句</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">3.2.3. 3.两种for循环遍历命令行参数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">3.2.4. 4.for中的条件表达式-控制是否循环的开关</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#for-range">3.2.5. 5. 键值循环（for range）-直接获得对象的索引和数据</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#range">3.2.6. 6.range语句中更新引用元素的值</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">3.2.7. 7.for循环的常见写法</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E5%88%86%E6%94%AF%E9%80%89%E6%8B%A9-switch.html">3.3. 分支选择-switch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.break.html">3.4. break</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.continue.html">3.5. continue</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93/index.html">10. 标准库和三方库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">3. </span>流程控制</a> &raquo;</li>
+      <li><span class="section-number">3.2. </span>构建循环-for</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/03.流程控制/02.构建循环-for.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#for" id="id12">构建循环-for</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id13">1. for常用遍历方式</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id14">2.for初始语句-开始循环时执行的语句</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id15">3.两种for循环遍历命令行参数</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id16">4.for中的条件表达式-控制是否循环的开关</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id17">4.1 结束循环时带可执行语句的无限循环</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id18">4.2 无限循环</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id19">4.4 for中的结束语句</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#for-range" id="id20">5. 键值循环（for range）-直接获得对象的索引和数据</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id8" id="id21">5.1 遍历数组、切片 - 获得索引和元素</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id22">5.2 遍历字符串-获得字符</a></p></li>
+<li><p><a class="reference internal" href="#map-map" id="id23">5.3 遍历map-获得map的键和值</a></p></li>
+<li><p><a class="reference internal" href="#channel" id="id24">5.4 遍历通道(channel)-接收通道数据</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id25">5.5 在遍历中选择希望获得的变量</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#range" id="id26">6.range语句中更新引用元素的值</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id27">7.for循环的常见写法</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="for">
+<h1><a class="toc-backref" href="#id12"><span class="section-number">3.2. </span>构建循环-for</a><a class="headerlink" href="#for" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">3.2.1. </span>1. for常用遍历方式</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>我们可以用for循环来迭代数组。下面常见的几种方式都可以用来遍历数组：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">a</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;a[%d]: %d\n&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">b</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;b[%d]: %d\n&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;c[%d]: %d\n&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">c</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">3.2.2. </span>2.for初始语句-开始循环时执行的语句</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">step</span> <span class="o">:=</span> <span class="mi">2</span>
+    <span class="k">for</span> <span class="p">;</span><span class="nx">step</span><span class="p">&gt;</span><span class="mi">0</span> <span class="p">;</span><span class="nx">step</span><span class="o">--</span>  <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">step</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">//2</span>
+<span class="c1">//1</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id15"><span class="section-number">3.2.3. </span>3.两种for循环遍历命令行参数</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">initialization</span><span class="p">;</span><span class="n">condition</span><span class="p">;</span><span class="n">post</span> <span class="p">{</span>
+<span class="o">//</span><span class="n">零个或多个语句</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>示例</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">sep</span> <span class="kt">string</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="nx">s</span> <span class="o">+=</span> <span class="nx">sep</span> <span class="o">+</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+        <span class="nx">sep</span> <span class="p">=</span> <span class="s">&quot; &quot;</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用range产生索引的循环方式</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">s</span><span class="p">,</span> <span class="nx">sep</span> <span class="o">:=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">arg</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="p">{</span>
+        <span class="nx">s</span> <span class="o">+=</span> <span class="nx">sep</span> <span class="o">+</span> <span class="nx">arg</span>
+        <span class="nx">sep</span> <span class="p">=</span> <span class="s">&quot; &quot;</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">3.2.4. </span>4.for中的条件表达式-控制是否循环的开关</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<section id="id5">
+<h3><a class="toc-backref" href="#id17">4.1 结束循环时带可执行语句的无限循环</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
+    <span class="c1">// 无限循环语句</span>
+    <span class="k">for</span> <span class="p">;</span> <span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">i</span> <span class="p">&gt;</span> <span class="mi">10</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id18">4.2 无限循环</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;loop ......\n&quot;</span><span class="p">)</span>
+        <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>美观的无限循环写法</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">i</span> <span class="p">&gt;</span> <span class="mi">10</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+        <span class="nx">i</span><span class="o">++</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在上面代码的基础上进一步简化代码，将if判断整合到for中，变为下面的代码：
+### 4.3 只有一个条件的循环</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">10</span> <span class="p">{</span>
+    <span class="nx">i</span><span class="o">++</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id19">4.4 for中的结束语句</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>在结束每次循环前执行的语句，如果循环被break、goto、return、panic等语句强制退出，结束语句不会被执行。</p>
+<p>打印一个99乘法表</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="nx">x</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">x</span> <span class="o">&lt;=</span> <span class="nx">i</span><span class="p">;</span> <span class="nx">x</span><span class="o">++</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%d*%d=%d &quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">x</span><span class="o">*</span><span class="nx">i</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">()</span> <span class="c1">// 添加一个换行符</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="cm">/*1*1=1</span>
+<span class="cm">2*1=2 2*2=4</span>
+<span class="cm">3*1=3 3*2=6 3*3=9</span>
+<span class="cm">4*1=4 4*2=8 4*3=12 4*4=16</span>
+<span class="cm">5*1=5 5*2=10 5*3=15 5*4=20 5*5=25</span>
+<span class="cm">6*1=6 6*2=12 6*3=18 6*4=24 6*5=30 6*6=36</span>
+<span class="cm">7*1=7 7*2=14 7*3=21 7*4=28 7*5=35 7*6=42 7*7=49</span>
+<span class="cm">8*1=8 8*2=16 8*3=24 8*4=32 8*5=40 8*6=48 8*7=56 8*8=64</span>
+<span class="cm">9*1=9 9*2=18 9*3=27 9*4=36 9*5=45 9*6=54 9*7=63 9*8=72 9*9=81 */</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="for-range">
+<h2><a class="toc-backref" href="#id20"><span class="section-number">3.2.5. </span>5. 键值循环（for range）-直接获得对象的索引和数据</a><a class="headerlink" href="#for-range" title="Permalink to this headline">¶</a></h2>
+<section id="id8">
+<h3><a class="toc-backref" href="#id21">5.1 遍历数组、切片 - 获得索引和元素</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>在遍历代码中，key和value分别代表切片的下标及下标对应的值。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">i2</span> <span class="o">:=</span> <span class="k">range</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;key:%d value:%d\n&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">i2</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">key:0 value:1</span>
+<span class="cm">key:1 value:2</span>
+<span class="cm">key:2 value:3</span>
+<span class="cm">key:3 value:4</span>
+<span class="cm">key:4 value:5</span>
+<span class="cm">key:5 value:6</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3><a class="toc-backref" href="#id22">5.2 遍历字符串-获得字符</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">str</span> <span class="p">=</span> <span class="s">&quot;hello 你好&quot;</span>
+    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">i2</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">str</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;key:%d value:0x%x\n&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">i2</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cm">/*</span>
+<span class="cm">key:0 value:0x68</span>
+<span class="cm">key:1 value:0x65</span>
+<span class="cm">key:2 value:0x6c</span>
+<span class="cm">key:3 value:0x6c</span>
+<span class="cm">key:4 value:0x6f</span>
+<span class="cm">key:5 value:0x20</span>
+<span class="cm">key:6 value:0x4f60</span>
+<span class="cm">key:9 value:0x597d</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</section>
+<section id="map-map">
+<h3><a class="toc-backref" href="#id23">5.3 遍历map-获得map的键和值</a><a class="headerlink" href="#map-map" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">m</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span>
+        <span class="s">&quot;num1&quot;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span>
+        <span class="s">&quot;num2&quot;</span><span class="p">:</span><span class="mi">13</span><span class="p">,</span>
+        <span class="s">&quot;num3&quot;</span><span class="p">:</span><span class="mi">14</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">i2</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">m</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;key:%s value:%d\n&quot;</span><span class="p">,</span><span class="nx">i</span><span class="p">,</span><span class="nx">i2</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cm">/*</span>
+<span class="cm">key:num3 value:14</span>
+<span class="cm">key:num1 value:12</span>
+<span class="cm">key:num2 value:13</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</section>
+<section id="channel">
+<h3><a class="toc-backref" href="#id24">5.4 遍历通道(channel)-接收通道数据</a><a class="headerlink" href="#channel" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">c</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>     <span class="c1">// 创建了一个整型类型的通道</span>
+    <span class="cm">/*</span>
+<span class="cm">    往通道里面推送 1 2 3，然后关闭通道</span>
+<span class="cm">     */</span>
+    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">c</span> <span class="o">&lt;-</span> <span class="mi">1</span>
+        <span class="nx">c</span> <span class="o">&lt;-</span> <span class="mi">2</span>
+        <span class="nx">c</span> <span class="o">&lt;-</span> <span class="mi">3</span>
+        <span class="nb">close</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+    <span class="p">}()</span>
+    <span class="c1">// 不断地从通道中取数据，直到通道被关闭</span>
+    <span class="k">for</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">c</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id25">5.5 在遍历中选择希望获得的变量</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>在使用for
+range循环遍历某个对象时，一般不会同时需要key或者value，这个时候可以采用一些技巧。让代码变得简单。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">m</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span>
+        <span class="s">&quot;num1&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="s">&quot;num2&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+        <span class="s">&quot;num3&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">value</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">m</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%d\n&quot;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">12</span>
+<span class="cm">13</span>
+<span class="cm">14</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>一个匿名变量的例子</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+<span class="c1">// 匿名变量</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="k">range</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">}</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;key:%d\n&quot;</span><span class="p">,</span><span class="nx">i</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="range">
+<h2><a class="toc-backref" href="#id26"><span class="section-number">3.2.6. </span>6.range语句中更新引用元素的值</a><a class="headerlink" href="#range" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="cm">/*</span>
+<span class="cm">在&quot;range&quot;语句中生成的数据的值是真实集合元素的拷贝。它们不是原有元素的引用。</span>
+<span class="cm">这意味着更新这些值将不会修改原来的数据。</span>
+
+<span class="cm">同时也意味着使用这些值的地址将不会得到原有数据的指针。</span>
+<span class="cm">*/</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">hujianlislice</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">}</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i2</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">hujianlislice</span> <span class="p">{</span>
+        <span class="nx">i2</span> <span class="o">*=</span> <span class="mi">10</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">hujianlislice</span><span class="p">)</span>  <span class="c1">//[12 13 14]</span>
+
+    <span class="c1">// 如果你需要更新原有集合中的数据，使用索引操作符来获得数据</span>
+    <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">hujianlislice</span> <span class="p">{</span>
+        <span class="nx">hujianlislice</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">10</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">hujianlislice</span><span class="p">)</span>  <span class="c1">//[120 130 140]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h2><a class="toc-backref" href="#id27"><span class="section-number">3.2.7. </span>7.for循环的常见写法</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">b</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">15</span>
+    <span class="kd">var</span> <span class="nx">a</span> <span class="kt">int</span>
+    <span class="nx">numbers</span> <span class="o">:=</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">}</span>
+
+    <span class="cm">/* for 循环 */</span>
+    <span class="k">for</span> <span class="nx">a</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">a</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">a</span><span class="o">++</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;a的值为: %d\n&quot;</span><span class="p">,</span><span class="nx">a</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="nx">a</span><span class="p">&lt;</span><span class="nx">b</span>  <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;a的值为: %d\n&quot;</span><span class="p">,</span><span class="nx">a</span><span class="p">)</span>
+        <span class="nx">a</span><span class="o">++</span>
+
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">num</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">numbers</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%d : %d\n&quot;</span><span class="p">,</span><span class="nx">index</span><span class="p">,</span><span class="nx">num</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01.%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD.html" class="btn btn-neutral float-left" title="3.1. 条件判断" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03.%E5%88%86%E6%94%AF%E9%80%89%E6%8B%A9-switch.html" class="btn btn-neutral float-right" title="3.3. 分支选择-switch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

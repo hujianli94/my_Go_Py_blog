@@ -1,0 +1,77 @@
+.. contents::
+   :depth: 3
+..
+
+推导式进阶
+==========
+
+进行多次赛选，选择出需要的值
+
+::
+
+   [<i相关表达式> for i in aiterator if <条件> ]
+
+   {key_exp:value_exp for key_exp, value_exp in aiterator if <条件>}
+
+代码示例
+--------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   #获得一个1~10中所有数的平方，且平方值为偶数的一个列表
+   square_odd = [i**i for i in range(1,11) if i**i %2 == 1]
+   print(square_odd)
+
+1.编写推导式的两个“不要”
+------------------------
+
+1.1 别写太复杂的推导式
+~~~~~~~~~~~~~~~~~~~~~~
+
+比如，列表推导式的狂热爱好者很可能会写出下面这样的代码：
+
+::
+
+   results = [
+       task.result if task.result_version == VERSION_2 else get_legacy_result(task)
+       for tasks_group in tasks
+       for task in in tasks_group
+       if task.is_active() and task.has_completed()
+   ]
+
+上面的表达式有两层嵌套循环，在获取任务结果部分还使用了一个三元表达式，读起来非常费劲。假如用原生循环代码来改写这段逻辑，代码量不见得会多出多少，但一定会更易读：
+
+::
+
+   results = []
+   for tasks_group in tasks:
+       for task in tasks_group:
+           if not (task.is_active() and task.has_completed()):
+               continue
+
+           if task.result_version == VERSION_2:
+               result = task.result
+           else:
+               result = get_legacy_result(task)
+           results.append(result)
+
+1.2 别把推导式当作代码量更少的循环
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+推导式是一种高度压缩的语法，这导致开发者有可能会把它当作一种更精简的循环来使用。比如在下面的代码里，我想要处理tasks列表里的所有任务，但其实并不关心process(task)的执行结果；为了节约代码量，我把代码写成了这样：
+
+::
+
+   [ process(task) for task in tasks if not task.started ]
+
+但这样做其实并不合适。推导式的核心意义在于它会返回值——一个全新构建的列表，\ *如果你不需要这个新列表，就失去了使用表达式的意义。*
+
+直接编写循环并不会多出多少代码量，而且代码更直观：
+
+.. code:: python
+
+   for task in tasks:
+       if not task.started:
+           process(task)

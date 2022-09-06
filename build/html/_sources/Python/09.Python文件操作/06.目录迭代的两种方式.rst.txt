@@ -1,0 +1,128 @@
+.. contents::
+   :depth: 3
+..
+
+目录迭代的两种方式
+==================
+
+方式一
+------
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   import os
+   import os.path
+
+   def traverse(pathname):
+       for item in os.listdir(pathname):
+           fullitem = os.path.join(pathname,item)
+           print(fullitem)
+           if os.path.isdir(fullitem):
+               traverse(fullitem)
+   traverse("D:\GitHub")
+
+方式二
+------
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   import os
+   import os.path
+
+   def trav_walk(pathname):
+       '''
+       root:当前目录
+       dirs：当前目录下的子目录
+       files：目录下的所有文件
+       '''
+       for root,dirs,files in os.walk(pathname):
+           for file in files:
+               fname = os.path.abspath(os.path.join(root,file))
+               print(fname)
+
+   trav_walk("D:\GitHub")
+
+遍历文件下的所有目录
+--------------------
+
+代码示例
+~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   '''
+   os.walk()函数返回的是一个可以迭代的生成器，要处理遍历得到的结果，可以使用for语句来循环处理
+   os.walk(path)
+   第一项为：当前遍历的路径
+   第二项为：遍历目录中的子目录列表
+   第三项为：遍历目录中所有文件的列表
+   '''
+   import os
+   print(os.linesep)   #平台下的行分割符
+   print(os.pathsep)   #目录名分隔符
+   for i in os.walk('.\\'):
+       print(i)
+
+文件属性浏览
+------------
+
+-  遍历path指定的目录，获取每个子目录的路径。
+-  遍历子目录下所有文件，返回文件的属性列表。
+-  分解属性列表，对属性列表进行格式化输出
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/20 14:56
+   # filename: 查看所有文件的属性.py
+
+
+   def ShowFileProperties(path):
+       """
+       显示文件属性，包括路径、大小、创建日期、最后修改时间、最后访问时间
+       :param path:
+       :return:
+       """
+       import os, time
+       for root, dirs, files in os.walk(path, True):
+           print("位置：" + root)
+           for filename in files:
+               state = os.stat(os.path.join(root, filename))
+               info = "文件名：" + filename + " "
+               info = info + "大小：" + ("%d" % state[-4]) + " "
+               t = time.strftime("%Y-%m-%d %X", time.localtime(state[-1]))
+               info = info + "创建时间：" + t + " "
+               t = time.strftime("%Y-%m-%d %X", time.localtime(state[-2]))
+               info = info + "修改时间：" + t + " "
+               t = time.strftime("%Y-%m-%d %X", time.localtime(state[-3]))
+               info = info + "最后访问时间：" + t + " "
+               print(info)
+
+
+   if __name__ == '__main__':
+       path = r"D:\GitHub\21_staduy_python\13.python文件操作\基本文件操作"
+       ShowFileProperties(path)
+
+``os.stat() 的参数必须是绝对路径。因此， 需要先调用os.path.join(root, filename) 连接文件的 路径和文件名。``
+
+输出结果
+
+::
+
+   文件名：messages1.txt 大小：84 创建时间：2018-11-10 18:33:45 修改时间：2018-11-10 18:34:01 最后访问时间：2019-06-14 23:44:56 
+   文件名：open函数.py 大小：3040 创建时间：2018-11-10 18:35:18 修改时间：2018-11-10 18:35:18 最后访问时间：2019-06-14 23:44:56 
+   文件名：python逐行读取文件.py 大小：713 创建时间：2018-12-04 09:43:20 修改时间：2018-12-04 09:43:20 最后访问时间：2019-06-14 23:44:56 
+   文件名：__init__.py 大小：45 创建时间：2018-12-04 09:43:03 修改时间：2018-12-04 09:43:03 最后访问时间：2019-06-14 23:44:56 
+   文件名：写入文件内容.py 大小：429 创建时间：2018-11-10 18:41:11 修改时间：2018-11-10 18:41:11 最后访问时间：2019-06-14 23:44:56 
+   文件名：打开文件使用with语句.py 大小：267 创建时间：2018-11-10 18:22:45 修改时间：2018-11-10 18:22:45 最后访问时间：2019-06-14 23:44:56 
+   文件名：查看所有文件的属性.py 大小：1199 创建时间：2019-07-20 15:03:56 修改时间：2019-07-20 15:03:56 最后访问时间：2019-07-20 15:03:57 
+   文件名：模拟进度条.py 大小：254 创建时间：2018-12-05 19:15:07 修改时间：2018-12-05 19:15:07 最后访问时间：2019-06-14 23:44:56 
+   文件名：读取文件内容.py 大小：837 创建时间：2018-12-05 19:10:37 修改时间：2018-12-05 19:10:37 最后访问时间：2019-06-14 23:44:56

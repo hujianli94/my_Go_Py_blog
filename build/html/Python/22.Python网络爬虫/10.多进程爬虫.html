@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>21.11. 多进程爬虫 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="21.12. 异步加载" href="11.%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BD.html" />
+    <link rel="prev" title="21.10. 数据的存储" href="09.%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%98%E5%82%A8.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">21. Python网络爬虫</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95%E5%A4%8D%E4%B9%A0.html">21.1. 基础语法复习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_1.Python%E7%9A%84%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82.html">21.2. Python的网络请求</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%88%AC%E8%99%AB%E5%8E%9F%E7%90%86%E5%92%8C%E7%BD%91%E9%A1%B5%E7%BB%93%E6%9E%84.html">21.3. 爬虫原理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%88%AC%E8%99%AB%E7%A8%8B%E5%BA%8F.html">21.4. 我的第一个爬虫程序</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">21.5. 正则表达式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.re%E6%A8%A1%E5%9D%97%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95.html">21.6. re模块的常用方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.Lxml%E5%BA%93%E5%92%8CXpath%E8%AF%AD%E6%B3%95.html">21.7. Lxml库和Xpath语法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E4%B8%89%E7%A7%8D%E7%88%AC%E8%99%AB%E6%A8%A1%E5%BC%8F%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94.html">21.8. 3种爬虫模式性能对比</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E4%BD%BF%E7%94%A8API.html">21.9. 使用API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%98%E5%82%A8.html">21.10. 数据的存储</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">21.11. 多进程爬虫</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">21.11.1. 多进程讲解</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">21.11.2. 多进程中的进程池</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">21.11.3. 使用队列实现多进程中相互通信</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">21.11.4. 线程同步</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">21.11.5. 多线程爬取示例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">21.11.6. 爬取简书网热评文章</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">21.11.7. 抓取瓜子二手车简单示例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">21.11.8. 多进程实战 - 转转网二手市场商品信息</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="11.%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BD.html">21.12. 异步加载</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.%E8%A1%A8%E5%8D%95%E4%BA%A4%E4%BA%92%E4%B8%8E%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95.html">21.13. 表单交互与模拟登陆</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.Selenium%E6%A8%A1%E6%8B%9F%E6%B5%8F%E8%A7%88%E5%99%A8.html">21.14. Selenium模拟浏览器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.%E6%89%8B%E5%86%99Python%E7%88%AC%E8%99%AB.html">21.15. 手写python爬虫</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.Python%E7%88%AC%E8%99%AB%E9%A1%B9%E7%9B%AE%E5%90%88%E9%9B%86.html">21.16. python爬虫项目合集</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E4%B8%AD%E5%9B%BD%E5%A4%A9%E6%B0%94%E7%BD%91%E5%9B%BE%E7%89%87.html">21.17. 案例：爬取中国天气网图片</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E5%B0%8F%E8%AF%B4.html">21.18. 案例：爬取小说</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1TOP100%E6%8E%92%E8%A1%8C.html">21.19. 案例：爬取猫眼电影TOP100排行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E4%BD%BF%E7%94%A8BeautifulSoup%E7%88%AC%E5%8F%96%E7%A7%9F%E6%88%BF%E4%BF%A1%E6%81%AF.html">21.20. 使用BeautifulSoup爬取租房信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E7%B3%97%E4%BA%8B%E7%99%BE%E7%A7%91%E5%86%85%E5%AE%B9.html">21.21. 爬取糗事百科内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E7%BA%B3%E6%96%AF%E8%BE%BE%E5%85%8B%E8%82%A1%E7%A5%A8%E6%95%B0%E6%8D%AE.html">21.22. 案例：爬取纳斯达克股票数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%82%A1%E7%A5%A8%E7%BD%91%E7%AB%99%E6%95%B0%E6%8D%AE%E8%BD%AC%E4%B8%BAjson.html">21.23. 案例：爬取股票网站数据转为json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%B1%86%E7%93%A3TOP250%E7%9A%84%E7%94%B5%E5%BD%B1%E5%92%8C%E4%B9%A6%E7%B1%8D.html">21.24. 案例：爬取豆瓣TOP250的电影和书籍</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%B5%B7%E7%82%B9%E4%B8%AD%E6%96%87%E7%BD%91%E6%95%B0%E6%8D%AE%E5%AD%98%E5%88%B0excel%E4%B8%AD.html">21.25. 案例：爬取起点中文网数据存到excel中</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E9%85%B7%E7%8B%97TOP500%E7%9A%84%E6%95%B0%E6%8D%AE.html">21.26. 爬取酷狗TOP500的数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E4%BF%A1%E6%81%AF%28Ajax%29.html">21.27. 案例：爬取今日头条信息(Ajax)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">21. </span>Python网络爬虫</a> &raquo;</li>
+      <li><span class="section-number">21.11. </span>多进程爬虫</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/22.Python网络爬虫/10.多进程爬虫.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id10">多进程爬虫</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id11">多进程讲解</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id12">多进程中的进程池</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id13">使用队列实现多进程中相互通信</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id14">线程同步</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id15">多线程爬取示例</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id16">爬取简书网热评文章</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id17">抓取瓜子二手车简单示例</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id18">多进程实战 - 转转网二手市场商品信息</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id10"><span class="section-number">21.11. </span>多进程爬虫</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<section id="id2">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">21.11.1. </span>多进程讲解</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/17 10:50</span>
+<span class="c1"># filename: 多进程01.py</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="k">def</span> <span class="nf">run_task</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Child process </span><span class="si">{}</span><span class="s2"> 【</span><span class="si">{}</span><span class="s2">】 Running ....&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parent process 【</span><span class="si">{}</span><span class="s2">】&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">run_task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">i</span><span class="p">,))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process will be Start.....&quot;</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>        <span class="c1">#等待子进程结束</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process end.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>输出信息:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Parent process 【232】
+Process will be Start.....
+Process will be Start.....
+Process will be Start.....
+Process will be Start.....
+Process will be Start.....
+Child process 0 【16256】 Running ....
+Child process 1 【3984】 Running ....
+Child process 2 【3192】 Running ....
+Child process 3 【5356】 Running ....
+Child process 4 【7036】 Running ....
+Process end.
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">21.11.2. </span>多进程中的进程池</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/17 10:41</span>
+<span class="c1"># filename: 多进程，进程池的使用.py</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">random</span>
+
+
+<span class="k">def</span> <span class="nf">run_task</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Task </span><span class="si">{0}</span><span class="s2"> (pid=</span><span class="si">{1}</span><span class="s2">) is running ....&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Task </span><span class="si">{}</span><span class="s2"> end.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Current process </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">run_task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">i</span><span class="p">,))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Waiting for all subprocess done....&quot;</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All subprocess done.!!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Pool对象调用join（）方法会等待所有子进程执行完毕，调用join（）之前必须先调用close（），调用close（）之后就不能继续添加新的Process了。</span></code></p>
+<p>输出信息如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Current process 5344
+Waiting for all subprocess done....
+Task 0 (pid=6432) is running ....
+Task 1 (pid=3932) is running ....
+Task 2 (pid=2588) is running ....
+Task 0 end.
+Task 3 (pid=6432) is running ....
+Task 2 end.
+Task 4 (pid=2588) is running ....
+Task 1 end.
+Task 4 end.
+Task 3 end.
+All subprocess done.!!
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">21.11.3. </span>使用队列实现多进程中相互通信</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/27 10:17</span>
+<span class="c1"># filename: 使用队列实现进程间通信.py</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+
+<span class="k">def</span> <span class="nf">proce_write</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">urls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    写数据执行的代码</span>
+<span class="sd">    :param q:</span>
+<span class="sd">    :param urls:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process【</span><span class="si">{}</span><span class="s2">】 is writing.....&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Put 【</span><span class="si">{}</span><span class="s2">】 to queue.....&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">proce_read</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    读数据的代码</span>
+<span class="sd">    :param q:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process【</span><span class="si">{}</span><span class="s2">】 is reading.....&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Get 【</span><span class="si">{}</span><span class="s2">】 from queue..&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># 父进程创建Queue，并传给各个子进程</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+    <span class="n">proce_write1</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">proce_write</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;url1&quot;</span><span class="p">,</span> <span class="s2">&quot;url2&quot;</span><span class="p">,</span> <span class="s2">&quot;url3&quot;</span><span class="p">]))</span>
+    <span class="n">proce_write2</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">proce_write</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;url4&quot;</span><span class="p">,</span> <span class="s2">&quot;url5&quot;</span><span class="p">,</span> <span class="s2">&quot;url6&quot;</span><span class="p">]))</span>
+    <span class="n">proce_reader</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">proce_read</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,))</span>
+
+    <span class="c1"># 启动子进程proc_writer,写入</span>
+    <span class="n">proce_write1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">proce_write2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># 启动子进程proce_reader 读取</span>
+    <span class="n">proce_reader</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># 等待proce_writer结束</span>
+    <span class="n">proce_write1</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">proce_write2</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="c1"># proce_reader进程是死循环，无法等待其结束，需要强制进行终止</span>
+    <span class="n">proce_reader</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Process【2640】 is writing.....
+Put 【url1】 to queue.....
+Process【7104】 is writing.....
+Put 【url4】 to queue.....
+Process【5700】 is reading.....
+Get 【url1】 from queue..
+Get 【url4】 from queue..
+Put 【url2】 to queue.....
+Get 【url2】 from queue..
+Get 【url3】 from queue..
+Put 【url3】 to queue.....
+Put 【url5】 to queue.....
+Get 【url5】 from queue..
+Put 【url6】 to queue.....
+Get 【url6】 from queue..
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">21.11.4. </span>线程同步</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 互斥锁的使用</span>
+
+<span class="c1">#创建锁</span>
+<span class="n">mutex</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+<span class="c1">#锁定</span>
+<span class="n">mutex</span><span class="o">.</span><span class="n">acquire</span><span class="p">([</span><span class="n">blocking</span><span class="p">])</span>
+
+<span class="c1">#释放锁</span>
+<span class="n">mutex</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/27 11:13</span>
+<span class="c1"># filename: 线程同步.py</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="n">mylock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
+<span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">class</span> <span class="nc">myThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">num</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">mylock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> locked, Number: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">num</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="c1">#当num大于等于4时，释放锁。其他子线程就能执行了</span>
+                <span class="n">mylock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> released, Number: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">num</span><span class="p">))</span>
+                <span class="k">break</span>
+            <span class="n">num</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> released, Number: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">num</span><span class="p">))</span>
+            <span class="n">mylock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">thread1</span> <span class="o">=</span> <span class="n">myThread</span><span class="p">(</span><span class="s1">&#39;Thread_1&#39;</span><span class="p">)</span>
+    <span class="n">thread2</span> <span class="o">=</span> <span class="n">myThread</span><span class="p">(</span><span class="s1">&#39;Thread_2&#39;</span><span class="p">)</span>
+    <span class="n">thread1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">thread2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Thread_1</span> <span class="n">locked</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">Thread_1</span> <span class="n">released</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">Thread_1</span> <span class="n">locked</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">Thread_1</span> <span class="n">released</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">2</span>
+<span class="n">Thread_1</span> <span class="n">locked</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">2</span>
+<span class="n">Thread_1</span> <span class="n">released</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">3</span>
+<span class="n">Thread_1</span> <span class="n">locked</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">3</span>
+<span class="n">Thread_1</span> <span class="n">released</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">4</span>
+<span class="n">Thread_1</span> <span class="n">locked</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">4</span>
+<span class="n">Thread_1</span> <span class="n">released</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">4</span>
+<span class="n">Thread_2</span> <span class="n">locked</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">4</span>
+<span class="n">Thread_2</span> <span class="n">released</span><span class="p">,</span> <span class="n">Number</span><span class="p">:</span> <span class="mi">4</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id15"><span class="section-number">21.11.5. </span>多线程爬取示例</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">python进行多进程爬虫使用了multiprocessing库.使用方法的代码如下：</span>
+
+<span class="sd">from multiprocessing import Pool</span>
+<span class="sd">pool = Pool(processes=4)</span>
+<span class="sd">pool.map(func, iterable[,chunksize])</span>
+
+<span class="sd">1.导入multiprocessing库的Pool模块</span>
+<span class="sd">2.创建进程池，processes参数为设置进程的个数</span>
+<span class="sd">3.利用map()函数运行进程，func参数为需运行的函数，iterable为迭代参数，可为多个URL列表进行迭代。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/15 22:11</span>
+<span class="c1"># filename: 01.多进程使用方法.py</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>  <span class="c1"># 导入多进程模块</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; WOW64; rv:67.0) Gecko/20100101 Firefox/67.0&quot;</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">judgment</span><span class="p">(</span><span class="n">class_name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">class_name</span> <span class="o">==</span> <span class="s2">&quot;womenIcon&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;女&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;男&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;&lt;h2&gt;(.*?)&lt;/h2&gt;&quot;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">levels</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;articleGender \D+Icon&quot;&gt;(.*?)&lt;/div&gt;&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">sexs</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;articleGender (.*?)&quot;&gt;&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;content&quot;&gt;.*?&lt;span&gt;(.*?)&lt;/span&gt;&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">laughs</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&lt;span class=&quot;stats-vote&quot;&gt;&lt;i class=&quot;number&quot;&gt;(\d+)&lt;/i&gt; 好笑&lt;/span&gt;&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">comments</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&lt;i class=&quot;number&quot;&gt;(\d+)&lt;/i&gt; 评论&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">sex</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">laugh</span><span class="p">,</span> <span class="n">comment</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">sexs</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">laughs</span><span class="p">,</span> <span class="n">comments</span><span class="p">):</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">id</span><span class="p">,</span>
+            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="n">level</span><span class="p">,</span>
+            <span class="s2">&quot;sex&quot;</span><span class="p">:</span> <span class="n">judgment</span><span class="p">(</span><span class="n">sex</span><span class="p">),</span>  <span class="c1"># 调用judgment_sex()函数</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+            <span class="s2">&quot;laugh&quot;</span><span class="p">:</span> <span class="n">laugh</span><span class="p">,</span>
+            <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="n">comments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">info</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://www.qiushibaike.com/text/page/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+    <span class="n">start_1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="c1"># 单进程</span>
+        <span class="n">get_info</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">end_1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;串行爬虫，单进程:&quot;</span><span class="p">,</span> <span class="n">end_1</span> <span class="o">-</span> <span class="n">start_1</span><span class="p">)</span>
+
+    <span class="c1"># 2个进程</span>
+    <span class="n">start_2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_info</span><span class="p">,</span> <span class="n">urls</span><span class="p">)</span>
+    <span class="n">end_2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;两个进程爬取：&quot;</span><span class="p">,</span> <span class="n">end_2</span> <span class="o">-</span> <span class="n">start_2</span><span class="p">)</span>
+
+    <span class="c1"># 4个进程</span>
+    <span class="n">start_3</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_info</span><span class="p">,</span> <span class="n">urls</span><span class="p">)</span>
+    <span class="n">end_3</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;两个进程爬取：&quot;</span><span class="p">,</span> <span class="n">end_3</span> <span class="o">-</span> <span class="n">start_3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">多进程爬虫使用2个进程和4个进程爬取，记录开始时间，循环爬取数据，记录结束时间，最后打印出所需时间</span></code></p>
+<p>输出信息如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>串行爬虫，单进程: 2.393002510070801
+两个进程爬取： 2.2469072341918945
+两个进程爬取： 1.9653539657592773
+</pre></div>
+</div>
+<img alt="../../_images/mutiprocess-pacong.png" src="../../_images/mutiprocess-pacong.png" />
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">21.11.6. </span>爬取简书网热评文章</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<img alt="../../_images/mongo-pachong.png" src="../../_images/mongo-pachong.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/16 9:45</span>
+<span class="c1"># filename: 02.爬取简书网热评文章.py</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">【爬虫】Xpath高级用法</span>
+
+<span class="sd">手动浏览翻页界面如下</span>
+<span class="sd">https://www.jianshu.com/c/22f2ca261b85?order_by=added_at&amp;page=1</span>
+<span class="sd">https://www.jianshu.com/c/22f2ca261b85?order_by=added_at&amp;page=12</span>
+<span class="sd">https://www.jianshu.com/c/22f2ca261b85?order_by=added_at&amp;page=13</span>
+<span class="sd">https://www.jianshu.com/c/22f2ca261b85?order_by=added_at&amp;page=14</span>
+<span class="sd">https://www.jianshu.com/c/22f2ca261b85?order_by=added_at&amp;page=15</span>
+
+<span class="sd">使用requests和lxml三方库和多进程爬虫方法，</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">pymongo</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>  <span class="c1"># 导入库文件</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>  <span class="c1"># 连接数据库</span>
+<span class="n">mydb</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s1">&#39;mydb&#39;</span><span class="p">]</span>
+<span class="n">jianshu_shouye</span> <span class="o">=</span> <span class="n">mydb</span><span class="p">[</span><span class="s1">&#39;jianshu_shouye&#39;</span><span class="p">]</span>  <span class="c1">## 连接数据库及创建数据库、数据集合</span>
+<span class="c1"># jianshu_shouye.insert_one({&#39;收藏数&#39;: &#39;1&#39;, &#39;评论数&#39;: &#39;1&#39;, &#39;作者&#39;: &#39;恋戰&#39;, &#39;标题&#39;: &#39;【python】进程与多进程&#39;, &#39;热度&#39;: &#39;0.2&#39;})</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;user-agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36&quot;</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">get_jianshu_info</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">selector</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">infos</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//ul[@class=&quot;note-list&quot;]/li&#39;</span><span class="p">)</span>  <span class="c1"># 获取大标签，以此进行循环</span>
+
+    <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">author</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;div/div/a[1]/text()&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tittles</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;div/a/text()&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">redus</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;div/div/span[1]/text()&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">redus</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">redu</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">redus</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/未知&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">redu</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">redus</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">pinglun</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;div/div/a[2]/text()&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">shoucangs</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;div/div/span[2]/text()&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shoucangs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">shoucang</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">shoucang</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">shoucangs</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;作者&quot;</span><span class="p">:</span> <span class="n">author</span><span class="p">,</span>
+                <span class="s2">&quot;标题&quot;</span><span class="p">:</span> <span class="n">tittles</span><span class="p">,</span>
+                <span class="s2">&quot;热度&quot;</span><span class="p">:</span> <span class="n">redu</span><span class="p">,</span>
+                <span class="s2">&quot;评论数&quot;</span><span class="p">:</span> <span class="n">pinglun</span><span class="p">,</span>
+                <span class="s2">&quot;收藏数&quot;</span><span class="p">:</span> <span class="n">shoucang</span>
+            <span class="p">}</span>
+            <span class="c1"># print(data)</span>
+            <span class="n">jianshu_shouye</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># 依次写入mongodb数据库</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># urls = &quot;https://www.jianshu.com/c/22f2ca261b85&quot;</span>
+    <span class="c1"># get_jianshu_info(urls)</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://www.jianshu.com/c/22f2ca261b85?order_by=added_at&amp;page=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)]</span>
+    <span class="c1"># for url in urls:              #单线程</span>
+    <span class="c1">#     get_jianshu_info(url)</span>
+
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>  <span class="c1"># 创建4个进程池，多线程</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_jianshu_info</span><span class="p">,</span> <span class="n">urls</span><span class="p">)</span>
+
+
+<span class="c1">#或者另外一种方式</span>
+<span class="c1">#   pool = Pool(4)  # 创建4个进程池，多线程</span>
+<span class="c1">#   for url in urls:</span>
+<span class="c1">#       pool.apply_async(get_jianshu_info, args=(url,))</span>
+<span class="c1">#   pool.close()</span>
+<span class="c1">#   pool.join()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">现在在多线程上出现点问题待解决，单线程爬取没有问题，多线程需要改进</span></code></p>
+<p>输出结果如下： <img alt="image1" src="../../_images/jianshu-pachong.png" /></p>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id17"><span class="section-number">21.11.7. </span>抓取瓜子二手车简单示例</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/18 12:08</span>
+<span class="c1"># filename: 多进程抓取瓜子二手车.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">手动浏览瓜子二手车的信息如下：</span>
+<span class="sd">https://www.guazi.com/bj/audi/o1/#bread</span>
+<span class="sd">https://www.guazi.com/bj/audi/o2/#bread</span>
+<span class="sd">https://www.guazi.com/bj/audi/o3/#bread</span>
+
+<span class="sd"># 翻页：</span>
+<span class="sd">urls = [&quot;https://www.guazi.com/bj/audi/o{}/#bread&quot;.format(str(i)) for i in range(1, 50)]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+<span class="kn">import</span> <span class="nn">pymongo</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>  <span class="c1"># 连接数据库</span>
+<span class="n">mydb</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s1">&#39;mydb&#39;</span><span class="p">]</span>
+<span class="n">guazi_2car</span> <span class="o">=</span> <span class="n">mydb</span><span class="p">[</span><span class="s1">&#39;guazi&#39;</span><span class="p">]</span>  <span class="c1">## 连接数据库及创建数据库、数据集合</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Accept-Encoding&quot;</span><span class="p">:</span> <span class="s2">&quot;gzip, deflate, br&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Accept-Language&quot;</span><span class="p">:</span> <span class="s2">&quot;zh-CN,zh;q=0.9,en;q=0.8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Cache-Control&quot;</span><span class="p">:</span> <span class="s2">&quot;max-age=0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Connection&quot;</span><span class="p">:</span> <span class="s2">&quot;keep-alive&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Cookie&quot;</span><span class="p">:</span> <span class="s2">&quot;uuid=90ed9f44-b20d-4ed8-a8e5-2fe9a107c527; antipas=69151747kC695T498278y598l82; user_city_id=12; ganji_uuid=1086212832684246083191; sessionid=cddd6039-f178-417d-ef82-3fc603fe1904; lg=1; cainfo=%7B</span><span class="si">%22c</span><span class="s2">a_s</span><span class="si">%22%</span><span class="s2">3A%22pz_baidu</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_n</span><span class="si">%22%</span><span class="s2">3A%22tbmkbturl</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_medium</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_term</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_content</span><span class="si">%22%</span><span class="s2">3A</span><span class="si">%22%</span><span class="s2">22%2C</span><span class="si">%22c</span><span class="s2">a_campaign</span><span class="si">%22%</span><span class="s2">3A</span><span class="si">%22%</span><span class="s2">22%2C</span><span class="si">%22c</span><span class="s2">a_kw</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C%22keyword</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_keywordid</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22s</span><span class="s2">code</span><span class="si">%22%</span><span class="s2">3A</span><span class="si">%2210103000312%</span><span class="s2">22%2C</span><span class="si">%22c</span><span class="s2">a_transid</span><span class="si">%22%</span><span class="s2">3A</span><span class="si">%22%</span><span class="s2">22%2C%22platform</span><span class="si">%22%</span><span class="s2">3A</span><span class="si">%221%</span><span class="s2">22%2C%22version</span><span class="si">%22%</span><span class="s2">3A1%2C</span><span class="si">%22c</span><span class="s2">a_i</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_b</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_a</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22d</span><span class="s2">isplay_finance_flag</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">lient_ab</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22g</span><span class="s2">uid</span><span class="si">%22%</span><span class="s2">3A</span><span class="si">%2290e</span><span class="s2">d9f44-b20d-4ed8-a8e5-2fe9a107c527</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22s</span><span class="s2">essionid</span><span class="si">%22%</span><span class="s2">3A</span><span class="si">%22c</span><span class="s2">ddd6039-f178-417d-ef82-3fc603fe1904</span><span class="si">%22%</span><span class="s2">7D; _gl_tracker=%7B</span><span class="si">%22c</span><span class="s2">a_source</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_name</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_kw</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_id</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_s</span><span class="si">%22%</span><span class="s2">3A</span><span class="si">%22s</span><span class="s2">elf</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_n</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22c</span><span class="s2">a_i</span><span class="si">%22%</span><span class="s2">3A%22-</span><span class="si">%22%</span><span class="s2">2C</span><span class="si">%22s</span><span class="s2">id</span><span class="si">%22%</span><span class="s2">3A43620202225%7D; cityDomain=bj; preTime=%7B</span><span class="si">%22la</span><span class="s2">st</span><span class="si">%22%</span><span class="s2">3A1563424468%2C%22this</span><span class="si">%22%</span><span class="s2">3A1563422804%2C%22pre</span><span class="si">%22%</span><span class="s2">3A1563422804%7D&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Host&quot;</span><span class="p">:</span> <span class="s2">&quot;www.guazi.com&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Referer&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.guazi.com/bj/buy/&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Upgrade-Insecure-Requests&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36&quot;</span>
+<span class="p">}</span>
+
+<span class="n">guazi_url</span> <span class="o">=</span> <span class="s2">&quot;https://www.guazi.com&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">get_link_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">selector</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">infos</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//ul[@class=&quot;carlist clearfix js-top&quot;]/li&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
+        <span class="n">href</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;a/@href&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">href</span> <span class="o">=</span> <span class="n">guazi_url</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
+        <span class="c1"># print(href)</span>
+        <span class="n">get_info_car</span><span class="p">(</span><span class="n">href</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_info_car</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    抓取标题、</span>
+<span class="sd">    上牌时间、 里程表信息、排量、变速箱、价格、原价</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">selettor</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tettile</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&lt;h2 class=&quot;titlebox&quot;&gt;(.*?)&lt;span class=&quot;labels baomai&quot;&gt;(.*?)&lt;/span&gt;&#39;</span><span class="p">,</span> <span class="n">html</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span>
+            <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">pailiang</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&lt;li class=&quot;three&quot;&gt;&lt;span&gt;(.*?)&lt;/span&gt;排量&lt;/li&gt;&#39;</span><span class="p">,</span> <span class="n">html</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">btjs</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s1">&#39;&lt;span class=&quot;pricestype&quot;&gt;&lt;span class=&quot;f14&quot;&gt;(.*?)&lt;/span&gt;(.*?)&lt;span class=&quot;f14&quot;&gt;(.*?)&lt;/span&gt;&lt;/span&gt;&#39;</span><span class="p">,</span>
+            <span class="n">html</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">btjs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">btj</span> <span class="o">=</span> <span class="s2">&quot;没有补贴&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">btjs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">btj</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="n">c</span>
+        <span class="n">yuanjia</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&lt;span class=&quot;newcarprice&quot;&gt;(.*?)&lt;/span&gt;&#39;</span><span class="p">,</span> <span class="n">html</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;标题&quot;</span><span class="p">:</span> <span class="n">tettile</span><span class="p">,</span>
+            <span class="s2">&quot;排量&quot;</span><span class="p">:</span> <span class="n">pailiang</span><span class="p">,</span>
+            <span class="s2">&quot;补贴价格&quot;</span><span class="p">:</span> <span class="n">btj</span><span class="p">,</span>
+            <span class="s2">&quot;原价&quot;</span><span class="p">:</span> <span class="n">yuanjia</span>
+        <span class="p">}</span>
+        <span class="c1"># print(data)</span>
+        <span class="n">guazi_2car</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://www.guazi.com/bj/audi/o</span><span class="si">{}</span><span class="s2">/#bread&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">)]</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c1"># 创建4个进程池，多线程</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">get_link_url</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">url</span><span class="p">,))</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+
+<span class="c1"># pool.map(get_link_url, urls)</span>
+
+<span class="c1"># urls = &quot;https://www.guazi.com/bj/audi/o3/#bread&quot;</span>
+<span class="c1"># get_link_url(urls)</span>
+
+<span class="c1"># url = &quot;https://www.guazi.com/bj/37f5a6414ab7d2dex.htm#fr_page=list&amp;fr_pos=city&amp;fr_no=1&quot;</span>
+<span class="c1"># get_info_car(url)</span>
+</pre></div>
+</div>
+<img alt="../../_images/guazi2car00001.png" src="../../_images/guazi2car00001.png" />
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">21.11.8. </span>多进程实战 - 转转网二手市场商品信息</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>爬取地址：https://wh.58.com/sale.shtml
+爬取信息：标题，价格，区域，浏览量，想买数，宝贝描述内容，宝贝留言数
+爬取方式：进入分类的详细页面，使用lxml解析。
+存储方式：MongoDB存储 &amp; MySQL存储
+
+
+进入分类页面，以二手手机为例。分类链接为http://gz.58.com//shouji/，
+点击多页后发现该类别的个人分类规律为：http://gz.58.com//shouji/0/pn{}/，其中{}放置数字即可实现翻页。
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>详细页面爬取信息为：标题，浏览量，想买数，价格，区域，宝贝描述内容，宝贝留言数。
+</pre></div>
+</div>
+<img alt="../../_images/many-Process-pacong0001.png" src="../../_images/many-Process-pacong0001.png" />
+<p><code class="docutils literal notranslate"><span class="pre">在计算机中新建一个文件夹，然后新建三个py文件：</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">class_urls.py</span> <span class="pre">:</span> <span class="pre">获取各商品类别的URL</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">page_spider.py：获取详细页面URL，获取页面信息</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">main.py：主程序</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">class_urls.py</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/18 17:31</span>
+<span class="c1"># filename: class_urls.py</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">爬取地址：https://wh.58.com/sale.shtml</span>
+<span class="sd">爬取信息：标题，价格，区域，浏览量，想买数，宝贝描述内容，宝贝留言数</span>
+<span class="sd">爬取方式：进入分类的详细页面，使用lxml解析。</span>
+<span class="sd">存储方式：MongoDB存储 &amp; MySQL存储</span>
+
+
+<span class="sd">进入分类页面，以二手手机为例。分类链接为http://gz.58.com//shouji/，</span>
+<span class="sd">点击多页后发现该类别的个人分类规律为：http://gz.58.com//shouji/0/pn{}/，其中{}放置数字即可实现翻页。</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+
+<span class="n">start_url</span> <span class="o">=</span> <span class="s2">&quot;http://cs.58.com/sale.shtml&quot;</span>
+<span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;http://cs.58.com&quot;</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">start_url</span><span class="p">)</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="n">infos</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//li[@class=&quot;ym-tab&quot;]&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;span/a/@href&#39;</span><span class="p">)</span>        <span class="c1">##简单二级目录</span>
+    <span class="c1">#urls = info.xpath(&#39;ul/li/span/a/@href&#39;) ##复杂二级目录</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="n">class_url</span> <span class="o">=</span> <span class="n">base_url</span> <span class="o">+</span> <span class="n">url</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">class_url</span><span class="p">)</span>
+
+
+<span class="n">class_urls1</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">http://cs.58.com/shouji/</span>
+<span class="s1">http://cs.58.com/tongxunyw/</span>
+<span class="s1">http://cs.58.com/danche/</span>
+<span class="s1">http://cs.58.com/diandongche/</span>
+<span class="s1">http://cs.58.com/diannao/</span>
+<span class="s1">http://cs.58.com/shuma/</span>
+<span class="s1">http://cs.58.com/jiadian/</span>
+<span class="s1">http://cs.58.com/ershoujiaju/</span>
+<span class="s1">http://cs.58.com/yingyou/</span>
+<span class="s1">http://cs.58.com/fushi/</span>
+<span class="s1">http://cs.58.com/meirong/</span>
+<span class="s1">http://cs.58.com/yishu/</span>
+<span class="s1">http://cs.58.com/tushu/</span>
+<span class="s1">http://cs.58.com/wenti/</span>
+<span class="s1">http://cs.58.com/kaquan/</span>
+<span class="s1">http://cs.58.com/shebei.shtml</span>
+<span class="s1">http://cs.58.com/chengren/</span>
+<span class="s1">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">page_spider.py</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/18 17:33</span>
+<span class="c1"># filename: page_spider.py</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">pymongo</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1"># 连接mongodb</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>
+<span class="n">mydb</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s1">&#39;mydb&#39;</span><span class="p">]</span>
+<span class="n">zhuanzhuan_url</span> <span class="o">=</span> <span class="n">mydb</span><span class="p">[</span><span class="s1">&#39;zhuanzhuan_url&#39;</span><span class="p">]</span>
+<span class="n">zhuanzhuan_info</span> <span class="o">=</span> <span class="n">mydb</span><span class="p">[</span><span class="s1">&#39;zhuanzhuan_info&#39;</span><span class="p">]</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;user-agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3294.6 Safari/537.36&#39;</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">get_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">page</span><span class="p">):</span>
+    <span class="n">url1</span> <span class="o">=</span> <span class="n">url</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">detail_url</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">0/pn</span><span class="si">{}</span><span class="s1">/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
+        <span class="c1"># print(detail_url)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">detail_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="c1"># print(r.text)</span>
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+        <span class="n">infos</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;tr&quot;</span><span class="p">)</span>
+        <span class="c1"># url_list = []       #单进程时使用</span>
+        <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
+            <span class="n">detail_url</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;a.t&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span>
+            <span class="c1"># print(detail_url)</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">detail_url</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;slot=-1&quot;</span><span class="p">):</span>
+                <span class="c1">#url_list.append(detail_url)        #单进程时使用</span>
+                <span class="n">zhuanzhuan_url</span><span class="o">.</span><span class="n">insert_one</span><span class="p">({</span><span class="s1">&#39;详细页面链接&#39;</span><span class="p">:</span> <span class="n">detail_url</span><span class="p">})</span>
+                <span class="c1"># print({&#39;详细页面链接&#39;: detail_url})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">page</span>
+        <span class="c1"># return url_list   #单进程时使用</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;#basicinfo &gt; div.detail-title &gt; h1&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">price</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+            <span class="s2">&quot;#basicinfo &gt; div.infocard__container.haveswitch &gt; div:nth-of-type(1) &gt; div.infocard__container__item__main &gt; span&quot;</span><span class="p">)[</span>
+            <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+            <span class="s2">&quot;#basicinfo &gt; div.infocard__container.haveswitch &gt; div:nth-of-type(3) &gt; div.infocard__container__item__main &gt; a&quot;</span><span class="p">)[</span>
+            <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;标题&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+                <span class="s1">&#39;价格&#39;</span><span class="p">:</span> <span class="n">price</span><span class="p">,</span>
+                <span class="s1">&#39;区域&#39;</span><span class="p">:</span> <span class="n">area</span><span class="p">,</span>
+                <span class="s1">&#39;链接&#39;</span><span class="p">:</span> <span class="n">url</span>
+                <span class="p">}</span>
+        <span class="n">zhuanzhuan_info</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+        <span class="c1"># print(info)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+    <span class="c1"># url = &quot;http://cs.58.com/shouji/&quot;</span>
+    <span class="c1"># get_page(url, 1)</span>
+
+    <span class="c1"># url = &#39;https://cs.58.com/shouji/38763000384403x.shtml?link_abtest=&amp;psid=176927105204931508910465081&amp;entinfo=38763000384403_j&amp;slot=-1&#39;</span>
+    <span class="c1"># get_info(url)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">main_one_Process.py</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/18 17:34</span>
+<span class="c1"># filename: main_one_Process.py</span>
+
+<span class="kn">from</span> <span class="nn">class_urls</span> <span class="kn">import</span> <span class="n">class_urls1</span>
+<span class="kn">from</span> <span class="nn">page_spider</span> <span class="kn">import</span> <span class="n">get_page</span><span class="p">,</span> <span class="n">get_info</span>
+
+<span class="n">url_list</span> <span class="o">=</span> <span class="n">class_urls1</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+
+<span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">url_list</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">):</span>
+        <span class="n">detail_url_list</span> <span class="o">=</span> <span class="n">get_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">detail_url</span> <span class="ow">in</span> <span class="n">detail_url_list</span><span class="p">:</span>
+            <span class="n">get_info</span><span class="p">(</span><span class="n">detail_url</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">main_many_Process.py</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/18 17:35</span>
+<span class="c1"># filename: main_many_Process.py</span>
+<span class="c1"># 多进程</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span> <span class="nn">class_urls</span> <span class="kn">import</span> <span class="n">class_urls1</span>
+<span class="kn">from</span> <span class="nn">page_spider</span> <span class="kn">import</span> <span class="n">get_page</span><span class="p">,</span> <span class="n">get_info</span>
+<span class="kn">from</span> <span class="nn">page_spider</span> <span class="kn">import</span> <span class="n">zhuanzhuan_url</span><span class="p">,</span> <span class="n">zhuanzhuan_info</span>
+
+
+<span class="k">def</span> <span class="nf">get_links_from</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">):</span>
+        <span class="n">get_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
+
+
+<span class="n">zz_urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;详细页面链接&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">zhuanzhuan_url</span><span class="o">.</span><span class="n">find</span><span class="p">()]</span>  <span class="c1"># 获取数据库中的详细页面链接</span>
+<span class="n">zz_urls_2</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;链接&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">zhuanzhuan_info</span><span class="o">.</span><span class="n">find</span><span class="p">()]</span>  <span class="c1"># 数据表zhuanzhuan_info不存在时返回0</span>
+<span class="n">rest_urls</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">zz_urls</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">zz_urls_2</span><span class="p">)</span>  <span class="c1"># 使用集合来过滤重复链接，支持断点续传</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">url_list</span> <span class="o">=</span> <span class="n">class_urls1</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>  <span class="c1"># 将字符串转变成列表</span>
+    <span class="c1">##    pool = Pool(processes=4)      #创建进程池</span>
+    <span class="c1">##    pool.map(get_links_from, url_list)  #调用进程池</span>
+
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>  <span class="c1"># 创建进程池</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_info</span><span class="p">,</span> <span class="n">rest_urls</span><span class="p">)</span>  <span class="c1"># 调用进程池</span>
+</pre></div>
+</div>
+<p>单进程执行如下： <img alt="image2" src="../../_images/many-Process0001.png" /> <img alt="image3" src="../../_images/many-Process00002.png" /></p>
+<p><code class="docutils literal notranslate"><span class="pre">多进程执行一样。去掉注释</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">①先获取详细页面链接存入Mongodb数据库</span></code>
+<code class="docutils literal notranslate"><span class="pre">②获取转转信息（支持断点续传）</span></code></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="09.%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%98%E5%82%A8.html" class="btn btn-neutral float-left" title="21.10. 数据的存储" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="11.%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BD.html" class="btn btn-neutral float-right" title="21.12. 异步加载" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

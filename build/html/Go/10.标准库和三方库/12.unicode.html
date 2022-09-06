@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10.12. unicode &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10.13. flag和go-flags" href="13.flag%E5%92%8Cgo-flags.html" />
+    <link rel="prev" title="10.11. reflect/unsafe" href="11.reflect-unsafe.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">10. 标准库和三方库</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.strings.html">10.1. strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.bytes.html">10.2. bytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.fmt.html">10.3. fmt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Json.html">10.4. Json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.strconv.html">10.5. strconv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.ioutil-bufio.html">10.6. ioutil/bufio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.time.html">10.7. time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.os-path-filepath.html">10.8. os/path/filepath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.regexp.html">10.9. regexp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.log.html">10.10. log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.reflect-unsafe.html">10.11. reflect/unsafe</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">10.12. unicode</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">10.12.1. 1. 判断字符是否包含字母和数字</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">10.12.2. 2. 转换字符</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">10.12.3. 3. 字符集</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">10.12.4. 4. 小结</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="13.flag%E5%92%8Cgo-flags.html">10.13. flag和go-flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.net-url.html">10.14. net/url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.sort.html">10.15. sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.net-http.html">10.16. net/http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.error.html">10.17. error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.template%E6%A8%A1%E6%9D%BF.html">10.18. template模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.%E6%93%8D%E4%BD%9Cmysql.html">10.19. 操作mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html">10.20. Go语言常用资料及工具详细汇总</a></li>
+<li class="toctree-l3"><a class="reference internal" href="21.Socket%E7%BD%91%E7%BB%9C.html">10.21. Socket网络</a></li>
+<li class="toctree-l3"><a class="reference internal" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html">10.22. go标准库和三方库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.cobra.html">10.23. cobra</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.viper.html">10.24. viper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.math-rand.html">10.25. math-rand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="26.zap-%E6%97%A5%E5%BF%97%E6%A8%A1%E5%9D%97.html">10.26. zap-日志模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">10. </span>标准库和三方库</a> &raquo;</li>
+      <li><span class="section-number">10.12. </span>unicode</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/10.标准库和三方库/12.unicode.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#unicode" id="id5">unicode</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id6">1. 判断字符是否包含字母和数字</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id7">2. 转换字符</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id8">3. 字符集</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id9">4. 小结</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="unicode">
+<h1><a class="toc-backref" href="#id5"><span class="section-number">10.12. </span>unicode</a><a class="headerlink" href="#unicode" title="Permalink to this headline">¶</a></h1>
+<p>unicode称为统一码，是为了将世界上存在的各种语言用于计算机中，统一码对世界上绝大多数语言的文字系统进行了编码，使得计算机可以使用更加简单的方式来呈现和处理这些文字，</p>
+<p>如图所示。统一码定义了一个字符和字符编码之间的映射，每个字符的编码都是唯一的。统一码可以认为是一种标准和规范，具体的实现方式各不相同，UTF-8和UTF-16是这种映射关系的两种不同的实现。</p>
+<img alt="../../_images/image-20220707100930156.png" src="../../_images/image-20220707100930156.png" />
+<p>unicode库提供的操作</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id6"><span class="section-number">10.12.1. </span>1. 判断字符是否包含字母和数字</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>使用下面的代码判断字符是否包含字母、数字等。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;unicode&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">UnicodeUsage</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="kt">string</span> <span class="p">=</span> <span class="s">&quot;你好 Golang 123&quot;</span>
+
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="kt">string</span> <span class="p">{</span>
+        <span class="c1">// 判断单个字符是不是字母</span>
+        <span class="k">if</span> <span class="nx">unicode</span><span class="p">.</span><span class="nx">IsLetter</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Yes:%c &quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;No:%c &quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">()</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="kt">string</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">unicode</span><span class="p">.</span><span class="nx">Is</span><span class="p">(</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">Scripts</span><span class="p">[</span><span class="s">&quot;Han&quot;</span><span class="p">],</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%c\n&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="kt">string</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%c&quot;</span><span class="p">,</span> <span class="nx">unicode</span><span class="p">.</span><span class="nx">ToUpper</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">UnicodeUsage</span><span class="p">()</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>IsLetter函数用于判断单个字符是不是字母，除了IsLetter函数之外，还有以下用于判断的函数：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span> <span class="n">Is</span><span class="p">(</span><span class="n">rangeTab</span> <span class="o">*</span><span class="n">RangeTable</span><span class="p">,</span> <span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">In</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">,</span> <span class="n">ranges</span> <span class="o">...*</span><span class="n">RangeTable</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsOneOf</span><span class="p">(</span><span class="n">ranges</span> <span class="p">[]</span><span class="o">*</span><span class="n">RangeTable</span><span class="p">,</span> <span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsSpace</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsDigit</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsNumber</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsLetter</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsGraphic</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsControl</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsMark</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsPrint</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsPunct</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsSymbol</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsLower</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsUpper</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+<span class="n">func</span> <span class="n">IsTitle</span><span class="p">(</span><span class="n">r</span> <span class="n">rune</span><span class="p">)</span> <span class="nb">bool</span>
+</pre></div>
+</div>
+<p>结合使用strings和unicode库可以轻松完成一些任务，比如清除字符串首尾中符合某种条件的字符、替换字符串中符合某种条件的字符。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+    <span class="s">&quot;unicode&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">TrimFunc</span><span class="p">(</span><span class="s">&quot;!!!Hello Gophers!!!&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="kt">rune</span><span class="p">)</span> <span class="kt">bool</span><span class="p">{</span><span class="k">return</span> <span class="p">!</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">IsLetter</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span><span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">IsNumber</span><span class="p">(</span><span class="nx">r</span><span class="p">)}))</span>
+    <span class="nx">f</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="kt">rune</span><span class="p">)</span> <span class="kt">bool</span><span class="p">{</span> <span class="k">return</span> <span class="p">!</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">IsLetter</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">IsNumber</span><span class="p">(</span><span class="nx">c</span><span class="p">)}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Fields are: %q&quot;</span><span class="p">,</span><span class="nx">strings</span><span class="p">.</span><span class="nx">FieldsFunc</span><span class="p">(</span><span class="s">&quot;foo1;bar2,baz3....&quot;</span><span class="p">,</span><span class="nx">f</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id7"><span class="section-number">10.12.2. </span>2. 转换字符</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>对字符进行转换，比如字母大小写的转换。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">UnicodeUsage</span><span class="p">()</span>  <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">starings</span> <span class="p">=</span> <span class="s">&quot;hello gophers!!, golang&quot;</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i</span><span class="o">:=</span> <span class="k">range</span> <span class="nx">starings</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%c&quot;</span><span class="p">,</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">ToUpper</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>除了ToUpper转换函数之外，还存在ToLower、ToTitle函数。在内置库strings和bytes中也提供了类似的函数（方法）。对开发者而言，可以选择的方式更多了。</p>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">10.12.3. </span>3. 字符集</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>在功能开发中有时会限定语言，比如注册用户名时只能使用中文、韩文等，统一码就是为了解决对不同文字系统的支持，使用unicode可以轻松地解决这个问题。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;errors&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;unicode&quot;</span>
+<span class="p">)</span>
+
+
+<span class="kd">func</span> <span class="nx">RegisterUserName</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">table</span> <span class="o">*</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">RangeTable</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">name</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">!</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">Is</span><span class="p">(</span><span class="nx">table</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;scripts is not correct&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">RegisterUserName</span><span class="p">(</span><span class="s">&quot;赵云1&quot;</span><span class="p">,</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">Scripts</span><span class="p">[</span><span class="s">&quot;Han&quot;</span><span class="p">]))</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">RegisterUserName</span><span class="p">(</span><span class="s">&quot;한국어&quot;</span><span class="p">,</span><span class="nx">unicode</span><span class="p">.</span><span class="nx">Scripts</span><span class="p">[</span><span class="s">&quot;Hangul&quot;</span><span class="p">]))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上文中第一个函数参数包含英文字符，报错；第二个函数参数只包含韩文，通过。</p>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">10.12.4. </span>4. 小结</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>本节主要讲述了统一码的使用，包括以下3个方面：</p>
+<p>（1）判断：判断字符是否符合指定的要求。</p>
+<p>（2）转换：将字符进行转换，例如字母大小写转换等操作。</p>
+<p>（3）字符集：包括各国和地区语言的字符集。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="11.reflect-unsafe.html" class="btn btn-neutral float-left" title="10.11. reflect/unsafe" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="13.flag%E5%92%8Cgo-flags.html" class="btn btn-neutral float-right" title="10.13. flag和go-flags" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

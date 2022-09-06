@@ -1,0 +1,212 @@
+.. contents::
+   :depth: 3
+..
+
+os模块
+======
+
+::
+
+   # 相对sys模块 os模块更为底层 os._exit() try无法抓取
+
+::
+
+   os.popen('id').read()      # 执行系统命令得到返回结果
+   os.system()                # 得到返回状态 返回无法截取
+   os.name                    # 返回系统平台 Linux/Unix用户是'posix'
+   os.getenv()                # 读取环境变量
+   os.putenv()                # 设置环境变量
+   os.getcwd()                # 当前工作路径
+   os.stat(‘path/filename’)    #获取文件/目录信息
+   os.chdir()                 # 改变当前工作目录
+   os.walk('/root/')          # 递归路径
+   os.environ['HOME']         # 查看系统环境变量
+   os.statvfs("/")            # 获取磁盘信息
+   os.path.abspath(path) #返回绝对路径
+   os.path.basename(path) #返回文件名
+   os.path.commonprefix(list) #返回list(多个路径)中，所有path共有的最长的路径。
+   os.path.dirname(path) #返回文件所在路径（目录）
+   os.path.dirname(os.path.abspath(__file__))  #返回文件当前工作路径
+   os.path.exists(path)  #路径存在则返回True,路径损坏返回False
+   os.path.lexists  #路径存在则返回True,路径损坏也返回True
+   os.path.expanduser(path)  #把path中包含的"~"和"~user"转换成用户目录
+   os.path.expandvars(path)  #根据环境变量的值替换path中包含的”$name”和”${name}”
+   os.path.getatime(path)  #返回最后一次进入此path的时间。
+   os.path.getmtime(path)  #返回在此path下最后一次修改的时间。
+   os.path.getctime(path)  #返回path的大小
+   os.path.getsize(path)  #返回文件大小，如果文件不存在就返回错误
+   os.path.isabs(path)  #判断是否为绝对路径
+   os.path.isfile(path)  #判断路径是否为文件
+   os.path.isdir(path)  #判断路径是否为目录
+   os.path.islink(path)  #判断路径是否为链接
+   os.path.ismount(path)  #判断路径是否为挂载点（）
+   os.path.ismount(path)  #判断路径是否为挂载点（）
+   os.path.join(path1[, path2[, ...]])  #把目录和文件名合成一个路径
+   os.path.normcase(path)  #转换path的大小写和斜杠
+   os.path.normpath(path)  #规范path字符串形式
+   os.path.realpath(path)  #返回path的真实路径
+   os.path.relpath(path[, start])  #从start开始计算相对路径
+   os.path.samefile(path1, path2)  #判断目录或文件是否相同
+   os.path.sameopenfile(fp1, fp2)  #判断fp1和fp2是否指向同一文件
+   os.path.samestat(stat1, stat2)  #判断stat tuple stat1和stat2是否指向同一个文件
+   os.path.split(path)    #把路径分割成dirname和basename，返回一个元组
+   os.path.splitdrive(path)   #一般用在windows下，返回驱动器名和路径组成的元组
+   os.path.splitext(path)   #分割路径，返回路径名和文件扩展名的元组
+   os.path.splitunc(path)  #把路径分割为加载点与文件
+   os.path.walk(path, visit, arg)  #遍历path，进入每个目录都调用visit函数，visit函数必须有
+
+eg
+
+::
+
+   import os
+   # 显示导入依赖模块的操作系统的名称
+   print(os.name)
+   # 获取PYTHONPATH环境变量的值
+   print(os.getenv('PYTHONPATH'))
+   # 返回当前系统的登录用户名
+   print(os.getlogin())
+   # 获取当前进程ID
+   print(os.getpid())
+   # 获取当前进程的父进程ID
+   print(os.getppid())
+   # 返回当前系统的CPU数量
+   print(os.cpu_count())
+   # 返回路径分隔符
+   print(os.sep)
+   # 返回当前系统的路径分隔符
+   print(os.pathsep)
+   # 返回当前系统的换行符
+   print(os.linesep)
+   # 返回适合作为加密使用的、最多3个字节组成的bytes
+   print(os.urandom(3))
+
+文件处理
+--------
+
+::
+
+   mkfifo()/mknod()       # 创建命名管道/创建文件系统节点
+   remove()/unlink()      # 删除文件
+   rename()/renames()     # 重命名文件
+   stat()                 # 返回文件信息
+   symlink()              # 创建符号链接
+   utime()                # 更新时间戳
+   tmpfile()              # 创建并打开('w+b')一个新的临时文件
+   walk()                 # 遍历目录树下的所有文件名
+   oct(os.stat('th1.py').st_mode)[-3:]      # 查看目录权限
+
+目录/文件夹
+-----------
+
+::
+
+   chdir()/fchdir()       # 改变当前工作目录/通过一个文件描述符改变当前工作目录
+   chroot()               # 改变当前进程的根目录
+   listdir()              # 列出指定目录下的所有的文件
+   getcwd()/getcwdu()     # 返回当前工作目录/功能相同,但返回一个unicode对象
+   mkdir()/makedirs()     # 创建目录/创建多层目录
+   rmdir()/removedirs()   # 删除目录/删除多层目录
+
+访问/权限
+---------
+
+::
+
+   saccess()                    # 检验权限模式
+   chmod('txt',eval("0777"))    # 改变权限模式
+   chown()/lchown()             # 改变owner和groupID功能相同,但不会跟踪链接
+   umask()                      # 设置默认权限模式
+
+文件描述符操作
+--------------
+
+::
+
+   open()                 # 底层的操作系统open(对于稳健,使用标准的内建open()函数)
+   read()/write()         # 根据文件描述符读取/写入数据 按大小读取文件部分内容
+   dup()/dup2()           # 复制文件描述符号/功能相同,但是复制到另一个文件描述符
+
+设备号
+------
+
+::
+
+   makedev()              # 从major和minor设备号创建一个原始设备号
+   major()/minor()        # 从原始设备号获得major/minor设备号
+
+os.path模块
+-----------
+
+::
+
+   os.path.expanduser('~/.ssh/key')   # 家目录下文件的全路径
+
+::
+
+           分隔
+               os.path.basename()         # 去掉目录路径,返回文件名
+               os.path.dirname()          # 去掉文件名,返回目录路径
+               os.path.join()             # 将分离的各部分组合成一个路径名
+               os.path.spllt()            # 返回(dirname(),basename())元组
+               os.path.splitdrive()       # 返回(drivename,pathname)元组
+               os.path.splitext()         # 返回(filename,extension)元组
+
+           信息
+               os.path.getatime()         # 返回最近访问时间
+               os.path.getctime()         # 返回文件创建时间
+               os.path.getmtime()         # 返回最近文件修改时间
+               os.path.getsize()          # 返回文件大小(字节)
+
+           查询
+               os.path.exists()           # 指定路径(文件或目录)是否存在
+               os.path.isabs()            # 指定路径是否为绝对路径
+               os.path.isdir()            # 指定路径是否存在且为一个目录
+               os.path.isfile()           # 指定路径是否存在且为一个文件
+               os.path.islink()           # 指定路径是否存在且为一个符号链接
+               os.path.ismount()          # 指定路径是否存在且为一个挂载点
+               os.path.samefile()         # 两个路径名是否指向同一个文件
+
+       子进程
+           os.fork()    # 创建子进程,并复制父进程所有操作  通过判断pid = os.fork() 的pid值,分别执行父进程与子进程操作，0为子进程
+           os.wait()    # 等待子进程结束
+
+       跨平台os模块属性
+
+           linesep         # 用于在文件中分隔行的字符串
+           sep             # 用来分隔文件路径名字的字符串
+           pathsep         # 用于分割文件路径的字符串
+           curdir          # 当前工作目录的字符串名称
+           pardir          # 父目录字符串名称
+
+       磁盘空间
+
+           import os
+           disk = os.statvfs("/")
+           # disk.f_bsize       块大小
+           # disk.f_blocks      块总数
+           # disk.f_bfree       剩余块总数
+           # disk.f_bavail      非root用户的剩余块数  由于权限小会比root的剩余块总数小 用这个做报警会更准确
+           # disk.f_files       总节点数
+           # disk.f_ffree       剩余节点数
+           # disk.f_favail      非root用户的剩余节点数
+
+           disk.f_bsize * disk.f_bavail / 1024 / 1024 / 1024   # 非root用户剩余空间大小G
+           disk.f_bsize * disk.f_blocks / 1024 / 1024 / 1024   # 分区空间总大小
+           
+       
+
+::
+
+   import os
+
+   os.remove('sample.txt')
+   print("File removed successfully")
+
+   os.rmdir('work1')
+   print("Directory removed successfully")
+
+使用python执行shell命令的几种常用方式
+-------------------------------------
+
+https://tendcode.com/article/python-shell-cmd/

@@ -1,0 +1,413 @@
+.. contents::
+   :depth: 3
+..
+
+方法
+====
+
+Go语言中的方法(Method)是一种作用于特定类型变量的函数。这种特定类型变量叫做接收器(Receiver)。
+
+如果把结构体理解为类，那么接收器就是this或者self
+在Go语言中，接收器的类型可以是任何类型，不仅仅是结构体，任何类型都可以拥有方法。
+
+1.为结构体添加方法
+------------------
+
+1.面向过程的实现方法
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   type Bag struct {
+       // 这个结构体包含一个整型切片类型的items的成员
+       items []int
+   }
+
+   // 将一个物品放入背包的过程，这个函数有2个参数，一个是背包指针（*Bag）一个是itemid
+   func Insert(b *Bag, itemid int) {
+       b.items = append(b.items, itemid)
+   }
+
+   func main() {
+       bag := new(Bag)
+       Insert(bag,1001)
+       fmt.Println(bag.items)  //[1001]
+   }
+
+2.Go语言的结构体方法
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 一个背包的结构体，里面有一个整数切片
+   type Bag1 struct {
+       items [] int
+   }
+
+   // b *Bag1表示接收器，即Insert作用的对象实例
+   func (b *Bag1) Insert(itemid int) {
+       b.items = append(b.items, itemid)
+   }
+
+   func main() {
+       b := new(Bag1)
+       b.Insert(1002)
+       fmt.Println(b.items)    //[1002]
+   }
+
+每个方法只能有一个接收器。Insert转换为方法后，就能用面向对象的方法调用Insert了。
+|image1|
+
+2.结构体中方法
+--------------
+
+2.1非指针类型的接收者
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 创建结构体
+   type Person struct {
+       name string
+       age  int8
+   }
+
+   // 构造函数
+   func NewPerson(name string, age int8) *Person {
+       return &Person{
+           name: name,
+           age:  age,
+       }
+   }
+
+   // 非指针类型的接收者.类方法定义
+   func (p Person) Dream() {
+       fmt.Printf("%s 最近在学习Go语言\n", p.name)
+   }
+
+   func main() {
+       p1 := Person{
+           name: "hujianli",
+           age:  0,
+       }
+       p1.Dream()
+
+       p2 := Person{
+           name: "hu",
+           age:  18,
+       }
+       p2.SetAge(19)
+       fmt.Printf("%s 的年龄是%d", p2.name, p2.age)
+   }
+
+2.2指针类型的接收者
+~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   // 指针类型的接收者，类方法定义
+   // 重新设置年龄
+   func (p *Person) SetAge(age int8) {
+       p.age = age
+   }
+
+
+   func main() {
+       p2 := Person{
+           name: "hu",
+           age:  18,
+       }
+       p2.SetAge(19)
+       fmt.Printf("%s 的年龄是%d", p2.name, p2.age)
+   }
+
+2.3什么时候应该使用指针类型接收者
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. **需要修改接收者中的值**
+2. **接收者是拷贝代价比较大的大对象**
+3. **保证一致性，如果有某个方法使用了指针接收者，那么其他的方法也应该使用指针接收者。**
+
+3.指针结类型方法和非指针类型方法案例
+------------------------------------
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   //声明一个用户类型
+   type user struct {
+       name  string
+       email string
+   }
+
+   //实现一个方法
+   func (u user) notify() {
+       fmt.Printf("Sending User email to %s<%s>\n", u.name, u.email)
+   }
+
+   // ------------------实现指针方法
+   func (u *user) changeEmail_zz(email string) {
+       u.email = email
+   }
+
+   // -------------------实现非指针方法
+   func (u user) changeEmail(email string) {
+       u.email = email
+       fmt.Printf("func 中的email value %s\n", u.email)
+   }
+
+   func main() {
+       name1 := user{
+           name:  "hujianli",
+           email: "123@qq.com",
+       }
+       name1.notify()
+       name1.changeEmail("666@qq.com")
+       name1.notify()
+
+       fmt.Println("----------------------------------------")
+
+       //值接收者使用值的副本来调用方法，而指针接受者使用实际值来调用方法。
+       name2 := &user{
+           name:  "huxiaojian",
+           email: "456@qq.com",
+       }
+       name2.notify()
+       name2.changeEmail_zz("789@qq.com")
+       name2.notify()
+
+   }
+
+   /**
+   Sending User email to hujianli<123@qq.com>
+   func 中的email value 666@qq.com
+   Sending User email to hujianli<123@qq.com>
+   ----------------------------------------
+   Sending User email to huxiaojian<456@qq.com>
+   Sending User email to huxiaojian<789@qq.com>
+   */
+
+4.类型的本质
+------------
+
+在声明一个新类型之后，声明一个该类型的方法之前，需要先回答一个问题：这个类型的本质是什么。如果给这个类型增加或者删除某个值，是要创建一个新值，还是要更改当前的值？
+
+``如果是要创建一个新值，该类型的方法就使用值接收者。如果是要修改当前值，就使用指针接收者``\ 。
+
+这个答案也会影响程序内部传递这个类型的值的方式：是按值做传递，还是按指针做传递。保持传递的一致性很重要。这个背后的原则是，不要只关注某个方法是如何处理这个值，而是要关注这个值的本质是什么。
+
+5.结构体的匿名字段
+------------------
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   //Person 结构体Person类型
+   type Person struct {
+       string
+       int
+   }
+   func main() {
+       p1 := Person{
+           "pprof.cn",
+           18,
+       }
+       fmt.Printf("%#v\n", p1)        //main.Person{string:"pprof.cn", int:18}
+       fmt.Println(p1.string, p1.int) //pprof.cn 18
+   }
+
+## 6.嵌套结构体
+
+一个结构体中可以嵌套包含另一个结构体或结构体指针。
+
+.. code:: go
+
+   //Address 地址结构体
+   type Address struct {
+       Province string
+       City     string
+   }
+   //User 用户结构体
+   type User struct {
+       Name    string
+       Gender  string
+       Address Address
+   }
+   func main() {
+       user1 := User{
+           Name:   "pprof",
+           Gender: "女",
+           Address: Address{
+               Province: "黑龙江",
+               City:     "哈尔滨",
+           },
+       }
+       fmt.Printf("user1=%#v\n", user1)//user1=main.User{Name:"pprof", Gender:"女", Address:main.Address{Province:"黑龙江", City:"哈尔滨"}}
+   }
+
+7.结构体字段的可见性
+--------------------
+
+-  结构体中字段大写开头表示可公开访问，小写表示私有（仅在定义当前结构体的包中可访问），命名getter方法的时候可以将Get省略。所有的setter方法使用接收器指针，我们也应对所有的getter方法使用指针。
+
+-  对于setter方法使用Set前缀，就像其他语言一样，因为我们需要区分同一个字段的setter方法和getter方法。
+
+8. 封装
+-------
+
+-  getter方法的名称应该与访问的字段或者变量的名字相同。
+
+目录结构
+
+::
+
+   calaner
+   |   data
+   |   |   data.go
+   |   main.go
+
+``data.go``
+
+.. code:: go
+
+   package data
+
+   import (
+       "errors"
+       "unicode/utf8"
+   )
+
+   type Event struct {
+       title string
+       Date
+   }
+
+   func (e *Event) Title() string {
+       return e.title
+   }
+
+   func (e *Event) SetTitle(title string) error {
+       if utf8.RuneCountInString(title) > 30 {
+           return errors.New("invalid title")
+       }
+       e.title = title
+       return nil
+   }
+
+   type Date struct {
+       year  int
+       month int
+       day   int
+   }
+
+   func (d *Date) Year() int {
+       return d.year
+   }
+
+   func (d *Date) Month() int {
+       return d.month
+   }
+
+   func (d *Date) Day() int {
+       return d.day
+   }
+
+   func (d *Date) SetYear(year int) (date *Date, err error) {
+       if year < 1 {
+           return nil, errors.New("invalid year")
+       }
+       // (*d).Year = year
+       d.year = year
+       return d, nil
+   }
+
+   func (d *Date) SetMonth(month int) (date *Date, err error) {
+       if month < 1 || month > 12 {
+           return nil, errors.New("invalid month")
+       }
+       d.month = month
+       return d, nil
+   }
+
+   func (d *Date) SetDay(day int) (data *Date, err error) {
+       if day < 1 || day > 31 {
+           return nil, errors.New("invalid days")
+       }
+       d.day = day
+       return d, nil
+   }
+
+``main.go``
+
+.. code:: go
+
+   package main
+
+   import (
+       "Head-first-go/chapter08/example1/calendar"
+       "fmt"
+       "log"
+   )
+
+   func main() {
+       event := calendar.Event{}
+       setyear, err := event.SetYear(2021)
+       if err != nil {
+           log.Fatal(err)
+       }
+       year := setyear.Year()
+       fmt.Println(*setyear)
+       fmt.Println(year)
+
+       setmonth, err := event.SetMonth(12)
+       if err != nil {
+           log.Fatal(err)
+       }
+       month := setmonth.Month()
+       fmt.Println(*setmonth)
+       fmt.Println(month)
+
+       setday, err := event.SetDay(31)
+       if err != nil {
+           log.Fatal(err)
+       }
+       day := setday.Day()
+       fmt.Println(*setday)
+       fmt.Println(day)
+
+       fmt.Println(event.Date.Year())
+       fmt.Println(event.Date.Month())
+       fmt.Println(event.Date.Day())
+
+       errorTitle := event.SetTitle("This is a very long title")
+       if errorTitle != nil {
+           log.Fatal(errorTitle)
+       }
+       fmt.Println(event.Title())
+       // data2 := calendar.Date{
+       //  Year:  -1,
+       //  Month: 13,
+       //  Day:   34,
+       // }
+       // fmt.Println(data2)
+
+       fmt.Printf("year:%d moth:%d day:%d\n", event.Year(), event.Month(), event.Day())
+   }
+
+.. |image1| image:: ../../_static/go_method_jieshouqi.png

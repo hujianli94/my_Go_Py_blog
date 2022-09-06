@@ -1,0 +1,841 @@
+.. contents::
+   :depth: 3
+..
+
+Saltstack安装使用入门（自己总结）
+=================================
+
+安装部署篇：
+------------
+
+::
+
+   salt-master启动时会自动监听两个端口4505和4506
+   4506的作用：Salt Master Ret接口：支持认证、文件服务、结果收集等功能
+   4505的作用：Salt Master pub接口，提供远程执行命令发送功能
+   Salt minion启动时会从配置文件中获取master的地址，如果是域名会进行解析，解析完成之后，会连接master的4506（Ret接口）
+   进行key认证，认证通过会获取到master的publish_port（4505） 然后连接publist_port订阅来自master pub接口的任务，
+   当master下发操作指令时，所有的 minion都能接收到， 然后 minion会检查本机是否匹配。如果匹配，则执行。
+   执行完毕后把结果发生到master的4506（Ret接口），由 master进行处理。命令发送通信完全是异步的。命令包很小。命令都
+   通过maqpack进行数据压缩，所以Salt的网络负载非常低。
+
+快速入门SaltStack快速入门SaltStack
+----------------------------------
+
+::
+
+   1.Master：控制中心,salt命令运行和资源状态管理
+   2.Minion : 需要管理的客户端机器,会主动去连接Mater端,并从Master端得到资源状态
+   信息,同步资源管理信息
+   3.States：配置管理的指令集
+   4.Modules：在命令行中和配置文件中使用的指令模块,可以在命令行中运行
+   5.Grains：minion端的变量,静态的
+   6.Pillar：minion端的变量,动态的比较私密的变量,可以通过配置文件实现同步minions定义
+   7.highstate：为minion端下发永久添加状态,从sls配置文件读取.即同步状态配置
+   8.salt_schedule：会自动保持客户端配置
+
+默认以CentOS6、7为例，采用yum安装
+---------------------------------
+
+-  还有其它安装方式，如pip、源码、salt-bootstrap
+
+安装EPEL
+--------
+
+::
+
+   由于目前RHEL官网yum源还没有Saltstack的安装包支持，因此先
+   安装EPEL作为部署Saltstack的默认yum源。
+   ·RHEL（CentOS）5版本：rpm-Uvh下载地址：
+   http://mirror.pnl.gov/epel/5/i386/epel-release-5-4.noarch.rpm
+
+   ·RHEL（CentOS）6版本：rpm-Uvh下载地址：
+   http://ftp.linux.ncsu.edu/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+
+   mkdir /home/saltstack
+   wget http://mirrors.ustc.edu.cn/fedora/epel//epel-release-latest-7.noarch.rpm
+   rpm -ivh epel-release-latest-7.noarch.rpm
+   或者
+   rpm -ivh http://mirrors.ustc.edu.cn/fedora/epel//epel-release-latest-7.noarch.rpm
+
+修改主机名和域名解析
+--------------------
+
+#修改主机名
+
+::
+
+   vim /etc/hostname
+   master
+
+   vim /etc/hostname
+   minion-one
+
+   #修改主机名和IP解析
+   vim /etc/hosts两台主机hosts文件后面分别加上：
+   192.168.200.128 master
+   192.168.200.129 minion-one
+
+   #使用命令添加
+   cat > /etc/hosts <<EOF
+   192.168.200.128 master
+   192.168.200.129 minion-one
+   EOF
+
+服务器端安装
+------------
+
+-  salt-master安装:
+
+::
+
+   yum install salt-master
+   chkconfig salt-master on
+
+   master端的配置文件是在 /etc/salt/master     #配置文件的：后面一定要加上空格！！！！！！！
+   对于此配置文件的详细配置可以查看 http://docs.saltstack.org/en/latest/ref/configuration/master.html
+   [root@ip-172-31-21-197 salt]# cat /etc/salt/master| grep -v "^$" | grep -v "#"
+   [root@hujianli-linux hujianli]# sed -e '/^$/d;/^#/d' /etc/salt/master
+
+   interface: 0.0.0.0  #绑定Master通信IP；
+   auto_accept: True   #自动认证，避免手动运行salt-key来确认证书信任；不需要手动执行 salt-key -A -y
+   file_roots:         #指定Saltstack文件根目录位置
+      base:
+        - /etc/salt/base/init
+      test:
+        - /etc/salt/test
+      prod:
+        - /etc/salt/prod
+      dev:
+        - /etc/salt/dev
+   log_file: /var/log/salt/master
+   key_logfile: /var/log/salt/key
+
+-  salt-master配置
+
+::
+
+   更改配置
+   注意格式！ 冒号后一定要空格！别问我怎么知道的
+   vim /etc/salt/master
+
+   interface: 127.0.0.1
+   //冒号后一定要空格!!
+   //master节点的外部ip
+   user: root
+   //运行Salt进程用户
+   conf_file: /etc/salt/master
+   //主配置文件路径
+   pki_dir: /etc/salt/pki/master
+   //存储pki身份验证密钥的目录 默认即可
+   cachedir: /data/cache/salt/master
+   //缓存路径指定空间较大目录下 默认即可
+   keep_jobs: 4
+   //设置保留旧作业信息的小时数。请注意，设置此选项可0禁用缓存清理程序，如果mimion节点超过1000建议此配置设置小
+   gather_job_timeout: 10
+   //客户端请求有关正在运行的作业的信息时等待的秒数
+   job_cache: True
+   //缓存文件到本地
+   worker_threads: 25
+   //开启的线程数，根据主机资源而定
+   auto_accept: Flase
+   //此设置是否自动接受来自minion的所有传入公钥
+   hash_type: sha256
+   //hash_type是在主服务器上发现文件的哈希时使用的哈希。默认值为sha256，但也支持md5，sha1，sha224，sha384和sha512
+   log_file: /data/log/salt/master
+   key_logfile: /data/log/salt/key
+   syndic_master: 127.0.0.1
+   //super master 服务器ip地址
+   //可以调度master节点的master
+   syndic_master_port: 4506
+   //master 端口号
+   syndic_log_file: /data/log/salt/syndic
+   syndic_wait: 15
+
+   配置开机启动：
+   /etc/init.d/salt-maser master
+   chkconfig salt-master on
+
+centos 6/7 启动/重启/停止命令
+-----------------------------
+
+::
+
+       #启动/重启/停止salt-master命令
+       systemctl start salt-master
+       systemctl restart salt-master
+       systemctl stop salt-master
+
+   * centos 6
+       service salt-master start
+       注：需要iptables开启master端4505、4506端口
+
+Saltstack防火墙配置
+-------------------
+
+::
+
+   在主控端添加TCP 4505、TCP 4506的规则，而在被控端无须配置
+   防火墙，原理是被控端直接与主控端的zeromq建立长链接，接收广播到
+   的任务信息并执行，具体操作是添加两条iptables规则：
+   iptables -I INPUT -m state --state new -m tcp -p tcp --dport 4505 -j ACCEPT
+   iptables -I INPUT -m state --state new -m tcp -p tcp --dport 4506 -j ACCEPT
+
+客户端minion程序安装
+--------------------
+
+::
+
+   salt-minion安装:
+   yum install salt-minion
+   chkconfig salt-minion on
+   #重启：
+   salt-minion -d
+   #停止/启动/重启salt-minion
+   systemctl stop/start/restart salt-minion
+
+
+   #minion端的配置文件是在 /etc/salt/minion
+   对于此配置文件的详细配置可以查看 http://docs.saltstack.org/en/latest/ref/configuration/minion.html
+   #指定master主机IP地址
+   master： 192.168.1.20
+   #修改被控端主机识别id，建议使用操作系统主机名来配置
+   id： SN2013-08-021
+   #查看客户端agent监听情况，看日志输出
+   tail -f /var/log/salt/minion
+
+查看自动认证状况
+----------------
+
+::
+
+       ·salt-key–L，显示已经或未认证的被控端id，Accepted Keys为已认
+       证清单，Unaccepted Keys为未认证清单；
+       ·salt-key–D，删除所有认证主机id证书；
+       ·salt-key-d id，删除单个id证书；
+       ·salt-key–A，接受所有id证书请求；
+       ·salt-key-a id，接受单个id证书请求。
+
+   salt-key -L    #查看当前证书签证情况
+   Accepted Keys:
+   Unaccepted Keys:
+   10.252.137.141
+   Rejected Keys:
+
+   salt-key -A -y   ########同意签证所有没有接受的签证情况
+   The following keys are going to be accepted:
+   Unaccepted Keys:
+   10.252.137.141
+   Key for minion 10.252.137.141 accepted.
+
+
+   salt-key -L         #查看证书签证的接收情况
+   Accepted Keys:
+   10.252.137.141
+   Unaccepted Keys:
+   Rejected Keys:
+
+   [root@hujianli-linux salt]# salt-key -f minion-one          #master上查看秘钥指纹
+   Accepted Keys:
+   minion-one:  a3:be:e8:7c:ac:64:44:2b:ab:70:f1:b0:77:9b:de:ce
+
+   [root@web01 ~]# salt-call --local key.finger                #主控端查看秘钥指纹
+   local:
+       a3:be:e8:7c:ac:64:44:2b:ab:70:f1:b0:77:9b:de:ce
+
+使用基础
+--------
+
+::
+
+   salt后主机名称支持正则，支持列表
+
+   * : #表示任意字符串，也可以是空字符串
+   ? : #表示一个字符，不可以为空
+   [...]: #字符集合，[a~z]表示任何一个小写字母，[0~9]代表数字
+   一般字符： #匹配自身
+   .: #匹配任意换行字符'\n'外的字符
+   \:  #转义字符
+   \d: #数字[0~9]
+   \D: #非数字[^\d]
+   \s: #空白字符[<空格>\t\n\r\f\v]
+   \S: #非空白字符[^\s]
+   \w: #单词字符：[A-Za-Z0-9_]
+   \W: #非单词字符:[^\w]
+   +：  #匹配字符1次或者无限次
+   {m}:    #匹配前一个字母m次
+   -E，--pcre， #通过正则表达式进行匹配。示例：控测SN2013字符开头的主机id名是否连通，命令：salt -E'^SN2013.*'test.ping
+
+   -L，--list， #以主机id名列表的形式进行过滤，格式与Python的列表相似，即不同主机id名称使用逗号分隔。示例：获取主机id名为
+   SN2013-08-021、SN2013-08-022；
+
+       #获取完整操作系统发行版名称，命令：salt -L 'SN2013-08-021，SN2013-08-022' grains.item osfullname
+       [root@hujianli-linux salt]# salt -L 'minion-one' test.ping
+       minion-one:
+           True
+       [root@hujianli-linux salt]# salt -L 'minion-one,minion-two,minion-three' test.ping
+       minion-one:
+           True
+
+   -N，--nodegroup， #根据主控端master配置文件中的分组名称进行过滤。使用配置文件里面的分组方式进行匹配
+
+   -C，--compound， #根据条件运算符not、and、or去匹配不同规则的主机信息
+
+   -S，--ipcidr， #根据被控主机的IP地址或IP子网进行匹配，示例
+   如下：
+   salt -S 192.168.0.0/16 test.ping
+
+   [root@hujianli-linux salt]# salt -E '^minion-.*' test.ping
+   minion-one:
+       True
+
+   [root@hujianli-linux salt]# salt -E 'minion-(one)?' test.ping
+   minion-one:
+       True
+
+   [root@hujianli-linux salt]# salt -E '.*-one$' test.ping
+   minion-one:
+       True
+
+salt-master上常用的命令：
+-------------------------
+
+::
+
+   #所有主机ping包测试
+   [root@ip-172-31-21-197 salt]# salt '*' test.ping
+   ip-172-31-17-191.us-east-2.compute.internal:
+       True
+
+   #查看test模块包含的其他函数
+   [root@hujianli-linux salt]# salt 'minion-one' sys.list_functions test
+   minion-one:
+       - test.arg
+       - test.arg_repr
+       - test.arg_type
+       - test.assertion
+       - test.attr_call
+       - test.collatz
+       - test.conf_test
+       - test.cross_test
+       - test.echo
+       - test.exception
+       - test.fib
+       - test.get_opts
+       - test.kwarg
+       - test.module_report
+       - test.not_loaded
+       - test.opts_pkg
+       - test.outputter
+       - test.ping
+       - test.provider
+       - test.providers
+       - test.rand_sleep
+       - test.rand_str
+       - test.retcode
+       - test.sleep
+       - test.stack
+       - test.try_
+       - test.tty
+       - test.version
+       - test.versions_information
+       - test.versions_report
+
+
+   #获取所有的状态模块，
+   salt "*" sys.list_modules
+   salt "*" sys.list_modules| grep acl
+
+   #列举状态模块中的所有函数
+   salt "*" sys.list_state_functions pkg
+   ip-172-31-17-191.us-east-2.compute.internal:
+       - pkg.installed
+       - pkg.latest
+       - pkg.mod_aggregate
+       - pkg.mod_init
+       - pkg.purged
+       - pkg.removed
+       - pkg.uptodate
+
+   #查看所有主机的内存状态
+   [root@ip-172-31-21-197 salt]# salt "*" cmd.run "free -m"
+   ip-172-31-17-191.us-east-2.compute.internal:
+                     total        used        free      shared  buff/cache   available
+       Mem:            990         131         208          12         650         658
+       Swap:             0           0           0
+
+所有主机查看系统
+----------------
+
+::
+
+   salt '*' grains.get os
+   或者
+   [root@hujianli-linux salt]# salt '*' grains.item osfullname
+   minion-one:
+       ----------
+       osfullname:
+           CentOS Linux
+
+
+   grains查看minion本身固有属性的静态数据
+   [root@hujianli-linux salt]# salt 'minion-one' grains.item os
+   minion-one:
+       ----------
+       os:
+           CentOS
+
+
+
+   开启命令的详细描述 -v 或者 -verbose
+   [root@hujianli-linux salt]# salt --verbose "*" cmd.run_all "echo my salt"
+   Executing job with jid 20181018213058967893
+   -------------------------------------------
+
+   minion-one:
+       ----------
+       pid:
+           1929
+       retcode:
+           0
+       stderr:
+       stdout:
+           my salt
+
+
+   --summary 显示一条命令的概要
+   [root@hujianli-linux salt]# salt --summary '*' cmd.run_all "echo my salt"
+   minion-one:
+       ----------
+       pid:
+           1936
+       retcode:
+           0
+       stderr:
+       stdout:
+           my salt
+
+--------------
+
+Summary -—————————————— # of Minions Targeted: 1 # of Minions Returned:
+1 # of Minions Did Not Return: 0 -——————————————
+
+::
+
+   --out=json  控制命令的输出，以json格式输出  --out=yaml #以yaml格式输出
+   [root@hujianli-linux salt]# salt --out=json "*" cmd.run_all "echo my salt"
+   {
+       "minion-one": {
+           "pid": 1942,
+           "retcode": 0,
+           "stderr": "",
+           "stdout": "my salt"
+       }
+   }
+
+   [root@hujianli-linux salt]# salt --out=yaml "*" cmd.run_all "echo my salt"
+   minion-one:
+     pid: 1948
+     retcode: 0
+     stderr: ''
+     stdout: my salt
+
+查看所有节点名称
+----------------
+
+::
+
+   salt '*' grains.get nodename
+
+查询所有主机salt的版本号是多少？
+--------------------------------
+
+::
+
+   salt '*' grains.get saltversion
+   salt '*' grains.item saltversion
+
+远程执行模块
+------------
+
+命令执行模块cmd
+~~~~~~~~~~~~~~~
+
+::
+
+   salt '*' cmd.run "ps aux | wc -l"
+   #查看详细信息的函数
+   salt '*' cmd.run_all "ps aux | wc -l"
+
+使用pkg.install来安装程序包
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   salt '*' pkg.install "lrzsz"
+   salt '*' pkg.install "httpd"
+
+查看已安装软件的版本信息
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   salt '*' pkg.version 'httpd'
+   salt '*' pkg.install "lsof"
+
+删除已安装的软件包
+~~~~~~~~~~~~~~~~~~
+
+::
+
+   [root@hujianli-linux salt]# salt 'minion-one' pkg.remove 'httpd'
+
+查看服务状态
+~~~~~~~~~~~~
+
+::
+
+   [root@ip-172-31-21-197 base]# salt '*' service.status httpd
+   ip-172-31-17-191.us-east-2.compute.internal:
+       True
+   #如果是True表示服务启动正常，如果是False表示服务启动失败
+   [root@ip-172-31-21-197 base]# salt '*' service.status mysql
+   ip-172-31-17-191.us-east-2.compute.internal:
+       False
+
+停止远程服务
+~~~~~~~~~~~~
+
+::
+
+   [root@ip-172-31-21-197 base]# salt '*' service.stop httpd
+   ip-172-31-17-191.us-east-2.compute.internal:
+       True
+   #启动远程服务
+   [root@ip-172-31-21-197 base]# salt '*' service.start httpd
+   ip-172-31-17-191.us-east-2.compute.internal:
+       True
+
+使用命令查看远程服务启动状态
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   [root@hujianli-linux salt]# salt "*" cmd.run "ps aux| grep httpd| grep -v grep"
+   minion-one:
+       root       2190  0.1  0.5 224020  5024 ?        Ss   06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+       apache     2191  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+       apache     2192  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+       apache     2195  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+       apache     2196  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+       apache     2197  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+
+用户管理模块
+------------
+
+添加用户
+~~~~~~~~
+
+::
+
+   [root@ip-172-31-21-197 salt]# salt '*' user.add 'xiaojian'
+   [root@hujianli-linux salt]# salt 'minion-one' user.add 'hujianli2'
+   #删除用户
+   [root@ip-172-31-21-197 salt]# salt '*' user.delete 'xiaojian'
+   [root@hujianli-linux salt]# salt 'minion-one' user.delete 'hujianli2'
+
+查看用户信息
+~~~~~~~~~~~~
+
+::
+
+   [root@ip-172-31-21-197 salt]# salt '*' user.info root
+
+cron模块
+--------
+
+-  功能：实现被控主机的crontab操作。
+
+   ::
+
+        #查看所有主机的cron
+        [root@ip-172-31-21-197 salt]# salt '*' cron.raw_cron root
+        ip-172-31-17-191.us-east-2.compute.internal:
+            20 15  *  *  * `cd /home/rzrk//server/pyScripts; /usr/bin/python calcManageFee.py`
+
+        #为所有主机添加计划任务
+        [root@ip-172-31-21-197 salt]# salt '*' cron.set_job root '*' '*' '*' '*' 1 /usr/local/weekly
+        ip-172-31-17-191.us-east-2.compute.internal:
+            new
+
+        #删除所有主机上的计划任务
+        [root@ip-172-31-21-197 salt]# salt '*' cron.rm_job root /usr/local/weekly
+        ip-172-31-17-191.us-east-2.compute.internal:
+            removed
+
+cp模块
+------
+
+::
+
+   #功能：实现远程文件、目录的复制，以及下载URL文件等操作。
+           #将指定被控主机的/etc/hosts文件复制到被控主机本地的salt  cache目录
+           （/var/cache/salt/minion/localfiles/）；
+           salt '*' cp.cache_local_file /etc/hosts
+           #将主服务器file_roots指定位置下的目录复制到被控主机
+           salt '*' cp.get_dir salt：//path/to/dir/ /minion/dest
+           #将主服务器file_roots指定位置下的文件复制到被控主机
+           salt '*' cp.get_file salt：//path/to/file /minion/dest
+           #下载URL内容到被控主机指定位置
+           salt '*' cp.get_url http：//www.slashdot.org /tmp/index.html
+
+dnsutil模块
+-----------
+
+::
+
+   #功能：实现被控主机通用DNS相关操作。
+           #添加指定被控主机hosts的主机配置项
+           salt  '*'  dnsutil.hosts_append  /etc/hosts  127.0.0.1  ad1.yuk.com，
+           ad2.yuk.com
+           #删除指定被控主机hosts的主机配置项
+           salt '*' dnsutil.hosts_remove /etc/hosts ad1.yuk.com
+
+file模块
+--------
+
+::
+
+   #查看文件状态
+   [root@ip-172-31-21-197 salt]# salt '*' file.stats /etc/yum.conf
+
+   #文件属组修改
+   [root@ip-172-31-21-197 salt]# salt '*' file.chown /etc/passwd root root
+   ip-172-31-17-191.us-east-2.compute.internal:
+   None
+   #功能：被控主机文件常见操作，包括文件读写、权限、查找、校验等。
+   #校验所有被控主机/etc/fstab文件的md5是否为6254e84e2f6ffa54e0c8d9cb230f5505，一致
+   则返回True
+   salt '*' file.check_hash /etc/fstab md5=6254e84e2f6ffa54e0c8d9cb230f5505
+   #校验所有被控主机文件的加密信息、支持md5、sha1、sha224、sha256、sha384、sha512加密算
+   法
+   salt '*' file.get_sum /etc/passwd md5
+   #修改所有被控主机/etc/passwd文件的属组、用户权限，等价于chown  root：root
+   /etc/passwd
+   salt '*' file.chown /etc/passwd root root
+   #复制所有被控主机本地/path/to/src文件到本地的/path/to/dst文件
+   salt '*' file.copy /path/to/src /path/to/dst
+   #检查所有被控主机/etc目录是否存在，存在则返回True，检查文件是否存在使用
+   file.file_exists方法
+   salt '*' file.directory_exists /etc
+   #获取所有被控主机/etc/passwd的stats信息
+   salt '*' file.stats /etc/passwd
+   #获取所有被控主机/etc/passwd的权限mode，如755、644
+   salt '*' file.get_mode /etc/passwd
+   #修改所有被控主机/etc/passwd的权限mode为0644
+   salt '*' file.set_mode /etc/passwd 0644
+   #在所有被控主机创建/opt/test目录
+   salt '*' file.mkdir /opt/test
+   #将所有被控主机/etc/httpd/httpd.conf文件的LogLevel参数的warn值修改成info
+   salt '*' file.sed /etc/httpd/httpd.conf 'LogLevel warn' 'LogLevel info'
+   #给所有被控主机的/tmp/test/test.conf文件追加内容"maxclient 100"
+   salt '*' file.append /tmp/test/test.conf "maxclient 100"
+   #删除所有被控主机的/tmp/foo文件
+   salt '*' file.remove /tmp/foo
+
+iptables模块
+------------
+
+::
+
+   #功能：被控主机iptables支持。
+           #在所有被控端主机追加（append）、插入（insert）iptables规则，其中INPUT为输入链
+           salt '*' iptables.append filter INPUT rule='-m state --state RELATED，
+           ESTABLISHED -j ACCEPT'
+           salt '*' iptables.insert filter INPUT position=3 rule='-m state --state
+           RELATED，ESTABLISHED -j ACCEPT'
+           #在所有被控端主机删除指定链编号为3（position=3）或指定存在的规则
+           salt '*' iptables.delete filter INPUT position=3
+           salt '*' iptables.delete filter INPUT rule='-m state --state RELATED，
+           ESTABLISHED -j ACCEPT'
+           #保存所有被控端主机规则到本地硬盘（/etc/sysconfig/iptables）
+           salt '*' iptables.save /etc/sysconfig/iptables
+
+netwrok模块
+-----------
+
+::
+
+   #返回被控主机网络信息。
+           #在指定被控主机'SN2013-08-022'获取dig、ping、traceroute目录域名信息
+           salt 'SN2013-08-022' network.dig www.qq.com
+           salt 'SN2013-08-022' network.ping www.qq.com
+           salt 'SN2013-08-022' network.traceroute www.qq.com
+           #获取指定被控主机'SN2013-08-022'的MAC地址
+           salt 'SN2013-08-022' network.hwaddr eth0
+           #检测指定被控主机'SN2013-08-022'是否属于10.0.0.0/16子网范围，属于则返回True
+           salt 'SN2013-08-022' network.in_subnet 10.0.0.0/16
+           #获取指定被控主机'SN2013-08-022'的网卡配置信息
+           salt 'SN2013-08-022' network.interfaces
+           #获取指定被控主机'SN2013-08-022'的IP地址配置信息
+           salt 'SN2013-08-022' network.ip_addrs
+           #获取指定被控主机'SN2013-08-022'的子网信息
+           salt 'SN2013-08-022' network.subnets
+
+pkg包管理模块
+-------------
+
+::
+
+   #功能：被控主机程序包管理，如yum、apt-get等
+           #为所有被控主机安装PHP环境，根据不同系统发行版调用不同安装工具进行部署，如redhat平台的yum，等价于yum -y install php
+           salt '*' pkg.install php
+           #卸载所有被控主机的PHP环境
+           salt '*' pkg.remove php
+           #升级所有被控主机的软件包
+           salt '*' pkg.upgrade
+
+Service服务模块
+---------------
+
+::
+
+   #功能：被控主机程序包服务管理。
+       #开启（enable）、禁用（disable）nginx开机自启动服务
+       salt '*' service.enable nginx
+       salt '*' service.disable nginx
+       #针对nginx服务的reload、restart、start、stop、status操作
+       salt '*' service.reload nginx
+       salt '*' service.restart nginx
+       salt '*' service.start nginx
+       salt '*' service.stop nginx
+       salt '*' service.status nginx
+
+被控端主机定制grains数据
+------------------------
+
+::
+
+   修改 etc/salt/minion.d/hostinfo.conf
+   cat hostinfo.conf
+   grains:
+     roles:
+       - webserver
+       - memcache
+     deployment: datacenter4
+     cabinet: 13
+   然后重启salt-minion
+   在到服务器上执行：salt '*' grains.items 查看键值对变化
+
+通过配置文件安装程序
+--------------------
+
+::
+
+   [root@ip-172-31-21-197 init]# cat /etc/salt/master| grep -v "^$" | grep -v "#"
+   interface: 0.0.0.0
+   auto_accept: True
+   file_roots:
+      base:
+        - /etc/salt/base/init
+      test:
+        - /etc/salt/test
+      prod:
+        - /etc/salt/prod
+      dev:
+        - /etc/salt/dev
+   log_file: /var/log/salt/master
+   key_logfile: /var/log/salt/key
+
+
+   #刷新state配置命令
+   salt "*" state.highstate
+
+-  配置YAML格式文件，YAML固定缩进为2个空格，2个空格一个缩进
+-  冒号后面的每一行用一个空格隔开
+-  一个短斜杠 - 加一个空格表示一个列表项
+   ，多个项使用同一的缩进作为同一列表的一部分
+
+批量安装httpd服务
+-----------------
+
+::
+
+   [root@ip-172-31-21-197 base]# cat apache.sls
+   install_httpd:
+     pkg.installed:
+      - name: httpd
+
+   salt "*" state.sls apache  #进行对远程机器的安装
+
+批量安装常用命令
+----------------
+
+::
+
+   [root@ip-172-31-21-197 init]# cat yum.sls
+   yum-list-init:
+     pkg.installed:
+       - names:
+         - gcc
+         - gcc-c++
+         - sysstat
+         - hdparm
+         - man
+         - vim-enhanced
+         - wget
+         - telnet
+         - lsof
+         - sysstat
+         - lrzsz
+         - tree
+         - hdparm
+   salt "*" state.sls yum
+
+批量设置所有主机的DNS
+---------------------
+
+::
+
+   [root@ip-172-31-21-197 init]# cat dns.sls
+   /etc/resolv.conf:
+     file.managed:
+       - source: salt://config/resolv.conf
+       - user: root
+       - group: root
+       - mode: 644
+       - backup: '*'
+
+   salt "*" state.sls dns
+
+批量设置所有主机的sysctl.conf
+-----------------------------
+
+::
+
+   [root@ip-172-31-21-197 init]# tree
+   .
+   ├── apache.sls
+   ├── config
+   │   ├── resolv.conf
+   │   └── sysctl.conf
+   ├── dns.sls
+   ├── sysctl.sls
+   └── yum.sls
+
+   [root@ip-172-31-21-197 init]# cat sysctl.sls
+   /etc/sysctl.conf:
+     file.managed:
+       - source: salt://config/sysctl.conf
+       - user: root
+       - group: root
+       - mode: 644
+
+编写自己的模块代码
+------------------
+
+参考文献
+
+自动化配置管理工具 SaltStack-03
+
+http://blog.linuxli.com/2019/07/Saltstack-03/

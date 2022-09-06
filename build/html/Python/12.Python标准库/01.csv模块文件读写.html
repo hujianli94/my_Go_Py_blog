@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12.1. csv模块文件读写 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="12.2. Json和Pickle序列化" href="02.json%E3%80%81pickle%E3%80%81shelve%E6%A8%A1%E5%9D%97.html" />
+    <link rel="prev" title="12. Python 标准库学习" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">12. Python 标准库学习</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">12.1. csv模块文件读写</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#csv-csv">12.1.1. 写入CSV数据，可以使用csv模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">12.1.2. 读取csv文件数据</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#csvjson">12.1.3. CSV格式转换成JSON格式</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="02.json%E3%80%81pickle%E3%80%81shelve%E6%A8%A1%E5%9D%97.html">12.2. Json和Pickle序列化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.shutil%E6%A8%A1%E5%9D%97.html">12.3. shutil模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.time-datetime%E6%A8%A1%E5%9D%97.html">12.4. time-datetime模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.randome%E6%A8%A1%E5%9D%97.html">12.5. randome模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.os%28%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9D%97%29.html">12.6. os模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.sys%28%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%E6%A8%A1%E5%9D%97%29.html">12.7. sys系统操作模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.configparser%E6%A8%A1%E5%9D%97.html">12.8. configparser模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.hashlib%E6%A8%A1%E5%9D%97.html">12.9. hashlib算法库模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.re%E6%A8%A1%E5%9D%97.html">12.10. re模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.logging%E6%A8%A1%E5%9D%97.html">12.11. logging模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.zipfile-tarfile%E6%A8%A1%E5%9D%97%E5%AD%A6%E4%B9%A0.html">12.12. zipfile、tarfile模块学习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.subprocess%E6%A8%A1%E5%9D%97.html">12.13. subprocess模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.collections%E6%A8%A1%E5%9D%97.html">12.14. collections模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.Redis%E6%A8%A1%E5%9D%97.html">12.15. Python标准库系列之Redis模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.urlib%E6%A8%A1%E5%9D%97.html">12.16. urllib模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.Stringw%E6%96%87%E6%9C%AC%E5%B8%B8%E9%87%8F%E5%92%8C%E6%A8%A1%E5%9D%97.html">12.17. Stringw文本常量和模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.math%E6%A8%A1%E5%9D%97.html">12.18. math模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.tempfile%E6%A8%A1%E5%9D%97.html">12.19. tempfile模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.argparse%E8%A7%A3%E6%9E%90%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0.html">12.20. argparse解析命令行参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="21.%E8%A7%A3%E6%9E%90XML%E6%96%87%E6%A1%A3.html">12.21. 解析XML文档</a></li>
+<li class="toctree-l3"><a class="reference internal" href="22.getopt%E6%A8%A1%E5%9D%97.html">12.22. getopt模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.pymysql%2Blog%2Bconfigparser%E5%B0%81%E8%A3%85.html">12.23. pymysql+log+configparser封装</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.python%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB.html">12.24. Python压缩文件方法汇总</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.requests%E6%A8%A1%E5%9D%97.html">12.25. requests模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">12. </span>Python 标准库学习</a> &raquo;</li>
+      <li><span class="section-number">12.1. </span>csv模块文件读写</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/12.Python标准库/01.csv模块文件读写.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#csv" id="id7">csv模块文件读写</a></p>
+<ul>
+<li><p><a class="reference internal" href="#csv-csv" id="id8">写入CSV数据，可以使用csv模块</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id9">读取csv文件数据</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id10">案例1</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id11">读取csv文件</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id12">同时读取和写入csv文件</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id13">读写csv文件的示例</a></p></li>
+<li><p><a class="reference internal" href="#python3csv" id="id14">python3写入csv文件中文乱码的解决</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id15">csv操作函数</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#csvjson" id="id16">CSV格式转换成JSON格式</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="csv">
+<h1><a class="toc-backref" href="#id7"><span class="section-number">12.1. </span>csv模块文件读写</a><a class="headerlink" href="#csv" title="Permalink to this headline">¶</a></h1>
+<section id="csv-csv">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">12.1.1. </span>写入CSV数据，可以使用csv模块</a><a class="headerlink" href="#csv-csv" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/5/6 13:09</span>
+<span class="c1"># filename: sample01.py</span>
+
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;UserName&#39;</span><span class="p">,</span> <span class="s1">&#39;Password&#39;</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Country&#39;</span><span class="p">]</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1001</span><span class="p">,</span> <span class="s2">&quot;qiye&quot;</span><span class="p">,</span> <span class="s2">&quot;qiye_pass&quot;</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="s2">&quot;China&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">1002</span><span class="p">,</span> <span class="s2">&quot;Mary&quot;</span><span class="p">,</span> <span class="s2">&quot;Mary_pass&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;USA&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">1003</span><span class="p">,</span> <span class="s2">&quot;Jack&quot;</span><span class="p">,</span> <span class="s2">&quot;Jack_pass&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;USA&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;qiye.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f_csv</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">f_csv</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">f_csv</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>写入字典序列的数据</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/5/6 13:10</span>
+<span class="c1"># filename: sample02.py</span>
+
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;UserName&#39;</span><span class="p">,</span> <span class="s1">&#39;Password&#39;</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Country&#39;</span><span class="p">]</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="mi">1001</span><span class="p">,</span> <span class="s1">&#39;UserName&#39;</span><span class="p">:</span> <span class="s2">&quot;qiye&quot;</span><span class="p">,</span> <span class="s1">&#39;Password&#39;</span><span class="p">:</span> <span class="s2">&quot;qiye_pass&quot;</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;Country&#39;</span><span class="p">:</span> <span class="s2">&quot; China&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="mi">1002</span><span class="p">,</span> <span class="s1">&#39;UserName&#39;</span><span class="p">:</span> <span class="s2">&quot;Mary&quot;</span><span class="p">,</span> <span class="s1">&#39;Password&#39;</span><span class="p">:</span> <span class="s2">&quot;Mary_pass&quot;</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;Country&#39;</span><span class="p">:</span> <span class="s2">&quot;USA&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="mi">1003</span><span class="p">,</span> <span class="s1">&#39;UserName&#39;</span><span class="p">:</span> <span class="s2">&quot;Jack&quot;</span><span class="p">,</span> <span class="s1">&#39;Password&#39;</span><span class="p">:</span> <span class="s2">&quot;Jack_pass&quot;</span><span class="p">,</span> <span class="s1">&#39;Age&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;Country&#39;</span><span class="p">:</span> <span class="s2">&quot;USA&quot;</span><span class="p">},</span>
+        <span class="p">]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;qiye2.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f_csv</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+    <span class="n">f_csv</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
+    <span class="n">f_csv</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>写入普通数据</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/10 21:24</span>
+<span class="c1"># filename: 操作写csv文件.py</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;sr.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="s2">&quot;three&quot;</span><span class="p">])</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;four&quot;</span><span class="p">,</span> <span class="s2">&quot;five&quot;</span><span class="p">,</span> <span class="s2">&quot;six&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">12.1.2. </span>读取csv文件数据</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/5/6 13:11</span>
+<span class="c1"># filename: sample03.py</span>
+
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;qiye.csv&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f_csv</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">f_csv</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">f_csv</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>使用命名元组 可以一一对应显示</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;stocks.csv&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f_csv</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">headings</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">f_csv</span><span class="p">)</span>
+    <span class="n">Row</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Row&#39;</span><span class="p">,</span> <span class="n">headings</span><span class="p">)</span>
+    <span class="n">f_csv</span> <span class="o">=</span> <span class="p">[</span><span class="n">f_csv</span> <span class="k">for</span> <span class="n">f_csv</span> <span class="ow">in</span> <span class="n">f_csv</span> <span class="k">if</span> <span class="n">f_csv</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">f_csv</span><span class="p">:</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">Row</span><span class="p">(</span><span class="o">*</span><span class="n">r</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>将数据读取到一个字典序列中</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">csv</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;stocks.csv&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f_csv</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">f_csv</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>先读取csv文件，再将读取的数据处理后写入新的csv中</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;villains&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;gbk&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;villains_bak&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;gbk&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wf</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">wf</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1">#采用水平制表符分割</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>        <span class="c1">#通过写入器writer对象的方法写入</span>
+</pre></div>
+</div>
+<section id="id2">
+<h3><a class="toc-backref" href="#id10">案例1</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>准备文件 test.csv</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="p">,</span><span class="n">软件工程</span><span class="p">,</span><span class="n">胡建力</span><span class="p">,</span><span class="n">机械工业出版社</span><span class="p">,</span><span class="mi">199407226517</span><span class="p">,</span><span class="mi">2</span>
+<span class="mi">2</span><span class="p">,</span><span class="n">汇编语言</span><span class="p">,</span><span class="n">胡建力2</span><span class="p">,</span><span class="n">北京工业大学出版社</span><span class="p">,</span><span class="mi">199407126517</span><span class="p">,</span><span class="mi">2</span>
+<span class="mi">3</span><span class="p">,</span><span class="n">计算机语言</span><span class="p">,</span><span class="n">胡建力3</span><span class="p">,</span><span class="n">经济科学出版社</span><span class="p">,</span><span class="mi">199417126517</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">4</span><span class="p">,</span><span class="n">FLASH精选</span><span class="p">,</span><span class="n">胡建力4</span><span class="p">,</span><span class="n">中国纺织出版社</span><span class="p">,</span><span class="mi">199417126511</span><span class="p">,</span><span class="mi">3</span>
+<span class="mi">5</span><span class="p">,</span><span class="n">JAVA基础</span><span class="p">,</span><span class="n">胡建力5</span><span class="p">,</span><span class="n">电子工业出版社</span><span class="p">,</span><span class="mi">199117126511</span><span class="p">,</span><span class="mi">3</span>
+<span class="mi">6</span><span class="p">,</span><span class="n">JAVA程序设计</span><span class="p">,</span><span class="n">胡建力6</span><span class="p">,</span><span class="n">世界出版社</span><span class="p">,</span><span class="mi">199117126512</span><span class="p">,</span><span class="mi">2</span>
+<span class="mi">7</span><span class="p">,</span><span class="n">新东方英语</span><span class="p">,</span><span class="n">胡建力7</span><span class="p">,</span><span class="n">外语出版社</span><span class="p">,</span><span class="mi">192117126512</span><span class="p">,</span><span class="mi">1</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id11">读取csv文件</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>csv_read.py</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/22 18:46</span>
+<span class="c1"># filename: CSV数据交换格式-读.py</span>
+
+<span class="c1"># reader()函数  读</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;test.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">rf</span><span class="p">:</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span> <span class="n">dialect</span><span class="o">=</span><span class="n">csv</span><span class="o">.</span><span class="n">excel</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="o">|</span><span class="n">软件工程</span><span class="o">|</span><span class="n">胡建力</span><span class="o">|</span><span class="n">机械工业出版社</span><span class="o">|</span><span class="mi">199407226517</span><span class="o">|</span><span class="mi">2</span>
+<span class="mi">2</span><span class="o">|</span><span class="n">汇编语言</span><span class="o">|</span><span class="n">胡建力2</span><span class="o">|</span><span class="n">北京工业大学出版社</span><span class="o">|</span><span class="mi">199407126517</span><span class="o">|</span><span class="mi">2</span>
+<span class="mi">3</span><span class="o">|</span><span class="n">计算机语言</span><span class="o">|</span><span class="n">胡建力3</span><span class="o">|</span><span class="n">经济科学出版社</span><span class="o">|</span><span class="mi">199417126517</span><span class="o">|</span><span class="mi">1</span>
+<span class="mi">4</span><span class="o">|</span><span class="n">FLASH精选</span><span class="o">|</span><span class="n">胡建力4</span><span class="o">|</span><span class="n">中国纺织出版社</span><span class="o">|</span><span class="mi">199417126511</span><span class="o">|</span><span class="mi">3</span>
+<span class="mi">5</span><span class="o">|</span><span class="n">JAVA基础</span><span class="o">|</span><span class="n">胡建力5</span><span class="o">|</span><span class="n">电子工业出版社</span><span class="o">|</span><span class="mi">199117126511</span><span class="o">|</span><span class="mi">3</span>
+<span class="mi">6</span><span class="o">|</span><span class="n">JAVA程序设计</span><span class="o">|</span><span class="n">胡建力6</span><span class="o">|</span><span class="n">世界出版社</span><span class="o">|</span><span class="mi">199117126512</span><span class="o">|</span><span class="mi">2</span>
+<span class="mi">7</span><span class="o">|</span><span class="n">新东方英语</span><span class="o">|</span><span class="n">胡建力7</span><span class="o">|</span><span class="n">外语出版社</span><span class="o">|</span><span class="mi">192117126512</span><span class="o">|</span><span class="mi">1</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id12">同时读取和写入csv文件</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>读取—写入—读取</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/22 18:57</span>
+<span class="c1"># filename: CSV数据交换格式-写.py</span>
+
+<span class="c1"># writer()函数</span>
+<span class="c1"># 先读取csv文件，再将读取的数据处理后写入新的csv中</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;编号&#39;</span><span class="p">,</span> <span class="s1">&#39;书名&#39;</span><span class="p">,</span> <span class="s1">&#39;作者&#39;</span><span class="p">,</span> <span class="s1">&#39;出版社&#39;</span><span class="p">,</span> <span class="s1">&#39;出版时间&#39;</span><span class="p">,</span> <span class="s1">&#39;级别&#39;</span><span class="p">]</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;10,软件工程1,胡建力,机械工业出版社,199407226517,2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;11,汇编语言1,胡建力2,北京工业大学出版社,199407126517,2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;12,计算机语言1,胡建力3,经济科学出版社,199417126517,1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;13,FLASH精选1,胡建力4,中国纺织出版社,199417126511,3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;14,JAVA基础1,胡建力5,电子工业出版社,199117126511,3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;15,JAVA程序设计1,胡建力6,世界出版社,199117126512,2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;16,新东方英语1,胡建力7,外语出版社,192117126512,1&quot;</span>
+<span class="p">]</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;test.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">rf</span><span class="p">:</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;开始读取test.csv文件内容......................&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;test_bak.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wf</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">wf</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">headers</span><span class="p">)]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;开始写入标题header 到test_bak.csv文件......................&quot;</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;开始写入文件旧数据 到test_bak.csv文件......................&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="c1"># print(row)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="n">rows_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;开始写入新的数据 到test_bak.csv文件......................&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row_new</span> <span class="ow">in</span> <span class="n">rows_list</span><span class="p">:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row_new</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;读写完毕，查看写入后的内容................&quot;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;test_bak.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">rf</span><span class="p">:</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>开始读取test.csv文件内容......................
+开始写入标题header 到test_bak.csv文件......................
+开始写入文件旧数据 到test_bak.csv文件......................
+开始写入新的数据 到test_bak.csv文件......................
+读写完毕，查看写入后的内容................
+编号|书名|作者|出版社|出版时间|级别
+1|软件工程|胡建力|机械工业出版社|199407226517|2
+2|汇编语言|胡建力2|北京工业大学出版社|199407126517|2
+3|计算机语言|胡建力3|经济科学出版社|199417126517|1
+4|FLASH精选|胡建力4|中国纺织出版社|199417126511|3
+5|JAVA基础|胡建力5|电子工业出版社|199117126511|3
+6|JAVA程序设计|胡建力6|世界出版社|199117126512|2
+7|新东方英语|胡建力7|外语出版社|192117126512|1
+10|软件工程1|胡建力|机械工业出版社|199407226517|2
+11|汇编语言1|胡建力2|北京工业大学出版社|199407126517|2
+12|计算机语言1|胡建力3|经济科学出版社|199417126517|1
+13|FLASH精选1|胡建力4|中国纺织出版社|199417126511|3
+14|JAVA基础1|胡建力5|电子工业出版社|199117126511|3
+15|JAVA程序设计1|胡建力6|世界出版社|199117126512|2
+16|新东方英语1|胡建力7|外语出版社|192117126512|1
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id13">读写csv文件的示例</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/28 20:39</span>
+<span class="c1"># filename: csv文件操作.py</span>
+
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;pingan.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">rf</span><span class="p">:</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;pingan2.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wf</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">wf</span><span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="s1">&#39;2016-01-01&#39;</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">50000000</span><span class="p">):</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="python3csv">
+<h3><a class="toc-backref" href="#id14">python3写入csv文件中文乱码的解决</a><a class="headerlink" href="#python3csv" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">加入encoding</span><span class="o">=</span><span class="s1">&#39;utf-8-sig&#39;</span><span class="n">就不会乱码了</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;haha.csv&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8-sig&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;飞机转场记录号&quot;</span><span class="p">,</span> <span class="s2">&quot;登机口&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id15">csv操作函数</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="c1"># 将数据写入csv文件</span>
+<span class="k">def</span> <span class="nf">write_csv_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param path: CSV文件的路径和文件名</span>
+<span class="sd">    :param head: 生成的CSV文件的文件头</span>
+<span class="sd">    :param data: data为需要写入CSV文件的数据，也需要传入一个列表</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">dialect</span><span class="o">=</span><span class="s1">&#39;excel&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">head</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Write a CSV file to path </span><span class="si">%s</span><span class="s2"> Successful.&quot;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Write an CSV file to path: </span><span class="si">%s</span><span class="s2">, Case: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="csvjson">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">12.1.3. </span>CSV格式转换成JSON格式</a><a class="headerlink" href="#csvjson" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/8 9:44</span>
+<span class="c1"># @filename: sample01.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+
+<span class="c1"># reload(sys)</span>
+
+<span class="k">def</span> <span class="nf">list_name</span><span class="p">(</span><span class="n">keyname</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">dict1</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">dict1</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keyname</span><span class="p">,</span> <span class="n">value1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">dict1</span>
+
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;address.csv&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">akk</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)]</span>
+            <span class="n">key1</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;street&#39;</span><span class="p">,</span> <span class="s1">&#39;namefirst&#39;</span><span class="p">,</span> <span class="s1">&#39;address&#39;</span><span class="p">]</span>
+            <span class="n">a1</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">list_name</span><span class="p">(</span><span class="n">key1</span><span class="p">,</span> <span class="n">akk</span><span class="p">,</span> <span class="n">a1</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="12. Python 标准库学习" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02.json%E3%80%81pickle%E3%80%81shelve%E6%A8%A1%E5%9D%97.html" class="btn btn-neutral float-right" title="12.2. Json和Pickle序列化" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

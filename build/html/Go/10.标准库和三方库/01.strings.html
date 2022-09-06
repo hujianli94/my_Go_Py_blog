@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10.1. strings &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10.2. bytes" href="02.bytes.html" />
+    <link rel="prev" title="10. 标准库和三方库" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">10. 标准库和三方库</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">10.1. strings</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">10.1.1. 1.字符串的常见操作</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">10.1.2. 2. strings实践</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#string">10.1.3. 3. string速查表</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">10.1.4. 4. strings-字符串操作</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">10.1.5. 5. 小结</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="02.bytes.html">10.2. bytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.fmt.html">10.3. fmt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Json.html">10.4. Json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.strconv.html">10.5. strconv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.ioutil-bufio.html">10.6. ioutil/bufio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.time.html">10.7. time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.os-path-filepath.html">10.8. os/path/filepath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.regexp.html">10.9. regexp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.log.html">10.10. log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.reflect-unsafe.html">10.11. reflect/unsafe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.unicode.html">10.12. unicode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.flag%E5%92%8Cgo-flags.html">10.13. flag和go-flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.net-url.html">10.14. net/url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.sort.html">10.15. sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.net-http.html">10.16. net/http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.error.html">10.17. error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.template%E6%A8%A1%E6%9D%BF.html">10.18. template模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.%E6%93%8D%E4%BD%9Cmysql.html">10.19. 操作mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html">10.20. Go语言常用资料及工具详细汇总</a></li>
+<li class="toctree-l3"><a class="reference internal" href="21.Socket%E7%BD%91%E7%BB%9C.html">10.21. Socket网络</a></li>
+<li class="toctree-l3"><a class="reference internal" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html">10.22. go标准库和三方库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.cobra.html">10.23. cobra</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.viper.html">10.24. viper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.math-rand.html">10.25. math-rand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="26.zap-%E6%97%A5%E5%BF%97%E6%A8%A1%E5%9D%97.html">10.26. zap-日志模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">10. </span>标准库和三方库</a> &raquo;</li>
+      <li><span class="section-number">10.1. </span>strings</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/10.标准库和三方库/01.strings.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#strings" id="id14">strings</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id15">1.字符串的常见操作</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id16">1.1 判断是否包含子字符串</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id17">1.2 字符串比较</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id18">1.3 大小写转换</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id19">1.4 统计子串出现的次数</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id20">1.5 字符串的前后缀</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id21">1.5 分割和连接</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id22">1.6 索引</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id23">1.7 清洗</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id24">1.8 替换操作</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id11" id="id25">2. strings实践</a></p></li>
+<li><p><a class="reference internal" href="#string" id="id26">3. string速查表</a></p></li>
+<li><p><a class="reference internal" href="#id12" id="id27">4. strings-字符串操作</a></p></li>
+<li><p><a class="reference internal" href="#id13" id="id28">5. 小结</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="strings">
+<h1><a class="toc-backref" href="#id14"><span class="section-number">10.1. </span>strings</a><a class="headerlink" href="#strings" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id15"><span class="section-number">10.1.1. </span>1.字符串的常见操作</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>包含：某个字符串是否包含另一个字符串。</p></li>
+<li><p>索引：获取字符串中某个子串的第一个字符的位置。</p></li>
+<li><p>清洗：去除前后的空格或者特定的字符。</p></li>
+<li><p>替换：替换字符串中原有的字符。</p></li>
+<li><p>分割：将字符串按特定的字符分割成字符串数组。</p></li>
+<li><p>统计：统计某字符出现的次数。</p></li>
+<li><p>大小写转换：转换字符串中字母的大小写。</p></li>
+<li><p>前后缀：判断某个字符串是不是以另一个字符串开头或者结尾。</p></li>
+</ul>
+<img alt="../../_images/go_string001.png" src="../../_images/go_string001.png" />
+<section id="id2">
+<h3><a class="toc-backref" href="#id16">1.1 判断是否包含子字符串</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">Value</span> <span class="p">=</span> <span class="s">&quot;Go is an open source programming language that makes it easy.....&quot;</span>
+
+<span class="kd">func</span> <span class="nx">StringsContains</span><span class="p">(</span><span class="nx">subStrings</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Contains</span><span class="p">(</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">subStrings</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsContains</span><span class="p">(</span><span class="s">&quot;Go&quot;</span><span class="p">))</span>  <span class="c1">//true</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsContains</span><span class="p">(</span><span class="s">&quot;Java&quot;</span><span class="p">))</span>    <span class="c1">//false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>源码</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// Contains reports whether substr is within s.</span>
+<span class="kd">func</span> <span class="nx">Contains</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">substr</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Index</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">substr</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id17">1.2 字符串比较</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>字符串的比较方法是根据单个字符的ASCII编码来进行的，比如A的编码为65，B的编码为66，如果A和B作为字符串进行比较，就会返回‒1。关于字符串的比较关系，可以通过非负值来表示大于关系，负值来表示小于关系，零值来表示相等关系。</p>
+<p>下面函数的作用是比较两个字符串的关系。相等的话，比较结果为0；前者大于后者则比较结果为1；否则为‒1。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+
+<span class="kd">func</span> <span class="nx">StringsCompare</span><span class="p">(</span><span class="nx">values</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">subString</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Compare</span><span class="p">(</span><span class="nx">values</span><span class="p">,</span> <span class="nx">subString</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsCompare</span><span class="p">(</span><span class="s">&quot;Java&quot;</span><span class="p">,</span><span class="s">&quot;Go&quot;</span><span class="p">))</span>    <span class="c1">//1</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsCompare</span><span class="p">(</span><span class="s">&quot;Go&quot;</span><span class="p">,</span><span class="s">&quot;Java&quot;</span><span class="p">))</span>    <span class="c1">//-1</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsCompare</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">),</span> <span class="nb">rune</span><span class="p">(</span><span class="sc">&#39;A&#39;</span><span class="p">),</span><span class="nb">rune</span><span class="p">(</span><span class="sc">&#39;B&#39;</span><span class="p">))</span>   <span class="c1">//-1 65 66</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id18">1.3 大小写转换</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">StringsToUpper</span><span class="p">(</span><span class="nx">subStrings</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>  <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">ToUpper</span><span class="p">(</span><span class="nx">subStrings</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">StringsToLower</span><span class="p">(</span><span class="nx">subStrings</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>  <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">ToLower</span><span class="p">(</span><span class="nx">subStrings</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">StringsToTitle</span><span class="p">(</span><span class="nx">subStrings</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>  <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">ToTitle</span><span class="p">(</span><span class="nx">subStrings</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsToUpper</span><span class="p">(</span><span class="s">&quot;goLang, hello world&quot;</span><span class="p">))</span>  <span class="c1">//GOLANG, HELLO WORLD</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsToLower</span><span class="p">(</span><span class="s">&quot;GoLang&quot;</span><span class="p">))</span>   <span class="c1">//golang</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsToTitle</span><span class="p">(</span><span class="s">&quot;goLang, hello world&quot;</span><span class="p">))</span>  <span class="c1">//GOLANG, HELLO WORLD</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id19">1.4 统计子串出现的次数</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">Value</span> <span class="p">=</span> <span class="s">&quot;Go is an open source programming language that makes it easy.....&quot;</span>
+
+<span class="kd">func</span> <span class="nx">StringsCount</span><span class="p">(</span><span class="nx">subStrings</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span>  <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Count</span><span class="p">(</span><span class="nx">Value</span><span class="p">,</span><span class="nx">subStrings</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsCount</span><span class="p">(</span><span class="s">&quot;Go&quot;</span><span class="p">))</span> <span class="c1">//1</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsCount</span><span class="p">(</span><span class="s">&quot;s&quot;</span><span class="p">))</span>  <span class="c1">//4</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id20">1.5 字符串的前后缀</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">Value</span> <span class="p">=</span> <span class="s">&quot;Go is an open source programming language that makes it easy.....&quot;</span>
+
+<span class="c1">// 前缀</span>
+<span class="kd">func</span> <span class="nx">StringsHasPrefix</span><span class="p">(</span><span class="nx">subStrings</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">HasPrefix</span><span class="p">(</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">subStrings</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">//后缀</span>
+<span class="kd">func</span> <span class="nx">StringsHasSuffix</span><span class="p">(</span><span class="nx">subStrings</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">HasSuffix</span><span class="p">(</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">subStrings</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsHasSuffix</span><span class="p">(</span><span class="s">&quot;..&quot;</span><span class="p">))</span>         <span class="c1">//true</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsHasSuffix</span><span class="p">(</span><span class="s">&quot;easy.....&quot;</span><span class="p">))</span>  <span class="c1">//true</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsHasSuffix</span><span class="p">(</span><span class="s">&quot;huj.....&quot;</span><span class="p">))</span>   <span class="c1">//false</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsHasPrefix</span><span class="p">(</span><span class="s">&quot;Go&quot;</span><span class="p">))</span>         <span class="c1">//true</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsHasPrefix</span><span class="p">(</span><span class="s">&quot;Java&quot;</span><span class="p">))</span>       <span class="c1">//false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>进行前后缀逻辑判断的源代码特别简单，就是判断字符串截取之后的子字符串是否相等，源码如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// HasPrefix tests whether the string s begins with prefix.</span>
+<span class="kd">func</span> <span class="nx">HasPrefix</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">prefix</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)]</span> <span class="o">==</span> <span class="nx">prefix</span>
+<span class="p">}</span>
+
+<span class="c1">// HasSuffix tests whether the string s ends with suffix.</span>
+<span class="kd">func</span> <span class="nx">HasSuffix</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">suffix</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">suffix</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="nx">suffix</span><span class="p">):]</span> <span class="o">==</span> <span class="nx">suffix</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id21">1.5 分割和连接</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>这两个操作是一对互逆的操作，一个是按照指定的字符分割成字符数组，另一个是按照指定的字符数组连接成字符串。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">Value</span> <span class="p">=</span> <span class="s">&quot;Go is an open source, programming language, that makes it easy.....&quot;</span>
+<span class="c1">//分割</span>
+<span class="kd">func</span> <span class="nx">StringsSplit</span><span class="p">(</span><span class="nx">split</span> <span class="kt">string</span><span class="p">)</span> <span class="p">[]</span><span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Split</span><span class="p">(</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">split</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">//连接</span>
+<span class="kd">func</span> <span class="nx">StringsJoin</span><span class="p">(</span><span class="nx">subStrings</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Join</span><span class="p">(</span><span class="nx">subStrings</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsSplit</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="nx">StringsSplit</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)))</span>  <span class="c1">//[Go is an open source  programming language  that makes it easy.....] 3</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsJoin</span><span class="p">([]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;Go&quot;</span><span class="p">,</span> <span class="s">&quot;Python&quot;</span><span class="p">,</span> <span class="s">&quot;Java&quot;</span><span class="p">}))</span>  <span class="c1">//Go Python Java</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3><a class="toc-backref" href="#id22">1.6 索引</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>这个操作获取指定字符首次出现的位置，通常用来判断子字符串在对应字符串中的位置。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">Value</span> <span class="p">=</span> <span class="s">&quot;Go is an open source, programming language, that makes it easy.....&quot;</span>
+
+<span class="c1">// 判断索引首次出现位置</span>
+<span class="kd">func</span> <span class="nx">StringsIndex</span><span class="p">(</span><span class="nx">subStrings</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Index</span><span class="p">(</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">subStrings</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsIndex</span><span class="p">(</span><span class="s">&quot;s&quot;</span><span class="p">))</span>  <span class="c1">//4</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3><a class="toc-backref" href="#id23">1.7 清洗</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>清洗操作可以将字符串两端的一些字符删掉。当然，常用的是去除两端的空格，所以内置库提供了专门的API。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">StringsTrim</span><span class="p">(</span><span class="nx">values</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>  <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">TrimSpace</span><span class="p">(</span><span class="nx">values</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsTrim</span><span class="p">(</span><span class="s">&quot;     hello world  &quot;</span><span class="p">))</span>  <span class="c1">//hello world</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id24">1.8 替换操作</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>清洗操作只能完成首尾的空格或者指定字符的替换，要完成更为复杂的操作则需要调用NewReplacer函数。该替换函数用于应对复杂的字符串清洗过程。比如，网络爬虫程序获取的数据经常包含一些用户并不需要的字符，使用字符串替换操作可以完成数据层面的清洗工作，方便后续更加复杂的操作。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+
+<span class="c1">// 替换</span>
+<span class="kd">func</span> <span class="nx">StringsReplacer</span><span class="p">(</span><span class="nx">values</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="nx">newReplacer</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">NewReplacer</span><span class="p">(</span><span class="s">&quot;\n&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;\t&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">newReplacer</span><span class="p">.</span><span class="nx">Replace</span><span class="p">(</span><span class="nx">values</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">StringsReplacer</span><span class="p">(</span><span class="s">&quot;hello world, \n goloang&quot;</span><span class="p">))</span> <span class="c1">//helloworld,goloang</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id11">
+<h2><a class="toc-backref" href="#id25"><span class="section-number">10.1.2. </span>2. strings实践</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">hustr</span> <span class="kt">string</span>
+    <span class="nx">hustr</span> <span class="p">=</span> <span class="s">&quot;My name is hujianli go go go&quot;</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">Index</span><span class="p">(</span><span class="nx">hustr</span><span class="p">,</span><span class="s">&quot;g&quot;</span><span class="p">))</span>       <span class="c1">//20</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">LastIndex</span><span class="p">(</span><span class="nx">hustr</span><span class="p">,</span><span class="s">&quot;g&quot;</span><span class="p">))</span>   <span class="c1">//26</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">Replace</span><span class="p">(</span><span class="nx">hustr</span><span class="p">,</span> <span class="s">&quot;hujianli&quot;</span><span class="p">,</span> <span class="s">&quot;huxioajian&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="c1">//hustr(替换，n为替换次数，&lt;0替换所有子串)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">HasPrefix</span><span class="p">(</span><span class="nx">hustr</span><span class="p">,</span> <span class="s">&quot;My&quot;</span><span class="p">))</span>            <span class="c1">//true(判断hustr是否有前缀字符串&quot;my&quot;))</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">HasSuffix</span><span class="p">(</span><span class="nx">hustr</span><span class="p">,</span> <span class="s">&quot;go&quot;</span><span class="p">))</span>           <span class="c1">//true(判断hustr是否有后缀字符串&quot;go&quot;)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">Contains</span><span class="p">(</span><span class="nx">hustr</span><span class="p">,</span> <span class="s">&quot;jianli&quot;</span><span class="p">))</span>           <span class="c1">//true(判断字符串hustr是否包含子串&quot;jianli&quot;))</span>
+
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">Count</span><span class="p">(</span><span class="s">&quot;nnnnnn&quot;</span><span class="p">,</span> <span class="s">&quot;n&quot;</span><span class="p">))</span>        <span class="c1">//6(字符串中有几个不重复的子串)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">Repeat</span><span class="p">(</span><span class="s">&quot;n&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>              <span class="c1">//nnnnnn(返回count个s串联的字符串)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">ToLower</span><span class="p">(</span><span class="s">&quot;SuoNing&quot;</span><span class="p">))</span>           <span class="c1">//suoning(将所有字母都转为对应的小写版本的拷贝)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">ToUpper</span><span class="p">(</span><span class="s">&quot;suoning&quot;</span><span class="p">))</span>          <span class="c1">//SUONING(将所有字母都转为对应的大写版本的拷贝)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">TrimSpace</span><span class="p">(</span><span class="s">&quot;  \nsuoning\n  &quot;</span><span class="p">))</span> <span class="c1">//suoning(去掉前后端所有空白)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">Trim</span><span class="p">(</span><span class="s">&quot;!!suoning!!&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span><span class="p">))</span>     <span class="c1">//suoning(将s前后端所有cutset包含的utf-8码值都去掉的字符串)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">TrimLeft</span><span class="p">(</span><span class="s">&quot;!suoning!&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span><span class="p">))</span>   <span class="c1">//suoning!(将s前端所有cutset包含的utf-8码值都去掉的字符串)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">TrimRight</span><span class="p">(</span><span class="s">&quot;!suoning!&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span><span class="p">))</span>  <span class="c1">//!suoning(将s后端所有cutset包含的utf-8码值都去掉的字符串)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">Fields</span><span class="p">(</span><span class="s">&quot; suo ning &quot;</span><span class="p">))</span>                   <span class="c1">//[suo ning](按照空白分割的多个字符串)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">Split</span><span class="p">(</span><span class="s">&quot;,suo,ning,&quot;</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">))</span>               <span class="c1">//[ suo ning ](去掉s中出现的sep的方式进行分割)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nx">Join</span><span class="p">([]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;suo&quot;</span><span class="p">,</span> <span class="s">&quot;ning&quot;</span><span class="p">},</span> <span class="s">&quot; &quot;</span><span class="p">))</span>     <span class="c1">//suo ning(用sep来拼接为一个字符串)</span>
+</pre></div>
+</div>
+</section>
+<section id="string">
+<h2><a class="toc-backref" href="#id26"><span class="section-number">10.1.3. </span>3. string速查表</a><a class="headerlink" href="#string" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">&quot;strings&quot;</span></code></p>
+<p>strings包实现了用于操作字符的简单函数。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">strings</span><span class="p">.</span><span class="nx">Index</span><span class="p">(</span><span class="s">&quot;suoning&quot;</span><span class="p">,</span> <span class="s">&quot;n&quot;</span><span class="p">)</span>        <span class="c1">//3(子串第一次出现的位置，不存在则返回-1)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">LastIndex</span><span class="p">(</span><span class="s">&quot;suoning&quot;</span><span class="p">,</span> <span class="s">&quot;n&quot;</span><span class="p">)</span>    <span class="c1">//5(子串最后一次出现的位置，不存在则返回-1)</span>
+
+<span class="nx">strings</span><span class="p">.</span><span class="nx">Replace</span><span class="p">(</span><span class="s">&quot;suoning&quot;</span><span class="p">,</span> <span class="s">&quot;ning&quot;</span><span class="p">,</span> <span class="s">&quot;nick&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1">//suonick(替换，n为替换次数，&lt;0替换所有子串)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">HasPrefix</span><span class="p">(</span><span class="s">&quot;suoning&quot;</span><span class="p">,</span> <span class="s">&quot;suo&quot;</span><span class="p">)</span>            <span class="c1">//true(判断s是否有前缀字符串prefix)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">HasSuffix</span><span class="p">(</span><span class="s">&quot;suoning&quot;</span><span class="p">,</span> <span class="s">&quot;ning&quot;</span><span class="p">)</span>           <span class="c1">//true(判断s是否有后缀字符串suffix)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">Contains</span><span class="p">(</span><span class="s">&quot;suoning&quot;</span><span class="p">,</span> <span class="s">&quot;suoni&quot;</span><span class="p">)</span>           <span class="c1">//true(判断字符串s是否包含子串substr)</span>
+
+<span class="nx">strings</span><span class="p">.</span><span class="nx">Count</span><span class="p">(</span><span class="s">&quot;nnnnnn&quot;</span><span class="p">,</span> <span class="s">&quot;n&quot;</span><span class="p">)</span>         <span class="c1">//6(字符串中有几个不重复的子串)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">Repeat</span><span class="p">(</span><span class="s">&quot;n&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>               <span class="c1">//nnnnnn(返回count个s串联的字符串)</span>
+
+<span class="nx">strings</span><span class="p">.</span><span class="nx">ToLower</span><span class="p">(</span><span class="s">&quot;SuoNing&quot;</span><span class="p">)</span>           <span class="c1">//suoning(将所有字母都转为对应的小写版本的拷贝)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">ToUpper</span><span class="p">(</span><span class="s">&quot;suoning&quot;</span><span class="p">)</span>           <span class="c1">//SUONING(将所有字母都转为对应的大写版本的拷贝)</span>
+
+<span class="nx">strings</span><span class="p">.</span><span class="nx">TrimSpace</span><span class="p">(</span><span class="s">&quot;  \nsuoning\n  &quot;</span><span class="p">)</span> <span class="c1">//suoning(去掉前后端所有空白)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">Trim</span><span class="p">(</span><span class="s">&quot;!!suoning!!&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span><span class="p">)</span>     <span class="c1">//suoning(将s前后端所有cutset包含的utf-8码值都去掉的字符串)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">TrimLeft</span><span class="p">(</span><span class="s">&quot;!suoning!&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span><span class="p">)</span>   <span class="c1">//suoning!(将s前端所有cutset包含的utf-8码值都去掉的字符串)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">TrimRight</span><span class="p">(</span><span class="s">&quot;!suoning!&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span><span class="p">)</span>  <span class="c1">//!suoning(将s后端所有cutset包含的utf-8码值都去掉的字符串)</span>
+
+<span class="nx">strings</span><span class="p">.</span><span class="nx">Fields</span><span class="p">(</span><span class="s">&quot; suo ning &quot;</span><span class="p">)</span>                   <span class="c1">//[suo ning](按照空白分割的多个字符串)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">Split</span><span class="p">(</span><span class="s">&quot;,suo,ning,&quot;</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">)</span>               <span class="c1">//[ suo ning ](去掉s中出现的sep的方式进行分割)</span>
+<span class="nx">strings</span><span class="p">.</span><span class="nx">Join</span><span class="p">([]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;suo&quot;</span><span class="p">,</span> <span class="s">&quot;ning&quot;</span><span class="p">},</span> <span class="s">&quot; &quot;</span><span class="p">)</span>     <span class="c1">//suo ning(用sep来拼接为一个字符串)</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h2><a class="toc-backref" href="#id27"><span class="section-number">10.1.4. </span>4. strings-字符串操作</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.topgoer.cn/docs/golangstandard/golangstandard-1cmksr4dhortl">https://www.topgoer.cn/docs/golangstandard/golangstandard-1cmksr4dhortl</a></p>
+</section>
+<section id="id13">
+<h2><a class="toc-backref" href="#id28"><span class="section-number">10.1.5. </span>5. 小结</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<p>语义化：字符串操作相关的函数一般按照其功能进行命名，这样能够更加直观地知道其语义。</p>
+<p>丰富的对外API接口。</p>
+<p>关于语义化命名，表示转换操作时可以使用To开头，表示是否为布尔结果类型时可以使用Has、Is或者Can等开头。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="10. 标准库和三方库" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02.bytes.html" class="btn btn-neutral float-right" title="10.2. bytes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

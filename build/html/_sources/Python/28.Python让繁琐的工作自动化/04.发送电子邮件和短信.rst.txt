@@ -1,0 +1,626 @@
+.. contents::
+   :depth: 3
+..
+
+04.发送电子邮件和短信
+=====================
+
+电子邮件
+--------
+
+1.1 发送邮件SMTP
+~~~~~~~~~~~~~~~~
+
+::
+
+   >>> import smtplib
+   >>> smtpObj = smtplib.SMTP('smtp.163.com', 25)
+   >>> smtpObj.ehlo()
+   (250, b'mail\nPIPELINING\nAUTH LOGIN PLAIN\nAUTH=LOGIN PLAIN\ncoremail 1Uxr2xKj7kG0xkI17xGrU7I0s8FY2U3Uj8Cz28x1UUUUU7Ic2I0Y2UrapFlrUCa0xDrUUUUj\nSTARTTLS\n8BITMIME')
+   >>> smtpObj.starttls()
+   (220, b'Ready to start TLS')
+   >>> smtpObj.login('account', 'XXXXXX')
+   (235, b'Authentication successful')
+
+貌似在idle的命令行里继续执行会报错，估计是163的邮件防护机制在起作用，下面连续代码则没任何问题。
+
+::
+
+   import smtplib
+   from email.header import Header
+   from email.mime.text import MIMEText
+
+   # 第三方 SMTP 服务
+   mail_host = "smtp.163.com"  # SMTP服务器
+   mail_user = "youraccount"  # 用户名
+   mail_pass = "passwd"  # 授权密码，非登录密码
+
+   sender = 'youraccount@163.com'    # 发件人邮箱(最好写全, 不然会失败)
+   receivers = [ 'tosomebody@126.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+
+   content = '我用Python'
+   title = '人生苦短'  # 邮件主题
+
+
+   def sendEmail():
+       message = MIMEText(content, 'plain', 'utf-8')  # 内容, 格式, 编码
+       message['From'] = "{}".format(sender)
+       message['To'] = ",".join(receivers)
+       message['Subject'] = title
+
+       try:
+           smtpObj = smtplib.SMTP_SSL(mail_host, 465)  # 启用SSL发信, 端口一般是465
+           smtpObj.login(mail_user, mail_pass)  # 登录验证
+           smtpObj.sendmail(sender, receivers, message.as_string())  # 发送
+           print("mail has been send successfully.")
+       except smtplib.SMTPException as e:
+           print(e)
+
+
+   def send_email2(SMTP_host, from_account, from_passwd, to_account, subject, content):
+       email_client = smtplib.SMTP(SMTP_host)
+       email_client.login(from_account, from_passwd)
+       # create msg
+       msg = MIMEText(content, 'plain', 'utf-8')
+       msg['Subject'] = Header(subject, 'utf-8')  # subject
+       msg['From'] = from_account
+       msg['To'] = to_account
+       email_client.sendmail(from_account, to_account, msg.as_string())
+
+       email_client.quit()
+
+
+   if __name__ == '__main__':
+       sendEmail()
+       # receiver = '***'
+       # send_email2(mail_host, mail_user, mail_pass, receiver, title, content)
+
+出现问题及解决方案
+~~~~~~~~~~~~~~~~~~
+
+::
+
+   出现问题
+
+   （1）出现554解决方案：
+   a: 更换邮件主题，不要用“测试”、“test”等主题
+   b: 使用MIMEtext方法，添加 “From”“To”“Sbuject”关键字，这里采用了这种方法
+
+   （2）SSL问题 ：ssl.SSLError: [SSL: UNKNOWN_PROTOCOL] unknown protocol (_ssl.c:777)
+   将smtplib.SMTP_SSL 更换为 smtplib.SMTP(smtp_server,25)
+
+   （3）ConnectionClosed 错误
+   a:尝试更换端口
+   b:检查是否开启IMAP/SMTP服务
+   c:网易163邮箱好像不能频繁发送，需要等待一段时间后在发送就可以了...
+
+   （4）认证错误
+   确保账号填写正确后，密码输入是授权码，而不是邮箱设定的密码
+
+1.2 IMAP
+~~~~~~~~
+
+::
+
+   >>> import imapclient
+   >>> imapObj = imapclient.IMAPClient('imap.163.com', ssl=True)
+   >>> imapObj.login('youraccount', 'XXXXXX')
+   b'LOGIN completed'
+   >>> import pprint
+   >>> pprint.pprint(imapObj.list_folders())
+   [((), b'/', 'INBOX'),
+    ((b'\\Drafts',), b'/', '草稿箱'),
+    ((b'\\Sent',), b'/', '已发送'),
+    ((b'\\Trash',), b'/', '已删除'),
+    ((b'\\Junk',), b'/', '垃圾邮件'),
+    ((), b'/', '病毒文件夹'),
+    ((), b'/', '广告邮件'),
+    ((), b'/', '订阅邮件'),
+    ((), b'/', 'Sent')]
+   >>> imapObj.select_folder('INBOX', readonly=True)
+   {b'PERMANENTFLAGS': (b'\\Answered', b'\\Seen', b'\\Deleted', b'\\Draft', b'\\Flagged'), b'EXISTS': 164, b'RECENT': 6, b'UIDVALIDITY': 1, b'FLAGS': (b'\\Answered', b'\\Seen', b'\\Deleted', b'\\Draft', b'\\Flagged'), b'READ-ONLY': [b'']}
+
+   >>> imapObj.logout()
+   b'Autologout; idle for too long'
+
+如果出现：
+
+::
+
+   raise exceptions.IMAPClientError("%s failed: %s" % (command, to_unicode(data[0])))
+   imaplib.IMAP4.error: select failed: EXAMINE Unsafe Login. Please contact kefu@188.com for help
+
+解决：
+
+http://config.mail.163.com/settings/imap/index.jsp?uid=youraccount@163.com
+配置一下即可
+
+一个接收邮件的范例：
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   # Created by LiTianYao on 2018/3/6
+   #
+
+   from imapclient import IMAPClient
+
+
+   class Imapmail(object):
+
+       def __init__(self):  # 初始化数据
+           self.serveraddress = None
+           self.user = None
+           self.passwd = None
+           self.prot = None
+           self.ssl = None
+           self.timeout = None
+           self.savepath = None
+           self.server = None
+
+       def client(self):  # 链接
+           try:
+               self.server = IMAPClient(self.serveraddress, self.prot, self.ssl, timeout=self.timeout)
+               return self.server
+           except BaseException as e:
+               return "ERROR: >>> " + str(e)
+
+       def login(self):  # 认证
+           try:
+               self.server.login(self.user, self.passwd)
+           except BaseException as e:
+               return "ERROR: >>> " + str(e)
+
+       def getmaildir(self):  # 获取目录列表 [((), b'/', 'INBOX'), ((b'\\Drafts',), b'/', '草稿箱'),]
+           dirlist = self.server.list_folders()
+           return dirlist
+
+       def getallmail(self):  # 收取所有邮件
+           print(self.server)
+           self.server.select_folder('INBOX', readonly=True)  # 选择目录 readonly=True 只读,不修改,这里只选择了 收件箱
+           result = self.server.search()  # 获取所有邮件总数目 [1,2,3,....]
+           print("邮件列表:", result)
+           for _sm in result:
+               # data = self.server.fetch(_sm, ['ENVELOPE'])
+               # size = self.server.fetch(_sm, ['RFC822.SIZE'])
+               # print("大小", size)
+               # envelope = data[_sm][b'ENVELOPE']
+               # print(envelope)
+               # subject = envelope.subject.decode()
+               # if subject:
+               #     subject, de = decode_header(subject)[0]
+               #     subject = subject if not de else subject.decode(de)
+               # dates = envelope.date
+               # print("主题", subject)
+               # print("时间", dates)
+
+               msgdict = self.server.fetch(_sm, ['BODY[]'])  # 获取邮件内容
+               mailbody = msgdict[_sm][b'BODY[]']  # 获取邮件内容
+               with open(self.savepath + str(_sm), 'wb') as f:  # 存放邮件内容
+                   f.write(mailbody)
+
+       def close(self):
+           self.server.logout()
+
+
+   if __name__ == "__main__":
+       imap = Imapmail()
+       imap.serveraddress = "imap.163.com"  # 邮箱地址
+       imap.user = "account"  # 邮箱密码
+       imap.passwd = "password"  # 邮箱账号
+       imap.savepath = ""  # 邮件存放路径
+       imap.client()
+       imap.login()
+       imap.getallmail()
+       imap.close()
+
+出现问题
+~~~~~~~~
+
+（1）在安装pyzmail的时候出现安装错误：
+
+如果你使用的是python3.6的话，有一个专门的包，执行以下代码就可以了。
+
+::
+
+   pip install pyzmail36
+
+2. 项目：向会员发送会费提醒电子邮件
+-----------------------------------
+
+假定你一直“自愿”为“强制自愿俱乐部”记录会员会费。这确实是一项枯燥的工作，包括维护一个电子表格，记录每个月谁交了会费，并用电子邮件提醒那些没交的会员。不必你自己查看电子表格，而是向会费超期的会员复制和粘贴相同的电子邮件。你猜对了，让我们编写一个脚本，帮你完成任务。
+
+在较高的层面上，下面是程序要做的事：
+
+::
+
+   ·从 Excel 电子表格中读取数据。
+   ·找出上个月没有交费的所有会员。
+   ·找到他们的电子邮件地址，向他们发送针对个人的提醒。
+
+这意味着代码需要做到以下几点：
+
+用 openpyxl 模块打开并读取 Excel 文档的单元格。
+
+::
+
+   ·创建一个字典，包含会费超期的会员。
+   ·调用 smtplib.SMTP()、 ehlo()、 starttls()和 login()，登录 SMTP 服务器。
+   ·针对会费超期的所有会员，调用 sendmail()方法，发送针对个人的电子邮件提醒。
+   ·打开一个新的文件编辑器窗口，并保存为 sendDuesReminders.py。
+
+第 1 步：打开 Excel 文件
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #! python3
+   # sendDuesReminders.py - Sends emails based on payment status in spreadsheet.
+
+   import openpyxl, smtplib, sys
+
+   # Open the spreadsheet and get the latest dues status.
+   wb = openpyxl.load_workbook('duesRecords.xlsx')
+   sheet = wb.get_sheet_by_name('Sheet1')
+
+   lastCol = sheet.get_highest_column()
+   latestMonth = sheet.cell(row=1, column=lastCol).value
+
+   # TODO: Check each member's payment status.
+
+   # TODO: Log in to email account.
+
+   # TODO: Send out reminder emails.
+
+第 2 步：查找所有未付成员
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #! python3
+   # sendDuesReminders.py - Sends emails based on payment status in spreadsheet.
+
+   --snip--
+
+   # Check each member's payment status.
+   unpaidMembers = {}
+   for r in range(2, sheet.get_highest_row() + 1):
+       payment = sheet.cell(row=r, column=lastCol).value
+       if payment != 'paid':
+           name = sheet.cell(row=r, column=1).value
+           email = sheet.cell(row=r, column=2).value
+           unpaidMembers[name] = email
+
+第 3 步：发送定制的电子邮件提醒
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #! python3
+   # sendDuesReminders.py - Sends emails based on payment status in spreadsheet.
+
+   --snip--
+
+   # Log in to email account.
+   smtpObj = smtplib.SMTP('smtp.gmail.com',25)
+   smtpObj.ehlo()
+   smtpObj.starttls()
+   smtpObj.login('my_email_address@gmail.com', sys.argv[1])
+
+调用\ ``smtplib.SMTP()``\ 并传入提供商的域名和端口，
+创建一个SMTP对象。调用\ ``ehlo()``\ 和
+``starttls()``\ ，然后调用\ ``login()``\ ，并传入你的电子邮件地址和
+``sys.argv[1]``\ ，
+
+其中保存着你的密码字符串。
+
+在每次运行程序时，将密码作为命令行参数输入，避免在源代码中保存密码。
+程序登录到你的电子邮件账户后，就应该遍历 unpaidMembers
+字典，向每个会员的电子邮件地址发送针对个人的电子邮件。
+将以下代码添加到\ ``sendDuesReminders.py``\ ：
+
+::
+
+   #! python3
+   # sendDuesReminders.py - Sends emails based on payment status in spreadsheet.
+
+   --snip--
+
+   # Send out reminder emails.
+   for name, email in unpaidMembers.items():
+       body = "Subject: %s dues unpaid.\nDear %s,\nRecords show that you have not
+   paid dues for %s. Please make this payment as soon as possible. Thank you!'" %
+   (latestMonth, name, latestMonth)
+       print('Sending email to %s...' % email)
+       sendmailStatus = smtpObj.sendmail('my_email_address@gmail.com', email, body)
+       
+       if sendmailStatus != {}:
+           print('There was a problem sending email to %s: %s' % (email,
+           sendmailStatus))
+   smtpObj.quit()
+
+书上的例子会被163认为是垃圾邮件，下面是解决方案：
+
+::
+
+   #! python3
+   # sendDuesReminders.py - Sends emails based on their status in spreadsheet.
+
+   import openpyxl, smtplib, sys
+   from email.header import Header
+   from email.mime.text import MIMEText
+
+   # Open the spreadsheet and get the latest dues status.
+   wb = openpyxl.load_workbook('duesRecords.xlsx')
+   sheet = wb['Sheet1']
+
+   lastCol = sheet.max_column
+   latestMonth = sheet.cell(row=1, column=lastCol).value
+
+   unpaidMembers = {}
+   # Check each member's payment status
+   for r in range(2, sheet.max_row + 1):
+       payment = sheet.cell(row=r, column=lastCol).value
+       if payment != 'paid':
+           name = sheet.cell(row=r, column=1).value
+           email = sheet.cell(row=r, column=2).value
+           unpaidMembers[name] = email
+
+   # Log in to email account.
+   smtpObj = smtplib.SMTP('smtp.163.com', 25)
+   smtpObj.ehlo()
+   smtpObj.starttls()
+   smtpObj.login('account@163.com', sys.argv[1])
+
+   sender = 'account@163.com'    # 发件人邮箱(最好写全, 不然会失败)
+   receivers = []
+
+   # Send out reminder emails.
+   print(unpaidMembers.items())
+   for name, email in unpaidMembers.items():
+       content = 'Dear %s,\nRecords show that you have not paid dues for %s. Please make this payment as soon as possible. Thank you!' % (name, latestMonth)
+       title = '%s mail to somebody dues unpaid'%(latestMonth)  # 邮件主题
+
+       message = MIMEText(content, 'plain', 'utf-8')  # 内容, 格式, 编码
+       message['From'] = "{}".format(sender)
+       message['To'] = ",".join(receivers)
+       message['Subject'] = title
+
+       receivers = email
+
+       # body = 'Subject: %s mail to somebody dues unpaid.\nDear %s,\nRecords show that you have not paid dues for %s. Please make this payment as soon as possible. Thank you!' % (latestMonth, name, latestMonth)
+       print('Sending email to %s...' % email)
+       # sendmailStatus = smtpObj.sendmail('lilyef2000@163.com', email, body.asstring())
+       # sendmailStatus = smtpObj.sendmail(sender, receivers, message.as_string())  # 发送
+
+       # if sendmailStatus != {}:
+       #     print('There was a problem sending email to %s: %s' % (email, sendmailStatus))
+
+   smtpObj.quit()
+
+   D:\Users\Administrator\Desktop\Automate the Boring Stuff with Python\automate_online-materials>py sendDuesReminders.py 781208LL
+   dict_items([('Alice', '2207xxxx@qq.com'), ('Bob', '5215xxxx@qq.com')])
+   Sending email to 2207xxxx@qq.com...
+   Sending email to 5215xxxx@qq.com...
+
+2.2 项目：“只给我发短信”模块
+----------------------------
+
+这个是书上的例子，使用云片网的例子：
+
+::
+
+   #! python3
+   # textMyself.py - Defines the textmyself() function that texts a message
+   # passed to it as a string.
+   # Desc: 短信http接口的python代码调用示例
+   # https://www.yunpian.com/api/demo.html
+   # https访问，需要安装  openssl-devel库。apt-get install openssl-devel
+
+   import http.client
+   import urllib
+   import json
+   #服务地址
+   sms_host = "sms.yunpian.com"
+   voice_host = "voice.yunpian.com"
+   #端口号
+   port = 443
+   #版本号
+   version = "v2"
+   #查账户信息的URI
+   user_get_uri = "/" + version + "/user/get.json"
+   #智能匹配模板短信接口的URI
+   sms_send_uri = "/" + version + "/sms/single_send.json"
+   #模板短信接口的URI
+   sms_tpl_send_uri = "/" + version + "/sms/tpl_single_send.json"
+   #语音短信接口的URI
+   sms_voice_send_uri = "/" + version + "/voice/send.json"
+   #语音验证码
+   voiceCode = 1234
+   def get_user_info(apikey):
+       """
+       取账户信息
+       """
+       conn = http.client.HTTPSConnection(sms_host , port=port)
+       headers = {
+           "Content-type": "application/x-www-form-urlencoded",
+           "Accept": "text/plain"
+       }
+       conn.request('POST',user_get_uri,urllib.parse.urlencode( {'apikey' : apikey}))
+       response = conn.getresponse()
+       response_str = response.read()
+       conn.close()
+       return response_str
+
+   def send_sms(apikey, text, mobile):
+       """
+       通用接口发短信
+       """
+       params = urllib.parse.urlencode({'apikey': apikey, 'text': text, 'mobile':mobile})
+       headers = {
+           "Content-type": "application/x-www-form-urlencoded",
+           "Accept": "text/plain"
+       }
+       conn = http.client.HTTPSConnection(sms_host, port=port, timeout=30)
+       conn.request("POST", sms_send_uri, params, headers)
+       response = conn.getresponse()
+       response_str = response.read()
+       conn.close()
+       return response_str
+
+   def tpl_send_sms(apikey, tpl_id, tpl_value, mobile):
+       """
+       模板接口发短信
+       """
+       params = urllib.parse.urlencode({
+           'apikey': apikey,
+           'tpl_id': tpl_id,
+           'tpl_value': urllib.parse.urlencode(tpl_value),
+           'mobile': mobile
+       })
+       headers = {
+           "Content-type": "application/x-www-form-urlencoded",
+           "Accept": "text/plain"
+       }
+       conn = http.client.HTTPSConnection(sms_host, port=port, timeout=30)
+       conn.request("POST", sms_tpl_send_uri, params, headers)
+       response = conn.getresponse()
+       response_str = response.read()
+       conn.close()
+       return response_str
+
+   def send_voice_sms(apikey, code, mobile):
+       """
+       通用接口发短信
+       """
+       params = urllib.urlencode({'apikey': apikey, 'code': code, 'mobile':mobile})
+       headers = {
+           "Content-type": "application/x-www-form-urlencoded",
+           "Accept": "text/plain"
+       }
+       conn = httplib.HTTPSConnection(voice_host, port=port, timeout=30)
+       conn.request("POST", sms_voice_send_uri, params, headers)
+       response = conn.getresponse()
+       response_str = response.read()
+       conn.close()
+       return response_str
+
+   def textmyself(message):
+       #修改为您的apikey.可在官网（http://www.yunpian.com)登录后获取
+       apikey = "xxxxxxxx538e3c3653033a32ec4a374e"
+       #修改为您要发送的手机号码，多个号码用逗号隔开
+       mobile = "176xxxxxxxx"
+       #修改为您要发送的短信内容
+       text = "【艾尔福】%s" % (message)
+       #查账户信息
+       # print(get_user_info(apikey))
+       #调用智能匹配模板接口发短信
+       print(send_sms(apikey,text,mobile))
+
+   >>> import textMyself
+   >>> textMyself.textmyself('The boring task is finished.')
+   b'{"http_status_code":400,"code":5,"msg":"\xe6\x9c\xaa\xe6\x89\xbe\xe5\x88\xb0\xe5\x8c\xb9\xe9\x85\x8d\xe7\x9a\x84\xe6\xa8\xa1\xe6\x9d\xbf","detail":"\xe6\x9c\xaa\xe8\x87\xaa\xe5\x8a\xa8\xe5\x8c\xb9\xe9\x85\x8d\xe5\x88\xb0\xe5\x90\x88\xe9\x80\x82\xe7\x9a\x84\xe6\xa8\xa1\xe6\x9d\xbf"}'
+
+天气预报短信提醒程序
+--------------------
+
+首先从天气网站调用API得到某地天气，进行JSON解析之后，将信息通过Twilio模块发送给指定号码。
+本来写了一个具有归属地和手机号码的字典数据结构，想要实现消息的群发，不过Twilio好像只能发送给自己？
+
+::
+
+   #!python3
+   #-*- coding: utf-8 -*-
+   # 2018/4/13 0013  10:41
+   #天气预报短信提醒程序  输入城市，通过twilio发送短信
+    
+   import requests,json,sys
+   import twilio
+   import datetime
+   import time
+   from twilio.rest import Client
+    
+
+   #发送短信列表，手机号-地点
+   location = {
+    'X1':'+86XXXXXXXXXXX',      
+    'X2':'+86XXXXXXXXXXX'
+   }
+    
+   accountSID = 'ACXXXXXXXXXXXXXXX'
+   authtoken = 'XXXXXXXXXXXXXXXXXXX'
+   myTwilionumber = '+XXXXXXXXXXXXXXXXX'
+   myphonenumber = location.values()          #接收的手机号
+    
+   def textme(message):
+       twiliocli = Client(accountSID, authtoken)
+       msg = twiliocli.messages.create(body=message, from_=myTwilionumber, to=myphonenumber)
+    
+   for city in location.keys():
+       weatherurl = 'https://www.sojson.com/open/api/weather/json.shtml?city=%s'%city    #天气API
+    
+       hello = '%s天气'%city     #短信开头
+    
+       response = requests.get(weatherurl)
+       response.raise_for_status()
+    
+       weatherdata = json.loads(response.text)
+       data = weatherdata['data']
+       forecast = data['forecast']
+       j = 0
+       text = []
+       sendsms = []
+    
+    for i in range(1):   #i为每一天的数据，字典类型
+           content = []
+           content.append(hello)
+    
+    for k,v in forecast[i].items():
+               text.append(v)             #将天气预报中文信息加到列表中
+    for t in text:
+    if isinstance(t, str) :    #去除不是string的参数，防止报错
+                   content.append(t)      #添加到一个新的列表content
+    
+           x = '\n'.join(content)       #twilio发送list数据时，只会发送第一项，所以要链接为字符串
+           print(x)
+       textme(x)                           #调用发短息模块
+       time.sleep(4) 
+
+使用redis队列发送短信
+---------------------
+
+*消费者模式*
+
+::
+
+   import redis
+   import json
+
+   client = redis.Redis(host='xxx.xxx.xx.xx')
+
+   while True:
+       phone_info_bytes = client.lpop('phone_queue')
+       if not phone_info_bytes:
+           print('短信发送完毕！')
+           break
+
+       phone_info = json.loads(phone_info_bytes.decode())
+       retry_times = phone_info.get('retry_times', 0)
+       phone_number = phone_info['phone_number']
+       result = send_sms(phone_number)
+       if result:
+           print(f'手机号：{phone_number} 短信发送成功！')
+           continue
+
+       if retry_times >= 3:
+           print(f'重试超过3次，放弃手机号：{phone_number}')
+           continue
+       next_phone_info = {'phone_number': phone_number, 'retry_times': retry_times + 1}
+       client.rpush('phone_queue', json.dumps(next_phone_info))
+
+参考文献
+--------
+
+https://zhuanlan.zhihu.com/p/44063961

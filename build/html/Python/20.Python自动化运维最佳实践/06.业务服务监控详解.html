@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>19.8. 业务服务监控详解 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="19.9. Supervisor在Devops工作中的应用" href="07.Supervisor%E5%9C%A8Devops%E5%B7%A5%E4%BD%9C%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8.html" />
+    <link rel="prev" title="19.7. Saltstack安装使用入门（自己总结）" href="05.Saltstack%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">19. Python自动化运维最佳实践</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E4%BF%A1%E6%81%AF%E6%A8%A1%E5%9D%97%E8%AF%A6%E8%A7%A3.html">19.1. 系统基础信息模块详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01.%E7%B3%BB%E7%BB%9F%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8pexpect.html">19.2. 系统批量运维管理器pexpect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html">19.3. 业务服务监控详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%B3%BB%E7%BB%9F%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8paramiko.html">19.4. 系统批量运维管理器paramiko</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8Fabric.html">19.5. 批量运维管理器Fabric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Ansible%E5%85%A5%E9%97%A8%E4%B8%8Eplaybook%E5%AE%9E%E6%88%98.html">19.6. Ansible入门与playbook实战</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.Saltstack%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8.html">19.7. Saltstack安装使用入门（自己总结）</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">19.8. 业务服务监控详解</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">19.8.1. 文件内容差异对比方法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">19.8.2. 文件与目录差异对比</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smtplib">19.8.3. 发送电子邮件模块smtplib</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#web">19.8.4. 探测Web服务质量</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">19.8.5. 检测主机存活状态</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">19.8.6. 检测主机存活状态示例1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">19.8.7. 使用生产者消费者模型来减少线程数量</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#python">19.8.8. Python实现端口扫描</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">19.8.9. 实现高效的端口扫描器</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#threadpoolexecutor">19.8.10. 使用进程池ThreadPoolExecutor抢占模式并发扫描</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#redis">19.8.11. Redis内存检测</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#glances">19.8.12. 交互式监控工具glances</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pythonlinux">19.8.13. 使用Python监控Linux</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="07.Supervisor%E5%9C%A8Devops%E5%B7%A5%E4%BD%9C%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8.html">19.9. Supervisor在Devops工作中的应用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E7%BD%91%E9%A1%B5%E8%87%AA%E5%8A%A8%E5%8C%96%E5%BC%80%E5%8F%91.html">19.10. 网页自动化开发</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.Conda%E5%88%9B%E5%BB%BApython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83.html">19.11. Conda创建python虚拟环境</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">19. </span>Python自动化运维最佳实践</a> &raquo;</li>
+      <li><span class="section-number">19.8. </span>业务服务监控详解</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/20.Python自动化运维最佳实践/06.业务服务监控详解.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id16">业务服务监控详解</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id17">文件内容差异对比方法</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id18">1.两个字符串的差异对比方法</a></p></li>
+<li><p><a class="reference internal" href="#nginx" id="id19">2.对比Nginx配置文件差异</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id4" id="id20">文件与目录差异对比</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id21">实践：校验源与备份目录差异</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#smtplib" id="id22">发送电子邮件模块smtplib</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id6" id="id23">1.简单的邮件</a></p></li>
+<li><p><a class="reference internal" href="#html" id="id24">2.实现html数据报表格式的邮件</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id25">3.实现图文格式的服务器性能报表邮件</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id26">4.实现带附件格式的业务服务质量周报邮件</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#web" id="id27">探测Web服务质量</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id28">检测主机存活状态</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id29">检测主机存活状态示例1</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id30">使用生产者消费者模型来减少线程数量</a></p></li>
+<li><p><a class="reference internal" href="#python" id="id31">Python实现端口扫描</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id12" id="id32">示例1</a></p></li>
+<li><p><a class="reference internal" href="#telnet" id="id33">示例2，使用telnet模块</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id13" id="id34">实现高效的端口扫描器</a></p></li>
+<li><p><a class="reference internal" href="#threadpoolexecutor" id="id35">使用进程池ThreadPoolExecutor抢占模式并发扫描</a></p></li>
+<li><p><a class="reference internal" href="#redis" id="id36">Redis内存检测</a></p></li>
+<li><p><a class="reference internal" href="#glances" id="id37">交互式监控工具glances</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id14" id="id38">安装</a></p></li>
+<li><p><a class="reference internal" href="#id15" id="id39">使用</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pythonlinux" id="id40">使用Python监控Linux</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id16"><span class="section-number">19.8. </span>业务服务监控详解</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<section id="id2">
+<h2><a class="toc-backref" href="#id17"><span class="section-number">19.8.1. </span>文件内容差异对比方法</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<section id="id3">
+<h3><a class="toc-backref" href="#id18">1.两个字符串的差异对比方法</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>打印输出差异</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">File_difference</span><span class="p">(</span><span class="n">src_file</span><span class="p">,</span> <span class="n">dest_file</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">difflib</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">src_file</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dest_file</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">Differ</span><span class="p">()</span>
+        <span class="n">text1_info</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">src_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="n">text2_info</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">dest_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">text1_info</span><span class="p">,</span> <span class="n">text2_info</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">diff</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The object of this function comparison must be a file!&quot;</span><span class="p">)</span>
+
+
+<span class="n">File_difference</span><span class="p">(</span><span class="s2">&quot;test001.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;test002.txt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>转换为html后查看差异输出</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">File_difference_to_Html</span><span class="p">(</span><span class="n">src_file</span><span class="p">,</span> <span class="n">dest_file</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">difflib</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">src_file</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dest_file</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">HtmlDiff</span><span class="p">()</span>
+        <span class="n">text1_info</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">src_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="n">text2_info</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">dest_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">make_file</span><span class="p">(</span><span class="n">text1_info</span><span class="p">,</span> <span class="n">text2_info</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;comp.html&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The object of this function comparison must be a file!&quot;</span><span class="p">)</span>
+
+<span class="n">File_difference_to_Html</span><span class="p">(</span><span class="s2">&quot;test001.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;test002.txt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="nginx">
+<h3><a class="toc-backref" href="#id19">2.对比Nginx配置文件差异</a><a class="headerlink" href="#nginx" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="kn">import</span> <span class="nn">difflib</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">textfile1</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">textfile2</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Usage: simple3.py filename1 filename2&quot;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">readfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fileHandle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">fileHandle</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="n">fileHandle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">text</span>
+    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Read file Error:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="n">textfile1</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">textfile2</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Usage: simple3.py filename1 filename2&quot;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+<span class="n">text1_lines</span> <span class="o">=</span> <span class="n">readfile</span><span class="p">(</span><span class="n">textfile1</span><span class="p">)</span>
+<span class="n">text2_lines</span> <span class="o">=</span> <span class="n">readfile</span><span class="p">(</span><span class="n">textfile2</span><span class="p">)</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">HtmlDiff</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">make_file</span><span class="p">(</span><span class="n">text1_lines</span><span class="p">,</span> <span class="n">text2_lines</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id20"><span class="section-number">19.8.2. </span>文件与目录差异对比</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<section id="id5">
+<h3><a class="toc-backref" href="#id21">实践：校验源与备份目录差异</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>定期校验源目录和备份目录，并进行增量补备份</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">定期校验源目录和备份目录，并进行增量补备份</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">filecmp</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="n">holderlist</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<span class="k">def</span> <span class="nf">compareme</span><span class="p">(</span><span class="n">dir1</span><span class="p">,</span> <span class="n">dir2</span><span class="p">):</span>
+    <span class="n">dircomp</span> <span class="o">=</span> <span class="n">filecmp</span><span class="o">.</span><span class="n">dircmp</span><span class="p">(</span><span class="n">dir1</span><span class="p">,</span> <span class="n">dir2</span><span class="p">)</span>
+    <span class="n">only_in_one</span> <span class="o">=</span> <span class="n">dircomp</span><span class="o">.</span><span class="n">left_only</span>
+    <span class="n">diff_in_one</span> <span class="o">=</span> <span class="n">dircomp</span><span class="o">.</span><span class="n">diff_files</span>
+    <span class="n">dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dir1</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">holderlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir1</span><span class="p">,</span> <span class="n">x</span><span class="p">)))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">only_in_one</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">holderlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir1</span><span class="p">,</span> <span class="n">x</span><span class="p">)))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">diff_in_one</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dircomp</span><span class="o">.</span><span class="n">common_dirs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dircomp</span><span class="o">.</span><span class="n">common_dirs</span><span class="p">:</span>
+            <span class="n">compareme</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir1</span><span class="p">,</span> <span class="n">item</span><span class="p">)),</span> \
+                      <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir2</span><span class="p">,</span> <span class="n">item</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">holderlist</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">dir1</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dir2</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Usage: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;datadir backupdir&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="n">source_files</span> <span class="o">=</span> <span class="n">compareme</span><span class="p">(</span><span class="n">dir1</span><span class="p">,</span> <span class="n">dir2</span><span class="p">)</span>
+    <span class="n">dir1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dir1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dir2</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span> <span class="n">dir2</span> <span class="o">=</span> <span class="n">dir2</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+    <span class="n">dir2</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dir2</span><span class="p">)</span>
+    <span class="n">destination_files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">createdir_bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">source_files</span><span class="p">:</span>
+        <span class="n">destination_dir</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">dir1</span><span class="p">,</span> <span class="n">dir2</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="n">destination_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">destination_dir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">destination_dir</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">destination_dir</span><span class="p">)</span>
+                <span class="n">createdir_bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">createdir_bool</span><span class="p">:</span>
+        <span class="n">destination_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">source_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">source_files</span> <span class="o">=</span> <span class="n">compareme</span><span class="p">(</span><span class="n">dir1</span><span class="p">,</span> <span class="n">dir2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">source_files</span><span class="p">:</span>
+            <span class="n">destination_dir</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">dir1</span><span class="p">,</span> <span class="n">dir2</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="n">destination_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">destination_dir</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;update item:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">source_files</span><span class="p">)</span>
+
+    <span class="n">copy_pair</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">source_files</span><span class="p">,</span> <span class="n">destination_files</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">copy_pair</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="smtplib">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">19.8.3. </span>发送电子邮件模块smtplib</a><a class="headerlink" href="#smtplib" title="Permalink to this headline">¶</a></h2>
+<section id="id6">
+<h3><a class="toc-backref" href="#id23">1.简单的邮件</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.gmail.com&quot;</span>
+<span class="n">SUBJECT</span> <span class="o">=</span> <span class="s2">&quot;Test email from Python&quot;</span>
+<span class="n">TO</span> <span class="o">=</span> <span class="s2">&quot;test@qq.com&quot;</span>
+<span class="n">FROM</span> <span class="o">=</span> <span class="s2">&quot;test@gmail.com&quot;</span>
+<span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Python rules them all!&quot;</span>
+<span class="n">BODY</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">join</span><span class="p">((</span>
+        <span class="s2">&quot;From: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">FROM</span><span class="p">,</span>
+        <span class="s2">&quot;To: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">TO</span><span class="p">,</span>
+        <span class="s2">&quot;Subject: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">SUBJECT</span> <span class="p">,</span>
+        <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">text</span>
+        <span class="p">),</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">()</span>
+<span class="n">server</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">HOST</span><span class="p">,</span><span class="s2">&quot;25&quot;</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+<span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s2">&quot;test@gmail.com&quot;</span><span class="p">,</span><span class="s2">&quot;123456&quot;</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">FROM</span><span class="p">,</span> <span class="p">[</span><span class="n">TO</span><span class="p">],</span> <span class="n">BODY</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="html">
+<h3><a class="toc-backref" href="#id24">2.实现html数据报表格式的邮件</a><a class="headerlink" href="#html" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="kn">import</span> <span class="n">MIMEImage</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.gmail.com&quot;</span>
+<span class="n">SUBJECT</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;业务性能数据报表&quot;</span>
+<span class="n">TO</span> <span class="o">=</span> <span class="s2">&quot;test@qq.com&quot;</span>
+<span class="n">FROM</span> <span class="o">=</span> <span class="s2">&quot;test@gmail.com&quot;</span>
+
+<span class="k">def</span> <span class="nf">addimg</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">imgid</span><span class="p">):</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="n">msgImage</span> <span class="o">=</span> <span class="n">MIMEImage</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">msgImage</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">,</span> <span class="n">imgid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msgImage</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;related&#39;</span><span class="p">)</span>
+<span class="n">msgtext</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;table width=&quot;600&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;4&quot;&gt;</span>
+<span class="s2">      &lt;tr bgcolor=&quot;#CECFAD&quot; height=&quot;20&quot; style=&quot;font-size:14px&quot;&gt;</span>
+<span class="s2">        &lt;td colspan=2&gt;*官网性能数据  &lt;a href=&quot;monitor.domain.com&quot;&gt;更多&gt;&gt;&lt;/a&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">      &lt;tr bgcolor=&quot;#EFEBDE&quot; height=&quot;100&quot; style=&quot;font-size:13px&quot;&gt;</span>
+<span class="s2">        &lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:io&quot;&gt;&lt;/td&gt;&lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:key_hit&quot;&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">      &lt;tr bgcolor=&quot;#EFEBDE&quot; height=&quot;100&quot; style=&quot;font-size:13px&quot;&gt;</span>
+<span class="s2">         &lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:men&quot;&gt;&lt;/td&gt;&lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:swap&quot;&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">    &lt;/table&gt;&quot;&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;html&quot;</span><span class="p">,</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msgtext</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/bytes_io.png&quot;</span><span class="p">,</span><span class="s2">&quot;io&quot;</span><span class="p">))</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/myisam_key_hit.png&quot;</span><span class="p">,</span><span class="s2">&quot;key_hit&quot;</span><span class="p">))</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/os_mem.png&quot;</span><span class="p">,</span><span class="s2">&quot;men&quot;</span><span class="p">))</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/os_swap.png&quot;</span><span class="p">,</span><span class="s2">&quot;swap&quot;</span><span class="p">))</span>
+
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SUBJECT</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">FROM</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">TO</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">HOST</span><span class="p">,</span><span class="s2">&quot;25&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s2">&quot;test@gmail.com&quot;</span><span class="p">,</span><span class="s2">&quot;123456&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">FROM</span><span class="p">,</span> <span class="n">TO</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="nb">print</span> <span class="s2">&quot;邮件发送成功！&quot;</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="s2">&quot;失败：&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id25">3.实现图文格式的服务器性能报表邮件</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="kn">import</span> <span class="n">MIMEImage</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.gmail.com&quot;</span>
+<span class="n">SUBJECT</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;业务性能数据报表&quot;</span>
+<span class="n">TO</span> <span class="o">=</span> <span class="s2">&quot;test@qq.com&quot;</span>
+<span class="n">FROM</span> <span class="o">=</span> <span class="s2">&quot;test@gmail.com&quot;</span>
+
+<span class="k">def</span> <span class="nf">addimg</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">imgid</span><span class="p">):</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="n">msgImage</span> <span class="o">=</span> <span class="n">MIMEImage</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">msgImage</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">,</span> <span class="n">imgid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msgImage</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;related&#39;</span><span class="p">)</span>
+<span class="n">msgtext</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;table width=&quot;600&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;4&quot;&gt;</span>
+<span class="s2">      &lt;tr bgcolor=&quot;#CECFAD&quot; height=&quot;20&quot; style=&quot;font-size:14px&quot;&gt;</span>
+<span class="s2">        &lt;td colspan=2&gt;*官网性能数据  &lt;a href=&quot;monitor.domain.com&quot;&gt;更多&gt;&gt;&lt;/a&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">      &lt;tr bgcolor=&quot;#EFEBDE&quot; height=&quot;100&quot; style=&quot;font-size:13px&quot;&gt;</span>
+<span class="s2">        &lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:io&quot;&gt;&lt;/td&gt;&lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:key_hit&quot;&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">      &lt;tr bgcolor=&quot;#EFEBDE&quot; height=&quot;100&quot; style=&quot;font-size:13px&quot;&gt;</span>
+<span class="s2">         &lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:men&quot;&gt;&lt;/td&gt;&lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:swap&quot;&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">    &lt;/table&gt;&quot;&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;html&quot;</span><span class="p">,</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msgtext</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/bytes_io.png&quot;</span><span class="p">,</span><span class="s2">&quot;io&quot;</span><span class="p">))</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/myisam_key_hit.png&quot;</span><span class="p">,</span><span class="s2">&quot;key_hit&quot;</span><span class="p">))</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/os_mem.png&quot;</span><span class="p">,</span><span class="s2">&quot;men&quot;</span><span class="p">))</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/os_swap.png&quot;</span><span class="p">,</span><span class="s2">&quot;swap&quot;</span><span class="p">))</span>
+
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SUBJECT</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">FROM</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">TO</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">HOST</span><span class="p">,</span><span class="s2">&quot;25&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s2">&quot;test@gmail.com&quot;</span><span class="p">,</span><span class="s2">&quot;123456&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">FROM</span><span class="p">,</span> <span class="n">TO</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="nb">print</span> <span class="s2">&quot;邮件发送成功！&quot;</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="s2">&quot;失败：&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3><a class="toc-backref" href="#id26">4.实现带附件格式的业务服务质量周报邮件</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="kn">import</span> <span class="n">MIMEImage</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.gmail.com&quot;</span>
+<span class="n">SUBJECT</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;业务性能数据报表&quot;</span>
+<span class="n">TO</span> <span class="o">=</span> <span class="s2">&quot;test@qq.com&quot;</span>
+<span class="n">FROM</span> <span class="o">=</span> <span class="s2">&quot;test@gmail.com&quot;</span>
+
+<span class="k">def</span> <span class="nf">addimg</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">imgid</span><span class="p">):</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="n">msgImage</span> <span class="o">=</span> <span class="n">MIMEImage</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">msgImage</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">,</span> <span class="n">imgid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msgImage</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;related&#39;</span><span class="p">)</span>
+<span class="n">msgtext</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;table width=&quot;600&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;4&quot;&gt;</span>
+<span class="s2">      &lt;tr bgcolor=&quot;#CECFAD&quot; height=&quot;20&quot; style=&quot;font-size:14px&quot;&gt;</span>
+<span class="s2">        &lt;td colspan=2&gt;*官网性能数据  &lt;a href=&quot;monitor.domain.com&quot;&gt;更多&gt;&gt;&lt;/a&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">      &lt;tr bgcolor=&quot;#EFEBDE&quot; height=&quot;100&quot; style=&quot;font-size:13px&quot;&gt;</span>
+<span class="s2">        &lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:io&quot;&gt;&lt;/td&gt;&lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:key_hit&quot;&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">      &lt;tr bgcolor=&quot;#EFEBDE&quot; height=&quot;100&quot; style=&quot;font-size:13px&quot;&gt;</span>
+<span class="s2">         &lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:men&quot;&gt;&lt;/td&gt;&lt;td&gt;</span>
+<span class="s2">         &lt;img src=&quot;cid:swap&quot;&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">    &lt;/table&gt;&quot;&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;html&quot;</span><span class="p">,</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msgtext</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/bytes_io.png&quot;</span><span class="p">,</span><span class="s2">&quot;io&quot;</span><span class="p">))</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/myisam_key_hit.png&quot;</span><span class="p">,</span><span class="s2">&quot;key_hit&quot;</span><span class="p">))</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/os_mem.png&quot;</span><span class="p">,</span><span class="s2">&quot;men&quot;</span><span class="p">))</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/os_swap.png&quot;</span><span class="p">,</span><span class="s2">&quot;swap&quot;</span><span class="p">))</span>
+
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SUBJECT</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">FROM</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">TO</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">HOST</span><span class="p">,</span><span class="s2">&quot;25&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s2">&quot;test@gmail.com&quot;</span><span class="p">,</span><span class="s2">&quot;123456&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">FROM</span><span class="p">,</span> <span class="n">TO</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="nb">print</span> <span class="s2">&quot;邮件发送成功！&quot;</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="s2">&quot;失败：&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="web">
+<h2><a class="toc-backref" href="#id27"><span class="section-number">19.8.4. </span>探测Web服务质量</a><a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1">#encoding:utf-8</span>
+<span class="c1">#*/30 * * * * /usr/bin/python /root/dnstime.py &gt;&gt; /root/myreport.txt 2&gt;&amp;1</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pycurl</span>
+<span class="c1">#import commands</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">URL</span><span class="o">=</span><span class="s2">&quot;http://imp-east.example.net&quot;</span>
+<span class="n">ISOTIMEFORMAT</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> </span><span class="si">%X</span><span class="s2">&quot;</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">pycurl</span><span class="o">.</span><span class="n">Curl</span><span class="p">()</span>
+<span class="n">c</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">pycurl</span><span class="o">.</span><span class="n">URL</span><span class="p">,</span> <span class="n">URL</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">pycurl</span><span class="o">.</span><span class="n">CONNECTTIMEOUT</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">pycurl</span><span class="o">.</span><span class="n">TIMEOUT</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">pycurl</span><span class="o">.</span><span class="n">FORBID_REUSE</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">pycurl</span><span class="o">.</span><span class="n">MAXREDIRS</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">pycurl</span><span class="o">.</span><span class="n">NOPROGRESS</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">pycurl</span><span class="o">.</span><span class="n">DNS_CACHE_TIMEOUT</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">indexfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span><span class="o">+</span><span class="s2">&quot;/content.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">pycurl</span><span class="o">.</span><span class="n">WRITEHEADER</span><span class="p">,</span> <span class="n">indexfile</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">setopt</span><span class="p">(</span><span class="n">pycurl</span><span class="o">.</span><span class="n">WRITEDATA</span><span class="p">,</span> <span class="n">indexfile</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">perform</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span><span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="s2">&quot;connecion error:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">indexfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+<span class="n">NAMELOOKUP_TIME</span> <span class="o">=</span>  <span class="n">c</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">NAMELOOKUP_TIME</span><span class="p">)</span>
+<span class="n">CONNECT_TIME</span> <span class="o">=</span>  <span class="n">c</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">CONNECT_TIME</span><span class="p">)</span>
+<span class="n">PRETRANSFER_TIME</span> <span class="o">=</span>   <span class="n">c</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">PRETRANSFER_TIME</span><span class="p">)</span>
+<span class="n">STARTTRANSFER_TIME</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">STARTTRANSFER_TIME</span><span class="p">)</span>
+<span class="n">TOTAL_TIME</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">TOTAL_TIME</span><span class="p">)</span>
+<span class="n">HTTP_CODE</span> <span class="o">=</span>  <span class="n">c</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">HTTP_CODE</span><span class="p">)</span>
+<span class="n">SIZE_DOWNLOAD</span> <span class="o">=</span>  <span class="n">c</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">SIZE_DOWNLOAD</span><span class="p">)</span>
+<span class="n">HEADER_SIZE</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">HEADER_SIZE</span><span class="p">)</span>
+<span class="n">SPEED_DOWNLOAD</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">SPEED_DOWNLOAD</span><span class="p">)</span>
+
+<span class="nb">print</span> <span class="s2">&quot;HTTP状态码：</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">HTTP_CODE</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&quot;DNS解析时间：</span><span class="si">%.2f</span><span class="s2"> ms&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">NAMELOOKUP_TIME</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&quot;建立连接时间：</span><span class="si">%.2f</span><span class="s2"> ms&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">CONNECT_TIME</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&quot;准备传输时间：</span><span class="si">%.2f</span><span class="s2"> ms&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">PRETRANSFER_TIME</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&quot;传输开始时间：</span><span class="si">%.2f</span><span class="s2"> ms&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">STARTTRANSFER_TIME</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&quot;传输结束总时间：</span><span class="si">%.2f</span><span class="s2"> ms&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">TOTAL_TIME</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="nb">print</span> <span class="s2">&quot;下载数据包大小：</span><span class="si">%d</span><span class="s2"> bytes/s&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">SIZE_DOWNLOAD</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&quot;HTTP头部大小：</span><span class="si">%d</span><span class="s2"> byte&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">HEADER_SIZE</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&quot;平均下载速度：</span><span class="si">%d</span><span class="s2"> bytes/s&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">SPEED_DOWNLOAD</span><span class="p">)</span>
+
+<span class="n">indexfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="nb">print</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span> <span class="n">ISOTIMEFORMAT</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">(</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="p">)</span> <span class="p">)</span>
+<span class="nb">print</span> <span class="s2">&quot;================================================================&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id28"><span class="section-number">19.8.5. </span>检测主机存活状态</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="n">lifeline</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d) received&quot;</span><span class="p">)</span>
+<span class="n">report</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;No response&quot;</span><span class="p">,</span><span class="s2">&quot;Partial Response&quot;</span><span class="p">,</span><span class="s2">&quot;Alive&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">254</span><span class="p">):</span>
+   <span class="n">ip</span> <span class="o">=</span> <span class="s2">&quot;192.168.1.&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>
+   <span class="n">pingaling</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s2">&quot;ping&quot;</span><span class="p">,</span><span class="s2">&quot;-q&quot;</span><span class="p">,</span> <span class="s2">&quot;-c 2&quot;</span><span class="p">,</span> <span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="n">ip</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+   <span class="nb">print</span> <span class="s2">&quot;Testing &quot;</span><span class="p">,</span><span class="n">ip</span><span class="p">,</span>
+   <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">pingaling</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+      <span class="n">line</span> <span class="o">=</span> <span class="n">pingaling</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span> <span class="k">break</span>
+      <span class="n">igot</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">lifeline</span><span class="p">,</span><span class="n">line</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">igot</span><span class="p">:</span>
+           <span class="nb">print</span> <span class="n">report</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">igot</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+<span class="nb">print</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id29"><span class="section-number">19.8.6. </span>检测主机存活状态示例1</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/21 10:50</span>
+<span class="c1"># filename: ping001.py</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+
+
+<span class="k">def</span> <span class="nf">is_reacheable</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;ping&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">ip</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> is alive&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> is unreacheable&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;ips.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">thr</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">is_reacheable</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">line</span><span class="p">,))</span>
+            <span class="n">thr</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thr</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">thr</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+            <span class="n">thr</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h2><a class="toc-backref" href="#id30"><span class="section-number">19.8.7. </span>使用生产者消费者模型来减少线程数量</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/21 10:54</span>
+<span class="c1"># filename: ping002.py</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Empty</span>
+
+
+<span class="k">def</span> <span class="nf">call_ping</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;ping&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">ip</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> is alive&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> is unreacheable&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">is_reacheable</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">ip</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">()</span>
+            <span class="n">call_ping</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;ips.txt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">thr</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">is_reacheable</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,))</span>
+        <span class="n">thr</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thr</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">thr</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+        <span class="n">thr</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="python">
+<h2><a class="toc-backref" href="#id31"><span class="section-number">19.8.8. </span>Python实现端口扫描</a><a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<section id="id12">
+<h3><a class="toc-backref" href="#id32">示例1</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/21 10:58</span>
+<span class="c1"># filename: sample01.py</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">def</span> <span class="nf">conn_scan</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="s1">&#39;is available&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="s1">&#39;is not available&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;192.168.0.1&quot;</span>
+    <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">5000</span><span class="p">):</span>
+        <span class="n">conn_scan</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="telnet">
+<h3><a class="toc-backref" href="#id33">示例2，使用telnet模块</a><a class="headerlink" href="#telnet" title="Permalink to this headline">¶</a></h3>
+<p>新增一个超时的时间</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/21 11:01</span>
+<span class="c1"># filename: smaple02.py</span>
+
+<span class="c1"># !/usr/bin/python</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">telnetlib</span>
+
+
+<span class="k">def</span> <span class="nf">conn_scan</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">telnetlib</span><span class="o">.</span><span class="n">Telnet</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="s1">&#39;is avaliable&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="s1">&#39;is not avaliable&#39;</span><span class="p">,</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;192.168.0.1&#39;</span>
+    <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">5000</span><span class="p">):</span>
+        <span class="n">conn_scan</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id13">
+<h2><a class="toc-backref" href="#id34"><span class="section-number">19.8.9. </span>实现高效的端口扫描器</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">nmap</span>
+
+<span class="n">scan_row</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">raw_input</span><span class="p">(</span><span class="s1">&#39;Please input hosts and port: &#39;</span><span class="p">)</span>
+<span class="n">scan_row</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scan_row</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="nb">print</span>
+    <span class="s2">&quot;Input errors,example </span><span class="se">\&quot;</span><span class="s2">192.168.1.0/24 80,443,22</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">hosts</span> <span class="o">=</span> <span class="n">scan_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 接收用户输入的主机</span>
+<span class="n">port</span> <span class="o">=</span> <span class="n">scan_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># 接收用户输入的端口</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">nm</span> <span class="o">=</span> <span class="n">nmap</span><span class="o">.</span><span class="n">PortScanner</span><span class="p">()</span>  <span class="c1"># 创建端口扫描对象</span>
+<span class="k">except</span> <span class="n">nmap</span><span class="o">.</span><span class="n">PortScannerError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Nmap not found&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unexpected error:&quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">nm</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">hosts</span><span class="o">=</span><span class="n">hosts</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="s1">&#39; -v -sS -p &#39;</span> <span class="o">+</span> <span class="n">port</span><span class="p">)</span>  <span class="c1"># 调用扫描方法，参数指定扫描主机hosts，nmap扫描命令行参数arguments</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span>
+    <span class="s2">&quot;Scan erro:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">nm</span><span class="o">.</span><span class="n">all_hosts</span><span class="p">():</span>  <span class="c1"># 遍历扫描主机</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;----------------------------------------------------&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Host : </span><span class="si">%s</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">nm</span><span class="p">[</span><span class="n">host</span><span class="p">]</span><span class="o">.</span><span class="n">hostname</span><span class="p">()))</span>  <span class="c1"># 输出主机及主机名</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;State : </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">nm</span><span class="p">[</span><span class="n">host</span><span class="p">]</span><span class="o">.</span><span class="n">state</span><span class="p">())</span>  <span class="c1"># 输出主机状态，如up、down</span>
+
+    <span class="k">for</span> <span class="n">proto</span> <span class="ow">in</span> <span class="n">nm</span><span class="p">[</span><span class="n">host</span><span class="p">]</span><span class="o">.</span><span class="n">all_protocols</span><span class="p">():</span>  <span class="c1"># 遍历扫描协议，如tcp、udp</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;----------&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Protocol : </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">proto</span><span class="p">)</span>  <span class="c1"># 输入协议名</span>
+
+        <span class="n">lport</span> <span class="o">=</span> <span class="n">nm</span><span class="p">[</span><span class="n">host</span><span class="p">][</span><span class="n">proto</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>  <span class="c1"># 获取协议的所有扫描端口</span>
+        <span class="n">lport</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># 端口列表排序</span>
+        <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">lport</span><span class="p">:</span>  <span class="c1"># 遍历端口及输出端口与状态</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;port : </span><span class="si">%s</span><span class="se">\t</span><span class="s1">state : </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">nm</span><span class="p">[</span><span class="n">host</span><span class="p">][</span><span class="n">proto</span><span class="p">][</span><span class="n">port</span><span class="p">][</span><span class="s1">&#39;state&#39;</span><span class="p">]))</span>
+</pre></div>
+</div>
+</section>
+<section id="threadpoolexecutor">
+<h2><a class="toc-backref" href="#id35"><span class="section-number">19.8.10. </span>使用进程池ThreadPoolExecutor抢占模式并发扫描</a><a class="headerlink" href="#threadpoolexecutor" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/21 10:58</span>
+<span class="c1"># filename: sample01.py</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">def</span> <span class="nf">conn_scan</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;192.168.0.1&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="s1">&#39;is available&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="s1">&#39;is not available&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">mulit_run</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">max_workers</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    多线程执行命令</span>
+<span class="sd">    :param func:  执行函数</span>
+<span class="sd">    :param max_workers: 最多线程数</span>
+<span class="sd">    :param args: 可迭代对象</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span><span class="p">,</span> <span class="n">wait</span><span class="p">,</span> <span class="n">ALL_COMPLETED</span><span class="p">,</span> <span class="n">FIRST_COMPLETED</span>
+    <span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">max_workers</span><span class="p">)</span>
+    <span class="n">all_task</span> <span class="o">=</span> <span class="p">[</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+    <span class="n">wait</span><span class="p">(</span><span class="n">all_task</span><span class="p">,</span> <span class="n">return_when</span><span class="o">=</span><span class="n">ALL_COMPLETED</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)]</span>
+    <span class="n">mulit_run</span><span class="p">(</span><span class="n">conn_scan</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ports</span><span class="p">),</span> <span class="n">ports</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="redis">
+<h2><a class="toc-backref" href="#id36"><span class="section-number">19.8.11. </span>Redis内存检测</a><a class="headerlink" href="#redis" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1">#Check redis Nagios Plungin,Please install the redis-py module.</span>
+<span class="kn">import</span> <span class="nn">redis</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">STATUS_OK</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">STATUS_WARNING</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">STATUS_CRITICAL</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">WARNING</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">CRITICAL</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">connect_redis</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">socket_timeout</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">socket_connect_timeout</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">connect_redis</span><span class="p">(</span><span class="n">HOST</span><span class="p">,</span> <span class="n">PORT</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="n">HOST</span><span class="p">,</span><span class="n">PORT</span><span class="p">,</span><span class="s1">&#39;down&#39;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">STATUS_CRITICAL</span><span class="p">)</span>
+
+    <span class="n">redis_info</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+    <span class="n">used_mem</span> <span class="o">=</span> <span class="n">redis_info</span><span class="p">[</span><span class="s1">&#39;used_memory&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mi">1024</span><span class="o">/</span><span class="mf">1024.0</span>
+    <span class="n">used_mem_human</span> <span class="o">=</span> <span class="n">redis_info</span><span class="p">[</span><span class="s1">&#39;used_memory_human&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">WARNING</span> <span class="o">&lt;=</span> <span class="n">used_mem</span> <span class="o">&lt;</span> <span class="n">CRITICAL</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="n">HOST</span><span class="p">,</span><span class="n">PORT</span><span class="p">,</span><span class="s1">&#39;use memory warning&#39;</span><span class="p">,</span><span class="n">used_mem_human</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">STATUS_WARNING</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">used_mem</span> <span class="o">&gt;=</span> <span class="n">CRITICAL</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="n">HOST</span><span class="p">,</span><span class="n">PORT</span><span class="p">,</span><span class="s1">&#39;use memory critical&#39;</span><span class="p">,</span><span class="n">used_mem_human</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">STATUS_CRITICAL</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="n">HOST</span><span class="p">,</span><span class="n">PORT</span><span class="p">,</span><span class="s1">&#39;use memory ok&#39;</span><span class="p">,</span><span class="n">used_mem_human</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">STATUS_OK</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="glances">
+<h2><a class="toc-backref" href="#id37"><span class="section-number">19.8.12. </span>交互式监控工具glances</a><a class="headerlink" href="#glances" title="Permalink to this headline">¶</a></h2>
+<p>galnces是一款使用Python语言开发、基于psutil的跨平台系统监控工具，在所有的Linux命令行工具中，它与top命令最相似。
+都是命令行交互式监控工具，但是glances实现了比top命令更齐全的监控，提供了更加丰富的功能。</p>
+<section id="id14">
+<h3><a class="toc-backref" href="#id38">安装</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">glances</span>
+</pre></div>
+</div>
+</section>
+<section id="id15">
+<h3><a class="toc-backref" href="#id39">使用</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">k8s</span><span class="o">-</span><span class="n">master</span> <span class="p">(</span><span class="n">CentOS</span> <span class="n">Linux</span> <span class="mf">7.6</span><span class="o">.</span><span class="mi">1810</span> <span class="mi">64</span><span class="n">bit</span> <span class="o">/</span> <span class="n">Linux</span> <span class="mf">3.10</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mf">957.</span><span class="n">el7</span><span class="o">.</span><span class="n">x86_64</span><span class="p">)</span>                                                                                   <span class="n">Uptime</span><span class="p">:</span> <span class="mi">18</span> <span class="n">days</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">20</span><span class="p">:</span><span class="mi">22</span>
+
+<span class="n">CPU</span>  <span class="p">[</span><span class="o">|||||||||||||||||||||||||||||||||||||||||||||||</span><span class="mf">100.0</span><span class="o">%</span><span class="p">]</span>   <span class="n">CPU</span>     <span class="mf">100.0</span><span class="o">%</span>  <span class="n">nice</span><span class="p">:</span>     <span class="mf">0.0</span><span class="o">%</span>  <span class="n">ctx_sw</span><span class="p">:</span>    <span class="mi">2</span><span class="n">K</span>   <span class="n">MEM</span>     <span class="mf">94.9</span><span class="o">%</span>  <span class="n">active</span><span class="p">:</span>    <span class="mf">3.07</span><span class="n">G</span>   <span class="n">SWAP</span>      <span class="mf">0.0</span><span class="o">%</span>   <span class="n">LOAD</span>    <span class="mi">2</span><span class="o">-</span><span class="n">core</span>
+<span class="n">MEM</span>  <span class="p">[</span><span class="o">||||||||||||||||||||||||||||||||||||||||||||</span>    <span class="mf">94.9</span><span class="o">%</span><span class="p">]</span>   <span class="n">user</span><span class="p">:</span>    <span class="mf">98.0</span><span class="o">%</span>  <span class="n">irq</span><span class="p">:</span>      <span class="mf">0.0</span><span class="o">%</span>  <span class="n">inter</span><span class="p">:</span>   <span class="mi">2590</span>   <span class="n">total</span><span class="p">:</span>  <span class="mf">3.69</span><span class="n">G</span>  <span class="n">inactive</span><span class="p">:</span>   <span class="mi">238</span><span class="n">M</span>   <span class="n">total</span><span class="p">:</span>       <span class="mi">0</span>   <span class="mi">1</span> <span class="nb">min</span><span class="p">:</span>    <span class="mf">5.57</span>
+<span class="n">SWAP</span> <span class="p">[</span>                                                 <span class="mf">0.0</span><span class="o">%</span><span class="p">]</span>   <span class="n">system</span><span class="p">:</span>   <span class="mf">2.0</span><span class="o">%</span>  <span class="n">iowait</span><span class="p">:</span>   <span class="mf">0.0</span><span class="o">%</span>  <span class="n">sw_int</span><span class="p">:</span>  <span class="mi">2517</span>   <span class="n">used</span><span class="p">:</span>   <span class="mf">3.50</span><span class="n">G</span>  <span class="n">buffers</span><span class="p">:</span>   <span class="mf">8.73</span><span class="n">M</span>   <span class="n">used</span><span class="p">:</span>        <span class="mi">0</span>   <span class="mi">5</span> <span class="nb">min</span><span class="p">:</span>    <span class="mf">8.79</span>
+                                                               <span class="n">idle</span><span class="p">:</span>     <span class="mf">0.0</span><span class="o">%</span>  <span class="n">steal</span><span class="p">:</span>    <span class="mf">0.0</span><span class="o">%</span>                  <span class="n">free</span><span class="p">:</span>    <span class="mi">193</span><span class="n">M</span>  <span class="n">cached</span><span class="p">:</span>     <span class="mi">492</span><span class="n">M</span>   <span class="n">free</span><span class="p">:</span>        <span class="mi">0</span>   <span class="mi">15</span> <span class="nb">min</span><span class="p">:</span>  <span class="mf">10.76</span>
+
+<span class="n">NETWORK</span>                  <span class="n">Rx</span><span class="o">/</span><span class="n">s</span>   <span class="n">Tx</span><span class="o">/</span><span class="n">s</span>   <span class="n">TASKS</span> <span class="mi">133</span> <span class="p">(</span><span class="mi">483</span> <span class="n">thr</span><span class="p">),</span> <span class="mi">2</span> <span class="n">run</span><span class="p">,</span> <span class="mi">130</span> <span class="n">slp</span><span class="p">,</span> <span class="mi">1</span> <span class="n">oth</span> <span class="nb">sorted</span> <span class="n">automatically</span> <span class="n">by</span> <span class="n">CPU</span> <span class="n">consumption</span>
+<span class="n">cni0</span>                      <span class="mi">1</span><span class="n">Kb</span>    <span class="mi">1</span><span class="n">Kb</span>
+<span class="n">docker0</span>                    <span class="mi">0</span><span class="n">b</span>     <span class="mi">0</span><span class="n">b</span>   <span class="n">CPU</span><span class="o">%</span>   <span class="n">MEM</span><span class="o">%</span>  <span class="n">VIRT</span>  <span class="n">RES</span>       <span class="n">PID</span> <span class="n">USER</span>          <span class="n">TIME</span><span class="o">+</span> <span class="n">THR</span>  <span class="n">NI</span> <span class="n">S</span>  <span class="n">R</span><span class="o">/</span><span class="n">s</span> <span class="n">W</span><span class="o">/</span><span class="n">s</span>  <span class="n">Command</span>
+<span class="n">eth0</span>                      <span class="mi">5</span><span class="n">Kb</span>   <span class="mi">10</span><span class="n">Kb</span>   <span class="mf">189.5</span>  <span class="mf">61.9</span>  <span class="mf">2.60</span><span class="n">G</span> <span class="mf">2.28</span><span class="n">G</span> <span class="mi">2669849</span> <span class="n">root</span>       <span class="mi">65</span><span class="n">h26</span><span class="p">:</span><span class="mi">10</span> <span class="mi">8</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">kdevtmpfsi</span>
+<span class="n">flannel</span><span class="o">.</span><span class="mi">1</span>                  <span class="mi">0</span><span class="n">b</span>     <span class="mi">0</span><span class="n">b</span>   <span class="mf">4.0</span>    <span class="mf">0.6</span>   <span class="mi">394</span><span class="n">M</span>  <span class="mf">22.8</span><span class="n">M</span> <span class="mi">2667601</span> <span class="n">root</span>           <span class="mi">0</span><span class="p">:</span><span class="mi">00</span> <span class="mi">1</span>     <span class="mi">0</span> <span class="n">R</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">glances</span>
+<span class="n">lo</span>                       <span class="mi">58</span><span class="n">Kb</span>   <span class="mi">58</span><span class="n">Kb</span>   <span class="mf">2.3</span>    <span class="mf">1.2</span>   <span class="mf">1.33</span><span class="n">G</span> <span class="mf">46.8</span><span class="n">M</span> <span class="mi">3938589</span> <span class="n">root</span>          <span class="mi">34</span><span class="p">:</span><span class="mi">30</span> <span class="mi">24</span>    <span class="mi">0</span> <span class="n">S</span>   <span class="mi">1</span><span class="n">M</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">kubelet</span> <span class="o">--</span><span class="n">bootstrap</span><span class="o">-</span><span class="n">kubeconfig</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">kubernetes</span><span class="o">/</span><span class="n">bootstrap</span>
+<span class="n">veth0f789466</span>               <span class="mi">0</span><span class="n">b</span>     <span class="mi">0</span><span class="n">b</span>   <span class="mf">1.3</span>    <span class="mf">1.6</span>   <span class="mi">495</span><span class="n">M</span>  <span class="mf">61.1</span><span class="n">M</span> <span class="mi">3154366</span> <span class="n">root</span>          <span class="mi">41</span><span class="p">:</span><span class="mi">29</span> <span class="mi">16</span>    <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">dockerd</span> <span class="o">-</span><span class="n">H</span> <span class="n">tcp</span><span class="p">:</span><span class="o">//</span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">2375</span> <span class="o">-</span><span class="n">H</span> <span class="n">unix</span><span class="p">:</span><span class="o">//</span><span class="n">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">docker</span><span class="o">.</span><span class="n">s</span>
+<span class="n">veth7b45d44</span>                <span class="mi">0</span><span class="n">b</span>     <span class="mi">0</span><span class="n">b</span>   <span class="mf">0.7</span>    <span class="mf">6.3</span>   <span class="mi">486</span><span class="n">M</span>  <span class="mi">238</span><span class="n">M</span>  <span class="mi">3118254</span> <span class="n">root</span>        <span class="mi">1</span><span class="n">h48</span><span class="p">:</span><span class="mi">12</span> <span class="mi">21</span>    <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="n">kube</span><span class="o">-</span><span class="n">apiserver</span> <span class="o">--</span><span class="n">advertise</span><span class="o">-</span><span class="n">address</span><span class="o">=</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">1.10</span> <span class="o">--</span><span class="n">allow</span><span class="o">-</span><span class="n">privilege</span>
+<span class="n">veth107edcc</span>                <span class="mi">0</span><span class="n">b</span>     <span class="mi">0</span><span class="n">b</span>   <span class="mf">0.7</span>    <span class="mf">1.3</span>   <span class="mf">10.1</span><span class="n">G</span> <span class="mf">47.8</span><span class="n">M</span> <span class="mi">3118849</span> <span class="n">root</span>          <span class="mi">50</span><span class="p">:</span><span class="mi">27</span> <span class="mi">21</span>    <span class="mi">0</span> <span class="n">S</span> <span class="mi">169</span><span class="n">K</span> <span class="mi">13</span><span class="n">K</span>  <span class="n">etcd</span> <span class="o">--</span><span class="n">advertise</span><span class="o">-</span><span class="n">client</span><span class="o">-</span><span class="n">urls</span><span class="o">=</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">1.10</span><span class="p">:</span><span class="mi">2379</span> <span class="o">--</span><span class="n">cert</span><span class="o">-</span><span class="n">fil</span>
+<span class="n">vethaeb1327</span>                <span class="mi">0</span><span class="n">b</span>     <span class="mi">0</span><span class="n">b</span>   <span class="mf">0.3</span>    <span class="mf">0.2</span>   <span class="mi">140</span><span class="n">M</span>  <span class="mf">9.44</span><span class="n">M</span> <span class="mi">3167493</span> <span class="n">root</span>          <span class="mi">12</span><span class="p">:</span><span class="mi">04</span> <span class="mi">10</span>    <span class="mi">0</span> <span class="n">S</span> <span class="mi">346</span><span class="n">K</span> <span class="mi">0</span>    <span class="o">//</span><span class="n">coredns</span> <span class="o">-</span><span class="n">conf</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">coredns</span><span class="o">/</span><span class="n">Corefile</span>
+<span class="n">vethe228162f</span>              <span class="mi">1</span><span class="n">Kb</span>    <span class="mi">1</span><span class="n">Kb</span>   <span class="mf">0.3</span>    <span class="mf">0.2</span>   <span class="mf">46.5</span><span class="n">M</span> <span class="mf">9.05</span><span class="n">M</span> <span class="mi">3860464</span> <span class="n">root</span>           <span class="mi">0</span><span class="p">:</span><span class="mi">07</span> <span class="mi">1</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">systemd</span><span class="o">/</span><span class="n">systemd</span><span class="o">-</span><span class="n">journald</span>
+                                       <span class="mf">0.3</span>    <span class="mf">0.2</span>   <span class="mi">140</span><span class="n">M</span>  <span class="mf">8.62</span><span class="n">M</span> <span class="mi">3167065</span> <span class="n">root</span>          <span class="mi">12</span><span class="p">:</span><span class="mi">15</span> <span class="mi">10</span>    <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">//</span><span class="n">coredns</span> <span class="o">-</span><span class="n">conf</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">coredns</span><span class="o">/</span><span class="n">Corefile</span>
+<span class="n">TCP</span> <span class="n">CONNECTIONS</span>                        <span class="mf">0.0</span>    <span class="mf">0.9</span>   <span class="mf">1.13</span><span class="n">G</span> <span class="mf">35.3</span><span class="n">M</span>  <span class="mi">156209</span> <span class="n">root</span>           <span class="mi">8</span><span class="p">:</span><span class="mi">15</span> <span class="mi">30</span>    <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">containerd</span>
+<span class="n">Listen</span>                            <span class="mi">16</span>   <span class="mf">0.0</span>    <span class="mf">0.8</span>   <span class="mi">623</span><span class="n">M</span>  <span class="mf">31.8</span><span class="n">M</span> <span class="mi">2656039</span> <span class="n">root</span>           <span class="mi">0</span><span class="p">:</span><span class="mi">00</span> <span class="mi">7</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="n">docker</span> <span class="o">-</span><span class="n">H</span> <span class="mf">159.255</span><span class="o">.</span><span class="mf">180.10</span> <span class="n">ps</span> <span class="o">-</span><span class="n">a</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">trunc</span>
+<span class="n">Initiated</span>                          <span class="mi">0</span>   <span class="mf">0.0</span>    <span class="mf">0.5</span>   <span class="mi">415</span><span class="n">M</span>  <span class="mf">18.0</span><span class="n">M</span>    <span class="mi">5021</span> <span class="n">root</span>           <span class="mi">2</span><span class="p">:</span><span class="mi">36</span> <span class="mi">3</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">5</span><span class="n">K</span>   <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">rsyslogd</span> <span class="o">-</span><span class="n">n</span>
+<span class="n">Established</span>                      <span class="mi">156</span>   <span class="mf">0.0</span>    <span class="mf">0.4</span>   <span class="mi">117</span><span class="n">M</span>  <span class="mf">13.7</span><span class="n">M</span> <span class="mi">2665945</span> <span class="n">root</span>           <span class="mi">2</span><span class="p">:</span><span class="mi">16</span> <span class="mi">7</span>     <span class="mi">0</span> <span class="n">S</span> <span class="mi">189</span><span class="n">K</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">kinsing</span>
+<span class="n">Terminated</span>                         <span class="mi">0</span>   <span class="mf">0.0</span>    <span class="mf">0.3</span>   <span class="mi">560</span><span class="n">M</span>  <span class="mf">10.9</span><span class="n">M</span>    <span class="mi">4725</span> <span class="n">root</span>           <span class="mi">2</span><span class="p">:</span><span class="mi">56</span> <span class="mi">5</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python2</span> <span class="o">-</span><span class="n">Es</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">tuned</span> <span class="o">-</span><span class="n">l</span> <span class="o">-</span><span class="n">P</span>
+<span class="n">Tracked</span>                 <span class="mi">14922</span><span class="o">/</span><span class="mi">131072</span>   <span class="mf">0.0</span>    <span class="mf">0.2</span>   <span class="mi">598</span><span class="n">M</span>  <span class="mf">9.02</span><span class="n">M</span>    <span class="mi">2762</span> <span class="n">polkitd</span>        <span class="mi">1</span><span class="p">:</span><span class="mi">04</span> <span class="mi">7</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">polkit</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">polkitd</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">debug</span>
+                                       <span class="mf">0.0</span>    <span class="mf">0.2</span>   <span class="mi">121</span><span class="n">M</span>  <span class="mf">8.95</span><span class="n">M</span> <span class="mi">2477499</span> <span class="n">root</span>           <span class="mi">0</span><span class="p">:</span><span class="mi">00</span> <span class="mi">1</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">-</span><span class="n">bash</span>
+<span class="n">DISK</span> <span class="n">I</span><span class="o">/</span><span class="n">O</span>                 <span class="n">R</span><span class="o">/</span><span class="n">s</span>    <span class="n">W</span><span class="o">/</span><span class="n">s</span>    <span class="mf">0.0</span>    <span class="mf">0.2</span>   <span class="mi">121</span><span class="n">M</span>  <span class="mf">8.95</span><span class="n">M</span> <span class="mi">3216944</span> <span class="n">root</span>           <span class="mi">1</span><span class="p">:</span><span class="mi">43</span> <span class="mi">8</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">//</span><span class="n">portainer</span>
+<span class="n">sr0</span>                         <span class="mi">0</span>      <span class="mi">0</span>   <span class="mf">0.0</span>    <span class="mf">0.2</span>   <span class="mi">137</span><span class="n">M</span>  <span class="mf">8.92</span><span class="n">M</span> <span class="mi">3166958</span> <span class="n">root</span>           <span class="mi">5</span><span class="p">:</span><span class="mi">58</span> <span class="mi">8</span>     <span class="mi">0</span> <span class="n">S</span>   <span class="mi">3</span><span class="n">M</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">kube</span><span class="o">-</span><span class="n">proxy</span> <span class="o">--</span><span class="n">config</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">kube</span><span class="o">-</span><span class="n">proxy</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">con</span>
+<span class="n">sr1</span>                         <span class="mi">0</span>      <span class="mi">0</span>   <span class="mf">0.0</span>    <span class="mf">0.2</span>   <span class="mi">261</span><span class="n">M</span>  <span class="mf">8.03</span><span class="n">M</span> <span class="mi">2670458</span> <span class="n">root</span>           <span class="mi">3</span><span class="p">:</span><span class="mi">24</span> <span class="mi">12</span>    <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="n">flanneld</span> <span class="o">--</span><span class="n">ip</span><span class="o">-</span><span class="n">masq</span> <span class="o">--</span><span class="n">kube</span><span class="o">-</span><span class="n">subnet</span><span class="o">-</span><span class="n">mgr</span>
+<span class="n">vda</span>                     <span class="mf">2.86</span><span class="n">M</span>    <span class="mi">22</span><span class="n">K</span>   <span class="mf">0.0</span>    <span class="mf">0.2</span>   <span class="mf">74.5</span><span class="n">M</span> <span class="mf">6.39</span><span class="n">M</span>  <span class="mi">566323</span> <span class="n">root</span>           <span class="mi">9</span><span class="p">:</span><span class="mi">01</span> <span class="mi">9</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">lvmetad</span>
+<span class="n">vda1</span>                    <span class="mf">2.86</span><span class="n">M</span>    <span class="mi">22</span><span class="n">K</span>   <span class="mf">0.0</span>    <span class="mf">0.1</span>   <span class="mi">110</span><span class="n">M</span>  <span class="mf">4.23</span><span class="n">M</span> <span class="mi">2667602</span> <span class="n">root</span>           <span class="mi">0</span><span class="p">:</span><span class="mi">00</span> <span class="mi">1</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="n">sshd</span><span class="p">:</span> <span class="p">[</span><span class="n">accepted</span><span class="p">]</span>
+                                       <span class="mf">0.0</span>    <span class="mf">0.1</span>   <span class="mi">105</span><span class="n">M</span>  <span class="mf">3.02</span><span class="n">M</span> <span class="mi">3166776</span> <span class="n">root</span>           <span class="mi">0</span><span class="p">:</span><span class="mi">08</span> <span class="mi">10</span>    <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="n">containerd</span><span class="o">-</span><span class="n">shim</span> <span class="o">-</span><span class="n">namespace</span> <span class="n">moby</span> <span class="o">-</span><span class="n">workdir</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">containerd</span><span class="o">/</span><span class="n">io</span><span class="o">.</span><span class="n">c</span>
+<span class="n">FILE</span> <span class="n">SYS</span>                 <span class="n">Used</span>  <span class="n">Total</span>   <span class="mf">0.0</span>    <span class="mf">0.1</span>   <span class="mi">123</span><span class="n">M</span>  <span class="mf">2.65</span><span class="n">M</span>       <span class="mi">1</span> <span class="n">root</span>           <span class="mi">8</span><span class="p">:</span><span class="mi">39</span> <span class="mi">1</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">systemd</span><span class="o">/</span><span class="n">systemd</span> <span class="o">--</span><span class="n">system</span> <span class="o">--</span><span class="n">deserialize</span> <span class="mi">15</span>
+<span class="o">/</span> <span class="p">(</span><span class="n">vda1</span><span class="p">)</span>                <span class="mf">4.45</span><span class="n">G</span>  <span class="mf">39.2</span><span class="n">G</span>   <span class="mf">0.0</span>    <span class="mf">0.0</span>   <span class="mi">151</span><span class="n">M</span>  <span class="mf">1.44</span><span class="n">M</span> <span class="mi">2474275</span> <span class="n">root</span>           <span class="mi">0</span><span class="p">:</span><span class="mi">00</span> <span class="mi">1</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="mi">0</span>
+                                       <span class="mf">0.0</span>    <span class="mf">0.0</span>   <span class="mi">105</span><span class="n">M</span>  <span class="mf">1.37</span><span class="n">M</span> <span class="mi">3166814</span> <span class="n">root</span>           <span class="mi">0</span><span class="p">:</span><span class="mi">07</span> <span class="mi">10</span>    <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="n">containerd</span><span class="o">-</span><span class="n">shim</span> <span class="o">-</span><span class="n">namespace</span> <span class="n">moby</span> <span class="o">-</span><span class="n">workdir</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">containerd</span><span class="o">/</span><span class="n">io</span><span class="o">.</span><span class="n">c</span>
+                                       <span class="mf">0.0</span>    <span class="mf">0.0</span>   <span class="mf">57.0</span><span class="n">M</span> <span class="mf">1.37</span><span class="n">M</span>    <span class="mi">2763</span> <span class="n">dbus</span>           <span class="mi">3</span><span class="p">:</span><span class="mi">01</span> <span class="mi">1</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">dbus</span><span class="o">-</span><span class="n">daemon</span> <span class="o">--</span><span class="n">system</span> <span class="o">--</span><span class="n">address</span><span class="o">=</span><span class="n">systemd</span><span class="p">:</span> <span class="o">--</span><span class="n">nofork</span> <span class="o">--</span><span class="n">nopid</span>
+                                       <span class="mf">0.0</span>    <span class="mf">0.0</span>   <span class="mf">26.0</span><span class="n">M</span> <span class="mf">1.23</span><span class="n">M</span>    <span class="mi">2760</span> <span class="n">root</span>           <span class="mi">1</span><span class="p">:</span><span class="mi">21</span> <span class="mi">1</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">systemd</span><span class="o">/</span><span class="n">systemd</span><span class="o">-</span><span class="n">logind</span>
+                                       <span class="mf">0.0</span>    <span class="mf">0.0</span>   <span class="mi">110</span><span class="n">M</span>  <span class="mf">1.21</span><span class="n">M</span>  <span class="mi">279077</span> <span class="n">root</span>           <span class="mi">1</span><span class="p">:</span><span class="mi">05</span> <span class="mi">1</span>     <span class="mi">0</span> <span class="n">S</span>    <span class="mi">0</span> <span class="mi">0</span>    <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">sshd</span> <span class="o">-</span><span class="n">D</span>
+</pre></div>
+</div>
+<p>如果我们安装了Bottle这个web框架，还能够通过web浏览器显示和命令行终端相同的监控界面。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@k8s</span><span class="o">-</span><span class="n">master</span> <span class="o">~</span><span class="p">]</span><span class="c1"># pip install Bottle</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@k8s</span><span class="o">-</span><span class="n">master</span> <span class="o">~</span><span class="p">]</span><span class="c1"># glances -w</span>
+<span class="n">Glances</span> <span class="n">Web</span> <span class="n">User</span> <span class="n">Interface</span> <span class="n">started</span> <span class="n">on</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">61208</span><span class="o">/</span>
+</pre></div>
+</div>
+<img alt="../../_images/jk_glances_py001.png" src="../../_images/jk_glances_py001.png" />
+<p>glances还支持将采集的数据导人到其他服务中心,包括</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>InfluxDB,Cassandra,CouchDB,OpenTSDB,Prometheus,StatsD,ElasticSearch,RabbitMQ/ActiveMQ,ZeroMQ,Kafka和Riemann。
+</pre></div>
+</div>
+</section>
+</section>
+<section id="pythonlinux">
+<h2><a class="toc-backref" href="#id40"><span class="section-number">19.8.13. </span>使用Python监控Linux</a><a class="headerlink" href="#pythonlinux" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/20 14:06</span>
+<span class="c1"># filename: sample01.py</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="n">Disk</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Disk&#39;</span><span class="p">,</span> <span class="s1">&#39; major_number minor_number device_name&#39;</span>
+                          <span class="s1">&#39; read_count read_merged_count read_sections&#39;</span>
+                          <span class="s1">&#39; time_spent_reading write_count write_merged_count&#39;</span>
+                          <span class="s1">&#39; write_sections time_spent_write io_request&#39;</span>
+                          <span class="s1">&#39; time_spent_doing_io weighted_time_spent_doing_io&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_disk_info</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    从/proc/diskstats中读取磁盘的IO信息</span>
+<span class="sd">    cat /proc/diskstats</span>
+<span class="sd">    253       0 vda 371112865 1361738 48576597402 2709064336 13868406 4698463 234200920 77805203 0 81962145 2378917941</span>
+<span class="sd">    :param device:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/proc/diskstats&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">device</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Disk</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;device (</span><span class="si">{0}</span><span class="s2">) not found !&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">disk_info</span> <span class="o">=</span> <span class="n">get_disk_info</span><span class="p">(</span><span class="s2">&quot;vdc&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">disk_info</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;磁盘写次数: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">disk_info</span><span class="o">.</span><span class="n">write_count</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;磁盘写字节数: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">disk_info</span><span class="o">.</span><span class="n">write_sections</span> <span class="o">*</span> <span class="mi">512</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;磁盘写延迟: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">disk_info</span><span class="o">.</span><span class="n">time_spent_write</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.Saltstack%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8.html" class="btn btn-neutral float-left" title="19.7. Saltstack安装使用入门（自己总结）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.Supervisor%E5%9C%A8Devops%E5%B7%A5%E4%BD%9C%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8.html" class="btn btn-neutral float-right" title="19.9. Supervisor在Devops工作中的应用" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

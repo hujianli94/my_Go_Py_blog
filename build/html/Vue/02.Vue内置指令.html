@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Vue内置指令 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Vue实例核心选项" href="03.Vue%E5%AE%9E%E4%BE%8B%E6%A0%B8%E5%BF%83%E9%80%89%E9%A1%B9.html" />
+    <link rel="prev" title="1. Vue基础入门" href="01.Vue%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js企业开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.Vue%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8.html">1. Vue基础入门</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2. Vue内置指令</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">2.1. 1.基本指令</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#v-textv-html">2.1.1. 1.1 v-text与v-html</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#v-bind">2.1.2. 1.2 v-bind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#v-once">2.1.3. 1.3 v-once</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#v-cloak">2.1.4. 1.4 v-cloak</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#v-pre">2.1.5. 1.5 v-pre</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">2.2. 2 条件渲染</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#v-show">2.2.1. 2.1 v-show</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#v-ifv-else-if">2.2.2. 2.2 v-if与v-else-if</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#v-ifv-show">2.2.3. 2.3 v-if和v-show的区别</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">2.3. 3 列表渲染</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">2.3.1. 3.1 遍历数组</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">2.3.2. 3.2 遍历对象</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">2.3.3. 3.3 遍历整数</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">2.4. 4 维护状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">2.5. 5 数组更新检测</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">2.5.1. 1.变更方法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">2.5.2. 2.替换数组</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">2.5.3. 3.对象变更检测注意事项</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#template-v-for">2.5.4. 4.在<code class="docutils literal notranslate"><span class="pre">&lt;template&gt;</span></code>上使用v-for</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#v-for-v-if">2.5.5. 5. <code class="docutils literal notranslate"><span class="pre">v-for</span></code> 与 <code class="docutils literal notranslate"><span class="pre">v-if</span></code> 一同使用</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">2.6. 6 事件处理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id13">2.6.1. 6.1 监听事件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">2.6.2. 6.2 事件修饰符</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">2.6.3. 6.3 按键修饰符</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">2.6.4. 6.4 系统修饰键</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">2.6.5. 6.5 综合案例-处理用户注册信息</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">2.7. 7.表单输入绑定</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id19">2.7.1. 7.1 修饰符</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id20">2.7.2. 7.2 参考</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03.Vue%E5%AE%9E%E4%BE%8B%E6%A0%B8%E5%BF%83%E9%80%89%E9%A1%B9.html">3. Vue实例核心选项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.Vue%E5%B7%A5%E7%A8%8B%E5%8C%96%E9%A1%B9%E7%9B%AE.html">4. Vue工程化项目</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Vue%E7%BB%84%E4%BB%B6.html">5. 深入了解Vue组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue-Router%E8%B7%AF%E7%94%B1.html">6. Vue-Router路由</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vuex%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86.html">7. Vuex状态管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue%E7%9A%84%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82.html">8. Vue的异步请求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%B8%B2%E6%9F%93.html">9. 服务器端渲染</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue3%E6%96%B0%E7%89%B9%E6%80%A7%E8%AF%A6%E8%AE%B2.html">10. Vue3新特性详讲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.TypeScript%E5%85%A5%E9%97%A8.html">11. TypeScript入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.Vite.html">12. Vite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.Vue3%E5%AE%9E%E8%B7%B5.html">13. Vue3 实践</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js企业开发实战</a> &raquo;</li>
+      <li><span class="section-number">2. </span>Vue内置指令</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue/02.Vue内置指令.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vue" id="id21">Vue内置指令</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id22">1.基本指令</a></p>
+<ul>
+<li><p><a class="reference internal" href="#v-textv-html" id="id23">1.1 v-text与v-html</a></p></li>
+<li><p><a class="reference internal" href="#v-bind" id="id24">1.2 v-bind</a></p></li>
+<li><p><a class="reference internal" href="#v-once" id="id25">1.3 v-once</a></p></li>
+<li><p><a class="reference internal" href="#v-cloak" id="id26">1.4 v-cloak</a></p></li>
+<li><p><a class="reference internal" href="#v-pre" id="id27">1.5 v-pre</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id2" id="id28">2 条件渲染</a></p>
+<ul>
+<li><p><a class="reference internal" href="#v-show" id="id29">2.1 v-show</a></p></li>
+<li><p><a class="reference internal" href="#v-ifv-else-if" id="id30">2.2 v-if与v-else-if</a></p></li>
+<li><p><a class="reference internal" href="#v-ifv-show" id="id31">2.3 v-if和v-show的区别</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id3" id="id32">3 列表渲染</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id33">3.1 遍历数组</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id34">3.2 遍历对象</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id35">3.3 遍历整数</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id7" id="id36">4 维护状态</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id37">5 数组更新检测</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id9" id="id38">1.变更方法</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id39">2.替换数组</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id40">3.对象变更检测注意事项</a></p></li>
+<li><p><a class="reference internal" href="#template-v-for" id="id41">4.在<code class="docutils literal notranslate"><span class="pre">&lt;template&gt;</span></code>上使用v-for</a></p></li>
+<li><p><a class="reference internal" href="#v-for-v-if" id="id42">5. <code class="docutils literal notranslate"><span class="pre">v-for</span></code> 与 <code class="docutils literal notranslate"><span class="pre">v-if</span></code> 一同使用</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id12" id="id43">6 事件处理</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id13" id="id44">6.1 监听事件</a></p></li>
+<li><p><a class="reference internal" href="#id14" id="id45">6.2 事件修饰符</a></p></li>
+<li><p><a class="reference internal" href="#id15" id="id46">6.3 按键修饰符</a></p></li>
+<li><p><a class="reference internal" href="#id16" id="id47">6.4 系统修饰键</a></p></li>
+<li><p><a class="reference internal" href="#id17" id="id48">6.5 综合案例-处理用户注册信息</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id18" id="id49">7.表单输入绑定</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id19" id="id50">7.1 修饰符</a></p></li>
+<li><p><a class="reference internal" href="#id20" id="id51">7.2 参考</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="vue">
+<h1><a class="toc-backref" href="#id21"><span class="section-number">2. </span>Vue内置指令</a><a class="headerlink" href="#vue" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">2.1. </span>1.基本指令</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<section id="v-textv-html">
+<h3><a class="toc-backref" href="#id23"><span class="section-number">2.1.1. </span>1.1 v-text与v-html</a><a class="headerlink" href="#v-textv-html" title="Permalink to this headline">¶</a></h3>
+<p>v-text与v-html指令都可以用来更新页面元素的内容，但是二者也有不同点，v-text输出的数据是以字符串形式显示的，而v-html不仅可以输出字符串形式的数据，而且可以渲染字符串中的HTML标签。</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="c">&lt;!-- 基础指令 --&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-text</span><span class="o">=</span><span class="s">&quot;message&quot;</span><span class="p">&gt;</span>{{message}}<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">v-html</span><span class="o">=</span><span class="s">&quot;message&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+            <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;&lt;a href=&quot;http://cn.vuejs.org&quot;&gt;vue.js官网&lt;/a&gt;&#39;</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="v-bind">
+<h3><a class="toc-backref" href="#id24"><span class="section-number">2.1.2. </span>1.2 v-bind</a><a class="headerlink" href="#v-bind" title="Permalink to this headline">¶</a></h3>
+<p>v-bind可以用来绑定标签的属性，例如：标签的srcs属性，标签的title属性等。使用v-bind绑定的属性值应该为一个JavaScript的变量，或者是JavaScript表达式。</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="c">&lt;!-- v-bind指令 --&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+                <span class="c">&lt;!-- &lt;a href=&quot;https://cn.vuejs.org/&quot; v-bind:title=&quot;titleText&quot;&gt;Vue.js官网&lt;/a&gt; --&gt;</span>
+                <span class="c">&lt;!-- 缩写 --&gt;</span>
+                <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://cn.vuejs.org/&quot;</span> <span class="na">:title</span><span class="o">=</span><span class="s">&quot;titleText&quot;</span><span class="p">&gt;</span>Vue.js官网<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+            <span class="c">&lt;!-- &lt;/div&gt; --&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+            <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">titleText</span><span class="o">:</span> <span class="s2">&quot;Vue.js是目前最流行的前端框架之一&quot;</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="v-once">
+<h3><a class="toc-backref" href="#id25"><span class="section-number">2.1.3. </span>1.3 v-once</a><a class="headerlink" href="#v-once" title="Permalink to this headline">¶</a></h3>
+<p>v-once指令只渲染元素和组件一次，随后的渲染，如果使用了此指令的元素、组件及其所有子节点，则都会当作静态内容并跳过。这个特性可以用于优化更新性能。index.html文件代码如下：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="c">&lt;!-- v-once指令 --&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;type&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;message&quot;</span> <span class="p">/&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-once</span><span class="p">&gt;</span>只渲染一次：{{message}}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>可以改变：{{message}}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+            <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;hello&quot;</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="v-cloak">
+<h3><a class="toc-backref" href="#id26"><span class="section-number">2.1.4. </span>1.4 v-cloak</a><a class="headerlink" href="#v-cloak" title="Permalink to this headline">¶</a></h3>
+<p>v-cloak指令将会保持在DOM元素上，直到关联实例结束编译后自动移除。v-cloak指令的使用场景非常有限，常用于解决网络较慢时数据的加载问题。用户在访问Vue.js实现的网站时，如果网络延迟，网页还在加载Vue.js，便会导致Vue来不及渲染，这时页面就会显示出Vue源代码，我们就可以使用v-cloak指令来解决这一问题。</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+            <span class="o">[</span><span class="nt">v-cloak</span><span class="o">]</span> <span class="p">{</span>
+                <span class="k">display</span><span class="p">:</span> <span class="kc">none</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span> <span class="na">v-cloak</span><span class="p">&gt;</span>
+            {{message}}
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+            <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s2">&quot;#app&quot;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;hello world&quot;</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="v-pre">
+<h3><a class="toc-backref" href="#id27"><span class="section-number">2.1.5. </span>1.5 v-pre</a><a class="headerlink" href="#v-pre" title="Permalink to this headline">¶</a></h3>
+<p>v-pre指令会跳过这个元素和它的子元素的编译过程，所以可以用来显示原始Mustache标签。跳过大量没有指令的节点会加快编译，代码如下：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">v-pre</span><span class="p">&gt;</span>{{ this will not be compiled }}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+            <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id28"><span class="section-number">2.2. </span>2 条件渲染</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<section id="v-show">
+<h3><a class="toc-backref" href="#id29"><span class="section-number">2.2.1. </span>2.1 v-show</a><a class="headerlink" href="#v-show" title="Permalink to this headline">¶</a></h3>
+<p>v-show指令可以根据条件展示元素，带有v-show的元素始终会被渲染并保留在DOM中，v-show只是通过简单地切换元素CSS属性display：none实现的。例如，将上面的代码v-show的值设置为false，代码如下：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">h1</span> <span class="na">v-show</span><span class="o">=</span><span class="s">&quot;true&quot;</span><span class="p">&gt;</span>Hello!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">h1</span> <span class="na">v-show</span><span class="o">=</span><span class="s">&quot;false&quot;</span><span class="p">&gt;</span>Hello!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span><span class="p">&gt;</span>
+            <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;#app&#39;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="v-ifv-else-if">
+<h3><a class="toc-backref" href="#id30"><span class="section-number">2.2.2. </span>2.2 v-if与v-else-if</a><a class="headerlink" href="#v-ifv-else-if" title="Permalink to this headline">¶</a></h3>
+<p>v-if和v-show都可以实现条件渲染，但是v-if与v-show不同的是，v-if不是通过切换CSS属性实现显示与隐藏的，当v-if的值为false时，<strong>带有v-if的DOM元素就不会被渲染出来。</strong></p>
+<p>v-if和v-show最大的不同就是，v-if不仅可以单独使用，还可以和v-else-if、v-else指令配合使用，类似于JavaScript中的if-else、if-else-if语句。</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="c">&lt;!-- v-if --&gt;</span>
+            <span class="p">&lt;</span><span class="nt">h2</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;ok&quot;</span><span class="p">&gt;</span>Vue.js<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">h2</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;!ok&quot;</span><span class="p">&gt;</span>React.js<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+
+            <span class="c">&lt;!-- v-else-if --&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;value === &#39;A&#39;&quot;</span><span class="p">&gt;</span>A<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-else-if</span><span class="o">=</span><span class="s">&quot;value === &#39;B&#39;&quot;</span><span class="p">&gt;</span>B<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-else</span><span class="p">&gt;</span>Not A/B<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+            <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s2">&quot;#app&quot;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">ok</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;B&quot;</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="v-ifv-show">
+<h3><a class="toc-backref" href="#id31"><span class="section-number">2.2.3. </span>2.3 v-if和v-show的区别</a><a class="headerlink" href="#v-ifv-show" title="Permalink to this headline">¶</a></h3>
+<p>v-if与v-show指令都可以根据表达式的值来控制元素的显示与隐藏状态。</p>
+<p>v-if相比于v-show，更“真实”地实现了元素的渲染与移除，但是在频繁的切换过程中，使DOM元素不断地在内存中重建与销毁，这样便增加了内存的开销。</p>
+<p>v-show是更简单的一种切换显示与隐藏状态的操作，只是修改了CSS属性中display的值，无论显示与隐藏，DOM元素始终被渲染。</p>
+<p><strong>综上所述，如果需要在页面中频繁地切换某个元素的显示状态，推荐使用v-show指令；如果在运行时条件很少改变，则推荐使用v-if指令。</strong></p>
+<p>在&lt;template&gt;元素上使用v-if条件渲染分组</p>
+<p>因为v-if是一个指令，所以必须将它添加到一个元素上。但是如果想切换多个元素应该如何操作呢？此时可以把一个元素当作不可见的包裹元素，并在上面使用v-if。最终的渲染结果将不包含元素。</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">template</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;value&quot;</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Vue教程<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Vue教程11111<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;</span>Vue教程2222<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+            <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s2">&quot;#app&quot;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">value</span><span class="o">:</span> <span class="kc">true</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id32"><span class="section-number">2.3. </span>3 列表渲染</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>遍历元素</p>
+<p>当遍历一个数组或枚举一个对象进行迭代循环展示时，会用到列表渲染的指令v-for。v-for指令类似于JavaScript中的for循环，在Vue中提供了v-for指令用来循环数组。</p>
+<section id="id4">
+<h3><a class="toc-backref" href="#id33"><span class="section-number">2.3.1. </span>3.1 遍历数组</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- 遍历数组 --&gt;
+&lt;p v-for=&quot;(item,index) in list&quot;&gt;
+{{index}}. {{item}}
+&lt;/p&gt;
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id34"><span class="section-number">2.3.2. </span>3.2 遍历对象</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- 遍历对象 --&gt;
+&lt;p v-for=&quot;(value,key) in student&quot;&gt;
+{{key}}：{{value}}
+&lt;/p&gt;
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id35"><span class="section-number">2.3.3. </span>3.3 遍历整数</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- 遍历整数 --&gt;
+&lt;p v-for=&quot;i in 5&quot;&gt;{{i}}&lt;/p&gt;
+</pre></div>
+</div>
+<p>完整示例</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="c">&lt;!-- 遍历数组 --&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;(item,index) in list&quot;</span><span class="p">&gt;</span>
+                {{index}}. {{item}}
+            <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+            <span class="c">&lt;!-- 遍历对象 --&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;(value,key) in student&quot;</span><span class="p">&gt;</span>
+                {{key}}：{{value}}
+            <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+            <span class="c">&lt;!-- 遍历整数 --&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;i in 5&quot;</span><span class="p">&gt;</span>{{i}}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+            <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s2">&quot;#app&quot;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">list</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span> <span class="s1">&#39;javascript&#39;</span><span class="p">,</span> <span class="s1">&#39;vue&#39;</span><span class="p">],</span>
+                    <span class="nx">student</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="nx">id</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
+                        <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;韩梅梅&#39;</span><span class="p">,</span>
+                        <span class="nx">age</span><span class="o">:</span> <span class="mf">18</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<img alt="../_images/image-20220823095742703.png" src="../_images/image-20220823095742703.png" />
+<img alt="../_images/image-20220823100022210.png" src="../_images/image-20220823100022210.png" />
+</section>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id36"><span class="section-number">2.4. </span>4 维护状态</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>当Vue正在更新使用v-for渲染的元素列表时，它默认使用“就地更新”的策略。</p>
+<p>如果数据项的顺序被改变，Vue将不会移动DOM元素来匹配数据项的顺序，而是就地更新每个元素，并且确保它们在每个索引位置被正确渲染。</p>
+<p>这个默认的模式是高效的，但是只适用于不依赖子组件状态或临时DOM状态（例如：表单输入值）的列表渲染输出。</p>
+<p>为了给Vue一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有元素，需要为每项提供一个唯一key属性，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">p</span> <span class="n">v</span><span class="o">-</span><span class="k">for</span><span class="o">=</span><span class="s2">&quot;item in ltems&quot;</span> <span class="n">v</span><span class="o">-</span><span class="n">bind</span><span class="p">:</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;item.id&quot;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>注意:
+不要使用对象或数组之类的非基本类型值作为v-for的key，而要使用字符串或数值类型的值。</p>
+</div></blockquote>
+<p>示例</p>
+<p>不使用key属性示例</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>不使用key属性<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>名称:<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;names&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>产地:<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;citys&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>价格:<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">v-model</span><span class="o">=</span><span class="s">&quot;prices&quot;</span><span class="p">&gt;&lt;</span><span class="nt">button</span> <span class="na">v-on:click</span><span class="o">=</span><span class="s">&quot;add()&quot;</span><span class="p">&gt;</span>添加<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">hr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;item in nameList&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;checkbox&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>名称:{{item.name}}—产地:{{item.city}}—价格:{{item.price}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="c">&lt;!--引入vue文件--&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://unpkg.com/vue@next&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="c1">//创建一个应用程序实例</span>
+    <span class="kd">const</span> <span class="nx">vm</span><span class="o">=</span> <span class="nx">Vue</span><span class="p">.</span><span class="nx">createApp</span><span class="p">({</span>
+        <span class="nx">data</span><span class="p">(){</span>
+          <span class="k">return</span><span class="p">{</span>
+            <span class="nx">names</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nx">citys</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nx">prices</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nx">nameList</span><span class="o">:</span><span class="p">[</span>
+                <span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;洗衣机&#39;</span><span class="p">,</span><span class="nx">city</span><span class="o">:</span><span class="s1">&#39;北京&#39;</span><span class="p">,</span><span class="nx">price</span><span class="o">:</span><span class="s1">&#39;6800元&#39;</span><span class="p">},</span>
+                <span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;冰箱&#39;</span><span class="p">,</span><span class="nx">city</span><span class="o">:</span><span class="s1">&#39;上海&#39;</span><span class="p">,</span><span class="nx">price</span><span class="o">:</span><span class="s1">&#39;8900元&#39;</span><span class="p">},</span>
+                <span class="p">{</span><span class="nx">name</span><span class="o">:</span><span class="s1">&#39;空调&#39;</span><span class="p">,</span><span class="nx">city</span><span class="o">:</span><span class="s1">&#39;广州&#39;</span><span class="p">,</span><span class="nx">price</span><span class="o">:</span><span class="s1">&#39;6800元&#39;</span><span class="p">}</span>
+            <span class="p">]</span>
+           <span class="p">}</span>
+         <span class="p">},</span>
+        <span class="nx">methods</span><span class="o">:</span><span class="p">{</span>
+            <span class="nx">add</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">nameList</span><span class="p">.</span><span class="nx">unshift</span><span class="p">({</span>
+                    <span class="nx">name</span><span class="o">:</span><span class="k">this</span><span class="p">.</span><span class="nx">names</span><span class="p">,</span>
+                    <span class="nx">city</span><span class="o">:</span><span class="k">this</span><span class="p">.</span><span class="nx">citys</span><span class="p">,</span>
+                    <span class="nx">price</span><span class="o">:</span><span class="k">this</span><span class="p">.</span><span class="nx">pricees</span>
+                <span class="p">})</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+     <span class="p">}).</span><span class="nx">mount</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">);</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>为了给Vue一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有元素，需要为每项提供一个唯一key属性。
+修改上面示例，在v-for指令的后面添加key属性。代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div id=&quot;app&quot;&gt;
+    &lt;div&gt;名称:&lt;input type=&quot;text&quot; v-model=&quot;names&quot;&gt;&lt;/div&gt;
+    &lt;div&gt;产地:&lt;input type=&quot;text&quot; v-model=&quot;citys&quot;&gt;&lt;/div&gt;
+    &lt;div&gt;价格:&lt;input type=&quot;text&quot; v-model=&quot;prices&quot;&gt;&lt;button v-on:click=&quot;add()&quot;&gt;添加&lt;/button&gt;&lt;/div&gt;
+    &lt;hr&gt;
+    &lt;p v-for=&quot;item in nameList&quot; v-bind:key=&quot;item.name&quot;&gt;
+    &lt;input type=&quot;checkbox&quot;&gt;
+    &lt;span&gt;名称:{{item.name}}—产地:{{item.city}}—价格:{{item.price}}&lt;/span&gt;
+&lt;/p&gt;
+
+&lt;/div&gt;
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id37"><span class="section-number">2.5. </span>5 数组更新检测</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<section id="id9">
+<h3><a class="toc-backref" href="#id38"><span class="section-number">2.5.1. </span>1.变更方法</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>Vue将被侦听的数组的变更方法进行了包裹，所以它们也会触发视图更新。这些被包裹过的方法如下。</p>
+<ol class="arabic simple">
+<li><p>push()：接收任意数量的参数并逐个追加到原数组末尾，返回新数组的长度。</p></li>
+<li><p>pop()：移除数组最后一项，返回被移除的元素。</p></li>
+<li><p>shift()：移除数组的第一项，返回被移除的元素。</p></li>
+<li><p>unshift()：在数组前追加新元素，返回新数组长度。</p></li>
+<li><p>splice()：删除指定索引的元素，并且可以在该索引处添加新元素。</p></li>
+<li><p>sort()：对数组进行排序，默认按字典升序排序，返回排序后的数组。</p></li>
+<li><p>reverse()：用于反转数组的顺序，返回反转后的数组。这些方法类似于JavaScript中操作数组的方法。</p></li>
+</ol>
+<p>这些方法类似于JavaScript中操作数组的方法。index.html文件代码如下：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="c">&lt;!-- 遍历数组 --&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;item in list&quot;</span><span class="p">&gt;</span>{{item}}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s2">&quot;#app&quot;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">list</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span> <span class="s1">&#39;javascript&#39;</span><span class="p">,</span> <span class="s1">&#39;vue&#39;</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+            <span class="nx">vm</span><span class="p">.</span><span class="nx">list</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;jquery&#39;</span><span class="p">);</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id39"><span class="section-number">2.5.2. </span>2.替换数组</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>变更方法，顾名思义，会变更调用这些方法的原始数组。相比之下，也有非变更方法，例如filter()、concat()和slice()。</p>
+<p>它们不会变更原始数组，而是返回一个新数组。当使用非变更方法时，可以用新数组替换旧数组。</p>
+<p>非变更方法如下。</p>
+<ol class="arabic simple">
+<li><p>concat():创建当前数组的副本，然后拼接参数中的数组，返回拼接后的新数组。</p></li>
+<li><p>slice():将数组的索引作为参数，可从已有的数组中返回选定的元素，返回新数组。</p></li>
+<li><p>map():对数组的每一项运行给定函数，返回每次函数调用的结果所组成的数组。</p></li>
+<li><p>filter():对数组的每一项运行给定函数，该函数会返回值为true的项所组成的数组。非变更方法也和JavaScript中的方法类似。</p></li>
+</ol>
+<p>index.html文件代码如下：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">li</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;n in evenNumbers&quot;</span> <span class="na">:key</span><span class="o">=</span><span class="s">&quot;n&quot;</span><span class="p">&gt;</span>{{ n }}<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+         <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s2">&quot;#app&quot;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="nx">numbers</span><span class="o">:</span> <span class="p">[</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">5</span> <span class="p">]</span>
+                <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="nx">computed</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">evenNumbers</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="c1">// return this.numbers.filter(number =&gt; number % 2 === 0)</span>
+                        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">numbers</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">number</span> <span class="p">=&gt;</span> <span class="nx">number</span> <span class="o">&lt;</span> <span class="mf">4</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="p">}</span>
+
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3><a class="toc-backref" href="#id40"><span class="section-number">2.5.3. </span>3.对象变更检测注意事项</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>对于已经创建的实例，Vue不允许动态添加根级别的响应式属性。但是，可以使用Vue.set（object，propertyName，value）方法向嵌套对象添加响应式属性，代码如下：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="c">&lt;!-- 遍历数组 --&gt;</span>
+            {{ studnet.name }} {{ studnet.age }}
+
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span><span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s2">&quot;#app&quot;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">studnet</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;胡建力&#39;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+            <span class="nx">Vue</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">studnet</span><span class="p">,</span><span class="s1">&#39;age&#39;</span><span class="p">,</span><span class="mf">18</span><span class="p">)</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>除了上面的方法，还可以使用<code class="docutils literal notranslate"><span class="pre">vm.$set</span></code>实例方法添加响应式属性，它只是全局Vue.set的别名，代码如下：</p>
+</section>
+<section id="template-v-for">
+<h3><a class="toc-backref" href="#id41"><span class="section-number">2.5.4. </span>4.在<code class="docutils literal notranslate"><span class="pre">&lt;template&gt;</span></code>上使用v-for</a><a class="headerlink" href="#template-v-for" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- Vue 2.x --&gt;
+&lt;template v-for=&quot;item in list&quot;&gt;
+  &lt;div v-if=&quot;item.isVisible&quot; :key=&quot;item.id&quot;&gt;...&lt;/div&gt;
+  &lt;span v-else :key=&quot;item.id&quot;&gt;...&lt;/span&gt;
+&lt;/template&gt;
+
+&lt;!-- Vue 3.x --&gt;
+&lt;template v-for=&quot;item in list&quot; :key=&quot;item.id&quot;&gt;
+  &lt;div v-if=&quot;item.isVisible&quot;&gt;...&lt;/div&gt;
+  &lt;span v-else&gt;...&lt;/span&gt;
+&lt;/template&gt;
+</pre></div>
+</div>
+</section>
+<section id="v-for-v-if">
+<h3><a class="toc-backref" href="#id42"><span class="section-number">2.5.5. </span>5. <code class="docutils literal notranslate"><span class="pre">v-for</span></code> 与 <code class="docutils literal notranslate"><span class="pre">v-if</span></code> 一同使用</a><a class="headerlink" href="#v-for-v-if" title="Permalink to this headline">¶</a></h3>
+<p>当它们处于同一节点，<code class="docutils literal notranslate"><span class="pre">v-if</span></code> 的优先级比 <code class="docutils literal notranslate"><span class="pre">v-for</span></code> 更高，这意味着
+<code class="docutils literal notranslate"><span class="pre">v-if</span></code> 将没有权限访问 <code class="docutils literal notranslate"><span class="pre">v-for</span></code> 里的变量：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="c">&lt;!-- 这将抛出一个错误，因为“todo” property 没有在实例上定义 --&gt;</span>
+<span class="p">&lt;</span><span class="nt">li</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;todo in todos&quot;</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;!todo.isComplete&quot;</span><span class="p">&gt;</span>
+  {{ todo.name }}
+<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>可以把 <code class="docutils literal notranslate"><span class="pre">v-for</span></code> 移动到 <code class="docutils literal notranslate"><span class="pre">&lt;template&gt;</span></code> 标签中来修正：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">template</span> <span class="na">v-for</span><span class="o">=</span><span class="s">&quot;todo in todos&quot;</span> <span class="na">:key</span><span class="o">=</span><span class="s">&quot;todo.name&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span> <span class="na">v-if</span><span class="o">=</span><span class="s">&quot;!todo.isComplete&quot;</span><span class="p">&gt;</span>
+    {{ todo.name }}
+  <span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id12">
+<h2><a class="toc-backref" href="#id43"><span class="section-number">2.6. </span>6 事件处理</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<section id="id13">
+<h3><a class="toc-backref" href="#id44"><span class="section-number">2.6.1. </span>6.1 监听事件</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p>事件是指在浏览器中通过内置的处理器监视特定的条件或用户行为，例如鼠标单击浏览器窗口中的按钮。</p>
+<p>浏览器中内置了大量的事件处理器，当这些事件处理器被触发时，会执行一个绑定在该处理器上的函数，然后执行相应的内容。在Vue中可以使用v-on指令来完成事件函数的绑定。</p>
+<p><code class="docutils literal notranslate"><span class="pre">v-on</span></code> 指令 (通常缩写为 <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> 符号) 来监听DOM事件</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;basic-event&quot;</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">button</span> <span class="nd">@click</span><span class="o">=</span><span class="s2">&quot;counter += 1&quot;</span><span class="o">&gt;</span><span class="n">Add</span> <span class="mi">1</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">The</span> <span class="n">button</span> <span class="n">above</span> <span class="n">has</span> <span class="n">been</span> <span class="n">clicked</span> <span class="p">{{</span> <span class="n">counter</span> <span class="p">}}</span> <span class="n">times</span><span class="o">.&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="nx">Vue</span><span class="p">.</span><span class="nx">createApp</span><span class="p">({</span>
+  <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="nx">counter</span><span class="o">:</span> <span class="mf">0</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}).</span><span class="nx">mount</span><span class="p">(</span><span class="s1">&#39;#basic-event&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在调用事件函数时，我们还可以为事件函数传入参数。</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span> <span class="p">/&gt;</span>
+        <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;js/vue.js&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;app&quot;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">button</span> <span class="na">v-on:click</span><span class="o">=</span><span class="s">&quot;reduct(5)&quot;</span><span class="p">&gt;</span>-<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+            {{ num }}
+            <span class="p">&lt;</span><span class="nt">button</span> <span class="na">v-on:click</span><span class="o">=</span><span class="s">&quot;add(10)&quot;</span><span class="p">&gt;</span>+<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+            <span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+                <span class="nx">el</span><span class="o">:</span> <span class="s2">&quot;#app&quot;</span><span class="p">,</span>
+                <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">num</span><span class="o">:</span> <span class="mf">0</span>
+                <span class="p">},</span>
+                <span class="nx">methods</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">num</span> <span class="o">+=</span><span class="nx">i</span>
+                    <span class="p">},</span>
+                    <span class="nx">reduct</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">i</span><span class="p">){</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">num</span> <span class="o">-=</span><span class="nx">i</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h3><a class="toc-backref" href="#id45"><span class="section-number">2.6.2. </span>6.2 事件修饰符</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p>在事件处理程序中调用event.preventDefault()或event.stopPropagation()是非常常见的需求。</p>
+<p>尽管我们可以在方法中轻松实现这点，但更好的方式是：方法只有纯粹的数据逻辑，而不是去处理DOM事件细节。</p>
+<p>为了解决这个问题，Vue.js为v-on提供了事件修饰符。使用修饰符可以节省很多代码和时间，这样便可以把更多的精力专注于处理程序的业务逻辑。v-on的修饰符是由点开头的指令后缀来表示的，在Vue中事件的修饰符主要有以下几个。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.stop</span></code> 等同于JavaScript中的event.stopPropagation()，阻止事件冒泡。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.prevent</span></code> 等 同 于 JavaScript 中
+的event.preventDefault()，阻止默认事件的发生。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.capture</span></code> 与事件冒泡的方向相反，事件捕获由外到内。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.self</span></code> 只会触发自己范围内的事件。</p></li>
+</ul>
+<p><strong>self修饰符可以理解为跳过冒泡事件和捕获事件</strong>，只有直接作用在该元素上的事件才可以执行。self修饰符会监视事件是否是直接作用在元素上，若不是，则冒泡跳过该元素。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.once</span></code> 只会触发一次。</p></li>
+</ul>
+<p>有时我们需要对元素只执行一次操作，例如社交软件上的点赞操作，可以使用once修饰符来完成。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.passive</span></code> 执行默认行为。</p></li>
+</ul>
+<p>prevent修饰符用于阻止默认行为，例如标签，当单击标签时，默认行为会跳转到对应的链接，如果添加上prevent修饰符，将不会跳转到对应的链接。</p>
+<p>而passive修饰符尤其能够提升移动端的性能。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- 阻止单击事件继续冒泡 --&gt;
+&lt;a @click.stop=&quot;doThis&quot;&gt;&lt;/a&gt;
+
+&lt;!-- 提交事件不再重载页面 --&gt;
+&lt;form @submit.prevent=&quot;onSubmit&quot;&gt;&lt;/form&gt;
+
+&lt;!-- 修饰符可以串联 --&gt;
+&lt;a @click.stop.prevent=&quot;doThat&quot;&gt;&lt;/a&gt;
+
+&lt;!-- 只有修饰符 --&gt;
+&lt;form @submit.prevent&gt;&lt;/form&gt;
+
+&lt;!-- 添加事件监听器时使用事件捕获模式 --&gt;
+&lt;!-- 即内部元素触发的事件先在此处理，然后才交由内部元素进行处理 --&gt;
+&lt;div @click.capture=&quot;doThis&quot;&gt;...&lt;/div&gt;
+
+&lt;!-- 只当在 event.target 是当前元素自身时触发处理函数 --&gt;
+&lt;!-- 即事件不是从内部元素触发的 --&gt;
+</pre></div>
+</div>
+<p>示例代码</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;utf-8&quot; /&gt;
+        &lt;title&gt;&lt;/title&gt;
+        &lt;script src=&quot;js/vue.js&quot; type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+        &lt;style type=&quot;text/css&quot;&gt;
+            /* 设置评论区的样式 */
+            .comment {
+                width: 200px;
+                height: 100px;
+                border: 1px solid #000;
+            }
+
+            /* 设置头像的样式 */
+            .avatar {
+                width: 50px;
+                height: 50px;
+                border: 1px solid #000;
+                border-radius: 50%;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div id=&quot;app&quot;&gt;
+            &lt;!-- 评论内容区 --&gt;
+            &lt;div class=&quot;comment&quot; @click=&quot;clickComment&quot;&gt;
+                &lt;!-- 用户头像 --&gt;
+                &lt;div class=&quot;avatar&quot; @click.stop=&quot;clickAvatar&quot;&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;script&gt;
+            var vm = new Vue({
+                el: &quot;#app&quot;,
+                methods: {
+                    clickComment() {
+                        alert(&#39;评论区被点击了&#39;)
+                    },
+                    clickAvatar() {
+                        alert(&#39;头像被点击了&#39;)
+                    }
+                }
+            })
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+</section>
+<section id="id15">
+<h3><a class="toc-backref" href="#id46"><span class="section-number">2.6.3. </span>6.3 按键修饰符</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<p>在Vue中可以使用以下3种键盘事件：</p>
+<ul class="simple">
+<li><p>keydown：键盘按键按下时触发。</p></li>
+<li><p>keyup：键盘按键抬起时触发。</p></li>
+<li><p>keypress：键盘按键按下抬起间隔期间触发。</p></li>
+</ul>
+<p>在日常的页面交互中，经常会遇到这种需求。例如，用户输入账号密码后按Enter键，以及一个多选筛选条件，通过单击多选框后自动加载符合选中条件的数据。</p>
+<p>在传统的前端开发中，碰到这种类似的需求时，往往需要知道JavaScript中需要监听的按键所对应的keyCode，然后通过判断keyCode得知用户按下了哪个按键，继而执行后续的操作。</p>
+<blockquote>
+<div><p>提示
+keyCode返回keypress事件触发的键值的字符代码或keydown、keyup事件的键的代码。</p>
+</div></blockquote>
+<p>下面来看一个示例，当触发键盘事件时，调用一个方法。在这个示例中，为两个input输入框绑定keyup事件，用键盘在输入框输入内容时触发，每次输入内容都会触发并调用name或password方法。</p>
+<p>触发键盘事件</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;触发键盘事件&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;app&quot;&gt;
+    &lt;label for=&quot;name&quot;&gt;姓名：&lt;/label&gt;
+    &lt;input v-on:keyup=&quot;name&quot; type=&quot;text&quot; id=&quot;name&quot;&gt;
+    &lt;label for=&quot;pass&quot;&gt;密码：&lt;/label&gt;
+    &lt;input v-on:keyup=&quot;password&quot; type=&quot;password&quot; id=&quot;pass&quot;&gt;
+&lt;/div&gt;
+&lt;!--引入vue文件--&gt;
+&lt;script src=&quot;https://unpkg.com/vue@next&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+    //创建一个应用程序实例
+    const vm= Vue.createApp({
+        methods: {
+            name:function(){
+                console.log(&quot;正在输入姓名...&quot;)
+            },
+            password:function(){
+                console.log(&quot;正在输入密码...&quot;)
+            }
+        }
+     //在指定的DOM元素上装载应用程序实例的根组件
+     }).mount(&#39;#app&#39;);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<p>Vue提供了一种便利的方式来实现监听按键事件。</p>
+<p>在监听键盘事件时，经常需要查找常见的按键所对应的keyCode，而Vue为最常用的按键提供了绝大多数常用的按键码的别名：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">enter</span>
+<span class="o">.</span><span class="n">tab</span>
+<span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">捕获</span><span class="s2">&quot;删除&quot;</span><span class="n">和</span><span class="s2">&quot;退格&quot;</span><span class="n">键</span><span class="p">)</span>
+<span class="o">.</span><span class="n">esc</span>
+<span class="o">.</span><span class="n">space</span>
+<span class="o">.</span><span class="n">up</span>
+<span class="o">.</span><span class="n">down</span>
+<span class="o">.</span><span class="n">left</span>
+<span class="o">.</span><span class="n">right</span>
+</pre></div>
+</div>
+<p>对于上面示例，每次输入都会触发keyup事件，有时候不需要每次输入都会触发，例如发QQ消息，希望所有的内容都输入完成再发送。
+这时可以为keyup事件添加enter按键码，当Enter键抬起时，才会触发keyup事件。</p>
+<p>例如，修改上面的示例，在keyup事件后添加enter按键码。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;添加enter按键码&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;app&quot;&gt;
+    &lt;label for=&quot;name&quot;&gt;商品名称：&lt;/label&gt;
+    &lt;input v-on:keyup.enter=&quot;name&quot; type=&quot;text&quot; id=&quot;name&quot;&gt;
+&lt;/div&gt;
+
+&lt;!--引入vue文件--&gt;
+&lt;script src=&quot;https://unpkg.com/vue@next&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+    //创建一个应用程序实例
+    const vm= Vue.createApp({
+        methods: {
+            name:function(){
+                console.log(&quot;正在输入商品名称...&quot;)
+            }
+        }
+     //在指定的DOM元素上装载应用程序实例的根组件
+     }).mount(&#39;#app&#39;);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;utf-8&quot; /&gt;
+        &lt;title&gt;&lt;/title&gt;
+        &lt;script src=&quot;js/vue.js&quot; type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div id=&quot;app&quot;&gt;
+            &lt;input type=&quot;text&quot; v-model=&quot;value&quot; @keydown.enter=&quot;handleInput&quot; /&gt;
+        &lt;/div&gt;
+        &lt;script&gt;
+            var vm = new Vue({
+                el: &quot;#app&quot;,
+                data: {
+                    value: &#39;&#39;
+                },
+                methods: {
+                    handleInput(){
+                        console.log(&#39;值：&#39;,this.value)
+                    }
+                }
+            })
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h3><a class="toc-backref" href="#id47"><span class="section-number">2.6.4. </span>6.4 系统修饰键</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<p>可以用如下修饰符来实现仅在按下相应按键时才触发鼠标或键盘事件的监听器。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">ctrl</span>
+<span class="o">.</span><span class="n">alt</span>
+<span class="o">.</span><span class="n">shift</span>
+<span class="o">.</span><span class="n">meta</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>提示
+系统修饰键与常规按键不同，在和keyup事件一起使用时，事件触发时修饰键必须处于按下状态。换句话说，只有在按住Ctrl的情况下释放其他按键，才能触发keyup.ctrl。而单单释放Ctrl键也不会触发事件。</p>
+</div></blockquote>
+<p>系统修饰键</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;系统修饰键&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;app&quot;&gt;
+    &lt;label for=&quot;name&quot;&gt;姓名：&lt;/label&gt;
+    &lt;!--添加shift按键码--&gt;
+    &lt;input v-on:keyup.shift.enter=&quot;name&quot; type=&quot;text&quot; id=&quot;name&quot;&gt;
+&lt;/div&gt;
+&lt;!--引入vue文件--&gt;
+&lt;script src=&quot;https://unpkg.com/vue@next&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+    //创建一个应用程序实例
+    const vm= Vue.createApp({
+        methods: {
+            name:function(){
+                console.log(&quot;正在输入姓名...&quot;)
+            }
+        }
+     //在指定的DOM元素上装载应用程序实例的根组件
+     }).mount(&#39;#app&#39;);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<p>在浏览器中运行程序，在input中输入内容后，按Enter键是无法激活keyup事件的，首先需要按Shift，再按Enter键才可以触发。</p>
+</section>
+<section id="id17">
+<h3><a class="toc-backref" href="#id48"><span class="section-number">2.6.5. </span>6.5 综合案例-处理用户注册信息</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<p>本案例主要在按钮、下拉列表、复选框上添加事件处理，从而实现注册用户时的信息处理。在选择“同意本站协议”复选框之前，“注册”按钮是不可用的。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;处理用户注册信息&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+ &lt;div id=&quot;app&quot;&gt;
+        &lt;p&gt;{{msg}}&lt;/p&gt;
+        &lt;button v-on:click=&quot;handleClick&quot;&gt;单击按钮&lt;/button&gt;
+        &lt;button @click=&quot;handleClick&quot;&gt;单击按钮&lt;/button&gt;
+        &lt;h5&gt;选择感兴趣技术&lt;/h5&gt;
+        &lt;select v-on:change=&quot;handleChange&quot;&gt;
+            &lt;option value=&quot;red&quot;&gt;网站前端技术&lt;/option&gt;
+            &lt;option value=&quot;green&quot;&gt;Python编程技术&lt;/option&gt;
+            &lt;option value=&quot;pink&quot;&gt;Java编程技术&lt;/option&gt;
+        &lt;/select&gt;
+        &lt;h5&gt;表单提交&lt;/h5&gt;
+        &lt;form v-on:submit.prevent=&quot;handleSubmit&quot;&gt;
+            &lt;input type=&quot;checkbox&quot;  v-on:click=&quot;handleDisabled&quot;/&gt;
+            同意本站协议
+            &lt;br&gt;&lt;br&gt;
+            &lt;button :disabled=&quot;isDisabled&quot;&gt;注册&lt;/button&gt;
+        &lt;/form&gt;
+ &lt;/div&gt;
+&lt;!--引入vue文件--&gt;
+&lt;script src=&quot;https://unpkg.com/vue@next&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+    //创建一个应用程序实例
+    const vm= Vue.createApp({
+        //该函数返回数据对象
+        data(){
+          return{
+                msg:&quot;注册账户&quot;,
+                isDisabled:true
+           }
+        },
+            //methods对象
+            methods:{
+                //通过methods来定义需要的方法
+                handleClick:function(){
+                    console.log(&quot;btn is clicked&quot;);
+                },
+                handleChange:function(event){
+                    console.log(&quot;选择了某选项&quot;+event.target.value);
+                },
+                handleSubmit:function(){
+                    console.log(&quot;触发事件&quot;);
+                },
+                handleDisabled:function(event){
+                    console.log(event.target.checked);
+                    if(event.target.checked==true){
+                        this.isDisabled =  false;
+                    }
+                    else {
+                        this.isDisabled =  true;
+                    }
+                }
+            }
+     //在指定的DOM元素上装载应用程序实例的根组件
+     }).mount(&#39;#app&#39;);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<p>为什么在HTML中监听事件？</p>
+<p>读者可能注意到这种事件监听的方式违背了关注点分离（separation of
+concern）的传统理念。不必担心，因为所有的
+Vue.js事件处理方法和表达式都严格绑定在当前视图的ViewModel上，它不会导致任何维护上的困难。</p>
+<p>实际上，使用v-on有几个好处：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>（1）通过HTML模板便能轻松定位在JavaScript代码里对应的方法。
+（2）因为无须在JavaScript里手动绑定事件，ViewModel代码可以是非常纯粹的逻辑，和DOM完全解耦，更易于测试。
+（3）当一个ViewModel被销毁时，所有的事件处理器都会自动被删除。无须担心如何清理它们。
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id18">
+<h2><a class="toc-backref" href="#id49"><span class="section-number">2.7. </span>7.表单输入绑定</a><a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h2>
+<section id="id19">
+<h3><a class="toc-backref" href="#id50"><span class="section-number">2.7.1. </span>7.1 修饰符</a><a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">lazy</span></code></p>
+<p>在输入框中，v-model默认是同步数据，使用lazy会转变为在change事件中同步，也就是在失去焦点或者按下回车键时才更新。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- 在“change”时而非“input”时更新 --&gt;
+&lt;input v-model.lazy=&quot;msg&quot; /&gt;
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">number</span></code></p>
+<p>如果想自动将用户的输入值转为数值类型，可以给 <code class="docutils literal notranslate"><span class="pre">v-model</span></code> 添加 <code class="docutils literal notranslate"><span class="pre">number</span></code>
+修饰符：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;number修饰符&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;app&quot;&gt;
+        &lt;p&gt;.number修饰符&lt;/p&gt;
+        &lt;input type=&quot;number&quot; v-model.number=&quot;val&quot;&gt;
+        &lt;p&gt;数据类型是：{{ typeof(val) }}&lt;/p&gt;
+&lt;/div&gt;
+&lt;!--引入vue文件--&gt;
+&lt;script src=&quot;https://unpkg.com/vue@next&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+    //创建一个应用程序实例
+    const vm= Vue.createApp({
+        //该函数返回数据对象
+        data(){
+          return{
+            val:&#39;&#39;
+           }
+        }
+        //在指定的DOM元素上装载应用程序实例的根组件
+     }).mount(&#39;#app&#39;);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<p>当输入类型为 <code class="docutils literal notranslate"><span class="pre">text</span></code> 时这通常很有用。如果输入类型是 <code class="docutils literal notranslate"><span class="pre">number</span></code>，Vue
+能够自动将原始字符串转换为数字，无需为 <code class="docutils literal notranslate"><span class="pre">v-model</span></code> 添加 <code class="docutils literal notranslate"><span class="pre">.number</span></code>
+修饰符。如果这个值无法被 <code class="docutils literal notranslate"><span class="pre">parseFloat()</span></code> 解析，则返回原始的值。</p>
+<p><code class="docutils literal notranslate"><span class="pre">trim</span></code></p>
+<p>如果要自动过滤用户输入的首尾空白字符，可以给 <code class="docutils literal notranslate"><span class="pre">v-model</span></code> 添加 <code class="docutils literal notranslate"><span class="pre">trim</span></code>
+修饰符：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;trim修饰符&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;app&quot;&gt;
+    &lt;p&gt;.trim修饰符&lt;/p&gt;
+    &lt;input type=&quot;text&quot; v-model.trim=&quot;val&quot;&gt;
+    &lt;p&gt;val的长度是：{{ val.length }}&lt;/p&gt;
+&lt;/div&gt;
+&lt;!--引入vue文件--&gt;
+&lt;script src=&quot;https://unpkg.com/vue@next&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+    //创建一个应用程序实例
+    const vm= Vue.createApp({
+        //该函数返回数据对象
+        data(){
+          return{
+            val:&#39;&#39;
+           }
+        }
+        //在指定的DOM元素上装载应用程序实例的根组件
+     }).mount(&#39;#app&#39;);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<p>示例代码</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;utf-8&quot; /&gt;
+        &lt;title&gt;&lt;/title&gt;
+        &lt;script src=&quot;js/vue.js&quot; type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div id=&quot;app&quot;&gt;
+            &lt;!-- 文本输入框 --&gt;
+            &lt;input type=&quot;text&quot; v-model=&quot;value&quot; /&gt;
+            &lt;p&gt;value的值：{{value}}&lt;/p&gt;
+
+            &lt;!-- 文本输入框，修饰符 --&gt;
+            &lt;input type=&quot;text&quot; v-model.lazy=&quot;value&quot; /&gt;
+            &lt;span&gt;{{message}}&lt;/span&gt;
+
+            &lt;!-- 文本域 --&gt;
+            &lt;textarea rows=&quot;2&quot; cols=&quot;15&quot; v-model=&quot;message&quot;&gt;&lt;/textarea&gt;
+            &lt;p&gt;文本域的值：{{message}}&lt;/p&gt;
+
+            &lt;!-- 复选框 --&gt;
+            &lt;input type=&quot;checkbox&quot; v-model=&quot;hobby&quot; value=&quot;篮球&quot;&gt;篮球
+            &lt;input type=&quot;checkbox&quot; v-model=&quot;hobby&quot; value=&quot;足球&quot;&gt;足球
+            &lt;input type=&quot;checkbox&quot; v-model=&quot;hobby&quot; value=&quot;排球&quot;&gt;排球
+            &lt;p&gt;爱好：{{hobby}}&lt;/p&gt;
+
+            &lt;!-- 单选按钮 --&gt;
+            单选题：
+            &lt;input type=&quot;radio&quot; v-model=&quot;selected&quot; value=&quot;A&quot;&gt;A
+            &lt;input type=&quot;radio&quot; v-model=&quot;selected&quot; value=&quot;B&quot;&gt;B
+            &lt;input type=&quot;radio&quot; v-model=&quot;selected&quot; value=&quot;C&quot;&gt;C
+            &lt;input type=&quot;radio&quot; v-model=&quot;selected&quot; value=&quot;D&quot;&gt;D
+            &lt;p&gt;选择：{{selected}}&lt;/p&gt;
+
+            &lt;!-- 下拉框 --&gt;
+            年级：
+            &lt;select v-model=&quot;grade&quot;&gt;
+                &lt;option value=&quot;一年级&quot;&gt;一年级&lt;/option&gt;
+                &lt;option value=&quot;二年级&quot;&gt;二年级&lt;/option&gt;
+                &lt;option value=&quot;三年级&quot;&gt;三年级&lt;/option&gt;
+            &lt;/select&gt;
+            &lt;p&gt;选择：{{grade}}&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;script&gt;
+            var vm = new Vue({
+                el: &quot;#app&quot;,
+                data: {
+                    value: &#39;&#39;,
+                    message: &#39;&#39;,
+                    hobby: [],
+                    selected: &#39;&#39;,
+                    grade: &#39;&#39;
+                }
+            })
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<img alt="../_images/image-20220823095849324.png" src="../_images/image-20220823095849324.png" />
+</section>
+<section id="id20">
+<h3><a class="toc-backref" href="#id51"><span class="section-number">2.7.2. </span>7.2 参考</a><a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://v3.cn.vuejs.org/guide/forms">https://v3.cn.vuejs.org/guide/forms</a>.html#</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01.Vue%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8.html" class="btn btn-neutral float-left" title="1. Vue基础入门" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03.Vue%E5%AE%9E%E4%BE%8B%E6%A0%B8%E5%BF%83%E9%80%89%E9%A1%B9.html" class="btn btn-neutral float-right" title="3. Vue实例核心选项" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

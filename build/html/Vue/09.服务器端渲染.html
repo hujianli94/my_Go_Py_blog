@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9. 服务器端渲染 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="10. Vue3新特性详讲" href="10.Vue3%E6%96%B0%E7%89%B9%E6%80%A7%E8%AF%A6%E8%AE%B2.html" />
+    <link rel="prev" title="8. Vue的异步请求" href="08.Vue%E7%9A%84%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js企业开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.Vue%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8.html">1. Vue基础入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Vue%E5%86%85%E7%BD%AE%E6%8C%87%E4%BB%A4.html">2. Vue内置指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.Vue%E5%AE%9E%E4%BE%8B%E6%A0%B8%E5%BF%83%E9%80%89%E9%A1%B9.html">3. Vue实例核心选项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.Vue%E5%B7%A5%E7%A8%8B%E5%8C%96%E9%A1%B9%E7%9B%AE.html">4. Vue工程化项目</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Vue%E7%BB%84%E4%BB%B6.html">5. 深入了解Vue组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue-Router%E8%B7%AF%E7%94%B1.html">6. Vue-Router路由</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vuex%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86.html">7. Vuex状态管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue%E7%9A%84%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82.html">8. Vue的异步请求</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">9. 服务器端渲染</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">9.1. 1.服务器端渲染简介</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ssr">9.1.1. 1.1 什么是服务器端渲染（SSR）</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">9.1.2. 1.2 为什么要使用服务器端渲染</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#nuxt-js-ssr">9.2. 2.基于 Nuxt.js 搭建一个服务端渲染(SSR)应用</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue3%E6%96%B0%E7%89%B9%E6%80%A7%E8%AF%A6%E8%AE%B2.html">10. Vue3新特性详讲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.TypeScript%E5%85%A5%E9%97%A8.html">11. TypeScript入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.Vite.html">12. Vite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.Vue3%E5%AE%9E%E8%B7%B5.html">13. Vue3 实践</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js企业开发实战</a> &raquo;</li>
+      <li><span class="section-number">9. </span>服务器端渲染</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue/09.服务器端渲染.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id4">服务器端渲染</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id5">1.服务器端渲染简介</a></p>
+<ul>
+<li><p><a class="reference internal" href="#ssr" id="id6">1.1 什么是服务器端渲染（SSR）</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id7">1.2 为什么要使用服务器端渲染</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#nuxt-js-ssr" id="id8">2.基于 Nuxt.js 搭建一个服务端渲染(SSR)应用</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id4"><span class="section-number">9. </span>服务器端渲染</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<section id="id2">
+<h2><a class="toc-backref" href="#id5"><span class="section-number">9.1. </span>1.服务器端渲染简介</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<section id="ssr">
+<h3><a class="toc-backref" href="#id6"><span class="section-number">9.1.1. </span>1.1 什么是服务器端渲染（SSR）</a><a class="headerlink" href="#ssr" title="Permalink to this headline">¶</a></h3>
+<p>服务器端渲染（Server Side
+Render，SSR）。Vue.js用于构建客户端应用程序的框架，在默认情况下，在浏览器中输出Vue组件，生成DOM和操作DOM。但是这种操作对SEO不利，所以在开发过程中需要在服务器端将组件渲染为HTML字符串，然后将它们直接发送到浏览器端。</p>
+<p>简单来说，服务器端渲染就是将本来要放在浏览器进行创建的标签，放到服务器端先创建好，然后生成对应的HTML内容并直接发送到浏览器，最后将这些静态标记“激活”为客户端完全可交互的应用程序。</p>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id7"><span class="section-number">9.1.2. </span>1.2 为什么要使用服务器端渲染</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>与传统的单页面应用程序相比，服务器端渲染的优势主要有以下几个方面。</p>
+<ol class="arabic simple">
+<li><p>更好的SEO，让搜索引擎和爬虫抓取工具可以直接查看完全渲染的页面。</p></li>
+<li><p>更快的内容到达时间，特别是对于缓慢的网络情况或运行缓慢的设备。</p></li>
+</ol>
+<p>在使用服务器端渲染技术开发的网站中，也是伴随着一些缺点，需要权衡的方面有以下几点。</p>
+<ol class="arabic simple">
+<li><p>由于开发条件的限制，对于一些外部扩展库有时需要进行特殊处理，这样才能在服务器渲染应用程序中运行。</p></li>
+<li><p>涉及构建设置和部署的更多要求，服务器端渲染的应用程序需要处于Node.js
+server运行环境。</p></li>
+<li><p>更多的服务器端负载，在Node.js中渲染完整的应用程序会占用大量CPU资源和流量资源。</p></li>
+</ol>
+<p>在做技术选型时，到底要不要使用服务器端渲染应该取决于项目的实际需求，这主要取决于内容到达时间对应用程序的重要程度。</p>
+</section>
+</section>
+<section id="nuxt-js-ssr">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">9.2. </span>2.基于 Nuxt.js 搭建一个服务端渲染(SSR)应用</a><a class="headerlink" href="#nuxt-js-ssr" title="Permalink to this headline">¶</a></h2>
+<p>参考文献</p>
+<p><a class="reference external" href="https://juejin.cn/post/6955273623292608520">https://juejin.cn/post/6955273623292608520</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="08.Vue%E7%9A%84%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82.html" class="btn btn-neutral float-left" title="8. Vue的异步请求" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="10.Vue3%E6%96%B0%E7%89%B9%E6%80%A7%E8%AF%A6%E8%AE%B2.html" class="btn btn-neutral float-right" title="10. Vue3新特性详讲" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,220 @@
+.. contents::
+   :depth: 3
+..
+
+文档和报告
+==========
+
+学习大纲
+
+-  标准输入和输出。
+-  字符串格式化。
+-  发送电子邮件。
+
+1.标准输入和输出
+----------------
+
+一个stdin\ ``和``\ stdout\ ``的一个示例程序。创建一个脚本，命名为``\ stdin_stdout_example.py
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+
+   import sys
+
+   print("Enter number1:")
+   a = int(sys.stdin.readline())
+
+   print("Enter number2:")
+   b = int(sys.stdin.readline())
+
+   c = a + b
+
+   sys.stdout.write("Result:%d" %c)
+
+上面的示例程序使用\ ``stdin`` 和\ ``stdout``
+来获取输入并显示输出。\ ``sys.stdin. readline()`` 用于从\ ``stdin``
+读取输入数据。
+
+``input()`` 函数
+
+.. code:: python
+
+   str1 = input("Enter a string: ")
+   print("Entered string is: ", str1)
+   print()
+
+   #如果我们需要一个整数值，只需在input() 函数前添加int 关键字
+   a = int(input("Enter the value of a: "))
+   b = int(input("Enter the value of b: "))
+   c = a + b
+   print("Value of c is: ", c)
+
+
+   #如果使用input() 输入整数值和浮点数值，必须用int() 和float() 类型转换函数将接收到的字符串分别转换为整数值和浮点数值。
+   num1 = float(input("Enter num 1: "))
+   num2 = float(input("Enter num 2: "))
+
+   num3 = num1/num2
+   print("Value of num 3 is: ", num3)
+
+2. 字符串格式化
+---------------
+
+一种是使用\ ``string`` 类中的\ ``format()``
+方法，另一种是使用\ ``%``\ 运算符。
+
+.. code:: python
+
+   # 单一的格式化
+   print("{}, My name is John".format("Hi"))
+   str1 = "This is John. I am learning {} scripting language."
+   print(str1.format("Python"))
+   print("Hi, My name is Sara and I am {} years old !!".format(26))
+
+
+   # 复合格式化
+   str2 = "This is Mary {}. I work at {} Resource department. I am {} years old !!"
+   print(str2.format("Jacobs", "Human", 30))
+   print("Hello {}, Nice to meet you. I am {}.".format("Emily", "Jennifer"))
+
+下面我们学习使用\ ``%`` 运算符进行字符串格式化。\ ``%``
+运算符包含特殊的格式化符号，以下是一些常用符号。
+
+-  ``%d`` ：十进制整数。
+-  ``%s`` ：字符串。
+-  ``%f`` ：浮点数。
+-  ``%c`` ：字符。
+
+现在我们来看一个示例
+
+.. code:: python
+
+   # 基本格式化
+   a = 10
+   b = 30
+   print("The values of a and b are %d %d" % (a, b))
+
+   c = a + b
+   print("The value of c is %d" % c)
+
+   str1 = 'John'
+   print("My name is %s" % str1)
+
+   x = 10.5
+   y = 33.5
+   z = x * y
+   print("The value of z is %f" % z)
+   print()
+
+   # 调整
+   name = 'Mary'
+
+   print("Normal: Hello, I am %s !!" % name)
+   print("Right aligned: Hello, I am %10s !!" % name)
+   print("Left aligned: Hello, I am %-10s !!" % name)
+
+3.发送电子邮件
+--------------
+
+该示例程序会通过Gmail邮箱给收件人发送一个包含简单文本的电子邮件
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import smtplib
+   from email.mime.text import MIMEText
+   import getpass
+
+   host_name = 'smtp.gmail.com'
+   port = 465
+   u_name = 'username/emailid'
+
+   password = getpass.getpass()
+   sender = 'sender_name'
+
+   receivers = ['receiver1_email_address', 'receiver2_email_address']
+   text = MIMEText('Test mail')
+   text['Subject'] = 'Test'
+   text['From'] = sender
+   text['To'] = ', '.join(receivers)
+   s_obj = smtplib.SMTP_SSL(host_name, port)
+   s_obj.login(u_name, password)
+   s_obj.sendmail(sender, receivers, text.as_string())
+   s_obj.quit()
+   print("Mail sent successfully")
+
+上面的示例程序使用自己的\ ``Gmail ID`` 给收件人发送了电子邮件。
+
+变量\ ``u_name`` 存储收件人的用户名或电子邮件\ ``ID`` 。
+
+变量\ ``password`` 存储密码，也可以使用\ ``getpass``
+模块提示输入密码，这里使用提示手动输入密码。
+
+``sender``
+变量存储发件人的姓名。现在把这封电子邮件发送给多个收件人，然后添加该电子邮件的主题。之后在\ ``login()``
+中使用了之前的用户名和密码变量，在\ ``sendmail()``
+中，给出了发件人、收件人和文本。如此，即可成功发送电子邮件。
+
+发送带附件的电子邮件的示例程序
+
+此示例程序将向收件人发送图像，这里依然通过\ ``Gmail``
+邮箱发送此邮件。创建一个脚本，命名为\ ``send_email_attachment.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import os
+   import smtplib
+   from email.mime.text import MIMEText
+   from email.mime.image import MIMEImage
+   from email.mime.multipart import MIMEMultipart
+   import getpass
+
+   host_name = 'smtp.gmail.com'
+   port = 465
+   u_name = 'username/emailid'
+   password = getpass.getpass()
+   sender = 'sender_name'
+   receivers = ['receiver1_email_address', 'receiver2_email_address']
+   text = MIMEMultipart()
+   text['Subject'] = 'Test Attachment'
+   text['From'] = sender
+   text['To'] = ', '.join(receivers)
+   txt = MIMEText('Sending a sample image.')
+   text.attach(txt)
+
+   f_path = '/home/student/Desktop/mountain.jpg'
+   with open(f_path, 'rb') as f:
+       img = MIMEImage(f.read())
+
+   img.add_header('Content-Disposition',
+                  'attachment',
+                  filename=os.path.basename(f_path))
+
+   text.attach(img)
+   server = smtplib.SMTP_SSL(host_name, port)
+   server.login(u_name, password)
+   server.sendmail(sender, receivers, text.as_string())
+   print("Email with attachment sent successfully !!")
+   server.quit()
+
+上面的示例程序将图像作为附件发送给收件人。程序指出了发件人和收件人的电子邮件\ ``ID``
+。接下来，在\ ``f_path``
+中指出了附件图像的文件路径。最后将该图像作为附件发送给收件人。
+
+总结
+----
+
+我们学习了标准输入和输出。
+
+其中我们学习了\ ``stdin`` 和\ ``stdout``
+如何分别作为键盘输入和用户终端来使用，
+
+还学习了\ ``input()``\ 和\ ``print()`` 函数以及使用\ ``format()``
+方法和\ ``%`` 运算符格式化字符串。
+
+另外，我们还了解了如何通过Gmail邮箱向收件人发送电子邮件，其中发送了一封包含简单文本的电子邮件，也发送了包含附件的电子邮件。

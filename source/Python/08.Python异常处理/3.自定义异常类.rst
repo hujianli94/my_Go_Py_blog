@@ -1,0 +1,124 @@
+.. contents::
+   :depth: 3
+..
+
+自定义异常类
+============
+
+举例1
+-----
+
+.. code:: python
+
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+
+   #继承Exception类
+   class MyError(Exception):
+       pass
+
+   #需要异常类有一定的提示信息,可以重载__init__和__str__两个方法
+   class RangeError(Exception):
+       def __init__(self,value):
+           self.value = value
+
+       def __str__(self):
+           return self.value
+
+
+   if __name__ == '__main__':
+       raise RuntimeError("Range Error....!")      #调用raise 抛出异常
+
+举例2
+-----
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/8 21:07
+   # filename: 07.自定义异常.py
+
+   class MyError(Exception):
+       def __init__(self):
+           pass
+
+       def __str__(self):
+           return "this is self define error"
+
+
+   def my_error_test():
+       try:
+           raise MyError()
+       except MyError as e:
+           print("Exception info: ", e)
+
+
+   my_error_test()  # Exception info:  this is self define error
+
+举例3
+-----
+
+.. code:: python
+
+   #自定义异常
+   class xError(Exception):
+       def __init__(self,value):
+           self.value=value
+       def __str__(self):
+           return repr(self.value)
+
+   #定义一个会抛出xError的方法
+   def call(xName):
+       if xName=='牛牛':
+           raise xError('严重错误！不许给牛牛打电话！：P')
+       else:
+           print('确定要给',repr(name),"打电话吗？")
+
+   #调用call方法
+   try:
+       name=input("请问您要跟谁打电话？")
+       call(name)
+   except xError as e:
+       print(e.value)
+       raise
+
+举例4
+-----
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   import sys
+
+
+   class MyError(Exception):
+       def __str__(self):
+           return "I'am a self-defiend Error!!!"
+
+
+   def main():
+       try:
+           print("************* start of main() ****************")
+           if len(sys.argv) == 1:
+               raise MyError
+           print("************* End of main() ****************")
+       except MyError as e:
+           print(e)
+
+
+   if __name__ == '__main__':
+       main()
+
+
+   # $ python 03.py
+   # ************* start of main() ****************
+   # I'am a self-defiend Error!!!
+
+
+   # $ python 03.py 11
+   # ************* start of main() ****************
+   # ************* End of main() ****************

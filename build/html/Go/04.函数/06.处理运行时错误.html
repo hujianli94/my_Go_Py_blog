@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.6. 处理运行时错误 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4.7. 宕机-panic" href="07.%E5%AE%95%E6%9C%BA-panic.html" />
+    <link rel="prev" title="4.5. 延迟执行语句-defer" href="05.%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C%E8%AF%AD%E5%8F%A5-defer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">4. 函数</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E5%A3%B0%E6%98%8E%E5%87%BD%E6%95%B0.html">4.1. 声明函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0.html">4.2. 匿名函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E9%97%AD%E5%8C%85.html">4.3. 闭包</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0.html">4.4. 可变参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C%E8%AF%AD%E5%8F%A5-defer.html">4.5. 延迟执行语句-defer</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.6. 处理运行时错误</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#net">4.6.1. 1.net包中的例子</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">4.6.2. 2.错误接口的定义格式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">4.6.3. 3.自定义一个错误</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E5%AE%95%E6%9C%BA-panic.html">4.7. 宕机-panic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E5%AE%95%E6%9C%BA%E6%81%A2%E5%A4%8D-recover.html">4.8. 宕机恢复-recover</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95.html">4.9. 单元测试</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93/index.html">10. 标准库和三方库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">4. </span>函数</a> &raquo;</li>
+      <li><span class="section-number">4.6. </span>处理运行时错误</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/04.函数/06.处理运行时错误.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id6">处理运行时错误</a></p>
+<ul>
+<li><p><a class="reference internal" href="#net" id="id7">1.net包中的例子</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id8">2.错误接口的定义格式</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id9">3.自定义一个错误</a></p>
+<ul>
+<li><p><a class="reference internal" href="#errors" id="id10">3.1 errors包</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id11">3.2 在代码中使用错误定义</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id12">3.3 示例：在解析中使用自定义错误</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id6"><span class="section-number">4.6. </span>处理运行时错误</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>Go语言的错误处理私信及设计包含一些特征：</p>
+<ul class="simple">
+<li><p>一个可能造成错误的函数，需要返回值中返回一个错误接口(error).如果调用是成功的。错误接口将返回nil，否则返回错误。</p></li>
+<li><p>在函数调用后需要检查错误，如果发生错误，进行必要的错误处理。</p></li>
+</ul>
+<p>Go语言希望开发者将错误处理视为正常开发必须实现的环境，正确地处理每一个可能发生错误的函数。
+同时，Go语言使用返回值返回错误的机制，也能大幅度降低编译器、运行时处理错误的复杂度，让开发者真正掌握错误的处理。</p>
+<section id="net">
+<h2><a class="toc-backref" href="#id7"><span class="section-number">4.6.1. </span>1.net包中的例子</a><a class="headerlink" href="#net" title="Permalink to this headline">¶</a></h2>
+<p>net.Dial()是Go语言系统包net即中的一个函数，一般用于创建Socket连接。</p>
+<p>net.Dial()拥有两个返回值，即Conn和error，这个函数是阻塞的，因此在Socket操作后，会返回Conn连接对象和error；如果发生错误，error会告知错误的类型，Conn会返回为空。</p>
+<p>根据Go语言的错误处理机制，Conn是其重要的返回值，因此为这个函数增加了一个错误返回，
+类似为error，参见如下代码：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">Dial</span><span class="p">(</span><span class="nx">network</span><span class="p">,</span> <span class="nx">address</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Conn</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">d</span> <span class="nx">Dialer</span>
+    <span class="k">return</span> <span class="nx">d</span><span class="p">.</span><span class="nx">Dial</span><span class="p">(</span><span class="nx">network</span><span class="p">,</span> <span class="nx">address</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在io包中的Writer接口也拥有错误返回，代码如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Write</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>io包中还有一个Closer接口，只有一个错误返回，代码如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Closer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Close</span><span class="p">()</span> <span class="kt">error</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">4.6.2. </span>2.错误接口的定义格式</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>error是Go系统声明的接口类型，代码如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="kt">error</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>所有符合Error()string格式的方法，都能实现错误接口。
+Error()返回错误的具体描述，使用者可以通过这个字符串知道发生了什么错误。</p>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">4.6.3. </span>3.自定义一个错误</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>返回错误前，需要定义会生成哪些可能的错误。在Go语言中，使用errors包进行错误的定义，格式如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;this is an error&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>错误字符串由于相对固定，一般在包作用域声明，应尽量减少在使用时直接使用errors.New返回。</p>
+<section id="errors">
+<h3><a class="toc-backref" href="#id10">3.1 errors包</a><a class="headerlink" href="#errors" title="Permalink to this headline">¶</a></h3>
+<p>Go语言的errors中对New的定义非常简单，代码如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 创建错误对象</span>
+<span class="c1">// 将errorString结构体实例化，并赋值错误描述的成员。</span>
+<span class="kd">func</span> <span class="nx">New</span><span class="p">(</span><span class="nx">text</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">errorString</span><span class="p">{</span><span class="nx">text</span><span class="p">}</span>
+<span class="p">}</span>
+
+
+
+<span class="c1">// 错误字符串</span>
+<span class="c1">// 声明errorString结构体，拥有一个成员，描述错误内容</span>
+<span class="kd">type</span> <span class="nx">errorString</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">s</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// 返回发生任何错误</span>
+<span class="c1">// 实现error接口的Error()方法，该方法返回成员中的错误描述</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">errorString</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">s</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id11">3.2 在代码中使用错误定义</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;errors&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// 定义除数为0的错误</span>
+<span class="kd">var</span> <span class="nx">errDivisionByZero</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;division by zero&quot;</span><span class="p">)</span>
+
+<span class="c1">// 除法函数，定义传入2个数都为int，返回一个int或error</span>
+<span class="kd">func</span> <span class="nx">div</span><span class="p">(</span><span class="nx">dividend</span><span class="p">,</span> <span class="nx">divisor</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 判断除数为0的情况并返回</span>
+    <span class="k">if</span> <span class="nx">divisor</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">errDivisionByZero</span>
+    <span class="p">}</span>
+    <span class="c1">// 返回计算后的值，error为nill</span>
+    <span class="k">return</span> <span class="nx">dividend</span> <span class="o">/</span> <span class="nx">divisor</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">div</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c1">//0 division by zero</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id12">3.3 示例：在解析中使用自定义错误</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>使用errors.New定义的错误字符串的错误类型是无法提供丰富的错误信息的。那么需要携带错误信息返回，
+就需要借助自定义结构体实现错误接口。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="c1">// 声明一个解析错误的结构体，解析错误包含2个成员，filename和line</span>
+<span class="kd">type</span> <span class="nx">ParseError</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">Filename</span> <span class="kt">string</span> <span class="c1">// 文件名</span>
+    <span class="nx">Line</span>     <span class="kt">int</span>    <span class="c1">// 行号</span>
+<span class="p">}</span>
+
+<span class="c1">// 实现error接口，返回错误描述，格式化成员的文件名和行号并返回</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">ParseError</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%s %d&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Filename</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Line</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 创建一些解析错误</span>
+<span class="kd">func</span> <span class="nx">newParseError</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">line</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">ParseError</span><span class="p">{</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">line</span><span class="p">}</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 声明一个错误接口类型</span>
+    <span class="kd">var</span> <span class="nx">e</span> <span class="kt">error</span>
+    <span class="c1">// 创建错误实例，包含文件名和行号</span>
+    <span class="nx">e</span> <span class="p">=</span> <span class="nx">newParseError</span><span class="p">(</span><span class="s">&quot;main.go&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1">// 通过error接口插件错误描述</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>      <span class="c1">//main.go 1</span>
+
+    <span class="c1">// 根据错误接口的具体类型，获取详细的错误信息</span>
+    <span class="k">switch</span> <span class="nx">detail</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="o">*</span><span class="nx">ParseError</span><span class="p">:</span> <span class="c1">// 这是一个解析错误</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Filename: %s Line: %d\n&quot;</span><span class="p">,</span> <span class="nx">detail</span><span class="p">.</span><span class="nx">Filename</span><span class="p">,</span> <span class="nx">detail</span><span class="p">.</span><span class="nx">Line</span><span class="p">)</span> <span class="c1">//Filename: main.go Line: 1</span>
+    <span class="k">default</span><span class="p">:</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;other error&quot;</span><span class="p">)</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C%E8%AF%AD%E5%8F%A5-defer.html" class="btn btn-neutral float-left" title="4.5. 延迟执行语句-defer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.%E5%AE%95%E6%9C%BA-panic.html" class="btn btn-neutral float-right" title="4.7. 宕机-panic" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,745 @@
+.. contents::
+   :depth: 3
+..
+
+06.类和对象
+===========
+
+.. _类和对象-1:
+
+类和对象
+--------
+
+定义类
+~~~~~~
+
+.. code:: python
+
+   class Person:
+       """
+       这是学习Python定义的一个Person类
+       """
+       hair = 'black'
+
+       def __init__(self, name='Charlie', age=8):
+           self.name = name
+           self.age = age
+
+       # 下面定义一个say方法
+       def say(self, content):
+           print(content)
+
+对象的产生和使用
+~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   p = Person()
+   print(p.name, p.age)                    #Charlie 8
+   p.name = "hujianli"
+   p.say("Python语言很简单，学习很容易！") #Python语言很简单，学习很容易！
+   print(p.name, p.age)        # hujianli 8
+
+对象动态的增加和删除
+~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   p = Person()
+   # 为p对象新增一个skills实例变量
+   p.skills = ['programming', 'swimming']
+   print(p.skills)
+
+   # 删除p对象的name实例变量
+   del p.name
+
+   # # 再次访问p的name实例变量
+   # print(p.name)       #AttributeError:
+
+· 动态增加方法
+
+.. code:: python
+
+   p = Person()
+   def info(self):
+       print("----------info函数----------", self)
+
+
+   # 动态增加方法，使用info对p的foo方法赋值
+   p.foo = info
+   # 手动将调用者绑定到第一个参数
+   p.foo(p)        # ----------info函数---------- <__main__.Person object at 0x0000020C22F7E4E0>
+
+
+   # 使用lambda表达式为p对象的bar方法赋值(动态增加方法)
+   p.bar = lambda self: print("----lambda表达式-----", self)
+   p.bar(p)       # ----lambda表达式----- <__main__.Person object at 0x0000020C22F7E4E0>
+
+实例方法和自动绑定self
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   class Dog:
+
+       # 定义一个jump()方法
+       def jump(self):
+           print("正在执行jump方法")
+
+       def run(self):
+           # 使用self参数引用调用run()方法对象
+           self.jump()
+           print("正在执行run方法")
+
+把self参数当成实例方法的返回值。
+
+.. code:: python
+
+   class ReturnSelf:
+       def grow(self):
+           if hasattr(self, 'age'):
+               self.age += 1
+           else:
+               self.age = 1
+           # 返回调用该方法的对象
+           return self
+
+
+   rs = ReturnSelf()
+   rs.grow().grow().grow()
+   print("rs的age属性值是:", rs.age)        #rs的age属性值是: 3
+
+如果在某个方法中把self参数作为返回值，则可以多次连续调用同一个方法，从而使得代码更加简洁。
+
+方法
+----
+
+类也能调用实例方法
+~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   class User:
+       def walk(self):
+           print(self, "正在慢慢地走")
+
+
+   u = User()              # <__main__.User object at 0x000002355E7338D0> 正在慢慢地走
+   # 显示地位方法的第一个参数绑定参数值
+   User.walk(u)
+   User.walk("hujianli")   #hujianli 正在慢慢地走
+
+类方法与静态方法
+~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   class Bird:
+       # 类方法
+       @classmethod
+       def fly(cls):
+           print("类方法fly:", cls)
+
+       # 静态方法
+       @staticmethod
+       def info(p):
+           print("静态方法info: ", p)
+
+
+   # 调用类方法，Bird类会自动绑定到第一个参数
+   Bird.fly()  # 类方法fly: <class '__main__.Bird'>
+
+   # 调用静态方法,不会自动绑定，要手动绑定一个参数
+   Bird.info("hujianli722")  # 静态方法info:  hujianli722
+
+   b = Bird()
+   b.fly()  # 类方法fly: <class '__main__.Bird'>
+   b.info("jianli722")  # 静态方法info:  jianli722
+
+@函数装饰器
+~~~~~~~~~~~
+
+.. code:: python
+
+   def funA(fn):
+       print("A")
+       fn()
+       return "xiaojianaichirou"
+
+
+   @funA
+   def funB():
+       print("B")
+
+
+   print(funB)
+
+   """
+   A
+   B
+   xiaojianaichirou
+   """
+
+复杂一点的函数装饰器
+
+.. code:: python
+
+   def foo(fn):
+       def bar(*args):
+           print("========1==========", args)
+           n = args[0]
+           print("========2==========", n * (n - 1))
+           print(fn.__name__)
+           fn(n * (n - 1))
+           print("*" * 15)
+           return fn(n * (n - 1))
+
+       return bar
+
+
+   @foo
+   def my_test(a):
+       print("=====my_test函数=====", a)
+
+
+   my_test(10)
+   my_test(6, 5)
+
+通过@符号来修饰函数是Python的宇哥非常实用的功能，可以在被修饰函数的前面添加一些额外的处理逻辑。
+比如(权限检查)，也可以在被修饰函数的后面添加一些额外的逻辑(比如记录日志。)
+也可以在目标方法抛出异常时进行一些修复操作…..
+这种改变不需要修改被修饰函数的代码，只要增加一个修饰即可。
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/24 13:35
+   # filename: sample01.py
+
+   def auth(fn):
+       def auth_fn(*args):
+           # 用一条语句模拟执行权限检查
+           print("-------------模拟执行权限检查--------")
+           # 回调被修饰的目标函数
+           fn(*args)
+
+       return auth_fn
+
+
+   @auth
+   def t0e0st(a, b):
+       print("执行test函数,参数a：%s,参数b: %s" % (a, b))
+
+
+   t0e0st(20, 15)
+   '''
+   -------------模拟执行权限检查--------
+   执行test函数,参数a：20,参数b: 15
+   '''
+
+在论命名空间
+~~~~~~~~~~~~
+
+.. code:: python
+
+   global_fn = lambda p: print("执行lambda表达式,p参数：", p)
+
+
+   class Category:
+       cate_fn = lambda p, d: print("执行lambda表达式,%s 参数 %s:" % (p, d))
+
+
+   # 调用全局空间内的global_fn，为参数p传入参数值
+   global_fn("jianli")
+
+   c = Category()
+
+   # python为方法绑定了参数值 self
+   c.cate_fn("aa")
+
+成员变量
+--------
+
+.. code:: python
+
+   class Record:
+       item = "鼠标"
+       date = '2020-3-24'
+
+       def info(self):
+           print("info方法中: ", self.item)
+           print("info方法中: ", self.date)
+
+
+   rc = Record()
+   print(rc.item)
+   print(rc.date)
+   rc.info()
+
+   rc.item = "键盘"
+   rc.date = "2020-03-20"
+   rc.info()
+
+.. code:: python
+
+   class Inverntory:
+       item = "鼠标"
+       quantity = 2000
+
+       def change(self, item, quantity):
+           self.item = item
+           self.quantity = quantity
+
+
+   iv = Inverntory()
+   # 访问iv的item和quantity实例变量
+   iv.change("显示器", 500)
+   print(iv.item)      # 显示器
+   print(iv.quantity)  # 500
+
+   # 访问Inventory的item和quantity类变量
+   print(Inverntory.item)      # 鼠标
+   print(Inverntory.quantity)  # 2000
+
+
+   # 修改类变量，实例变量不受影响
+   Inverntory.item = "笔记本"
+   Inverntory.quantity = 5000
+
+   print(iv.item)      # 显示器
+   print(iv.quantity)  # 500
+
+使用property函数定义属性
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+如果Python类定义了getter、setter等访问器方法，则可以使用property()函数将它们定义成属性(相当于实例变量)
+
+.. code:: python
+
+   class Rectangle:
+       # 定义构造方法
+       def __init__(self, width, height):
+           self.width = width
+           self.height = height
+       # 定义setsize()函数
+       def setsize (self , size):
+           self.width, self.height = size
+       # 定义getsize()函数
+       def getsize (self):
+           return self.width, self.height
+        # 定义getsize()函数
+       def delsize (self):
+           self.width, self.height = 0, 0  
+       # 使用property定义属性
+       size = property(getsize, setsize, delsize, '用于描述矩形大小的属性')
+   # 访问size属性的说明文档
+   print(Rectangle.size.__doc__)
+   # 通过内置的help()函数查看Rectangle.size的说明文档
+   help(Rectangle.size)
+   rect = Rectangle(4, 3)
+   # 访问rect的size属性
+   print(rect.size) # (4, 3)
+   # 对rect的size属性赋值
+   rect.size = 9, 7 
+   # 访问rect的width、height实例变量
+   print(rect.width) # 9
+   print(rect.height) # 7
+   # 删除rect的size属性
+   del rect.size
+   # 访问rect的width、height实例变量
+   print(rect.width) # 0
+   print(rect.height) # 0
+   print(dir(Rectangle))
+
+还可以使用@property装饰器来修饰方法，使之成为属性。
+
+.. code:: python
+
+   class Cell:
+       # 使用@property修饰方法，相当于为该属性设置getter方法
+       @property
+       def state(self):
+           return self._state
+       # 为state属性设置setter方法
+       @state.setter
+       def state(self, value):
+           if 'alive' in value.lower():
+               self._state = 'alive'
+           else:
+               self._state = 'dead'
+       # 为is_dead属性设置getter方法
+       # 只有getter方法属性是只读属性
+       @property
+       def is_dead(self):
+           return not self._state.lower() == 'alive'
+   c = Cell()
+   # 修改state属性
+   c.state = 'Alive'
+   # 访问state属性
+   print(c.state)
+   # 访问is_dead属性
+   print(c.is_dead)
+
+隐藏和封装
+~~~~~~~~~~
+
+Python并没有提供类似于其他语言的private等修饰符，因此Python并不能真正的支持隐藏，
+为了隐藏类中的成员，Python玩了一个小技巧：只要将Python类的成员命名为以双下划线开头的，Python就会把它们隐藏起来。
+
+Python的封装机制
+
+.. code:: python
+
+   class User :
+       def __hide(self):
+           print('示范隐藏的hide方法')
+       def getname(self):
+           return self.__name
+       def setname(self, name):
+           if len(name) < 3 or len(name) > 8:
+               raise ValueError('用户名长度必须在3～8之间')
+           self.__name = name
+       name = property(getname, setname)
+       def setage(self, age):
+           if age < 18 or age > 70:
+               raise ValueError('用户名年龄必须在18在70之间')
+           self.__age = age
+       def getage(self):
+           return self.__age
+       age = property(getage, setage)
+   # 创建User对象
+   u = User()
+   # 对name属性赋值，实际上调用setname()方法
+   #u.name = 'fk' # 引发 ValueError: 用户名长度必须在3～8之间
+   u.name = 'fkit'
+   u.age = 25
+   print(u.name) # fkit
+   print(u.age) # 25
+
+   # 尝试调用隐藏的__hide()方法
+   #u.__hide()
+
+   # 调用隐藏的__hide()方法
+   u._User__hide()
+   # 对隐藏的__name属性赋值
+   u._User__name = 'fk'
+   # 访问User对象的name属性（实际上访问__name实例变量）
+   print(u.name)
+
+类的继承
+--------
+
+继承的语法
+~~~~~~~~~~
+
+.. code:: python
+
+   class Fruit:
+       def info(self):
+           print("我是一个水果！重%g克" % self.weight)
+
+
+   class Food:
+       def taste(self):
+           print("不同食物的口感不同")
+
+
+   # 定义Apple类，继承了Fruit和Food类
+   class Apple(Fruit, Food):
+       pass
+
+
+   # 创建Apple对象
+   a = Apple()
+   a.weight = 5.6
+   # 调用Apple对象的info()方法
+   a.info()
+   # 调用Apple对象的taste()方法
+   a.taste()
+
+关于多继承
+~~~~~~~~~~
+
+Python 虽然在语法上明确支持多继承，但是通推荐:
+
+::
+
+   如果不是很有必要，则尽量不要使用多继承，而是使用单继承，这样可以保证
+   编程思路更清晰，而且可以避免很多麻烦。
+
+.. code:: python
+
+   class Item:
+       def info(self):
+           print("Item中方法:", "这是一个商品")
+
+
+   class Product:
+       def info(self):
+           print("Product中方法：", "这是一个工业产品")
+
+
+   class Mouse(Item, Product):
+       pass
+
+
+   m = Mouse()
+   m.info()        # Item中方法: 这是一个商品
+
+Python优先到Item父类中搜寻方法，一旦在Item父类中搜寻到目标方法，Python就不会继续向下搜索了。
+
+重写父类的方法
+~~~~~~~~~~~~~~
+
+.. code:: python
+
+   class Bird: 
+       # Bird类的fly()方法
+       def fly(self):
+           print("我在天空里自由自在地飞翔...")
+   class Ostrich(Bird):
+       # 重写Bird类的fly()方法
+       def fly(self):
+           print("我只能在地上奔跑...")
+     
+   # 创建Ostrich对象
+   os = Ostrich()
+   # 执行Ostrich对象的fly()方法，将输出"我只能在地上奔跑..."
+   os.fly()
+
+使用未绑定的方法调用被重写的方法
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+如果需要在子类中调用父类中被重写的实例方法，如何操作？
+
+即使是实例方法，Python也运行通过类名调用。区别在于：
+``在通过类名调用实例方法时，Python不会为实例方法的第一个参数self自动绑定参数值，而是需要程序显式绑定第一个参数self。``
+这种机制被称为未绑定方法。
+
+.. code:: python
+
+   class BaseClass:
+       def foo(self):
+           print("父类中定义的foo方法")
+
+
+   class SubClass(BaseClass):
+       # 重写父类的foo方法
+       def foo(self):
+           print("子类重写父类中的foo方法")
+
+       def bar(self):
+           print("执行bar方法")
+           # 还是子类的foo方法
+           self.foo()
+           # 使用类名调用实例方法(未绑定方法)调用父类被重写的方法
+           BaseClass.foo(self)
+
+
+   sc = SubClass()
+   sc.bar()
+
+   '''
+   执行bar方法
+   子类重写父类中的foo方法
+   父类中定义的foo方法
+   '''
+
+使用super函数调用父类的构造方法
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+
+   class Employee:
+       def __init__(self, salary):
+           self.salary = salary
+
+       def work(self):
+           print('普通员工正在写代码，工资是:', self.salary)
+
+
+   class Customer:
+       def __init__(self, favorite, address):
+           self.favorite = favorite
+           self.address = address
+
+       def info(self):
+           print('我是一个顾客，我的爱好是: %s,地址是%s' % (self.favorite, self.address))
+
+
+   # Manager继承了Employee、Customer
+   class Manager(Employee, Customer):
+       # 重写父类的构造方法
+       def __init__(self, salary, favorite, address):
+           print('--Manager的构造方法--')
+           # 通过super()函数调用父类的构造方法
+           super().__init__(salary)
+           # 与上一行代码的效果相同
+           #        super(Manager, self).__init__(salary)
+           # 使用未绑定方法调用父类的构造方法
+           Customer.__init__(self, favorite, address)
+
+
+   # 创建Manager对象
+   m = Manager(25000, 'IT产品', '广州')
+   m.work()  # ①
+   m.info()  # ②
+
+Python多态的意义和灵活性
+------------------------
+
+.. code:: python
+
+   class Bird:
+       def move(self, field):
+           print('鸟在%s上自由地飞翔' % field)
+   class Dog:
+       def move(self, field):
+           print('狗在%s里飞快的奔跑' % field)
+   # x变量被赋值为Bird对象
+   x = Bird()
+   # 调用x变量的move()方法
+   x.move('天空')
+   # x变量被赋值为Dog对象
+   x = Dog()
+   # 调用x变量的move()方法
+   x.move('草地')
+
+   # 多态的典型应用
+   class Canvas:
+       def draw_pic(self, shape):
+           print('--开始绘图--')
+           shape.draw(self)
+
+   class Rectangle:
+       def draw(self, canvas):
+           print('在%s上绘制矩形' % canvas)
+   class Triangle:
+       def draw(self, canvas):
+           print('在%s上绘制三角形' % canvas)
+   class Circle:
+       def draw(self, canvas):
+           print('在%s上绘制圆形' % canvas)
+   c = Canvas()
+   # 传入Rectangle参数，绘制矩形
+   c.draw_pic(Rectangle())
+   # 传入Triangle参数，绘制三角形
+   c.draw_pic(Triangle())
+   # 传入Circle参数，绘制圆形
+   c.draw_pic(Circle())
+   print(hasattr(c, 'draw_pic'))
+   print(hasattr(c.draw_pic, '__call__'))
+   print(Circle.__dict__)
+
+类型检查的相关函数和属性
+------------------------
+
+.. code:: python
+
+   # 定义一个字符串
+   hello = "Hello";
+   # "Hello"是str类的实例，输出True
+   print('"Hello"是否是str类的实例: ', isinstance(hello, str))
+   # "Hello"是object类的子类的实例，输出True
+   print('"Hello"是否是object类的实例: ', isinstance(hello, object))
+   # str是object类的子类，输出True
+   print('str是否是object类的子类: ', issubclass(str, object))
+   # "Hello"不是tuple类及其子类的实例，输出False
+   print('"Hello"是否是tuple类的实例: ', isinstance(hello, tuple))
+   # str不是tuple类的子类，输出False
+   print('str是否是tuple类的子类: ', issubclass(str, tuple))
+   # 定义一个列表
+   my_list = [2, 4]
+   # [2, 4]是list类的实例，输出True
+   print('[2, 4]是否是list类的实例: ', isinstance(my_list, list))
+   # [2, 4]是object类的子类的实例，输出True
+   print('[2, 4]是否是object类及其子类的实例: ', isinstance(my_list, object))
+   # list是object类的子类，输出True
+   print('list是否是object类的子类: ', issubclass(list, object))
+   # [2, 4]不是tuple类及其子类的实例，输出False
+   print('[2, 4]是否是tuple类及其子类的实例: ', isinstance([2, 4], tuple))
+   # list不是tuple类的子类，输出False
+   print('list是否是tuple类的子类: ', issubclass(list, tuple))
+
+   data = (20, 'fkit')
+   print('data是否为列表或元组: ', isinstance(data, (list, tuple))) # True
+   # str不是list或者tuple的子类，输出False
+   print('str是否为list或tuple的子类: ', issubclass(str, (list, tuple)))
+   # str是list或tuple或object的子类，输出True
+   print('str是否为list或tuple或object的子类 ', issubclass(str, (list, tuple, object)))
+
+枚举类的用法
+------------
+
+.. code:: python
+
+   import enum
+   # 定义Season枚举类
+   Season = enum.Enum('Season', ('SPRING', 'SUMMER', 'FALL', 'WINTER'))
+   # 直接访问指定枚举
+   print(Season.SPRING)
+   # 访问枚举成员的变量名
+   print(Season.SPRING.name)
+   # 访问枚举成员的值
+   print(Season.SPRING.value)
+
+   # 根据枚举变量名访问枚举对象
+   print(Season['SUMMER']) # Season.SUMMER
+   # 根据枚举值访问枚举对象
+   print(Season(3)) # Season.FALL
+
+   # 遍历Season枚举的所有成员
+   for name, member in Season.__members__.items():
+       print(name, '=>', member, ',', member.value)
+
+   # extend
+   import enum
+   class Orientation(enum.Enum):
+       # 为序列值指定value值
+       EAST = '东'
+       SOUTH = '南'
+       WEST = '西'
+       NORTH = '北'
+       def info(self):
+           print('这是一个代表方向【%s】的枚举' % self.value)
+   print(Orientation.SOUTH)
+   print(Orientation.SOUTH.value)
+   # 通过枚举变量名访问枚举
+   print(Orientation['WEST'])
+   # 通过枚举值来访问枚举
+   print(Orientation('南'))
+   # 调用枚举的info()方法
+   Orientation.EAST.info()
+   # 遍历Orientation枚举的所有成员
+   for name, member in Orientation.__members__.items():
+       print(name, '=>', member, ',', member.value)
+
+枚举类及其构造器
+----------------
+
+.. code:: python
+
+   import enum
+   class Gender(enum.Enum):
+       MALE = '男', '阳刚之力'
+       FEMALE = '女', '柔顺之美'
+       def __init__(self, cn_name, desc):
+           self._cn_name = cn_name
+           self._desc = desc
+       @property
+       def desc(self):
+           return self._desc
+       @property
+       def cn_name(self):
+           return self._cn_name
+   # 访问FEMALE的name
+   print('FEMALE的name:', Gender.FEMALE.name)
+   # 访问FEMALE的value
+   print('FEMALE的value:', Gender.FEMALE.value)
+   # 访问自定义的cn_name属性
+   print('FEMALE的cn_name:', Gender.FEMALE.cn_name)
+   # 访问自定义的desc属性
+   print('FEMALE的desc:', Gender.FEMALE.desc)

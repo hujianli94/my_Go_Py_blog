@@ -1,0 +1,44 @@
+.. contents::
+   :depth: 3
+..
+
+13.与字典有关的计算问题
+=======================
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/4/1 16:03
+   # filename: 13.与字典有关的计算问题.py
+
+   prices = {
+       'ACME': 45.23,
+       'AAPL': 612.78,
+       'IBM': 205.55,
+       'HPQ': 37.20,
+       'FB': 10.75
+   }
+
+   min_price = min(zip(prices.values(), prices.keys()))
+   print(min_price)  # (10.75, 'FB')
+   max_price = max(zip(prices.values(), prices.keys()))
+   print(max_price)  # (612.78, 'AAPL')
+
+   prices_sorted = sorted(zip(prices.values(), prices.keys()))
+   print(prices_sorted)  # [(10.75, 'FB'), (37.2, 'HPQ'), (45.23, 'ACME'), (205.55, 'IBM'), (612.78, 'AAPL')]
+
+   # 当进行这些计算时，请注意zip()创建了一个迭代器，它的内容只能被消费一次。
+   # prices_and_names = zip(prices.values(), prices.keys())
+   # print(min(prices_and_names))  # OK
+   # print(max(prices_and_names))  # ValueError: max() arg is an empty sequence
+
+   print(min(prices, key=lambda k: prices[k]))  # FB
+   print(max(prices, key=lambda k: prices[k]))  # AAPL
+
+   # 利用了zip()的解决方案是通过将字典的键-值对“反转”为值-键对序列来解决这个问题的。
+
+   prices = {'AAA': 49.23, 'ZZZ': 45.23}
+   print(min(zip(prices.values(), prices.keys())))
+   print(max(zip(prices.values(), prices.keys())))

@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>16.2. 线程 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="16.3. 协程与微线程" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html" />
+    <link rel="prev" title="16.1. 进程" href="01.%E8%BF%9B%E7%A8%8B.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">16. Python 进程和线程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html">16.1. 进程</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">16.2. 线程</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">16.2.1. 线程初探</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#thread">16.2.2. 调用Thread类来创建多线程</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">16.2.3. 继承Thread类创建多线程</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deamon">16.2.4. 演示deamon属性的作用 后台线程</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">16.2.5. 线程管理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">16.2.6. 线程安全</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">16.2.7. 什么是互斥锁</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">16.2.8. 使用信号量同步多线程之间的执行顺序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">16.2.9. 创建定时触发程序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">16.2.10. 循环定时触发程序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">16.2.11. 设置定时间隔和结束定时器</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">16.2.12. 使用线程池提升运行效率</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id19">16.2.13. 使用队列实现线程间通信</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#condition">16.2.14. 使用Condition实现线程间通信</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#event">16.2.15. 使用Event实现线程间通信</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html">16.3. 协程与微线程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html">16.4. Python程序中concurrent模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB.html">16.5. 多线程和多进程的区别</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E5%88%86%E5%B8%83%E5%BC%8F%E8%BF%9B%E7%A8%8B.html">16.6. 分布式进程</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">16. </span>Python 进程和线程</a> &raquo;</li>
+      <li><span class="section-number">16.2. </span>线程</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/16.Python线程和进程/02.线程.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id21">线程</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id22">线程初探</a></p></li>
+<li><p><a class="reference internal" href="#thread" id="id23">调用Thread类来创建多线程</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id24">代码示例1</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id25">代码示例2</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id5" id="id26">继承Thread类创建多线程</a></p></li>
+<li><p><a class="reference internal" href="#deamon" id="id27">演示deamon属性的作用 后台线程</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id28">线程管理</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id7" id="id29">等待线程结束</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id30">线程停止</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id9" id="id31">线程安全</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id32">什么是互斥锁</a></p>
+<ul>
+<li><p><a class="reference internal" href="#lock" id="id33">Lock</a></p></li>
+<li><p><a class="reference internal" href="#rlock" id="id34">RLock</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id13" id="id35">使用信号量同步多线程之间的执行顺序</a></p></li>
+<li><p><a class="reference internal" href="#id14" id="id36">创建定时触发程序</a></p></li>
+<li><p><a class="reference internal" href="#id15" id="id37">循环定时触发程序</a></p></li>
+<li><p><a class="reference internal" href="#id16" id="id38">设置定时间隔和结束定时器</a></p></li>
+<li><p><a class="reference internal" href="#id17" id="id39">使用线程池提升运行效率</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id18" id="id40">线程池实现主机端口扫描实例</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id19" id="id41">使用队列实现线程间通信</a></p></li>
+<li><p><a class="reference internal" href="#condition" id="id42">使用Condition实现线程间通信</a></p></li>
+<li><p><a class="reference internal" href="#event" id="id43">使用Event实现线程间通信</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id20" id="id44">模拟人物对话</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id21"><span class="section-number">16.2. </span>线程</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>线程线程（Thread，有时被称为轻量级进程）跟进程有些相似，不同的是所有线程运行在同一个进程中，共享运行环境。</p>
+<p>线程有开始、顺序执行和结束3部分，有一个自己的指令指针，记录运行到什么地方。</p>
+<p>线程的运行可能被抢占（中断）或暂时被挂起（睡眠），从而让其他线程运行，这叫作让步。</p>
+<p>一个进程中的各个线程之间共享同一块数据空间，所以线程之间可以比进程之间更方便地共享数据和相互通信。</p>
+<p>线程一般是并发执行的。正是由于这种并行和数据共享的机制，使得多个任务的合作变得可能。实际上，在单CPU系统中，真正的并发并不可能，每个线程会被安排成每次只运行一小会儿，然后就把CPU让出来，让其他线程运行。</p>
+<p>在进程的整个运行过程中，每个线程都只做自己的事，需要时再跟其他线程共享运行结果。多个线程共同访问同一块数据不是完全没有危险的，由于访问数据的顺序不一样，因此有可能导致数据结果不一致的问题，这叫作竞态条件。大多数线程库都带有一系列同步原语，用于控制线程的执行和数据的访问</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Python 的标准库提供了两个模块： _thread 和 threading ， _thread 是低级模块， threading 是高级模
+块，对 _thread 进行了封装。绝大多数情况下，我们只需要使用 threading 这个高级模块。
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>启动一个线程就是把一个函数传入并创建 Thread 实例，然后调用 start() 开始执行：
+</pre></div>
+</div>
+<section id="id2">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">16.2.1. </span>线程初探</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/23 14:11</span>
+<span class="c1"># filename: threading001.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">threading.actice_count():返回当前处于活动状态的线程个数</span>
+<span class="sd">threading.current_thread():返回当前的Thread对象</span>
+<span class="sd">threading.main_thread():返回主线程对象，主线程是Python解释器启动的线程</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="c1">#当前线程对象</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span>
+<span class="c1">#当前线程名</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># 返回当前处于活动状态的线程</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">active_count</span><span class="p">())</span>
+
+<span class="c1"># 主线程名</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>输出内容：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MainThread</span>
+<span class="mi">1</span>
+<span class="n">MainThread</span>
+</pre></div>
+</div>
+</section>
+<section id="thread">
+<h2><a class="toc-backref" href="#id23"><span class="section-number">16.2.2. </span>调用Thread类来创建多线程</a><a class="headerlink" href="#thread" title="Permalink to this headline">¶</a></h2>
+<section id="id3">
+<h3><a class="toc-backref" href="#id24">代码示例1</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="c1"># 新线程执行的代码</span>
+
+<span class="k">def</span> <span class="nf">loop</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;thread </span><span class="si">{}</span><span class="s2"> is running ....&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;thread </span><span class="si">{}</span><span class="s2"> &gt;&gt;&gt; </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;thread </span><span class="si">{}</span><span class="s2"> ended&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;thread </span><span class="si">{}</span><span class="s2"> is running ....&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">loop</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Loopthread&quot;</span><span class="p">,)</span>
+<span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;thread </span><span class="si">%s</span><span class="s1"> ended.&#39;</span> <span class="o">%</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id25">代码示例2</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/23 14:18</span>
+<span class="c1"># filename: Thread类实现多线程1.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="c1"># 线程体函数</span>
+<span class="k">def</span> <span class="nf">thread_bady</span><span class="p">():</span>
+    <span class="c1"># 当前线程对象</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="c1"># 当前线程名</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;第</span><span class="si">{}</span><span class="s2">次执行线程:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="c1"># 线程休眠，如果不休眠，线程对象t1结束后才会执行线程对象t2线程将</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;线程:</span><span class="si">{}</span><span class="s2">执行完成！&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="c1"># 主函数</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># 创建线程对象t1</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_bady</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;hu_thread&quot;</span><span class="p">)</span>
+    <span class="c1"># 启动线程t1</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># 创建线程对象t2</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_bady</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;xiaojian_thread&quot;</span><span class="p">)</span>
+    <span class="c1"># 启动线程t2</span>
+    <span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>第0次执行线程:hu_thread
+第0次执行线程:xiaojian_thread
+第1次执行线程:hu_thread
+第1次执行线程:xiaojian_thread
+第2次执行线程:hu_thread
+第2次执行线程:xiaojian_thread
+第3次执行线程:hu_thread
+第3次执行线程:xiaojian_thread
+第4次执行线程:hu_thread
+第4次执行线程:xiaojian_thread
+线程:hu_thread执行完成！
+线程:xiaojian_thread执行完成！
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/17 17:14</span>
+<span class="c1"># filename: 调用Thread类创建多线程.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="nb">max</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">max</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="c1">#创建并启动第一个线程</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">action</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="p">))</span>
+        <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1">#创建并启动第二个线程</span>
+        <span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">action</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,))</span>
+        <span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主线程执行完成！！&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>代码示例3</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/7/30 22:08</span>
+<span class="c1"># @filename: exp_thread_1.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+<span class="kn">import</span> <span class="nn">_thread</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">date_time_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%M-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">date_time_str</span><span class="p">(</span><span class="n">date_time</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 时间转为字符串&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">date_time</span><span class="p">,</span> <span class="n">date_time_format</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">loop_one</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-----线程1开始于:</span><span class="si">{</span><span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------线程休眠4秒&quot;</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-----线程1休眠结束，结束于:</span><span class="si">{</span><span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">loop_two</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-----线程2开始于:</span><span class="si">{</span><span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------线程休眠2秒&quot;</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-----线程2休眠结束，结束于:</span><span class="si">{</span><span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;----所有线程开始时间：</span><span class="si">{</span><span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">_thread</span><span class="o">.</span><span class="n">start_new_thread</span><span class="p">(</span><span class="n">loop_one</span><span class="p">,</span> <span class="p">())</span>
+    <span class="n">_thread</span><span class="o">.</span><span class="n">start_new_thread</span><span class="p">(</span><span class="n">loop_two</span><span class="p">,</span> <span class="p">())</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-----所有线程结束时间:</span><span class="si">{</span><span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>----所有线程开始时间：2020-14-30 22:14:20
+-----线程2开始于:2020-14-30 22:14:20
+------线程休眠2秒
+-----线程1开始于:2020-14-30 22:14:20
+------线程休眠4秒
+-----线程2休眠结束，结束于:2020-14-30 22:14:22
+-----线程1休眠结束，结束于:2020-14-30 22:14:24
+-----所有线程结束时间:2020-14-30 22:14:26
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id26"><span class="section-number">16.2.3. </span>继承Thread类创建多线程</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>代码示例1</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="k">class</span> <span class="nc">MyThreading</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyThreading</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">conn</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;run task&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">t1</span> <span class="o">=</span> <span class="n">MyThreading</span><span class="p">(</span><span class="s1">&#39;t1&#39;</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">MyThreading</span><span class="p">(</span><span class="s1">&#39;t2&#39;</span><span class="p">)</span>
+<span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>代码示例2</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/23 14:27</span>
+<span class="c1"># filename: 继承Thread类创建多线程.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">class</span> <span class="nc">MyThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyThread</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># 线程体函数</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 当前线程对象</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="c1"># 当前线程名</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;第</span><span class="si">{}</span><span class="s2">此执行线程:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="c1"># 线程休眠</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;线程</span><span class="si">{}</span><span class="s2">执行完毕！&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># 创建线程对象t1</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">MyThread</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;t1-thread&quot;</span><span class="p">)</span>
+    <span class="c1"># 启动线程t1</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># 创建线程对象t2</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">MyThread</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;t2-thread&quot;</span><span class="p">)</span>
+    <span class="c1"># 启动线程t2</span>
+    <span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>第0此执行线程:t1-thread
+第0此执行线程:t2-thread
+第1此执行线程:t2-thread
+第1此执行线程:t1-thread
+第2此执行线程:t1-thread
+第2此执行线程:t2-thread
+第3此执行线程:t2-thread
+第3此执行线程:t1-thread
+第4此执行线程:t1-thread
+第4此执行线程:t2-thread
+线程t2-thread执行完毕！
+线程t1-thread执行完毕！
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/17 17:23</span>
+<span class="c1"># filename: 继承Thread类创建多线程.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="k">class</span> <span class="nc">FkThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># 重写run()方法作为线程执行体</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">+=</span><span class="mi">1</span>
+
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="c1"># 启动第一个线程</span>
+        <span class="n">ft1</span> <span class="o">=</span> <span class="n">FkThread</span><span class="p">()</span>
+        <span class="n">ft1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># 启动第二个线程</span>
+        <span class="n">ft2</span> <span class="o">=</span> <span class="n">FkThread</span><span class="p">()</span>
+        <span class="n">ft2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="deamon">
+<h2><a class="toc-backref" href="#id27"><span class="section-number">16.2.4. </span>演示deamon属性的作用 后台线程</a><a class="headerlink" href="#deamon" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/12/21 18:27</span>
+<span class="c1"># filename: 04.deamon属性使用.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">class</span> <span class="nc">myThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mynum</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">myThread</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mynum</span> <span class="o">=</span> <span class="n">mynum</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mynum</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mynum</span> <span class="o">+</span> <span class="mi">5</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    main()主函数运行结束时，ma和mb在后台运行，无法输出运行结果</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;start............&quot;</span><span class="p">)</span>
+    <span class="n">ma</span> <span class="o">=</span> <span class="n">myThread</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mb</span> <span class="o">=</span> <span class="n">myThread</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">ma</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mb</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">ma</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">mb</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;end...........&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">start............</span>
+<span class="sd">end...........</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id28"><span class="section-number">16.2.5. </span>线程管理</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<section id="id7">
+<h3><a class="toc-backref" href="#id29">等待线程结束</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/23 14:37</span>
+<span class="c1"># filename: 等待线程结束.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">join()方法，当前线程t1调用join()方法时，会阻塞当前线程，等到t1线程结束，如果t1线程结束</span>
+<span class="sd">或者等待超时，则当前线程回到活动状态继续执行。</span>
+<span class="sd">join(timeout=None)</span>
+<span class="sd">参数timeout 设置超时时间，单位是秒。如果没有设置timeout时间，则可以一直等待</span>
+
+<span class="sd">使用join()方法的场景是：一个线程依赖另一个线程的运行结果，所以调用另一个线程的join()方法等待它的运行完成</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># 共享变量0</span>
+<span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="c1"># 线程体函数</span>
+<span class="k">def</span> <span class="nf">thread_body</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">value</span>
+    <span class="c1"># 当前线程对象</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ThreadA 开始.....&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ThreadA 执行.......&quot;</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># 线程休眠</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ThreadA 结束.......&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主线程 开始........&quot;</span><span class="p">)</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_body</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ThreadA&quot;</span><span class="p">)</span>
+    <span class="c1"># 启动线程</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="c1"># 主线程被阻塞，等待t1线程结束</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;value = </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主线程  结束.....&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">主线程</span> <span class="n">开始</span><span class="o">........</span>
+<span class="n">ThreadA</span> <span class="n">开始</span><span class="o">.....</span>
+<span class="n">ThreadA</span> <span class="n">执行</span><span class="o">.......</span>
+<span class="n">ThreadA</span> <span class="n">结束</span><span class="o">.......</span>
+<span class="n">ThreadA</span> <span class="n">执行</span><span class="o">.......</span>
+<span class="n">ThreadA</span> <span class="n">结束</span><span class="o">.......</span>
+<span class="n">value</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">主线程</span>  <span class="n">结束</span><span class="o">.....</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3><a class="toc-backref" href="#id30">线程停止</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/23 14:51</span>
+<span class="c1"># filename: 5.线程停止.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">模拟一个下载程序，设置一个停止子进程的停止变量</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1"># 线程停止变量</span>
+<span class="n">isrunning</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="c1"># 线程体函数</span>
+<span class="k">def</span> <span class="nf">thread_body</span><span class="p">():</span>
+    <span class="k">while</span> <span class="n">isrunning</span><span class="p">:</span>
+        <span class="c1"># 线程开始工作</span>
+        <span class="c1"># TODO</span>
+        <span class="k">global</span> <span class="n">count</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;下载中:【</span><span class="si">{}</span><span class="s2">】.......&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;download.log&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="c1"># 程序休眠</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;执行完成！！,执行结果查看：&#39;download.log&#39;&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># 主函数</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># 创建线程对象t1</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_body</span><span class="p">)</span>
+    <span class="c1"># 启动线程t1</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># 从键盘停止指令</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入停止指令：&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;exit&quot;</span><span class="p">:</span>
+        <span class="k">global</span> <span class="n">isrunning</span>
+        <span class="n">isrunning</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>请输入停止指令：exit
+执行完成！！,执行结果查看：&#39;download.log&#39;
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id31"><span class="section-number">16.2.6. </span>线程安全</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>代码示例1</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/7/30 22:08</span>
+<span class="c1"># @filename: exp_thread_1.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+<span class="kn">import</span> <span class="nn">_thread</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">loops</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">date_time_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%M-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">date_time_str</span><span class="p">(</span><span class="n">date_time</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 时间转为字符串&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">date_time</span><span class="p">,</span> <span class="n">date_time_format</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">loop</span><span class="p">(</span><span class="n">nloop</span><span class="p">,</span> <span class="n">n_sec</span><span class="p">,</span> <span class="n">lock</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-----线程(</span><span class="si">{</span><span class="n">nloop</span><span class="si">}</span><span class="s2">)开始于:</span><span class="si">{</span><span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="si">}</span><span class="s2">,先休眠(</span><span class="si">{</span><span class="n">n_sec</span><span class="si">}</span><span class="s2">)秒&quot;</span><span class="p">)</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="n">n_sec</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;-----线程(</span><span class="si">{</span><span class="n">nloop</span><span class="si">}</span><span class="s2">)休眠结束，结束于:</span><span class="si">{</span><span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-------所有线程开始执行---------&quot;</span><span class="p">)</span>
+    <span class="n">locks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">n_loops</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loops</span><span class="p">))</span>
+
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n_loops</span><span class="p">:</span>
+        <span class="n">lock</span> <span class="o">=</span> <span class="n">_thread</span><span class="o">.</span><span class="n">allocate_lock</span><span class="p">()</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="n">locks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lock</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n_loops</span><span class="p">:</span>
+        <span class="n">_thread</span><span class="o">.</span><span class="n">start_new_thread</span><span class="p">(</span><span class="n">loop</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">loops</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">locks</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n_loops</span><span class="p">:</span>
+        <span class="k">while</span> <span class="n">locks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">locked</span><span class="p">():</span>
+            <span class="k">pass</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;----所有线程执行结束:</span><span class="si">{</span><span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>代码示例2</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/23 15:12</span>
+<span class="c1"># filename: 线程安全.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">class</span> <span class="nc">TickDB</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 机票的数量</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="k">def</span> <span class="nf">get_ticket_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :return: 获得当前机票的数量</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span>
+
+    <span class="k">def</span> <span class="nf">sell_ticket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: 销售机票</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO</span>
+        <span class="c1"># 线程休眠，模拟等待用户付款</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;机票已经售完，请换乘其他航空..............&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;第</span><span class="si">{0}</span><span class="s2">号票，已经售出,【购买者】乘客：</span><span class="si">{1}</span><span class="s2">，还剩下：</span><span class="si">{2}</span><span class="s2">张票&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+
+<span class="c1"># 创建TickDB对象</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">TickDB</span><span class="p">()</span>
+
+
+<span class="c1"># 模拟选票线程体1</span>
+<span class="k">def</span> <span class="nf">thread_body1</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># 声明为全局变量</span>
+    <span class="k">global</span> <span class="n">db</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">curr_ticket_count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_ticket_count</span><span class="p">()</span>
+        <span class="c1"># 查询是否有票</span>
+        <span class="k">if</span> <span class="n">curr_ticket_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">sell_ticket</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;【</span><span class="si">{}</span><span class="s2">】 您查询到的结果：无票&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">break</span>
+
+
+<span class="c1"># 模拟选票线程体2</span>
+<span class="k">def</span> <span class="nf">thread_body2</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># 声明为全局变量</span>
+    <span class="k">global</span> <span class="n">db</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">curr_ticket_count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_ticket_count</span><span class="p">()</span>
+        <span class="c1"># 查询是否有票</span>
+        <span class="k">if</span> <span class="n">curr_ticket_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">sell_ticket</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;【</span><span class="si">{}</span><span class="s2">】您查询到的结果：无票&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">break</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;***************************************************************&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*************** 欢迎来到XXX航空购票系统 ************************&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;***************************************************************&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----------------------------------- t1开始购票--------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="c1"># 创建线程对象t1</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_body1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;t1&quot;</span><span class="p">,))</span>
+    <span class="c1"># 启动线程t1</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----------------------------------- t2开始购票--------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="c1"># 创建线程对象t2</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_body2</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;t2&quot;</span><span class="p">,))</span>
+    <span class="c1"># 启动线程t1</span>
+    <span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>***************************************************************
+*************** 欢迎来到XXX航空购票系统 ************************
+***************************************************************
+----------------------------------- t1开始购票--------------------------------------------------
+----------------------------------- t2开始购票--------------------------------------------------
+第4号票，已经售出,【购买者】乘客：t1，还剩下：3张票
+第3号票，已经售出,【购买者】乘客：t2，还剩下：2张票
+第2号票，已经售出,【购买者】乘客：t1，还剩下：1张票
+第1号票，已经售出,【购买者】乘客：t2，还剩下：0张票
+机票已经售完，请换乘其他航空..............
+【t2】您查询到的结果：无票
+机票已经售完，请换乘其他航空..............
+【t1】 您查询到的结果：无票
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id32"><span class="section-number">16.2.7. </span>什么是互斥锁</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<section id="lock">
+<h3><a class="toc-backref" href="#id33">Lock</a><a class="headerlink" href="#lock" title="Permalink to this headline">¶</a></h3>
+<p>示例1</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># threading.Lock()</span>
+<span class="c1"># 使用互斥锁可以防止多个线程同时读取内存的某一个区域,互斥锁保证了每个线程同一时间只有一个在使用内存资源</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">从系统的角度来看。锁的作用其实是将多线程变回到单线程，这是以牺牲性能，来换取程序的准确性。</span>
+
+<span class="sd">在代码设计中，应该最大化地避免使用锁。即使加了锁，也要让被保护的区域尽量地少，在满足准确性的同时实现性能最大化。</span>
+<span class="sd">在代码中，有“加锁”操作，就一定要有与之对应的“解锁”操作，否则代码失去多线程的优势。</span>
+
+<span class="sd">在Python中，使用threading.RLock类来创建锁。threading.RLock类有两个方法--acquire与release</span>
+
+<span class="sd">* acquire负责开始对代码进行保护，在acquire之后的代码，都将只允许一个线程进行执行。</span>
+
+<span class="sd">* release方法用于停止保护（即释放锁资源）。在release之后的代码又恢复到原来的样子，可以被多线程交叉执行。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Lock</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"># 互斥锁的使用</span>
+
+<span class="sd">#创建锁</span>
+<span class="sd">mutex = threading.Lock()</span>
+
+<span class="sd">#锁定</span>
+<span class="sd">mutex.acquire([blocking])</span>
+
+<span class="sd">#释放锁</span>
+<span class="sd">mutex.release()</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="c1"># 计数器，总票数</span>
+<span class="n">num</span> <span class="o">=</span> <span class="mi">20</span>
+
+
+<span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">num</span>       <span class="c1"># 使用全局变量</span>
+    <span class="n">mutex</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>  <span class="c1"># 锁定线程，只有1个线程可以抢用</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">号用户【线程】，购买成功，剩余</span><span class="si">{}</span><span class="s2">张电影票&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">num</span><span class="p">))</span>
+    <span class="n">mutex</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>  <span class="c1"># 释放，其他线程可以进行操作</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">mutex</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>  <span class="c1"># 创建锁</span>
+    <span class="n">t_l</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">i</span><span class="p">,))</span>
+        <span class="n">t_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">t_l</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;main thread end..!&quot;</span><span class="p">)</span>
+
+<span class="c1"># 0号用户【线程】，购买成功，剩余19张电影票</span>
+<span class="c1"># 1号用户【线程】，购买成功，剩余18张电影票</span>
+<span class="c1"># 2号用户【线程】，购买成功，剩余17张电影票</span>
+<span class="c1"># 3号用户【线程】，购买成功，剩余16张电影票</span>
+<span class="c1"># 4号用户【线程】，购买成功，剩余15张电影票</span>
+<span class="c1"># 5号用户【线程】，购买成功，剩余14张电影票</span>
+<span class="c1"># 6号用户【线程】，购买成功，剩余13张电影票</span>
+<span class="c1"># 7号用户【线程】，购买成功，剩余12张电影票</span>
+<span class="c1"># 8号用户【线程】，购买成功，剩余11张电影票</span>
+<span class="c1"># 9号用户【线程】，购买成功，剩余10张电影票</span>
+<span class="c1"># main thread end..!</span>
+</pre></div>
+</div>
+<p>示例2</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">class</span> <span class="nc">myTread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">x</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="mi">10</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> result = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="n">getName</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">x</span><span class="p">))</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+
+<span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">thrs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="n">thrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">myTread</span><span class="p">())</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">thrs</span><span class="p">:</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">自定义一个带锁访问全局变量x的线程类myThread，在main()函数中初始化了5个线程来修改变量x，</span>
+<span class="sd">但同一时刻只能由一个线程对x操作</span>
+
+<span class="sd">Thread-1 result = 30</span>
+<span class="sd">Thread-2 result = 60</span>
+<span class="sd">Thread-3 result = 90</span>
+<span class="sd">Thread-4 result = 120</span>
+<span class="sd">Thread-5 result = 150</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>代码示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/23 13:44</span>
+<span class="c1"># @filename: sample03_lock.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">func</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">data</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> acquire lock ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> get the lock&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+        <span class="n">data</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> release lock&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+
+<span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+<span class="n">t3</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+<span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">t3</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="id11">
+<h4>互斥锁航空机票示例<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/23 15:42</span>
+<span class="c1"># filename: 7.多线程同步、互斥锁.py</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">class</span> <span class="nc">TickDB</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 机票的数量</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="k">def</span> <span class="nf">get_ticket_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :return: 获得当前机票的数量</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span>
+
+    <span class="k">def</span> <span class="nf">sell_ticket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: 销售机票</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO</span>
+        <span class="c1"># 线程休眠，模拟等待用户付款</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;机票已经售完，请换乘其他航空..............&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;第</span><span class="si">{0}</span><span class="s2">号票，已经售出,【购买者】乘客：</span><span class="si">{1}</span><span class="s2">，还剩下：</span><span class="si">{2}</span><span class="s2">张票&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticket_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+
+<span class="c1"># 创建TickDB对象</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">TickDB</span><span class="p">()</span>
+<span class="c1"># 创建lock对象</span>
+<span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+
+<span class="c1"># 模拟选票线程体1</span>
+<span class="k">def</span> <span class="nf">thread_body1</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># 声明为全局变量</span>
+    <span class="k">global</span> <span class="n">db</span>
+    <span class="k">global</span> <span class="n">lock</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># 看这里！！开始锁定，加上小锁</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="n">curr_ticket_count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_ticket_count</span><span class="p">()</span>
+        <span class="c1"># 查询是否有票</span>
+        <span class="k">if</span> <span class="n">curr_ticket_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">sell_ticket</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 看这里，解锁，放开锁定</span>
+            <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;【</span><span class="si">{}</span><span class="s2">】 您查询到的结果：无票&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="c1"># 解锁</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># 模拟选票线程体2</span>
+<span class="k">def</span> <span class="nf">thread_body2</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># 声明为全局变量</span>
+    <span class="k">global</span> <span class="n">db</span>
+    <span class="k">global</span> <span class="n">lock</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># 开始锁定，加上小锁</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="n">curr_ticket_count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_ticket_count</span><span class="p">()</span>
+        <span class="c1"># 查询是否有票</span>
+        <span class="k">if</span> <span class="n">curr_ticket_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">sell_ticket</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 看这里，解锁，放开锁定</span>
+            <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;【</span><span class="si">{}</span><span class="s2">】您查询到的结果：无票&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="c1">#解锁</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;***************************************************************&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*************** 欢迎来到XXX航空购票系统 ************************&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;***************************************************************&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----------------------------------- t1开始购票--------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="c1"># 创建线程对象t1</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_body1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;t1&quot;</span><span class="p">,))</span>
+    <span class="c1"># 启动线程t1</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----------------------------------- t2开始购票--------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="c1"># 创建线程对象t2</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">thread_body2</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;t2&quot;</span><span class="p">,))</span>
+    <span class="c1"># 启动线程t1</span>
+    <span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>***************************************************************
+*************** 欢迎来到XXX航空购票系统 ************************
+***************************************************************
+----------------------------------- t1开始购票--------------------------------------------------
+----------------------------------- t2开始购票--------------------------------------------------
+第4号票，已经售出,【购买者】乘客：t1，还剩下：3张票
+第3号票，已经售出,【购买者】乘客：t2，还剩下：2张票
+第2号票，已经售出,【购买者】乘客：t1，还剩下：1张票
+第1号票，已经售出,【购买者】乘客：t2，还剩下：0张票
+机票已经售完，请换乘其他航空..............
+【t2】您查询到的结果：无票
+【t1】 您查询到的结果：无票
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>使用Thread对象的Lock和RLock可以实现简单的线程同步，
+这两个对象都有acquire方法和release方法。
+对于每次只允许一个线程操作的数据，可以将操作放到acquire和release方法之间。
+多线程的优势在于可以同时运行多个任务，但当线程需要共享数据时，可能存在数据不同步的问题。
+考虑这样一种情况：一个列表里所有元素都是0，线程set从后向前把所有元素改成1，
+而线程print负责从前往后读取列表并输出。
+</pre></div>
+</div>
+<section id="id12">
+<h5>代码示例<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h5>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">date_time_format</span> <span class="o">=</span> <span class="s1">&#39;%y-%M-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span>
+
+<span class="k">class</span> <span class="nc">MyThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threadID</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">counter</span><span class="p">):</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threadID</span> <span class="o">=</span> <span class="n">threadID</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;开启线程：&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1">#获取锁，用于线程同步</span>
+        <span class="n">threadLock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+
+        <span class="n">print_time</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1">#释放锁，开启下一个线程</span>
+        <span class="n">threadLock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">date_time_str</span><span class="p">(</span><span class="n">date_time</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">date_time</span><span class="p">,</span> <span class="n">date_time_format</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">print_time</span><span class="p">(</span><span class="n">threadName</span><span class="p">,</span> <span class="n">delay</span><span class="p">,</span> <span class="n">counter</span><span class="p">):</span>
+    <span class="k">while</span> <span class="n">counter</span><span class="p">:</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threadName</span><span class="p">,</span> <span class="n">date_time_str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())))</span>
+        <span class="n">counter</span> <span class="o">-=</span><span class="mi">1</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1">#创建新线程</span>
+    <span class="n">thread1</span> <span class="o">=</span> <span class="n">MyThread</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Thread-1&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">thread2</span> <span class="o">=</span> <span class="n">MyThread</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Thread-2&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1">#开启新线程</span>
+    <span class="n">thread1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">thread2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># 添加线程到线程列表</span>
+    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread1</span><span class="p">)</span>
+    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread2</span><span class="p">)</span>
+
+    <span class="c1">#等待所有线程完成</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;退出主线程.......&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">threadLock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="rlock">
+<h3><a class="toc-backref" href="#id34">RLock</a><a class="headerlink" href="#rlock" title="Permalink to this headline">¶</a></h3>
+<p>RLockRLock（可重入锁）是一个可以被同一个线程请求多次的同步指令。RLock使用了“拥有的线程”和“递归等级”的概念，处于锁定状态时，RLock被某个线程拥有。拥有RLock的线程可以再次调用acquire()，释放锁时需要调用release()相同次数。</p>
+<p>可以认为RLock包含一个锁定池和一个初始值为0的计数器，每次成功调用acquire()/release()，计数器将+1/-1，为0时锁处于未锁定状态。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/23 13:44</span>
+<span class="c1"># @filename: sample03_lock.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">func</span><span class="p">():</span>
+    <span class="c1"># 第一次请求锁</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> acquire lock ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> get the lock&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1">#  第二次请求锁</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> acquire lock agin...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> get the lock&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># 第一次释放锁</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> release lock ....&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># 第二次释放锁</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> release lock agin ....&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+        <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+
+<span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+<span class="n">t3</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
+<span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">t3</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id13">
+<h2><a class="toc-backref" href="#id35"><span class="section-number">16.2.8. </span>使用信号量同步多线程之间的执行顺序</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<p>1.纯粹的信号量（Semphore）</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/12/21 18:40</span>
+<span class="c1"># filename: 05.使用信号量同步多线程之间的执行顺序.py</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">信号量（semaphore）是一种带计数的线程同步机制，调用release函数时，计数器加1，调用acquire函数时，计数器减1.</span>
+<span class="sd">当计数为0时，线程会自动阻塞，等待release被调用。</span>
+
+<span class="sd">Python中存在两种信号量：</span>
+<span class="sd">1.纯粹的信号量（Semphore）</span>
+<span class="sd">2.带有边界的信号量(BoundedSemaphore)</span>
+
+<span class="sd">1.纯粹的信号量（Semphore）: 在调用release函数时，单纯地将计数器加1，不会检查加1后计算器是否超过上限</span>
+<span class="sd">2.带有边界的信号量(BoundedSemaphore)：在调用release函数时，会检查计数器是否超过上限，对计数器的上限进行校验，是一个更加安全的机制。</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="n">semaphore</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 创建信号量</span>
+
+
+<span class="k">def</span> <span class="nf">consumer</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    消费者</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;consumer: 挂起...&quot;</span><span class="p">)</span>
+    <span class="n">semaphore</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>  <span class="c1"># 计数器减1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;consumer:消费 </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">producer</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">item</span>  <span class="c1"># 定义商品编号</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>              <span class="c1"># 产生随机数并赋值给全局变量--商品编号</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;producer :生产 </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+    <span class="n">semaphore</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>  <span class="c1"># 计数器加1</span>
+
+
+<span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 定义列表收集线程</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>  <span class="c1"># 循环完成生产者与消费者线程的建立</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">producer</span><span class="p">)</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">consumer</span><span class="p">)</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">consumer: 挂起...</span>
+<span class="sd">producer :生产 694</span>
+<span class="sd">consumer:消费 694</span>
+<span class="sd">consumer: 挂起...</span>
+<span class="sd">producer :生产 939</span>
+<span class="sd">consumer:消费 939</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+<p>2.带有边界的信号量(BoundedSemaphore)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>将上述代码中的semaphore = threading.Semaphore(0)改为
+semaphore = threading.BoundedSemaphore(2)  # 创建信号量为2.初始的时候item就有2个，消费者的可以消费的item有2个，
+对item的取值进行判断，过滤掉初始值
+
+需要将全局变量item放在外部。
+    global item  # 定义商品编号
+    item = random.randint(1, 1000)  # 产生随机数并赋值给全局变量--商品编号
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h2><a class="toc-backref" href="#id36"><span class="section-number">16.2.9. </span>创建定时触发程序</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/12/21 19:12</span>
+<span class="c1"># filename: 06.创建定时触发程序.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">timer1_headle</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;1  Timer headle!&quot;</span><span class="p">)</span>  <span class="c1"># 定时触发函数</span>
+
+
+<span class="k">def</span> <span class="nf">timer3_headle</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;3 Timer headle!&quot;</span><span class="p">)</span>  <span class="c1"># 定时触发函数</span>
+
+
+<span class="n">timer1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">timer1_headle</span><span class="p">)</span>  <span class="c1"># 实例化定时器线程，1s后执行线程处理函数</span>
+<span class="n">timer3</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">timer3_headle</span><span class="p">)</span>  <span class="c1"># 实例化定时器线程，3s后执行线程处理函数</span>
+<span class="n">timer1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">timer3</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">1 Timer headle!</span>
+<span class="sd">3 Timer headle!</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id15">
+<h2><a class="toc-backref" href="#id37"><span class="section-number">16.2.10. </span>循环定时触发程序</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/12/21 19:12</span>
+<span class="c1"># filename: 07.循环定时触发程序.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">loop_timer_headle</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     定时循环触发函数</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Timer headle!&quot;</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">timer2</span>
+    <span class="n">timer2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">loop_timer_headle</span><span class="p">)</span>  <span class="c1"># 创建定时器</span>
+    <span class="n">timer2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="n">timer2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">loop_timer_headle</span><span class="p">)</span>
+<span class="n">timer2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Timer headle!</span>
+<span class="sd">Timer headle!</span>
+<span class="sd">Timer headle!</span>
+<span class="sd">.......</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h2><a class="toc-backref" href="#id38"><span class="section-number">16.2.11. </span>设置定时间隔和结束定时器</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/12/21 19:12</span>
+<span class="c1"># filename: 07.循环定时触发程序.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">loop_timer_headle</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     定时循环触发函数</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Timer headle!&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">n</span>
+    <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">global</span> <span class="n">timer2</span>
+    <span class="n">timer2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">loop_timer_headle</span><span class="p">)</span>  <span class="c1"># 创建定时器</span>
+    <span class="n">timer2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">timer2</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>  <span class="c1"># 结束定时器</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;循环了3次了，要退出了...........&quot;</span><span class="p">)</span>
+
+
+<span class="n">timer2</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">loop_timer_headle</span><span class="p">)</span>
+<span class="n">timer2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Timer headle!</span>
+<span class="sd">Timer headle!</span>
+<span class="sd">Timer headle!</span>
+<span class="sd">循环了3次了，要退出了...........</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id17">
+<h2><a class="toc-backref" href="#id39"><span class="section-number">16.2.12. </span>使用线程池提升运行效率</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
+<section id="id18">
+<h3><a class="toc-backref" href="#id40">线程池实现主机端口扫描实例</a><a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<p>本例使用的多线程模块需要用命令“pip3 install threadpool”进行安装。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/22 11:27</span>
+<span class="c1"># @filename: sample01.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+<span class="kn">import</span> <span class="nn">threadpool</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+
+<span class="k">def</span> <span class="nf">scan_port</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ports</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="mi">4096</span>
+    <span class="n">thread_name</span> <span class="o">=</span> <span class="s1">&#39;thread&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ports</span><span class="p">,</span> <span class="n">ports</span> <span class="o">+</span> <span class="mi">4096</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I am </span><span class="si">%s</span><span class="s2">,port </span><span class="si">%d</span><span class="s2"> is openned!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">thread_name</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="n">ip</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">threadpool</span><span class="o">.</span><span class="n">ThreadPool</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">num_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+<span class="n">tasks</span> <span class="o">=</span> <span class="n">threadpool</span><span class="o">.</span><span class="n">makeRequests</span><span class="p">(</span><span class="n">scan_port</span><span class="p">,</span> <span class="n">num_list</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">putRequest</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All subprocesses had finished!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/12/21 19:29</span>
+<span class="c1"># filename: 08.使用线程池提升运行效率.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">在需要频繁创建线程的系统中， 一般都会使用线程池技术。原因有两点：</span>
+<span class="sd">    1.每一个线程的创建都是需要占用系统资源的， 是一件相对耗时的事情。同样在销毁线程时还需要回收线程资源。</span>
+<span class="sd">    线程池技术， 可以省去创建与回收过程中所浪费的系统开销。</span>
+
+<span class="sd">    2.在某些系统中需要为每个子任务来创建对应的线程(例如爬虫系统中的子链接)。</span>
+<span class="sd">    这种情况会导致线程数量失控性暴涨， 直到程序崩溃。线程池技术可以很好地固定线程的数量保持程序稳定。</span>
+
+
+<span class="sd">实现线程池</span>
+<span class="sd">Python中，使用conncurrent.futures 模块下的ThreadPoolExecutor 类来实现线程池。在实例化时， 会将需要的线程个数传入。</span>
+<span class="sd">系统就会为该线程池初始化相应个数的线程。线程池的使用有两种方式。</span>
+
+<span class="sd">    * 抢占式： 线程池中的线程执行顺序不固定。该方式使用ThreadPooIExecutor 的submit方法实现。</span>
+
+<span class="sd">    * 非抢占式： 线程将按照调用的顺序执行。此方式使用ThreadPoolExecutor 的map方法来实现。</span>
+
+<span class="sd">从使用角度来看： 抢占式更灵活； 非抢占式更严格。</span>
+
+
+<span class="sd">· 抢占式， 允许池中线程的处理函数不一样。如执行过程中某个线程出现异常， 也不影响其他线程。</span>
+<span class="sd">· 非抢占式， 要求线程池中的线程必须执行同样的处理函数。而且一旦某个线程出现异常,其他线程也会停止。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">printperson</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    定义线程池处理函数</span>
+<span class="sd">    :param p:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="n">person</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;hujianli1&quot;</span><span class="p">,</span> <span class="s2">&quot;hujianli2&quot;</span><span class="p">,</span> <span class="s2">&quot;hujianli3&quot;</span><span class="p">]</span>
+
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">person</span><span class="p">:</span>
+    <span class="n">printperson</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+<span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">printperson</span><span class="p">(</span><span class="s2">&quot;all spend time :</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">hujianli1</span>
+<span class="sd">hujianli2</span>
+<span class="sd">hujianli3</span>
+<span class="sd">all spend time :6.00168251991272</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>实现抢占线程池</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">start2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">person</span><span class="p">:</span>
+        <span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">printperson</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="n">end2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">printperson</span><span class="p">(</span><span class="s2">&quot;all spend time :</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end2</span> <span class="o">-</span> <span class="n">start2</span><span class="p">))</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">hujianli1</span>
+<span class="sd">hujianli2</span>
+<span class="sd">hujianli3</span>
+<span class="sd">all spend time :2.0018222332000732</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>实现非抢占线程池</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">start3</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">as</span> <span class="n">executorl</span><span class="p">:</span>
+    <span class="n">executorl</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">printperson</span><span class="p">,</span> <span class="n">person</span><span class="p">)</span>
+<span class="n">end3</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">printperson</span><span class="p">(</span><span class="s2">&quot;all spend time :</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end3</span> <span class="o">-</span> <span class="n">start3</span><span class="p">))</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">hujianli1</span>
+<span class="sd">hujianli2</span>
+<span class="sd">hujianli3</span>
+<span class="sd">all spend time :2.001864433288574</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>代码示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">currentThread</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+
+
+<span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> 在执行任务</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c1"># 进程池里有4个进程</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>  <span class="c1"># 20个任务</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>  <span class="c1"># 进程池里当前执行的任务i，池子里的4个进程一次一次执行任务</span>
+</pre></div>
+</div>
+<p>抢占模式+回调函数</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/1/14 22:19</span>
+<span class="c1"># filename: 09-1.线程池01.py</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="nb">max</span><span class="p">):</span>
+    <span class="n">my_sum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">max</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">my_sum</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">my_sum</span>
+
+
+<span class="c1"># 创建一个包含两个线程的线程池</span>
+<span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="c1"># 向线程池中提交一个任务,50作为action()函数的参数</span>
+    <span class="n">future1</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="c1"># 向线程池中再提交一个任务,100作为action()函数的参数</span>
+    <span class="n">future2</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="n">future</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+
+
+    <span class="c1"># 为future1添加线程完成的回调函数,该函数在线程任务结束时获取其返回值</span>
+    <span class="n">future1</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="n">get_result</span><span class="p">)</span>
+
+    <span class="c1"># 为future2添加线程完成的回调函数，该函数在线程任务结束时获取其返回值</span>
+    <span class="n">future2</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="n">get_result</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------------------------------&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>使用map()方法启动线程，并收集线程任务的返回值。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/1/14 22:19</span>
+<span class="c1"># filename: 09-1.线程池02.py</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="nb">max</span><span class="p">):</span>
+    <span class="n">my_sum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">max</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">my_sum</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">my_sum</span>
+
+
+<span class="c1"># 创建一个包含4个线程的线程池</span>
+<span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="c1"># 使用线程执行map计算</span>
+    <span class="c1"># 后面的元祖有3个元素，因此程序启动了3个线程来执行action函数</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>可供参考文献：</p>
+<p><a class="reference external" href="https://python3-cookbook.readthedocs.io/zh_CN/latest/c12/p08_perform_simple_parallel_programming.html">https://python3-cookbook.readthedocs.io/zh_CN/latest/c12/p08_perform_simple_parallel_programming.html</a></p>
+<p><a class="reference external" href="https://docs.python.org/zh-cn/3.8/library/concurrent.futures.html">Python标准库 concurrent.futures —
+启动并行任务</a></p>
+<p><a class="reference external" href="https://www.cnblogs.com/nickchen121/p/11141751.html">Python程序中的线程操作-concurrent模块</a></p>
+<p>需要创建多少个线程才算合理</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>多线程的并发机制， 虽然可以提升程序效率， 但线程个数也不是越多越好。如要找到更优
+的线程数量， 可以使用如下方法：
+    (1)初始化一定数量的线程。
+    (2)在多次实验中递增或递减线程数量， 测试运行性能。
+    (3)确定最优的线程数量。
+
+其中的第(1)步初始化线程的个数,可以先查看单个任务的CPU消耗,然后直接乘以百分比。而第(2)步,评估运行性能的方法,从外部观察每秒处理的任务数,算出批处理全部任务所用的时间。
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id19">
+<h2><a class="toc-backref" href="#id41"><span class="section-number">16.2.13. </span>使用队列实现线程间通信</a><a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">通常使用于生产者和消费者模式</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="c1">#导入队列模块</span>
+<span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="k">class</span> <span class="nc">Producer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">queue</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;生产者</span><span class="si">{}</span><span class="s2"> 将产品</span><span class="si">{}</span><span class="s2">加入队列&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span> <span class="n">i</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;生产者</span><span class="si">{}</span><span class="s2">完成！&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+
+
+<span class="k">class</span> <span class="nc">Consumer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">queue</span><span class="p">):</span>
+        <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">queue</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;消费者</span><span class="si">{}</span><span class="s2"> 将产品</span><span class="si">{}</span><span class="s2">从队列中取出&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span> <span class="n">val</span><span class="p">))</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;消费者</span><span class="si">{}</span><span class="s2">完成！&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getName</span><span class="p">()))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主线程开始&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span>
+    <span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">Producer</span><span class="p">(</span><span class="s1">&#39;Producer&#39;</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span>
+    <span class="n">consumer</span> <span class="o">=</span> <span class="n">Consumer</span><span class="p">(</span><span class="s1">&#39;Consumer&#39;</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">consumer</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主线程结束&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>----------------------主线程开始-----------------------
+生产者Producer 将产品0加入队列
+消费者Consumer 将产品0从队列中取出
+生产者Producer 将产品1加入队列
+消费者Consumer 将产品1从队列中取出
+生产者Producer 将产品2加入队列
+消费者Consumer 将产品2从队列中取出
+生产者Producer 将产品3加入队列
+消费者Consumer 将产品3从队列中取出
+生产者Producer 将产品4加入队列
+生产者Producer完成！
+消费者Consumer 将产品4从队列中取出
+消费者Consumer完成！
+----------------------主线程结束-----------------------
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">队列在进程中的通信</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>  <span class="c1"># 导入进程和队列</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">write_task</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">full</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;消息&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;写入：</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">read_task</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;读取：</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---主进程开始-----&quot;</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+    <span class="n">pw</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">write_task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,))</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">read_task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,))</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">pr</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">pr</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---主进程结束----&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>---主进程开始-----
+写入：消息0
+写入：消息1
+写入：消息2
+写入：消息3
+写入：消息4
+读取：消息0
+读取：消息1
+读取：消息2
+读取：消息3
+读取：消息4
+---主进程结束----
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">threading</span><span class="o">,</span><span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">queue</span>
+
+<span class="n">q</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>       <span class="c1">#设置maxsize=5，防止生产过快</span>
+
+<span class="k">def</span> <span class="nf">Producer</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>    <span class="c1">#生产者</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;面包</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">count</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">生产了面包</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">count</span><span class="p">))</span>
+        <span class="n">count</span> <span class="o">+=</span><span class="mi">1</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">Consumer</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>         <span class="c1">#消费者</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">] 取到[</span><span class="si">%s</span><span class="s2">] 并且吃了它...&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">()))</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">#生成多个线程</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">Producer</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;derek&quot;</span><span class="p">,))</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">Consumer</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;chihuo1&quot;</span><span class="p">,))</span>
+<span class="n">c1</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">Consumer</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;chihou2&quot;</span><span class="p">,))</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">c</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">c1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">derek生产了面包1</span>
+<span class="p">[</span><span class="n">chihuo1</span><span class="p">]</span> <span class="n">取到</span><span class="p">[</span><span class="n">面包1</span><span class="p">]</span> <span class="n">并且吃了它</span><span class="o">...</span>
+<span class="n">derek生产了面包2</span>
+<span class="p">[</span><span class="n">chihuo1</span><span class="p">]</span> <span class="n">取到</span><span class="p">[</span><span class="n">面包2</span><span class="p">]</span> <span class="n">并且吃了它</span><span class="o">...</span>
+<span class="n">derek生产了面包3</span>
+<span class="p">[</span><span class="n">chihou2</span><span class="p">]</span> <span class="n">取到</span><span class="p">[</span><span class="n">面包3</span><span class="p">]</span> <span class="n">并且吃了它</span><span class="o">...</span>
+<span class="n">derek生产了面包4</span>
+<span class="p">[</span><span class="n">chihuo1</span><span class="p">]</span> <span class="n">取到</span><span class="p">[</span><span class="n">面包4</span><span class="p">]</span> <span class="n">并且吃了它</span><span class="o">...</span>
+<span class="n">derek生产了面包5</span>
+<span class="p">[</span><span class="n">chihou2</span><span class="p">]</span> <span class="n">取到</span><span class="p">[</span><span class="n">面包5</span><span class="p">]</span> <span class="n">并且吃了它</span><span class="o">...</span>
+<span class="n">derek生产了面包6</span>
+<span class="p">[</span><span class="n">chihuo1</span><span class="p">]</span> <span class="n">取到</span><span class="p">[</span><span class="n">面包6</span><span class="p">]</span> <span class="n">并且吃了它</span><span class="o">...</span>
+<span class="n">derek生产了面包7</span>
+<span class="p">[</span><span class="n">chihou2</span><span class="p">]</span> <span class="n">取到</span><span class="p">[</span><span class="n">面包7</span><span class="p">]</span> <span class="n">并且吃了它</span><span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="condition">
+<h2><a class="toc-backref" href="#id42"><span class="section-number">16.2.14. </span>使用Condition实现线程间通信</a><a class="headerlink" href="#condition" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>wait(timeout=None):使当前线程释放锁，然后当前线程处于阻塞状态，等待相同条件变量中其他线程唤醒或超时。</p></li>
+<li><p>notify()：唤醒相同条件变量中的一个线程；</p></li>
+<li><p>notify_all():唤醒相同条件变量中的所有线程。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/25 9:58</span>
+<span class="c1"># filename: 8.使用Condition实现线程间通信.py</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># 创建条件变量对象</span>
+<span class="n">condition</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">Stack</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 堆栈指针初始值为0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># 堆栈有5个数字的空间</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># 压栈方法</span>
+    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">condition</span>
+        <span class="n">condition</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="c1"># 堆栈已满，不能压栈</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+            <span class="c1"># 等待其它线程把数据出栈</span>
+            <span class="n">condition</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="c1"># 通知其他线程把数据出栈</span>
+        <span class="n">condition</span><span class="o">.</span><span class="n">notify</span><span class="p">()</span>
+        <span class="c1"># 数据压栈</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="c1"># 指针向上移动</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">condition</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+    <span class="c1"># 出栈方法</span>
+    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">condition</span>
+        <span class="n">condition</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="c1"># 堆栈无数据，不能出栈</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># 等待其他线程把数据压栈</span>
+            <span class="n">condition</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="c1"># 通知其他线程压栈</span>
+        <span class="n">condition</span><span class="o">.</span><span class="n">notify</span><span class="p">()</span>
+        <span class="c1"># 指针向下移动</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span><span class="p">]</span>
+        <span class="n">condition</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+        <span class="c1"># 数据出栈</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="c1"># 创建堆栈Stack对象</span>
+<span class="n">stack</span> <span class="o">=</span> <span class="n">Stack</span><span class="p">()</span>
+
+<span class="c1"># 创建堆栈Stack对象</span>
+
+<span class="n">stack</span> <span class="o">=</span> <span class="n">Stack</span><span class="p">()</span>
+
+
+<span class="c1"># 生产者线程体函数</span>
+<span class="k">def</span> <span class="nf">producer_thread_body</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">stack</span>  <span class="c1"># 声明为全局变量</span>
+    <span class="c1"># 产生10个数字</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="c1"># 把数字压栈</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="c1"># 打印数字</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;生产者:</span><span class="si">{0}</span><span class="s1"> 开始生产</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+        <span class="c1"># 每产生一个数字线程就睡眠</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="c1"># 消费者线程体函数</span>
+<span class="k">def</span> <span class="nf">consumer_thread_body</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">stack</span>  <span class="c1"># 声明为全局变量</span>
+    <span class="c1"># 从堆栈中读取数字</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="c1"># 从堆栈中读取数字</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="c1"># 打印数字</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;消费者:</span><span class="si">{0}</span><span class="s1"> 开始消费</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;xiaojian&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+        <span class="c1"># 每消费一个数字线程就睡眠</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="c1"># 主函数</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># 创建生产者线程对象producer</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">producer_thread_body</span><span class="p">)</span>
+    <span class="c1"># 启动生产者线程</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="c1"># 创建消费者线程对象consumer</span>
+    <span class="n">consumer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">consumer_thread_body</span><span class="p">)</span>
+    <span class="c1"># 启动消费者线程</span>
+    <span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">生产者</span><span class="p">:</span><span class="n">hujianli</span> <span class="n">开始生产0</span>
+<span class="n">消费者</span><span class="p">:</span><span class="n">xiaojian</span> <span class="n">开始消费0</span>
+<span class="n">生产者</span><span class="p">:</span><span class="n">hujianli</span> <span class="n">开始生产1</span>
+<span class="n">消费者</span><span class="p">:</span><span class="n">xiaojian</span> <span class="n">开始消费1</span>
+<span class="n">生产者</span><span class="p">:</span><span class="n">hujianli</span> <span class="n">开始生产2</span>
+<span class="n">消费者</span><span class="p">:</span><span class="n">xiaojian</span> <span class="n">开始消费2</span>
+</pre></div>
+</div>
+</section>
+<section id="event">
+<h2><a class="toc-backref" href="#id43"><span class="section-number">16.2.15. </span>使用Event实现线程间通信</a><a class="headerlink" href="#event" title="Permalink to this headline">¶</a></h2>
+<p>threading模块提供的Evernt可以实现线程间通信。 *
+wait(timeout=None)方法：阻塞当前线程，是线程进入等待状态。 *
+Event对象的set()方法，通知所有等待状态的线程恢复运行。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/25 11:50</span>
+<span class="c1"># filename: 9.使用Event实现线程间通信.py</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># 创建条件变量对象</span>
+<span class="n">event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">Stack</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 堆栈指针初始值为0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># 堆栈有5个数字的空间</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># 压栈方法</span>
+    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">event</span>
+
+        <span class="c1"># 堆栈已满，不能压栈</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+            <span class="c1"># 等待其它线程把数据出栈</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="c1"># 通知其他线程把数据出栈</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="c1"># 数据压栈</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="c1"># 指针向上移动</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># 出栈方法</span>
+    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">event</span>
+
+        <span class="c1"># 堆栈无数据，不能出栈</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># 等待其他线程把数据压栈</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="c1"># 通知其他线程压栈</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="c1"># 指针向下移动</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="c1"># 数据出栈</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+<span class="c1"># 创建堆栈Stack对象</span>
+<span class="n">stack</span> <span class="o">=</span> <span class="n">Stack</span><span class="p">()</span>
+
+
+<span class="c1"># 生产者线程体函数</span>
+<span class="k">def</span> <span class="nf">producer_thread_body</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">stack</span>  <span class="c1"># 声明为全局变量</span>
+    <span class="c1"># 产生10个数字</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="c1"># 把数字压栈</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="c1"># 打印数字</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;生产者:</span><span class="si">{0}</span><span class="s1"> 开始生产</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+        <span class="c1"># 每产生一个数字线程就睡眠</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="c1"># 消费者线程体函数</span>
+<span class="k">def</span> <span class="nf">consumer_thread_body</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">stack</span>  <span class="c1"># 声明为全局变量</span>
+    <span class="c1"># 从堆栈中读取数字</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="c1"># 从堆栈中读取数字</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="c1"># 打印数字</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;消费者:</span><span class="si">{0}</span><span class="s1"> 开始消费</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;xiaojian&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+        <span class="c1"># 每消费一个数字线程就睡眠</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="c1"># 主函数</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># 创建生产者线程对象producer</span>
+    <span class="n">producer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">producer_thread_body</span><span class="p">)</span>
+    <span class="c1"># 启动生产者线程</span>
+    <span class="n">producer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="c1"># 创建消费者线程对象consumer</span>
+    <span class="n">consumer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">consumer_thread_body</span><span class="p">)</span>
+    <span class="c1"># 启动消费者线程</span>
+    <span class="n">consumer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">生产者</span><span class="p">:</span><span class="n">hujianli</span> <span class="n">开始生产0</span>
+<span class="n">消费者</span><span class="p">:</span><span class="n">xiaojian</span> <span class="n">开始消费0</span>
+<span class="n">生产者</span><span class="p">:</span><span class="n">hujianli</span> <span class="n">开始生产1</span>
+<span class="n">消费者</span><span class="p">:</span><span class="n">xiaojian</span> <span class="n">开始消费1</span>
+<span class="n">生产者</span><span class="p">:</span><span class="n">hujianli</span> <span class="n">开始生产2</span>
+<span class="n">消费者</span><span class="p">:</span><span class="n">xiaojian</span> <span class="n">开始消费2</span>
+</pre></div>
+</div>
+<section id="id20">
+<h3><a class="toc-backref" href="#id44">模拟人物对话</a><a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="k">class</span> <span class="nc">myThreada</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">evt</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s2">&quot;:Good morning!&quot;</span><span class="p">)</span>
+        <span class="n">evt</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">evt</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">evt</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s2">&quot;:I&#39;m fine,thank you.&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">myThreadb</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s2">&quot;:Good moring!&quot;</span><span class="p">)</span>
+        <span class="n">evt</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">evt</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s2">&quot;: How are you?&quot;</span><span class="p">)</span>
+        <span class="n">evt</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">evt</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+<span class="n">evt</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">John</span> <span class="o">=</span> <span class="n">myThreada</span><span class="p">()</span>
+    <span class="n">John</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;John&quot;</span>
+    <span class="n">Smith</span> <span class="o">=</span> <span class="n">myThreadb</span><span class="p">()</span>
+    <span class="n">Smith</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Smith&#39;</span>
+    <span class="n">John</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">Smith</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Smith :Good moring!
+John :Good morning!
+Smith : How are you?
+John :I&#39;m fine,thank you.
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01.%E8%BF%9B%E7%A8%8B.html" class="btn btn-neutral float-left" title="16.1. 进程" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html" class="btn btn-neutral float-right" title="16.3. 协程与微线程" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

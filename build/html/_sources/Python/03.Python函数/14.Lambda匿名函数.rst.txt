@@ -1,0 +1,226 @@
+.. contents::
+   :depth: 3
+..
+
+Lambda匿名函数
+==============
+
+匿名函数
+--------
+
+在 代码中不常用的函数，可以使用匿名函数来实现。
+不需要反复调用，代码逻辑比较简单
+
+lambda表达式的首要用途是指定短小的回调函数
+
+::
+
+   lambda 可以用来创建匿名函数， 
+   也可以将匿名函数赋给一个变量供调用，
+   它是Python 中一类比较特殊的声明函数的方式，
+    
+   lambda 来源于LISP 语言， 其语法形式如下：
+
+   lambda 参数: 表达式
+
+   - lambda表达式必须由lambda关键字定义
+   - 冒号左边是参数列表，可以没有参数，也可以有多个参数，参数之间用逗号隔开。
+   - 冒号右边是lambda表达式的返回值
+
+匿名函数语法：
+
+``lambda [arg1 [,arg2,.....argn]]:expression``
+
+::
+
+   ### 匿名函数
+       创建一个匿名函数 可用于上面几种方法中直接创建匿名函数式
+   a = lambda x,y:x+y
+   print(a(2, 4))
+
+lambda函数定义时直接调用
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   print((lambda x, y: x - y)(10, 2))  #8
+
+经典示例
+~~~~~~~~
+
+.. code:: python
+
+   import datetime
+
+
+   def namefunc(n):
+       return "I'am named function with param %s" % n
+
+
+   def call_func(func, param):
+       print(datetime.datetime.now())
+       print(func(param))
+       print("")
+
+
+   if __name__ == '__main__':
+       call_func(namefunc, "hello")
+       call_func(lambda x: x ** 2, 9)
+       call_func(lambda y: y * y, 6)
+
+
+   # 2020-12-15 20:58:34.645674
+   # I'am named function with param hello
+   # 
+   # 2020-12-15 20:58:34.645674
+   # 81
+   # 
+   # 2020-12-15 20:58:34.645674
+   # 36
+
+eg
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/17 23:36
+   # filename: lambda函数.py
+
+   def calcylate(option):
+       if option == "+":
+           return lambda x, y: x + y
+       elif option == "-":
+           return lambda x, y: x - y
+
+       else:
+           return
+
+
+   f1 = calcylate("+")
+   f2 = calcylate("-")
+   print("1 + 2的值为：{0}".format(f1(1, 2)))
+   print("3 - 1的值为：{0}".format(f2(3, 1)))
+
+输出结果
+
+::
+
+   1 + 2的值为：3
+   3 - 1的值为：2
+
+lambda函数通常和内置的map()函数一起使用，map()函数第一个参数需要传入函数。
+
+::
+
+   In [5]: x=list(map(lambda x:x*x,range(8)))
+
+   In [6]: x
+   Out[6]: [0, 1, 4, 9, 16, 25, 36, 49]
+
+代码示例
+^^^^^^^^
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   #计算圆面积的函数
+   import math
+   result = lambda r:math.pi*r*r
+   r = 10
+   print(result(r))
+
+   # result1 = lambda [arg1,[arg2,....argn] : expression
+
+   bookinfo = [('不一样的卡梅拉', 22.50, 120), ('零基础学Android', 65.10, 85), ('摆渡人', 23.40, 130) ,('福尔摩斯探案', 20.50, 110)]
+   print('爬取到的商品名称:\n', bookinfo, '\n')
+   bookinfo.sort(key=lambda x: (x[1], x[1]/x[2]))       #指定排序规则
+   print('排序后的商品信息: \n', bookinfo, '\n')
+
+匿名函数与reduce函数的组合
+--------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/12/22 12:55
+   # filename: 匿名函数与reduce函数的组合.py
+   """
+       reduce(function, sequence[, initial]) -> value
+
+       Apply a function of two arguments cumulatively to the items of a sequence,
+       from left to right, so as to reduce the sequence to a single value.
+       For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5]) calculates
+       ((((1+2)+3)+4)+5).  If initial is present, it is placed before the items
+       of the sequence in the calculation, and serves as a default when the
+       sequence is empty.
+
+   """
+   from functools import reduce
+
+   # 求1~100所有数值的和
+   print(reduce(lambda x, y: x + y, range(1, 101)))
+
+   """
+   5050
+   """
+
+匿名函数与map函数的组合
+-----------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/12/22 12:55
+   # filename: 匿名函数与map函数的组合.py
+
+   '''
+       map(func, *iterables) --> map object
+
+       Make an iterator that computes the function using arguments from
+       each of the iterables.  Stops when the shortest iterable is exhausted.
+   '''
+   # 使用map函数，对列表[1,2,4,5]的元素求平方值
+   t = map(lambda x: x ** 2, [1, 2, 3, 4, 5])
+   print(list(t))
+
+   '''
+   [1, 4, 9, 16, 25]
+   '''
+
+匿名函数与filter函数的组合
+--------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/12/22 12:55
+   # filename: 匿名函数与filter函数的组合.py
+
+   '''
+       filter(function or None, iterable) --> filter object
+
+       Return an iterator yielding those items of iterable for which function(item)
+       is true. If function is None, return the items that are true.
+   '''
+   # 筛选出一个列表中的偶数的元素
+   t = filter(lambda x: x % 2 == 0, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+   print(list(t))
+
+
+   t4 = filter(lambda x: x % 4 == 0, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+   print(list(t4))
+   print(list(t4))         # 由于生成器对象只能取一次，再取就没有值了
+   '''
+   [2, 4, 6, 8, 10]
+   [4, 8]
+   []
+   '''

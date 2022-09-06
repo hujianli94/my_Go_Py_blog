@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23.7.7. 分析吾爱破解论坛反爬虫机制 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="23.7.8. 关于跨域问题的解决办法" href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html" />
+    <link rel="prev" title="23.7.6. 违禁词自审查功能" href="06.%E8%BF%9D%E7%A6%81%E8%AF%8D%E8%87%AA%E5%AE%A1%E6%9F%A5%E5%8A%9F%E8%83%BD.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">23. Python框架</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../01.%E5%B8%B8%E7%94%A8%E7%9A%84GUI%E6%A1%86%E6%9E%B6/index.html">23.1. 常用的GUI框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02.Flask/index.html">23.2. Flask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../03.Scrapy/index.html">23.3. Scrapy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../04.Django/index.html">23.4. Django</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05.Tornado/index.html">23.5. Tornado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../06.Python%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Django-Flask/index.html">23.6. Python高效开发实战-Django、Flask</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">23.7. Python-Django-Web典型模块开发实战</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="01.Django-RESTful-API%E5%9F%BA%E7%A1%80.html">23.7.1. Django-RESTful-API基础</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02.%E7%94%A8Django-REST-framework%E5%AE%9E%E7%8E%B0%E8%B1%86%E7%93%A3API%E5%BA%94%E7%94%A8.html">23.7.2. 用Django REST framework实现豆瓣API应用</a></li>
+<li class="toctree-l4"><a class="reference internal" href="03.%E7%94%A8Django%E5%AE%9E%E7%8E%B0%E7%99%BE%E5%BA%A6%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A4%E8%AF%81%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9E%8B.html">23.7.3. 用Django实现百度开发者认证业务模型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html">23.7.4. 区块链时代与Token登录</a></li>
+<li class="toctree-l4"><a class="reference internal" href="05.%E5%AE%9E%E7%8E%B0%E4%BC%98%E9%85%B7%E5%92%8C%E7%88%B1%E5%A5%87%E8%89%BA%E4%BC%9A%E5%91%98%E7%9A%84VIP%E6%A8%A1%E5%BC%8F.html">23.7.5. 实现优酷和爱奇艺会员的VIP模式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06.%E8%BF%9D%E7%A6%81%E8%AF%8D%E8%87%AA%E5%AE%A1%E6%9F%A5%E5%8A%9F%E8%83%BD.html">23.7.6. 违禁词自审查功能</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">23.7.7. 分析吾爱破解论坛反爬虫机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html">23.7.8. 关于跨域问题的解决办法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="09.Django%E5%AE%9E%E7%8E%B0%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6.html">23.7.9. Django实现缓存机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html">23.7.10. 附1.Vue前端项目</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%842.%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E4%B8%8A%E7%BA%BF%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8.html">23.7.11. 附2.前后端分离项目上线部署到云服务器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="../index.html"><span class="section-number">23. </span>Python框架</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">23.7. </span>Python-Django-Web典型模块开发实战</a> &raquo;</li>
+      <li><span class="section-number">23.7.7. </span>分析吾爱破解论坛反爬虫机制</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Python/24.Python框架/07.Python-Django-Web典型模块开发实战/07.分析吾爱破解论坛反爬虫机制.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id14">分析吾爱破解论坛反爬虫机制</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id15">1.常见的反爬虫手段</a></p>
+<ul>
+<li><p><a class="reference internal" href="#robots" id="id16">1.1 编写Robots协议</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id17">1.2 限制协议头</a></p></li>
+<li><p><a class="reference internal" href="#cookietoken" id="id18">1.3 限制Cookie或限制Token</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id4" id="id19">2.吾爱破解论坛怎样反爬虫</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id20">2.1 注册阶段的反爬虫</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id21">2.2 登录阶段的反爬虫</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id22">2.3 搜索阶段的反爬虫</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#django-rest-framework" id="id23">3. Django REST framework实现频率限制</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id8" id="id24">3.1 建立演示频率限制功能的项目</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id25">3.2 网页客户端向服务端提交了多少信息</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id26">3.3 频率限制功能开发</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id27">3.4 频率限制该怎样确定</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id14"><span class="section-number">23.7.7. </span>分析吾爱破解论坛反爬虫机制</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<section id="id2">
+<h2><a class="toc-backref" href="#id15">1.常见的反爬虫手段</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<section id="robots">
+<h3><a class="toc-backref" href="#id16">1.1 编写Robots协议</a><a class="headerlink" href="#robots" title="Permalink to this headline">¶</a></h3>
+<p>如果网站没有Robots协议，网站中有价值的数据被爬虫搬空，网站方想要通过法律维权，将非常艰难，因为网站中没有Robots协议，代表该网站的数据资源是共享的。只要网站对用户开放服务，网站想要通过技术手段彻底将网络爬虫挡在门外，几乎是不可能的。所以，作为一个反爬虫工程师一定要编写网站的Robots协议</p>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id17">1.2 限制协议头</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>限制协议头，是指网络请求在到达后端的时候，服务器程序先对网络请求的协议头内的某个键值进行验证（大多数情况是对User-Agent进行验证），如果与正常用户通过浏览器或者客户端访问所携带的协议头一致，就可以通过验证，否则，将拒绝此网络请求。</p>
+</section>
+<section id="cookietoken">
+<h3><a class="toc-backref" href="#id18">1.3 限制Cookie或限制Token</a><a class="headerlink" href="#cookietoken" title="Permalink to this headline">¶</a></h3>
+<p>crsf_token机制即防止跨站攻击机制，属于网站安全的一个机制，许多通过Cookie进行防爬虫设计的手段，都是基于crsf_token机制的原理。</p>
+<p>某平台的反爬虫机制如下：</p>
+<p>（1）监测协议头中的User-agent，查看客户端的设备。</p>
+<p>（2）用户进入App时，向服务器请求首页数据的同时，返回一条Cookie。</p>
+<p>（3）当用户访问某本小说的章节时，向服务器请求章节页数据的同时，携带Cookie信息。后端对Cookie进行验证，如果与第一步set-Cookie的值匹配，则证明是用户在操作，如果不匹配，则判定为爬虫操作。</p>
+<p>如此看来，某平台反爬虫工程师的设计，与crsf_token的原理如出一辙。只不过crsf_token是在第二步只对以post方式向后端提交数据的网络请求进行验证。</p>
+<p>在此提醒各位开发者：代码千万条，守法第一条。刷新阅读量是不正当的竞争行为，希望大家不要去尝试。我们应将技术用于防范，而不是以侵犯他的人利益为目的而走捷径。</p>
+<p>（4）对访问者IP的访问频率进行限制。</p>
+<p>（5）对访问异常者弹出验证码，要求用户识别验证码。但是，从产品的角度来说，让用户识别填写验证码，已经影响到用户体验了，笔者并不推荐用在反爬虫的机制中。</p>
+</section>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id19">2.吾爱破解论坛怎样反爬虫</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<section id="id5">
+<h3><a class="toc-backref" href="#id20">2.1 注册阶段的反爬虫</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>吾爱破解论坛的注册，要求有注册码，如果想要获取注册码，则需要花19元人民币进行购买。当然，收费获取注册码只是一种反爬虫批量注册用户账号的一种手段，并不是必须要购买注册码才能注册成为论坛的用户。</p>
+<p>之所以设置这种注册用户需要注册码的机制，是为了灵活地掌握开放注册的时间，从而防止恶意注册。</p>
+<p>吾爱破解论坛会不定期地开放注册时间，在开放注册的时间段内，注册成为论坛的用户是不需要注册码的，因而大多数的论坛用户，都是在开放注册时间段内完成注册的。</p>
+<p>编写一个网络爬虫，从抓包到分析数据的加密算法，再到编写代码，然后经过几番测试，修改代码，最后完成爬虫项目，至少需要一整天的时间。但吾爱破解论坛每一次开放注册的时间，都控制在几个小时，下一次再开放注册，就不知道是什么时候了，并且很有可能已经换了一套新的加密算法了。</p>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id21">2.2 登录阶段的反爬虫</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>吾爱破解论坛在登录阶段的反爬虫机制，可以分为两部分来分析，</p>
+<ul class="simple">
+<li><p>提交用户名和密码之前</p></li>
+</ul>
+<blockquote>
+<div><p>滑块验证码，需要用户通过鼠标手动将滑块按照提示，拖曳到最右边。当用户将滑块拖曳到最右边后，会显示字母验证码</p>
+</div></blockquote>
+<p>一个好的验证码，应该秉持着一个原则：真人识别越容易越好，机器识别越困难越好，在机器与人的识别难度之间找到一个平衡点，最好是人一看就一目了然，机器分析却无法识别。</p>
+<p>举一个比较优秀的图片验证码的例子。比如2017年谷歌应用商店的一组图片验证码，图片内是一张马路上的街拍照，要求用户用鼠标单击图片中的垃圾桶。这对于人来说是一目了然的，但是对于机器而言，就比较困难了。</p>
+<ul class="simple">
+<li><p>提交用户名和密码之后</p></li>
+</ul>
+<blockquote>
+<div><p>当用户输入用户名和密码，在单击“登录”按钮以后，网页端的代码逻辑并没有直接将登录相关数据发送给网站的后端服务器，而是在这之前先执行了一个给密码进行加密的步骤。</p>
+</div></blockquote>
+<p>这样做的意义是什么呢？其实可以想象一下，当恶意注册的网络爬虫，批量注册了论坛的用户账号，同时对接打码平台，攻破了验证码的关卡时，那么这一道给密码加密的措施就开始起作用了。假设网络爬虫的开发者不知道加密算法是什么，即使他掌握着大量的论坛账号和密码，依然无法通过使用网络爬虫完成对这些账号的批量登录。</p>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id22">2.3 搜索阶段的反爬虫</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>对同一个IP的访问进行了频率限制，如果爬虫工程师想要突破这个限制，必须要进行VPS拨号换IP或者IP代理才可以。</p>
+</section>
+</section>
+<section id="django-rest-framework">
+<h2><a class="toc-backref" href="#id23">3. Django REST framework实现频率限制</a><a class="headerlink" href="#django-rest-framework" title="Permalink to this headline">¶</a></h2>
+<p>除了在注册阶段和登录阶段的反爬虫机制，对访问网站的频率限制也是一个主要的反爬虫机制。</p>
+<section id="id8">
+<h3><a class="toc-backref" href="#id24">3.1 建立演示频率限制功能的项目</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>（1）新建Django项目，命名为demo8，新建App命名为app01</p>
+<p>（2）在templates目录下新建HTML文件index.html。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h4&gt;小说章节内容页、视频播放页、博客访问页、网页广告页……&lt;/h4&gt;
+
+&lt;h4&gt;本网页代表了所有浏览量高能带来收益的网页。&lt;/h4&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<p>（3）安装Django REST framework及其依赖包：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">djangorestframework</span> <span class="n">markdown</span> <span class="n">Django</span><span class="o">-</span><span class="nb">filter</span> <span class="o">-</span><span class="n">i</span> <span class="s2">&quot;https://pypi.doubanio.com/simple/&quot;</span>
+</pre></div>
+</div>
+<p>（4）在settings.py中添加注册代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（5）执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<p>（6）在app01.views.py中编写视图代码：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="c1"># Create your views here.</span>
+<span class="k">class</span> <span class="nc">IndexView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    演示视图</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;index.html&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（7）在urls.py内设置路由代码：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">IndexView</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;index/&#39;</span><span class="p">,</span><span class="n">IndexView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（8）运行demo8，然后使用浏览器访问<a class="reference external" href="http://127.0.0.1:8000/index/">http://127.0.0.1:8000/index/</a></p>
+</section>
+<section id="id9">
+<h3><a class="toc-backref" href="#id25">3.2 网页客户端向服务端提交了多少信息</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>用户通过网络请求所传到服务器的信息都封装在request.META中，我们可以改造一下视图类IndexView，查看这些信息。</p>
+<p>将views.py中的IndexView类改写如下:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">IndexView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    演示视图</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">request</span><span class="p">):</span>
+        <span class="n">j</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="n">request</span><span class="o">.</span><span class="n">META</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">j</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;共&quot;</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="s2">&quot;条信息&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;index.html&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>然后重启demo8项目，在浏览器端刷新访问http://127.0.0.1:8000/index/</p>
+<p>在Pycharm中可以直接查看到后端打印的内容</p>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id26">3.3 频率限制功能开发</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>（1）在settings.py中增加频率限制的配置代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">REST_FRAMEWORK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;DEFAULT_THROTTLE_CLASSES&#39;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="c1"># AnonRateThrottle是对未登录用户的网络访问进行频率限制，判断是否为同一个用户的依据是访问用户的IP地址</span>
+        <span class="s1">&#39;rest_framework.throttling.AnonRateThrottle&#39;</span><span class="p">,</span>
+        <span class="c1"># UserRateThrottle是对已登录用户的网络访问进行频率限制，判断是否为同一个用户的依据是用户的身份验证</span>
+        <span class="s1">&#39;rest_framework.throttling.UserRateThrottle&#39;</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;DEFAULT_THROTTLE_RATES&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;anon&#39;</span><span class="p">:</span> <span class="s1">&#39;2/day&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="s1">&#39;1000/day&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看到代码中有两种频率限制的配置AnonRateThrottle和UserRateThrottle。</p>
+<ul class="simple">
+<li><p>AnonRateThrottle是对未登录用户的网络访问进行频率限制，判断是否为同一个用户的依据是访问用户的IP地址。</p></li>
+<li><p>UserRateThrottle是对已登录用户的网络访问进行频率限制，判断是否为同一个用户的依据是用户的身份验证。</p></li>
+</ul>
+<p>我们选择使用的是对未登录用户的网络访问进行频率限制的</p>
+<p>AnonRateThrottle。在DEFAULT_THROTTLE_RATES中，配置的是对频率限制的具体限制要求，其中，anon代表的是对未登录用户的频率限制，限制为每天最多访问两次（当然，这是为测试才如此设置）。</p>
+<p>对于频率限制的单位，Django REST
+framework给出了<code class="docutils literal notranslate"><span class="pre">second</span></code>、<code class="docutils literal notranslate"><span class="pre">minute</span></code>、<code class="docutils literal notranslate"><span class="pre">hour</span></code>和<code class="docutils literal notranslate"><span class="pre">day</span></code>4个选择。</p>
+<p>（2）改造views.py中的IndexView，引入频率限制模块：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework.throttling</span> <span class="kn">import</span> <span class="n">AnonRateThrottle</span>
+
+
+<span class="c1"># Create your views here.</span>
+
+<span class="k">class</span> <span class="nc">IndexView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    演示视图</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">throttle_classes</span> <span class="o">=</span> <span class="p">(</span><span class="n">AnonRateThrottle</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s1">&#39;本网页代表了所有浏览量高能带来收益的网页。&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（3）重启demo8，浏览器访问http://127.0.0.1:8000/index/</p>
+<p>然后刷新浏览器两次</p>
+<figure class="align-default" id="id12">
+<img alt="image-20220222113559690" src="../../../_images/image-20220222113559690.png" />
+<figcaption>
+<p><span class="caption-text">image-20220222113559690</span><a class="headerlink" href="#id12" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>连续刷新10次之后</p>
+<figure class="align-default" id="id13">
+<img alt="image-20220222113839420" src="../../../_images/image-20220222113839420.png" />
+<figcaption>
+<p><span class="caption-text">image-20220222113839420</span><a class="headerlink" href="#id13" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>提示访问被限制，需要86369秒以后才可以再次访问。至此，我们的频率限制功能开发成功了。</p>
+</section>
+<section id="id11">
+<h3><a class="toc-backref" href="#id27">3.4 频率限制该怎样确定</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>以一个小说网站为例，假设一个用户看小说的速度极限为2秒钟看一章，那么设置访问频率为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;anon&#39;</span><span class="p">:</span> <span class="s1">&#39;30/ minute &#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>对未登录用户的频率限制，是以用户的IP地址来判断用户身份的，所以网站程序默认一个IP地址代表一个用户。但事实并非如此，如果一个WiFi环境下有10个用户，那么这10个用户是同一个IP地址，如图8-27所示。我们可以假设最多每30个客户端连接同一个路由器的WiFi网络，所以，将小说网站的访问频率设置为900/minute更加合理。所以，我们在设定未登录用户的访问频率时，一定要考虑到同一网络下的用户数量。</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="06.%E8%BF%9D%E7%A6%81%E8%AF%8D%E8%87%AA%E5%AE%A1%E6%9F%A5%E5%8A%9F%E8%83%BD.html" class="btn btn-neutral float-left" title="23.7.6. 违禁词自审查功能" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html" class="btn btn-neutral float-right" title="23.7.8. 关于跨域问题的解决办法" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

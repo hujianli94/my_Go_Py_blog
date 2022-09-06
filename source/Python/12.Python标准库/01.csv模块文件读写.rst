@@ -1,0 +1,353 @@
+.. contents::
+   :depth: 3
+..
+
+csv模块文件读写
+===============
+
+写入CSV数据，可以使用csv模块
+----------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/5/6 13:09
+   # filename: sample01.py
+
+   import csv
+
+   headers = ['ID', 'UserName', 'Password', 'Age', 'Country']
+   rows = [(1001, "qiye", "qiye_pass", 24, "China"),
+           (1002, "Mary", "Mary_pass", 20, "USA"),
+           (1003, "Jack", "Jack_pass", 20, "USA"),
+           ]
+
+   with open('qiye.csv', 'w', newline="") as f:
+       f_csv = csv.writer(f)
+       f_csv.writerow(headers)
+       f_csv.writerows(rows)
+
+-  写入字典序列的数据
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/5/6 13:10
+   # filename: sample02.py
+
+   import csv
+
+   headers = ['ID', 'UserName', 'Password', 'Age', 'Country']
+   rows = [{'ID': 1001, 'UserName': "qiye", 'Password': "qiye_pass", 'Age': 24, 'Country': " China"},
+           {'ID': 1002, 'UserName': "Mary", 'Password': "Mary_pass", 'Age': 20, 'Country': "USA"},
+           {'ID': 1003, 'UserName': "Jack", 'Password': "Jack_pass", 'Age': 20, 'Country': "USA"},
+           ]
+   with open('qiye2.csv', 'w') as f:
+       f_csv = csv.DictWriter(f, headers)
+       f_csv.writeheader()
+       f_csv.writerows(rows)
+
+-  写入普通数据
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/10 21:24
+   # filename: 操作写csv文件.py
+   import csv
+
+   with open("sr.csv", "w") as f:
+       w = csv.writer(f, delimiter=",")
+       w.writerow(["one", "two", "three"])
+       w.writerow(["four", "five", "six"])
+
+读取csv文件数据
+---------------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/5/6 13:11
+   # filename: sample03.py
+
+   import csv
+
+   with open('qiye.csv') as f:
+       f_csv = csv.reader(f)
+       headers = next(f_csv)
+       print(headers)
+       for row in f_csv:
+           print(row)
+
+-  使用命名元组 可以一一对应显示
+
+::
+
+   from collections import namedtuple
+   with open('stocks.csv') as f:
+       f_csv = csv.reader(f)
+       headings = next(f_csv)
+       Row = namedtuple('Row', headings)
+       f_csv = [f_csv for f_csv in f_csv if f_csv]
+       for r in f_csv:
+           row = Row(*r)
+           print(row)
+
+-  将数据读取到一个字典序列中
+
+::
+
+   import csv
+   with open('stocks.csv') as f:
+       f_csv = csv.DictReader(f)
+       for row in f_csv:
+           print(row)
+
+先读取csv文件，再将读取的数据处理后写入新的csv中
+
+::
+
+   with open("villains", "r", encoding="gbk") as f:
+       reader = csv.reader(f)
+       with open("villains_bak", "w", newline="", encoding="gbk") as wf:
+           writer = csv.writer(wf,delimiter='\t')  #采用水平制表符分割
+           for row in reader:
+               print("|".join(row))
+               writer.writerow(row)        #通过写入器writer对象的方法写入
+
+案例1
+~~~~~
+
+准备文件 test.csv
+
+::
+
+   1,软件工程,胡建力,机械工业出版社,199407226517,2
+   2,汇编语言,胡建力2,北京工业大学出版社,199407126517,2
+   3,计算机语言,胡建力3,经济科学出版社,199417126517,1
+   4,FLASH精选,胡建力4,中国纺织出版社,199417126511,3
+   5,JAVA基础,胡建力5,电子工业出版社,199117126511,3
+   6,JAVA程序设计,胡建力6,世界出版社,199117126512,2
+   7,新东方英语,胡建力7,外语出版社,192117126512,1
+
+读取csv文件
+~~~~~~~~~~~
+
+csv_read.py
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/22 18:46
+   # filename: CSV数据交换格式-读.py
+
+   # reader()函数  读
+   import csv
+
+   with open("test.csv", "r", encoding="utf-8") as rf:
+       reader = csv.reader(rf, dialect=csv.excel)
+       for row in reader:
+           print("|".join(row))
+
+输出信息
+
+::
+
+   1|软件工程|胡建力|机械工业出版社|199407226517|2
+   2|汇编语言|胡建力2|北京工业大学出版社|199407126517|2
+   3|计算机语言|胡建力3|经济科学出版社|199417126517|1
+   4|FLASH精选|胡建力4|中国纺织出版社|199417126511|3
+   5|JAVA基础|胡建力5|电子工业出版社|199117126511|3
+   6|JAVA程序设计|胡建力6|世界出版社|199117126512|2
+   7|新东方英语|胡建力7|外语出版社|192117126512|1
+
+同时读取和写入csv文件
+~~~~~~~~~~~~~~~~~~~~~
+
+读取—写入—读取
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/22 18:57
+   # filename: CSV数据交换格式-写.py
+
+   # writer()函数
+   # 先读取csv文件，再将读取的数据处理后写入新的csv中
+   import csv
+
+   headers = ['编号', '书名', '作者', '出版社', '出版时间', '级别']
+   rows = [
+       "10,软件工程1,胡建力,机械工业出版社,199407226517,2",
+       "11,汇编语言1,胡建力2,北京工业大学出版社,199407126517,2",
+       "12,计算机语言1,胡建力3,经济科学出版社,199417126517,1",
+       "13,FLASH精选1,胡建力4,中国纺织出版社,199417126511,3",
+       "14,JAVA基础1,胡建力5,电子工业出版社,199117126511,3",
+       "15,JAVA程序设计1,胡建力6,世界出版社,199117126512,2",
+       "16,新东方英语1,胡建力7,外语出版社,192117126512,1"
+   ]
+
+   with open("test.csv", "r", encoding="utf-8") as rf:
+       reader = csv.reader(rf)
+       print("开始读取test.csv文件内容......................")
+       with open("test_bak.csv", "w", newline="", encoding="utf-8") as wf:
+           writer = csv.writer(wf, delimiter=",")
+           header = ["|".join(headers)]
+           print("开始写入标题header 到test_bak.csv文件......................")
+           writer.writerow(header)
+           print("开始写入文件旧数据 到test_bak.csv文件......................")
+           for row in reader:
+               # print(row)
+               writer.writerow(row)
+           rows_list = [str(row).split(",") for row in rows]
+           print("开始写入新的数据 到test_bak.csv文件......................")
+           for row_new in rows_list:
+               writer.writerow(row_new)
+       print("读写完毕，查看写入后的内容................")
+
+   with open("test_bak.csv", "r", encoding="utf-8") as rf:
+       reader = csv.reader(rf)
+       for info in reader:
+           print("|".join(info))
+
+输出信息
+
+::
+
+   开始读取test.csv文件内容......................
+   开始写入标题header 到test_bak.csv文件......................
+   开始写入文件旧数据 到test_bak.csv文件......................
+   开始写入新的数据 到test_bak.csv文件......................
+   读写完毕，查看写入后的内容................
+   编号|书名|作者|出版社|出版时间|级别
+   1|软件工程|胡建力|机械工业出版社|199407226517|2
+   2|汇编语言|胡建力2|北京工业大学出版社|199407126517|2
+   3|计算机语言|胡建力3|经济科学出版社|199417126517|1
+   4|FLASH精选|胡建力4|中国纺织出版社|199417126511|3
+   5|JAVA基础|胡建力5|电子工业出版社|199117126511|3
+   6|JAVA程序设计|胡建力6|世界出版社|199117126512|2
+   7|新东方英语|胡建力7|外语出版社|192117126512|1
+   10|软件工程1|胡建力|机械工业出版社|199407226517|2
+   11|汇编语言1|胡建力2|北京工业大学出版社|199407126517|2
+   12|计算机语言1|胡建力3|经济科学出版社|199417126517|1
+   13|FLASH精选1|胡建力4|中国纺织出版社|199417126511|3
+   14|JAVA基础1|胡建力5|电子工业出版社|199117126511|3
+   15|JAVA程序设计1|胡建力6|世界出版社|199117126512|2
+   16|新东方英语1|胡建力7|外语出版社|192117126512|1
+
+读写csv文件的示例
+~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/28 20:39
+   # filename: csv文件操作.py
+
+   import csv
+
+   with open('pingan.csv', 'r') as rf:
+       reader = csv.reader(rf)
+       with open('pingan2.csv', 'w') as wf:
+           writer = csv.writer(wf)
+           headers = next(reader)
+           writer.writerow(headers)
+           for row in reader:
+               if row[0] < '2016-01-01':
+                   break
+               if int(row[5]) >= int(50000000):
+                   writer.writerow(row)
+
+python3写入csv文件中文乱码的解决
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   加入encoding='utf-8-sig'就不会乱码了
+   with open("haha.csv",'w',newline='',encoding='utf-8-sig') as csvfile:
+       writer = csv.writer(csvfile)
+       writer.writerow(["飞机转场记录号", "登机口"])
+
+csv操作函数
+~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   import csv
+
+   # 将数据写入csv文件
+   def write_csv_file(path, head, data):
+       '''
+       :param path: CSV文件的路径和文件名
+       :param head: 生成的CSV文件的文件头
+       :param data: data为需要写入CSV文件的数据，也需要传入一个列表
+       :return:
+       '''
+       try:
+           with open(path, "w", newline='') as csv_file:
+               writer = csv.writer(csv_file, dialect='excel')
+               if head is not None:
+                   writer.writerow(head)
+               for row in data:
+                   writer.writerow(row)
+               print("Write a CSV file to path %s Successful." % path)
+
+       except Exception as e:
+           print("Write an CSV file to path: %s, Case: %s" % (path, e))
+
+CSV格式转换成JSON格式
+---------------------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # @auther:   18793
+   # @Date：    2020/6/8 9:44
+   # @filename: sample01.py
+   # @Email:    1879324764@qq.com
+   # @Software: PyCharm
+
+   import sys
+   import json
+
+
+   # reload(sys)
+
+   def list_name(keyname, value1, dict1=None):
+       dict1 = dict(zip(keyname, value1))
+       return dict1
+
+
+   with open("address.csv", 'r') as f:
+       for line in f:
+           if line == []:
+               line = ""
+           else:
+               if line[-1] == "\n":
+                   line = line[:-1]
+                   if line[-1] == "\r":
+                       line = line[:-1]
+
+               akk = [y for y in line.split(" ")]
+               key1 = ['street', 'namefirst', 'address']
+               a1 = {}
+               arr = list_name(key1, akk, a1)
+               arr = json.dumps(arr)
+               print(arr)      

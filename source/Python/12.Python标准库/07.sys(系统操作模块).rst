@@ -1,0 +1,139 @@
+.. contents::
+   :depth: 3
+..
+
+sys系统操作模块
+===============
+
+::
+
+       sys.path              #打印程序运行的的路径列表
+       sys.argv              # 取参数列表
+       sys.exit(2)           # 退出脚本返回状态 会被try截取
+       sys.exc_info()        # 获取当前正在处理的异常类
+       sys.version           # 获取Python解释程序的版本信息
+       sys.maxint            # 最大的Int值  9223372036854775807
+       sys.maxunicode        # 最大的Unicode值
+       sys.modules           # 返回系统导入的模块字段，key是模块名，value是模块
+       sys.path              # 返回模块的搜索路径，初始化时使用PYTHONPATH环境变量的值
+       sys.path.append       #添加相关的路径，但在退出python环境后自己添加的路径就会自动消失！
+       os.path.getatime("d:\\new")  #最后访问时间
+       os.path.isabs("d:\\")  #是否是绝对路径
+       sys.platform          # 返回操作系统平台名称
+       sys.stdout            # 标准输出
+       sys.stdin             # 标准输入
+       sys.stderr            # 错误输出
+       sys.exec_prefix       # 返回平台独立的python文件安装的位置
+       sys.stdin.readline()  # 从标准输入读一行
+       sys.stdout.write("a") # 屏幕输出a
+       sys.path.insert(1, os.path.join(sys.path[0], '/opt/script/'))     # 将/opt/script/目录加入环境变量，可导入相应模块
+
+模块查找
+--------
+
+::
+
+   #模块的查找路径在Python中可以通过sys模块来进行操纵（查看、增加和删除），代码如下：
+   import sys                   #导入sys模块
+   print(sys.path)             #输出当前模块查找路径（列表形式）
+   sys.path.append(Apath)      #添加Apath为模块查找路径
+
+举例1
+-----
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/15 17:52
+   # filename: example01.py
+   import sys
+
+   # 显示本地字节序的指示符
+   print(sys.byteorder)
+
+   # 显示与Python解释器有关的版权信息
+   print(sys.copyright)
+
+   # 显示Python解释器在磁盘上的存储路径
+   print(sys.executable)  # C:\Users\18793\Anaconda3\python.exe
+
+   # 显示在当前系统中保存文件所用的字符集
+   print(sys.getfilesystemencoding())  # mbcs
+   # 显示python整数支持的最大值
+   print(sys.maxsize)  # 9223372036854775807
+
+   # 显示python解释器所在的平台
+   print(sys.platform)  # win32
+
+   # 显示当前python解释器的版本信息
+   print(sys.version)  # 3.5.2 |Anaconda 4.2.0 (64-bit)| (default, Jul  5 2016, 11:41:13) [MSC v.1900 64 bit (AMD64)]
+
+   # 返回当前python解释器的主版本号
+   print(sys.winver)  # 3.5
+
+   args = sys.argv
+   if len(args) < 2:
+       print(args[0])  # D:/21-DAY-Python/18.python标准库/sys模块/example01.py
+       print("请传入参数！")
+   else:
+       print(args[0])
+       print(args[1])
+
+
+   # 动态修改模块加载路径
+   sys.path.append("D:/21-DAY-Python/18.python标准库/sys模块/")
+   import test
+   print(test.hello)
+
+举例2
+-----
+
+::
+
+   import sys 
+   print(sys.argv) 
+   python echo.py −a −b −c 
+
+   ['echo.py', '−a', '−b', '−c']
+
+::
+
+   import sys
+   #加载临时环境变量
+   sys.path.append("D:\GitHub\21_staduy_python\8.面对对象编程初探")
+
+::
+
+   import sys
+   print('Number of arguments:', len(sys.argv))    # Number of arguments: 1
+   print('Argument list:', str(sys.argv)) #Argument list: ['F:/电子书系列/写给系统管理员的Python脚本编程指南_配套资源/9781789133226_Code/Chapter01/12_argv_example.py']
+
+eg：
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/15 18:01
+   # filename: Logging01.py
+   import sys
+
+   hello = "hujianli"
+
+   if len(sys.argv) != 2:  # 检查命令行参数的数量
+       print("Please supply a filename")
+       raise SystemExit(1)
+
+   f = open(sys.argv[1])  # 文件名
+   lines = f.readlines()  # 将文件内容读成列表
+   f.close()
+
+   # 将字符串转换为浮点数
+   fvalues = [float(line) for line in lines]
+
+   # 打印最大值和最小值
+   print("The minimum value is ", min(fvalues))
+   print("The maximum value is ", max(fvalues))

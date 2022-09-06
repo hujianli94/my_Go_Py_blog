@@ -1,0 +1,379 @@
+.. contents::
+   :depth: 3
+..
+
+模块和包
+========
+
+9.1 模块化编程
+--------------
+
+对于一个python程序，我们不可能自己完成所有的工作，通常要借助三方库，也不可能在一个源文件中编写整个程序的源代码，都需要以模块化的方式来组织项目的源代码。
+
+9.1.1 导入模块的语法
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   import 模块名1 [as 别名1],模块名2 [as 别名2],  # 导入整个模块
+
+   from 模块名 import 成员名1[as 别名1]，成员名2[as 别名2],  #导入模块中的指定成员 
+
+``import_test.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   # @auther:   18793
+   # @Date：    2020/7/7 17:15
+   # @filename: import_test.py
+   # @Email:    1879324764@qq.com
+   # @Software: PyCharm
+   import sys
+   print(sys.argv[0])
+
+``import_test2.py``
+
+.. code:: python
+
+   import sys as s
+   print(s.argv[0])
+
+``import_test3.py``
+
+.. code:: python
+
+   import sys, os
+
+   print(sys.argv[0])
+   print(os.sep)
+
+``import_test4.py``
+
+::
+
+   import sys as s, os as o
+
+   print(s.argv[0])
+   print(o.sep)
+
+``from_import_test.py``
+
+::
+
+   from sys import argv
+
+   print(argv[0])
+
+``from_import_test2.py``
+
+::
+
+   # 导入sys模块的argv成员，并为其指定别名v
+   from sys import argv as v
+   # 使用导入成员（并指定别名）的语法，直接使用成员的别名访问
+   print(v[0])
+
+``from_import_test3.py``
+
+::
+
+   # 导入sys模块的argv,winver成员
+   from sys import argv, winver
+   # 使用导入成员的语法，直接使用成员名访问
+   print(argv[0])
+   print(winver)
+
+``from_import_test4.py``
+
+.. code:: python
+
+   from sys import *
+   # 使用导入成员的语法，直接使用成员的别名访问
+   print(argv[0])
+   print(winver)
+
+不推荐使用\ ``from 模块 import *``\ 这种语法导入存在风险。
+
+9.1.2 定义模块
+~~~~~~~~~~~~~~
+
+模块就是程序，所有的python程序都可以作为模块导入。
+
+下面定义一个简单的模块:
+
+``module1.py``
+
+.. code:: python
+
+   '''
+   这是我们编写的第一个模块，该模块包含以下内容：
+   my_book：字符串变量
+   say_hi：简单的函数
+   User：代表用户的类
+   '''
+   print('这是module 1')
+   my_book = '疯狂Python讲义'
+   def say_hi(user):
+       print('%s,您好，欢迎学习Python' % user)
+   class User:
+       def __init__(self, name):
+           self.name = name
+       def walk(self):
+           print('%s正在慢慢地走路' % self.name)
+       def __repr__(self):
+           return 'User[name=%s]' % self.name
+             
+           
+   # ===以下部分是测试代码===
+   def test_my_book ():
+       print(my_book)
+   def test_say_hi():
+       say_hi('孙悟空')
+       say_hi(User('Charlie'))
+   def test_User():
+       u = User('白骨精')
+       u.walk()
+       print(u)
+   # 当__name__为'__main__'（直接使用python运行该模块）时执行如下代码
+   if __name__ == '__main__':
+       test_my_book()
+       test_say_hi()
+       test_User()
+
+``module1.py`` 的模块名就是\ ``module1``
+
+9.1.3 为模块编写说明文档
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+在实际的开发中往往应该为模块编写说明文档，否则，其他开发者看不懂模块的作用和功能。
+
+为模块编写说明文档很简单，只需要在模块开始处定义一个字符串直接量即可。
+
+module1.py文件的第一行代码之前添加如下内容：
+
+.. code:: python
+
+   '''
+   这是我们编写的第一个模块，该模块包含以下内容：
+   my_book：字符串变量
+   say_hi：简单的函数
+   User：代表用户的类
+   '''
+
+这段字符串内容将作为该模块的说明文档，可以通过模块的\ ``__doc__``\ 属性来访问文档。
+
+9.1.4 为模块编写测试代码
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   # ===以下部分是测试代码===
+   def test_my_book ():
+       print(my_book)
+   def test_say_hi():
+       say_hi('孙悟空')
+       say_hi(User('Charlie'))
+   def test_User():
+       u = User('白骨精')
+       u.walk()
+       print(u)
+
+上面代码为module1定义了三个函数，分别用于测试模块中的变量、函数和类，不过这三个函数并没有得到调用的机会。
+
+如果只是简单的调用上面的程序，则会导致一个问题：当其他程序每次导入该模块时，这三个函数都会自动运行。我们期望的效果是：python执行该模块，相当于测试，程序执行该函数的测试模块。如果其他程序导入该模块，程序不应该执行该模块的测试函数。
+
+.. code:: python
+
+   # 当__name__为'__main__'（直接使用python运行该模块）时执行如下代码
+   if __name__ == '__main__':
+       test_my_book()
+       test_say_hi()
+       test_User()
+
+9.2 加载模块
+------------
+
+为了让Python能找到我们编写的模块（或第三方模块），可以使用以下两种方式：
+
+-  使用环境变量
+-  将模块放在默认的模块加载路径下
+
+9.2.1 使用环境变量
+~~~~~~~~~~~~~~~~~~
+
+**1.windows上设置环境变量**
+
+“计算机” –> “属性” –> “高级系统设置” –> “用户变量” – > “模块路径”
+
+**2.Linux上设置环境变量**
+
+::
+
+   export PYTHONPATH=./home/hujianli/python_module
+
+   vim .bash_profile
+   export PYTHONPATH=./home/hujianli/python_module
+
+   source .bash_profile
+
+   # 或者写入/etc/profile
+
+导入模块
+
+.. code:: python
+
+   import module1 as md
+   import module1 as md
+   print(md.my_book)
+   md.say_hi('Charlie')
+   user = md.User('孙悟空')
+   print(user)
+   user.walk()
+
+9.2.2 默认的模块加载路径
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   import sys,pprint
+
+   pprint.pprint(sys.path)
+
+下面编写一个python模块文件，将文件复制到\ ``lib/site-packages``\ 下
+
+``print_shape.py``
+
+.. code:: python
+
+   # coding: utf-8
+   '''
+   简单的模块，该模块包含以下内容
+   my_list：保存列表的变量
+   print_triangle: 使用星号打印三角形的函数
+   '''
+   my_list = ['Python', 'Kotlin', 'Swift']
+   def print_triangle(n):
+       '''使用星号打印一个三角形'''
+       if n <= 0:
+           raise ValueError('n必须大于0')
+       for i in range(n):
+           print(' ' * (n - i - 1), end='')
+           print('*' * (2 * i + 1), end='')
+           print('')
+
+   # ====以下是测试代码====
+   def test_print_triangle():
+       print_triangle(3)
+       print_triangle(4)
+       print_triangle(7)
+   if __name__ == '__main__': 
+       test_print_triangle()
+
+就可以在python交互式解释器中测试该模块
+
+::
+
+   import print_shape
+
+9.2.3 导入模块的本质
+~~~~~~~~~~~~~~~~~~~~
+
+``from ... import...``\ 值导入模块中部分成员，该模块中的输出语句也会在import时自动执行，说明Python依然会加载并执行模块中的代码。
+
+导入模块的本质就是：将模块中的全部代码加载到内存并执行，然后将模块的内容赋值给与模块名同名的变量，该变量类型是module，而在该模块中定义的所有程序单元都相当于该module对象的成员。
+
+在导入模块后，可以在模块文件所在目录下看的一个名为\ ``__pycache__``\ 的文件夹，打开该文件夹，可以看到Python为每个模块都生成一个\ ``*.cpyhton-36.pyc``\ 文件。比如Python为fk_module.py模块生成一个fk_module.cpyhton-36.pyc文件，该文件其实是Python为模块编译生成的字节码，用于提升该模块的运行效率。
+
+9.2.4 模块的__all__变量
+~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   __all__变量的意义在于为模块定义了一个开放的公共接口，通常来说，
+   只有__all__变量列出的程序单元，才是希望该模块被外界使用的程序单元。
+   不需要使用的函数、类、变量可以使用__all__进行过滤，
+   这样import的时候就不会自动导入了
+
+::
+
+   测试__all__变量的模块'
+
+   def hello():
+       print("Hello, Python")
+   def world():
+       print("Pyhton World is funny")
+   def test():
+       print('--test--')
+
+   # 定义__all__变量，指定默认只导入hello和world两个程序单元
+   __all__ = ['hello', 'world']
+
+::
+
+   # 导入all_module模块内所有成员
+   from all_module import *
+   hello()
+   world()
+   test() # 会提示找不到test()函数
+
+9.3 使用包
+----------
+
+9.3.1 什么是包
+~~~~~~~~~~~~~~
+
+从物理的角度看：包就是一个文件夹。该文件夹下包含一个\ ``__init__.py``\ 的文件。该文件夹可以包含多个模块源文件。
+
+从逻辑上看： 包的本质依然是模块
+
+9.3.2 定义包
+~~~~~~~~~~~~
+
+1. 创建一个文件夹，该文件夹就是包名
+2. 在文件夹内添加一个\ ``__init__.py``\ 文件即可
+
+``first_package/__init__.py``
+
+::
+
+   '''
+   这是学习包的第一个示例
+   '''
+   print('this is first_package')
+
+使用包
+
+::
+
+   # 导入first_package包（模块）
+   import first_package
+
+   print('==========')
+   print(first_package.__doc__)
+   print(type(first_package))
+   print(first_package)
+
+9.4 查看模块内容
+----------------
+
+9.4.1 模块包含什么
+~~~~~~~~~~~~~~~~~~
+
+1. 使用dir()函数
+2. 使用模块本身提供的\ ``__all__``\ 变量
+
+9.4.2 使用__doc__查看属性查看文档
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   print(string.capwords.__doc__)
+
+9.4.3 使用__file__属性查看模块的源文件路径
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   print(string.__file__)

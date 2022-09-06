@@ -1,0 +1,270 @@
+.. contents::
+   :depth: 3
+..
+
+goroutine和coroutine
+====================
+
+C#、Lua、Python语言都支持coroutine特性。coroutine与goroutine在名字上类似，都可以将函数或者语句在独立的环境中运行，但是它们之间有两点不同：
+
+-  goroutine可能发生并行执行；
+-  coroutine始终顺序执行；
+
+狭义地说，goroutine可能发生在多线程环境下，goroutine无法控制自己获取高优先度支持；
+
+coroutine始终发生在单线程，coroutine程序需要主动交出控制权，宿主才能获得控制权并将控制权交给其他coroutine。
+
+-  goroutine间使用channel通信；
+-  coroutine使用yield和resume操作。
+
+goroutine和coroutine的概念和运行机制都是脱胎于早期的操作系统。
+
+coroutine的运行机制属于协作式任务处理，早期的操作系统要求每一个应用必须遵守操作系统的任务处理规则，
+应用程序在不需要使用CPU时， 会主动交出CPU使用权。
+如果开发者无意间或者故意让应用程序长时间占用CPU，操作系统也无能为力，表现出来的效果就是计算机很容易失去响应或者死机。
+
+goroutine属于抢占式任务处理，已经和现有的多线程和多进程任务处理非常类似。
+应用程序对CPU的控制最终还需要由操作系统来管理，操作系统如果发现一个应用程序长时间大量地占用CPU，那么用户有权终止这个任务。
+
+1.启动多个Goroutine
+-------------------
+
+代码示例
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "time"
+   )
+
+   func main() {
+       go printNum()
+       go printLetter()
+       time.Sleep(3 * time.Second)
+       fmt.Println("\n main over.......")
+   }
+
+   func printNum() {
+       for i := 1; i <= 10; i++ {
+           time.Sleep(time.Millisecond * 250)
+           fmt.Printf("%d", i)
+       }
+   }
+
+   func printLetter() {
+       for i := 97; i <= 122; i++ {
+           time.Sleep(time.Millisecond * 350)
+           char1 := rune(i)
+           fmt.Printf("%c", char1)
+       }
+   }
+
+2.竞争状态
+----------
+
+如果两个或者多个goroutine在没有互相同步的情况下，访问某个共享的资源，并试图同时读和写这个资源，就处于相互竞争的状态，
+这种情况被称作\ **竞争状态** （race candition）。
+
+竞争状态的存在是让并发程序变得复杂的地方，十分容易引起潜在问题。
+
+基于调度器的内部算法，一个正运行的goroutine在工作结束前，可以被停止并重新调度。调度器这样做的目的是防止某个goroutine长时间占用逻辑处理器。当goroutine占用时间过长时，调度器会停止当前正运行的goroutine，并给其他可运行的goroutine运行的机会。
+
+.. code:: go
+
+   // This sample program demonstrates how the goroutine scheduler
+   // will time slice goroutines on a single thread.
+   package main
+
+   import (
+       "fmt"
+       "runtime"
+       "sync"
+   )
+
+   // wg is used to wait for the program to finish.
+   var wg sync.WaitGroup
+
+   // main is the entry point for all Go programs.
+   func main() {
+       // Allocate 1 logical processors for the scheduler to use.
+       runtime.GOMAXPROCS(1)
+
+       // Add a count of two, one for each goroutine.
+       wg.Add(2)
+
+       // Create two goroutines.
+       fmt.Println("Create Goroutines")
+       go printPrime("A")
+       go printPrime("B")
+
+       // Wait for the goroutines to finish.
+       fmt.Println("Waiting To Finish")
+       wg.Wait()
+
+       fmt.Println("Terminating Program")
+   }
+
+   // printPrime displays prime numbers for the first 5000 numbers.
+   func printPrime(prefix string) {
+       // Schedule the call to Done to tell main we are done.
+       defer wg.Done()
+
+   next:
+       for outer := 2; outer < 5000; outer++ {
+           for inner := 2; inner < outer; inner++ {
+               if outer%inner == 0 {
+                   continue next
+               }
+           }
+           fmt.Printf("%s:%d\n", prefix, outer)
+       }
+       fmt.Println("Completed", prefix)
+   }
+
+3.锁住共享资源
+--------------
+
+Go语言提供了传统的同步goroutine的机制，就是对共享资源加锁。如果需要顺序访问一个整型变量或者一段代码，\ ``atomic``
+和\ ``sync`` 包里的函数提供了很好的解决方案。
+
+.. code:: go
+
+   // This sample program demonstrates how to use the atomic
+   // package to provide safe access to numeric types.
+   package main
+
+   import (
+       "fmt"
+       "runtime"
+       "sync"
+       "sync/atomic"
+   )
+
+   var (
+       // counter is a variable incremented by all goroutines.
+       counter int64
+
+       // wg is used to wait for the program to finish.
+       wg sync.WaitGroup
+   )
+
+   // main is the entry point for all Go programs.
+   func main() {
+       // Add a count of two, one for each goroutine.
+       wg.Add(2)
+
+       // Create two goroutines.
+       go incCounter(1)
+       go incCounter(2)
+
+       // Wait for the goroutines to finish.
+       wg.Wait()
+
+       // Display the final value.
+       fmt.Println("Final Counter:", counter)
+   }
+
+   // incCounter increments the package level counter variable.
+   func incCounter(id int) {
+       // Schedule the call to Done to tell main we are done.
+       defer wg.Done()
+
+       for count := 0; count < 2; count++ {
+           // Safely Add One To Counter.
+           atomic.AddInt64(&counter, 1)
+
+           // Yield the thread and be placed back in queue.
+           runtime.Gosched()
+       }
+   }
+
+::
+
+   Final Counter: 4
+
+另外两个有用的原子函数是\ ``LoadInt64`` 和\ ``StoreInt64``
+。这两个函数提供了一种安全地读和写一个整型值的方式。
+
+4.互斥锁
+--------
+
+另一种同步访问共享资源的方式是使用互斥锁（\ ``mutex``
+）。互斥锁这个名字来自互斥（mutual
+exclusion）的概念。互斥锁用于在代码上创建一个临界区，保证同一时间只有一个goroutine可以执行这个临界区代码
+
+.. code:: go
+
+   // This sample program demonstrates how to use a mutex
+   // to define critical sections of code that need synchronous
+   // access.
+   package main
+
+   import (
+       "fmt"
+       "runtime"
+       "sync"
+   )
+
+   var (
+       // counter is a variable incremented by all goroutines.
+       counter int
+
+       // wg is used to wait for the program to finish.
+       wg sync.WaitGroup
+
+       // mutex is used to define a critical section of code.
+       mutex sync.Mutex
+   )
+
+   // main is the entry point for all Go programs.
+   func main() {
+       // Add a count of two, one for each goroutine.
+       wg.Add(2)
+
+       // Create two goroutines.
+       go incCounter(1)
+       go incCounter(2)
+
+       // Wait for the goroutines to finish.
+       wg.Wait()
+       fmt.Printf("Final Counter: %d\n", counter)
+   }
+
+   // incCounter increments the package level Counter variable
+   // using the Mutex to synchronize and provide safe access.
+   func incCounter(id int) {
+       // Schedule the call to Done to tell main we are done.
+       defer wg.Done()
+
+       for count := 0; count < 2; count++ {
+           // Only allow one goroutine through this
+           // critical section at a time.
+           //Lock() 和Unlock() 函数调用定义的临界区里被保护起来。
+           //使用大括号只是为了让临界区看起来更清晰，并不是必需的。
+           //同一时刻只有一个goroutine可以进入临界区。之后，直到调用Unlock() 函数之后，其他goroutine才能进入临界区。
+           mutex.Lock()
+           {
+               // Capture the value of counter.
+               value := counter
+
+               // Yield the thread and be placed back in queue.
+               runtime.Gosched()
+
+               // Increment our local value of counter.
+               value++
+
+               // Store the value back into counter.
+               counter = value
+           }
+           mutex.Unlock()
+           // Release the lock and allow any
+           // waiting goroutine through.
+       }
+   }
+
+::
+
+   Final Counter: 4

@@ -1,0 +1,403 @@
+.. contents::
+   :depth: 3
+..
+
+指针
+====
+
+指针概念在Go语言中被拆分称为两个核心概念
+----------------------------------------
+
+-  类型指针，允许这个指针类型的数据进行修改。传递数据使用指针，而无需拷贝数据。类型指针不能进行偏移和运算。
+
+-  切片，由指向起始元素的原始指针、元素数量和容量组成。
+
+受益于这样的约束和拆分，Go语言的指针类型变量拥有指针的高效访问，但又不会发送指针偏移，从而避免非法修改关键性数据问题。同时，垃圾回收也必将容易对不会发送偏移的指针进行检索和回收。
+
+切片比原始指针具备更强大的特性，更为安全。切片发生越界时，运行时会报出宕机，并打出堆栈，而原始指针只会崩溃。
+
+要明白指针，需要知道几个概念：
+
+**指针地址、指针类型、指针取值**
+
+认识指针地址和指针类型
+----------------------
+
+每个变量运行时都拥有一个地址，这个地址代表变量在内存中的位置，Go语言中使用“&”操作符放在变量前面对变量进行“取地址”操作。
+
+格式如下：
+
+::
+
+   pstr := &v    // v的类型为T
+
+   其中v代表被取地址的变量，被取地址的v使用ptr变量进行接收，ptr的类型就为"*T",称做T的指针类型。"*"代表指针。
+
+指针实际用法，示例代码：
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       var cat int = 1         // 声明整型变量cat
+       var str string = "banaba"       //声明字符串str变量
+       fmt.Printf("%p %p", &cat, &str) //0xc000062090 0xc00004a1e0     //输出变量cat和变量str取值地址后的指针值
+   }
+
+..
+
+   提示：变量、指针和地址三者的关系是：每个变量都拥有地址，指针的值就是地址。
+
+从指针获取指针指向的值
+----------------------
+
+在对普通变量使用\ ``"&"``\ 操作符取地址获得这个变量的指针后，可以对指针使用\ ``"*"``\ 操作，进行指针的取值,
+"\*“又被读作”处的值"。
+
+这么记：
+
+::
+
+   ptr := &house       // 取址赋给ptr
+   value := *ptr       // 根据地址取值赋给value
+
+::
+
+   &   取址              // 处的地址
+   *   根据地址取值       // 处的值
+
+在函数间传递大数组数据时使用指针
+
+.. code:: go
+
+   package main
+
+   func foo(array [1e6]int)  {
+       println("mem chile .....")
+   }
+
+
+   func foo1(array *[1e6]int)  {
+       println("mem chile .....")
+   }
+   func main() {
+       // 声明一个需要8 MB的数组
+       var array [1e6]int
+       // 将数组传递给函数foo
+       foo(array)
+
+       // 节省了内存，但是会改变共享的内存
+       // 将数组的地址传递给函数foo
+       foo1(&array)
+
+   }
+
+示例代码如下：
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       // 准备一个字符串类型
+       var house = "Malibu Point 10880, 90265"
+
+       // 对字符串取地址，ptr类型为*string
+       ptr := &house
+
+       // 打印ptr的类型
+       fmt.Printf("address: %T\n", ptr)        //address: *string
+       // 打印ptr的指针地址
+       fmt.Printf("address: %p\n", ptr)        //address: 0xc00004a1e0
+
+       // 对指针进行取值操作
+       value := *ptr
+
+       // 取值后的类型
+       fmt.Printf("value type: %T\n", value)   //value type: string
+       // 指针取值后就是指向变量的值
+       fmt.Printf("value : %s\n", value)       //value : Malibu Point 10880, 90265
+   }
+
+取地址操作符“&”和取值操作符“*”是一对互补操作符，“&”取出地址，“*”根据地址取出地址指向的值。
+
+变量、指针地址、指针变量、取地址、取值的相互关系和特性如下：
+
+-  对变量进行取地址（&）操作，可以获得这个变量的指针变量。
+
+-  指针变量的值是指针地址。
+
+-  对指针变量进行取值（*）操作，可以获得指针变量指向的原变量的值。
+
+使用指针修改值
+--------------
+
+-  通过指针不仅可以取值，也可以修改值。
+
+指针实现数值交换代码示例:
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 交换函数
+   func swap(a, b *int) {                      //定义一个交换函数，参数为a,b.类型都为*int，都是指针类型
+       // 取a指针的值，赋给临时变量t
+       t := *a                                  // 将a指针的取值，把int类型赋值给t变量。t此时也是int类型
+       // 取b指针的值，赋给a指针指向的变量
+       *a = *b                                 // 取b指针值，赋给a变量指向的变量。
+       // 将a指针的值赋给b指针指向的变量
+       *b = t                                  // 将t的值赋给b指向的变量
+   }
+
+   func main() {
+       // 准备2个变量，赋值1和2
+       x, y := 1, 2
+       // 交换变量的值
+       swap(&x, &y)
+       fmt.Println(x, y)
+   }
+
+其实归纳起来“*”操作符的根本意义就是操作指针指向的变量。
+
+``当操作在右值时， 就是取指向变量的值；``
+
+``当操作在左值时， 就是将值设置给指向的变量；``
+
+值的传递和引用的传递
+--------------------
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   /*值传递：传递的是值的一个拷贝
+   引用传递：传递的是引用指向的内存地址,会在原值的基础上改变值*/
+   func test03(n1 *int) {
+       *n1 = *n1 + 10
+       fmt.Println("test03() n1= ", *n1) //test03() n1=  30
+   }
+
+   func test04(n1 int) {
+       n1 = n1 + 20
+       fmt.Println("test04 n1= ", n1)  //test04 n1=  50
+   }
+
+   func main() {
+       num := 20
+       test03(&num)
+       fmt.Println("main() num= ", num) //main() num=  30
+
+       num2 := 30
+       test04(num2)
+       fmt.Println("main() num2= ", num2)  //main() num2=  30
+   }
+
+示例：使用指针变量获取命令行的输入信息
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import (
+       "flag"
+       "fmt"
+       "os"
+       "strings"
+   )
+
+   // 定义命令行参数，通过flag.String，定义一个mode变量，这个变量的类型是*string。
+   var mode  = flag.String("mode","","process mode")
+   func main() {
+       args := os.Args
+       if len(args) != 2 {
+           flag.PrintDefaults()
+           return
+       }
+       argsflag := strings.Split(args[1],"=")[0]
+       if argsflag != "-mode"{
+           flag.PrintDefaults()
+           return
+       }
+
+       // 解析命令行参数
+       flag.Parse()
+       // 输出命令行参数
+       fmt.Println(*mode)
+
+   }
+
+   /*
+   D:\go_studay\day3>go run canshu01.go --mode=fast
+   fast
+   */
+
+创建指针的另一种方法-new()函数
+------------------------------
+
+Go语言还提供了另外一种方法来创建指针变量，格式如下：
+
+::
+
+   new(类型)
+
+.. code:: go
+
+   str := new(string)
+   *str = "hujianli"
+   fmt.Println(*str)   //hujianli
+
+new()函数可以创建一个对应类型的指针，创建过程会分配内存。被创建的指针指向的值为默认值。
+
+传值和传引用
+~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 传值
+   func changeIntVal(a int) {
+       fmt.Printf("--------changeIntVal函数内：值参数a的内存地址：%p，值为：%v \n ", &a, a)
+       a = 90
+   }
+
+   //传引用
+   func changeIntPtr(a *int) {
+       fmt.Printf("--------changeIntPtr函数内：指针参数a的内存地址：%p，值为：%v \n ", &a, a)
+       *a = 50
+   }
+
+   func main() {
+       a := 10
+       fmt.Printf("1.变量a的内存地址：%p，值为：%v \n\n", &a, a)
+       fmt.Printf("=========int型变量a的内存地址：%p \n\n", a)
+       changeIntVal(a)
+       fmt.Printf("2.changgeIntVal函数调用之后，变量a的内存地址：%p，值为：%v \n\n", &a, a)
+       changeIntPtr(&a)
+       fmt.Printf("3.changgeIntPtr函数调用之后，变量a的内存地址：%p，值为：%v \n\n", &a, a)
+
+   }
+
+   /*
+   1.变量a的内存地址：0xc00000a0b8，值为：10
+
+   =========int型变量a的内存地址：%!p(int=10)
+
+   --------changeIntVal函数内：值参数a的内存地址：0xc00000a0f0，值为：10
+   2.changgeIntVal函数调用之后，变量a的内存地址：0xc00000a0b8，值为：10
+
+   --------changeIntPtr函数内：指针参数a的内存地址：0xc000006030，值为：0xc00000a0b8
+   3.changgeIntPtr函数调用之后，变量a的内存地址：0xc00000a0b8，值为：50
+   */
+
+指针的核心要点
+--------------
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   /*
+   指针使用流程如下。
+   • 定义指针变量。
+   • 为指针变量赋值。
+   • 访问指针变量中指向地址的值。
+   获取指针指向的变量值：在指针类型的变量前加上 * 号（前缀），如*a。
+   */
+
+   func main() {
+       // 定义指针变量
+       var zhizhen *int
+
+       // 定义一个int变量
+       var id int = 120
+
+       //为指针变量赋值,将id的值赋予zhizhen变量
+       zhizhen = &id
+
+       //访问指针变量中指向地址的值。
+       fmt.Printf("id变量类型是: %T 值是 %v。\n",id, id)       //id变量类型是: int 值是 120。
+       fmt.Printf("&id变量类型是: %T 值是 %v。\n",&id, &id)    //&id变量类型是: *int 值是 0xc00000a0b8。
+       fmt.Printf("zhizhen指针变量类型是: %T 指向地址的值是 %v。\n",zhizhen, zhizhen)     //zhizhen指针变量类型是: *int 指向地址的值是 0xc00000a0b8。
+       fmt.Printf("*zhizhen指针变量类型是: %T 指向地址的值是 %v。\n",*zhizhen, *zhizhen)  //*zhizhen指针变量类型是: int 指向地址的值是 120。
+
+       fmt.Printf("*&id变量类型是: %T 值是 %v。\n",*&id, *&id)     //*&id变量类型是: int 值是 120。
+
+
+   }
+
+空指针
+~~~~~~
+
+在Go语言中，当一个指针被定义后没有分配到任何变量时，它的值为nil。nil指针也称为空指针。nil在概念上和其他语言的null、None、NULL一样，都指代零值或空值。
+
+假设指针变量命名为ptr。空指针判断如下
+
+.. code:: go
+
+   if (prt != nil)     // ptr不是空指针
+   if (prt == nill)    // ptr是空指针
+
+使用指针
+~~~~~~~~
+
+1.通过指针修改变量的数值
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       a := 10086
+       b := &a
+       fmt.Printf("a的地址是：%v\n", b)      // a的地址是：0xc00000a0b8
+       fmt.Printf("*b的值是:%v\n",*b)         // *b的值是:10086
+       *b++
+       fmt.Printf("a的新值是：%v",a)             // a的新值是：10087
+
+   }
+
+2.使用指针作为函数的参数
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       a := 58
+       fmt.Printf("调用函数之前a的值: %v\n", a)            // 调用函数之前a的值: 58
+       fmt.Printf("调用函数之前a的内存地址: %v\n", &a)         // 调用函数之前a的内存地址: 0xc000062090
+
+       // 声明b为指针类型的变量，并将a的内存地址赋值给b
+       var b *int = &a
+       change(b)
+       fmt.Printf("调用函数之后a的值：%v\n", a)         // 调用函数之后a的值：15
+       fmt.Printf("调用函数之后a的内存地址: %v\n", &a)        // 调用函数之后a的内存地址: 0xc00000a0b8
+   }
+
+   func change(val *int) {
+       *val = 15
+   }
+
+将基本数据类型的指针作为函数的参数，可以实现对传入数据的修改，这是因为指针作为函数的参数只是复制了一个指针，指针指向的内存没有发生改变。

@@ -1,0 +1,96 @@
+.. contents::
+   :depth: 3
+..
+
+玩转Django2.0-Auth认证系统
+==========================
+
+　　Django除了有强大的Admin管理系统之外，还提供了完善的用户管理系统。整个用户管理系统可分为三大部分：用户信息、用户权限和用户组，在数据库中分别对应数据表auth_user、auth_permission和auth_group。
+
+1.内置User实现用户管理
+----------------------
+
+　　用户管理功能已经是一个网站必备的功能之一，而Django内置了强大的用户管理系统，并且具有灵活的扩展性，可以满足多方面的开发需求。在创建Django项目时，Django已默认使用内置用户管理系统，在settings.py的INSTALLED_APPS、MIDDLEWARE和AUTH_PASSWORD_VALIDATORS中可以看到相关的配置信息。
+
+::
+
+   #settings.py配置信息
+   INSTALLED_APPS = [
+       'django.contrib.admin',
+       'django.contrib.auth',
+       'django.contrib.contenttypes',
+       'django.contrib.sessions',
+       'django.contrib.messages',
+       'django.contrib.staticfiles',
+       'index.apps.IndexConfig',
+       'user.apps.UserConfig',
+       'user_defined',
+   ]
+
+   #文件夹MyDjango的urls.py的URL地址配置
+   from django.contrib import admin
+   from django.urls import path,include
+
+   urlpatterns = [
+       path('admin/', admin.site.urls),
+       path('index/',include('index.urls')),
+       path('user/',include('user.urls')),
+   ]
+
+   # 文件夹MyDjango下的user下的urls.py地址配置
+   #!/usr/bin/env python
+   from django.conf.urls import url
+   from django.urls import path
+   from . import views
+
+   urlpatterns = [
+       path('', views.login_index, name='login_index'),
+       path('login.html', views.loginView, name='login'),
+       path('register.html', views.registerView, name='register'),
+       path('setpassword.html', views.setpasswordView, name='setpassword'),
+       path('logout.html', views.logoutView, name='logout'),
+   ]
+
+…..省略具体步骤，参考参考文献，本人代码以实现。
+
+2. 发送邮件实现密码找回
+-----------------------
+
+::
+
+   # 文件夹MyDjango下的user下的urls.py地址配置
+   #!/usr/bin/env python
+   from django.conf.urls import url
+   from django.urls import path
+   from . import views
+
+   urlpatterns = [
+       path('', views.login_index, name='login_index'),
+       path('login.html', views.loginView, name='login'),
+       path('register.html', views.registerView, name='register'),
+       path('setpassword.html', views.setpasswordView, name='setpassword'),
+       path('logout.html', views.logoutView, name='logout'),
+       # 发邮件找回密码
+       path('findPassword.html', views.findPassword, name='findPassword'),
+   ]
+
+…..省略具体步骤，参考参考文献，本人代码以实现。
+
+3.扩展User模型
+--------------
+
+代码实现，不在此填写，可以查阅参考文献
+
+4.设置用户权限
+--------------
+
+代码实现，不在此填写，可以查阅参考文献
+
+5. 自定义用户权限
+-----------------
+
+代码实现，不在此填写，可以查阅参考文献
+
+参考文献：
+
+https://www.cnblogs.com/zhaop8078/p/11580590.html

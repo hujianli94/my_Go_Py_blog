@@ -1,0 +1,298 @@
+.. contents::
+   :depth: 3
+..
+
+用正则表达式匹配更多模式
+========================
+
+利用括号分组
+------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/22 15:23
+   # filename: main.py
+   import re
+
+   phoneNum = re.compile(r"(\d\d\d)-(\d\d\d-\d\d\d\d)")
+   mo = phoneNum.search("My number is 415-555-4242.")
+   print(mo.group(1))  # 415
+   print(mo.group(2))  # 555-4242
+   print(mo.group(0))  # 415-555-4242
+   print(mo.group())  # 415-555-4242
+
+用管道匹配多个分组
+------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/22 15:26
+   # filename: re-main2.py
+   import re
+
+   herRegex = re.compile(r'Batman|Tina Fey')
+   mo1 = herRegex.search("Batman and Tina Fey")
+   print(mo1.group())  # Batman
+
+   mo2 = herRegex.search("Tina Fey and Batman ")
+   print(mo2.group())  # Tina Fey
+
+   batRegex = re.compile(r"Bat(man|mobile|copter|bat)")
+   mo = batRegex.search("Batmobile lost a wheel")
+   print(mo.group())   # Batmobile
+   print(mo.group(1))  # mobile
+
+用问号实现可选匹配
+------------------
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/22 15:33
+   # filename: re-main3.py
+   import re
+
+   batRegex = re.compile(r"Bat(wo)?man")
+   mo1 = batRegex.search("The Adventures of Batman")
+   print(mo1.group())  #Batman
+
+   mo2 = batRegex.search("The Adventures of Batwoman")
+   print(mo2.group())  #Batwoman
+
+用星号匹配零次或多次
+--------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/22 15:37
+   # filename: re-main4.py
+   import re
+
+   batRegex = re.compile(r'Bat(wo)*man')
+   mo1 = batRegex.search('The Adventures of Batman')
+   print(mo1.group())  # Batman
+
+   mo2 = batRegex.search('The Adventures of Batwoman')
+   print(mo2.group())  # Batwoman
+
+   mo3 = batRegex.search('The Adventures of Batwowowowoman')
+   print(mo3.group())  # Batwowowowoman
+
+用加号匹配一次或多次
+--------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/22 15:37
+   # filename: re-main4.py
+   import re
+
+   batRegex = re.compile(r'Bat(wo)+man')
+   mo1 = batRegex.search('The Adventures of Batwoman')
+   print(mo1.group())  # Batman
+
+   mo2 = batRegex.search('The Adventures of Batwowowowowowoman')
+   print(mo2.group())  # Batwowowowowowoman
+
+   mo3 = batRegex.search('The Adventures of Batman')
+   print(mo3 == None)  # True
+
+用花括号匹配特定次数
+--------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/22 15:41
+   # filename: re-main5.py
+   import re
+
+   haregex = re.compile(r"(Ha){3}")
+   mo1 = haregex.search("HaHaHa")
+   print(mo1.group())  # HaHaHa
+
+   mo2 = haregex.search("Ha")
+   print(mo2 == None)  # True
+
+贪心和非贪心匹配
+----------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/22 15:48
+   # filename: re-main6.py
+   import re
+
+   # 贪婪匹配
+   regreedyHaRegex = re.compile(r"(Ha){3,5}")
+   mo1 = regreedyHaRegex.search("HaHaHaHaHa")
+   print(mo1.group())      # HaHaHaHaHa
+
+   # 非贪婪匹配
+   regreedyHaRegex = re.compile(r"(Ha){3,5}?")
+   mo1 = regreedyHaRegex.search("HaHaHaHaHa")
+   print(mo1.group())      # HaHaHa
+
+通配字符
+--------
+
+.匹配单个字符
+~~~~~~~~~~~~~
+
+``.（句点）字符称为“通配符”。它匹配除了换行之外的所有字符，句点字符只匹配一个字符。``
+
+::
+
+   atRegex = re.compile(r'.at')
+   result = atRegex.findall('The cat in the hat sat on the flat mat.')
+   print(result)   #['cat', 'hat', 'sat', 'lat', 'mat']
+
+用点-星匹配所有字符
+~~~~~~~~~~~~~~~~~~~
+
+::
+
+   (.*)        #贪婪匹配模式
+   (.*?)       #非贪婪匹配模式
+
+点-星使用“贪心”模式：它总是匹配尽可能多的文本。要用“非贪心”模式匹配所有文本，就使用点-星和问号。
+像和大括号一起使用时那样，问号告诉Python 用非贪心模式匹配。
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/22 15:57
+   # filename: sample01.py
+   import re
+
+   nameRegex = re.compile(r'First Name: (.*) Last Name: (.*)')
+   mo = nameRegex.search('First Name: Al Last Name: Sweigart')
+   print(mo.group(1))      #Al
+   print(mo.group(2))      #Sweigart
+
+
+   nongreedyRegex = re.compile(r'<.*?>')
+   mo = nongreedyRegex.search('<To serve man> for dinner.>')
+   print(mo.group())       #<To serve man>
+
+用句点字符匹配换行
+~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/22 16:00
+   # filename: sample02.py
+
+   import re
+
+   noNewlineRegex = re.compile('.*')
+   result = noNewlineRegex.search('Serve the public trust.\nProtect the innocent.\nUphold the law.').group()
+   print(result)
+
+   # 通过传入 re.DOTALL 作为 re.compile()的第二个参数，可以让句点字符匹配所有字符，包括换行字符
+   newlineRegex = re.compile('.*', re.DOTALL)
+   result = newlineRegex.search('Serve the public trust.\nProtect the innocent.\nUphold the law.').group()
+   print(result)
+
+正则表达式符号简述
+------------------
+
+::
+
+      ?匹配零次或一次前面的分组。
+      *匹配零次或多次前面的分组。
+      +匹配一次或多次前面的分组。
+      {n}匹配 n 次前面的分组。
+      {n,}匹配 n 次或更多前面的分组。
+      {,m}匹配零次到 m 次前面的分组。
+      {n,m}匹配至少 n 次、至多 m 次前面的分组。
+      {n,m}?或*?或+?对前面的分组进行非贪心匹配。
+      ^spam 意味着字符串必须以 spam 开始。
+      spam$意味着字符串必须以 spam 结束。
+      .匹配所有字符，换行符除外。
+      \d、\w 和\s 分别匹配数字、单词和空格。
+      \D、\W 和\S 分别匹配出数字、单词和空格外的所有字符。
+      [abc]匹配方括号内的任意字符（诸如 a、b 或 c）。
+      [^abc]匹配不在方括号内的任意字符。
+
+不区分大小写的匹配
+------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   import re
+
+   robocop = re.compile(r'robocop', re.I)
+   result1 = robocop.search('RoboCop is part man, part machine, all cop.').group()
+   print(result1)
+
+   result2 = robocop.search('ROBOCOP protects the innocent.').group()
+   print(result2)
+
+   result3 = robocop.search('Al, why does your programming book talk about robocop so much?').group()
+   print(result3)
+
+管理复杂的正则表达式
+--------------------
+
+要实现这种详细模式，可以向\ ``re.compile()``\ 传入变量\ ``re.VERBOSE``\ ，作为第二个参数。
+
+可以将正则表达式放在多行中，并加上注释
+
+::
+
+   phoneRegex = re.compile(r'''(
+   (\d{3}|\(\d{3}\))?              # area code
+   (\s|-|\.)?                      # separator
+   \d{3}                           # first 3 digits
+   (\s|-|\.)                       # separator
+   \d{4}                           # last 4 digits
+   (\s*(ext|x|ext.)\s*\d{2,5})?    # extension
+   )''', re.VERBOSE)
+
+使用了\ ``三重引号(''')``\ ，创建了一个多行字符串。这样就可以将正则表达式定义放在多行中，让它更可读。
+
+正则表达式字符串中的注释规则，与普通的 Python
+代码一样：#符号和它后面直到行末的内容，都被忽略。
+而且，表示正则表达式的多行字符串中，多余的空白字符也不认为是要匹配的文本模式的一部分。这让你能够组织正则表达式，让它更可读。
+
+组合使用 re.IGNOREC ASE、re.DOTALL 和 re.VERBOSE
+------------------------------------------------
+
+如果希望正则表达式不区分大小写，并且句点字符匹配换行
+
+::
+
+   someRegexValue = re.compile('foo', re.IGNORECASE | re.DOTALL)
+
+或者
+
+::
+
+   someRegexValue = re.compile('foo', re.IGNORECASE | re.DOTALL | re.VERBOSE)

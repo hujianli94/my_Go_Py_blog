@@ -1,0 +1,74 @@
+.. contents::
+   :depth: 3
+..
+
+接口的嵌套组合
+==============
+
+在Go语言中，不仅结构体与结构体之间可以嵌套，接口与接口之间也可以通过该嵌套创造出新的接口。
+
+接口与接口嵌套组合而成了新接口，只要接口的所有方法被实现，则这个接口中的所有嵌套接口的方法均可以被调用。
+
+1.系统中的接口嵌套组合
+----------------------
+
+.. code:: go
+
+   // Implementations must not retain p.  
+   // 写入器
+   type Writer interface {
+       Write(p []byte) (n int, err error)
+   }
+
+   // Closer is the interface that wraps the basic Close method.
+   //
+   // The behavior of Close after the first call is undefined.
+   // Specific implementations may document their own behavior.    
+   // 关闭器
+   type Closer interface {
+       Close() error
+   }
+
+
+   // WriteCloser is the interface that groups the basic Write and Close methods.
+   // 写入关闭器
+   type WriteCloser interface {
+       Writer
+       Closer
+   }
+
+2.在代码中使用接口嵌套组合
+--------------------------
+
+.. code:: go
+
+   package main
+
+   import "io"
+
+   // 声明一个设备结构
+   type device struct {
+   }
+
+   // 实现io.Writer的Write()方法
+   func (d *device) Write(p []byte) (n int, err error) {
+       return 0, nil
+   }
+
+   // 实现io.Closer的Close()方法
+   func (d *device) Close() error {
+       return nil
+   }
+
+   func main() {
+       // 声明写入关闭器，并赋予device的实例
+       var wc io.WriteCloser = new(device)
+       // 写入数据
+       wc.Write(nil)
+       // 关闭设备
+       wc.Close()
+       // 声明写入器，并赋予device的新实例
+       var writeOnly io.Writer = new(device)
+       // 写入数据
+       writeOnly.Write(nil)
+   }

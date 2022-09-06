@@ -1,0 +1,437 @@
+.. contents::
+   :depth: 3
+..
+
+合理地使用并发特性
+==================
+
+Go语言原生支持并发是被众人津津乐道的特性。goroutine早期是Inferno操作系统的一个试验性特性，而现在这个特性与操作系统一起，将开发变得越来越简单。
+
+很多刚开始使用Go语言开发的人都很喜欢使用并发特性，而没有考虑并发是否真正能解决他们的问题。
+
+1.了解goroutine的生命期时再创建goroutine
+----------------------------------------
+
+在Go语言中，开发者习惯将并发内容与goroutine一一对应地创建goroutine。
+
+开发者很少会考虑goroutine在什么时候能退出和控制goroutine生命期，这就会造成goroutine失控的情况。下面来看一段代码。
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "runtime"
+   )
+
+   func consumer(ch chan int) {
+       // 无限获取数据的循环
+       for  {
+           // 从通道获取数据
+           data := <-ch
+           fmt.Println(data)
+       }
+       
+   }
+
+   func main() {
+       ch := make(chan int)
+       for  {
+           // 空变量，什么也不做
+           var dummy string
+           // 获取输入，模拟进程持续运行
+           fmt.Scan(&dummy)
+
+           // 启动并发执行consumer()函数
+           go consumer(ch)
+           // 输出现在的goroutine数量
+           fmt.Println("goroutines:", runtime.NumGoroutine())
+       }
+   }
+
+运行程序，每输入一个字符串+回车，将会创建一个goroutine，结果如下：
+
+::
+
+   a
+   goroutines: 2
+   b
+   goroutines: 3
+   c
+   goroutines: 4
+
+这个程序实际在模拟一个进程根据需要创建goroutine的情况。运行后，问题已经被暴露出来：随着输入的字符串越来越多，goroutine将会无限制地被创建，但并不会结束。
+
+这种情况如果发生在生产环境中，将会造成内存大量分配，最终使进程崩溃。现实的情况也许比这段代码更加隐蔽：也许你设置了一个退出的条件，但是条件永远不会被满足或者触发。
+
+为了避免这种情况，在这个例子中，需要为consumer()函数添加合理的退出条件，修改代码后如下：
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "runtime"
+   )
+
+   func consumer(ch chan int) {
+       // 无限获取数据的循环
+       for  {
+           // 从通道获取数据
+           data := <-ch
+           if data == 0{
+               break
+           }
+           fmt.Println(data)
+       }
+       fmt.Println("goroutine exit")
+   }
+
+   func main() {
+       ch := make(chan int)
+       for  {
+           // 空变量，什么也不做
+           var dummy string
+           // 获取输入，模拟进程持续运行
+           fmt.Scan(&dummy)
+           // 当命令行输入quit时，进入退出处理的流程。
+           if dummy == "quit" {
+               // runtime.NumGoroutine返回一个进程的所有goroutine数，main()的goroutine也被算在里面。
+               // 因此需要扣除main()的goroutine数。剩下的goroutine为实际创建的goroutine数，对这些goroutine进行遍历。
+               for i := 0; i < runtime.NumGoroutine()-1; i++ {
+                   // 并发开启的goroutine都在竞争获取通道中的数据，因此只要知道有多少个goroutine需要退出，就给通道里发多少个0。
+                   ch <- 0
+               }
+               continue
+           }
+           // 启动并发执行consumer()函数
+           go consumer(ch)
+           // 输出现在的goroutine数量
+           // 每启动一个goroutine，使用runtime.NumGoroutine检查进程创建的goroutine数量总数。
+           fmt.Println("goroutines:", runtime.NumGoroutine())
+       }
+   }
+
+2.避免在不必要的地方使用通道
+----------------------------
+
+通道（channel）和map、切片一样，也是由Go源码编写而成。为了保证两个goroutine并发访问的安全性，通道也需要做一些锁操作，因此通道其实并不比锁高效。
+
+下面的例子展示套接字的接收和并发管理。对于TCP来说，一般是接收过程创建goroutine并发处理。当套接字结束时，就要正常退出这些goroutine。
+
+2.1 连接、关闭、同步goroutine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "net"
+       "time"
+   )
+
+   func socketRecv(conn net.Conn, exitChan chan string) {
+       // 创建一个接收的缓冲
+       buff := make([]byte, 1024)
+       // 不停地接收数据
+       for  {
+           // 从套接字中读取数据
+           _, err := conn.Read(buff)
+           // 需要结束接收，退出循环
+           if err != nil {
+               break
+           }
+       }
+       // 函数已经结束，发送通知
+       exitChan <- "recv exit"
+   }
+   func main() {
+       // 连接一个地址
+       conn, err := net.Dial("tcp", "www.163.com:80")
+       // 发生错误时打印错误退出
+       if err != nil {
+           fmt.Println(err)
+           return
+       }
+       // 创建退出通道
+       exit := make(chan string)
+       // 并发执行套接字接收
+       go socketRecv(conn, exit)
+       // 在接收时，等待1秒
+       time.Sleep(time.Second)
+       // 主动关闭套接字
+       conn.Close()
+
+       // 等待goroutine退出完毕
+       fmt.Println(<-exit)
+
+   }
+
+在这个例子中，goroutine退出使用通道来通知，这种做法可以解决问题，但是实际上通道中的数据并没有完全使用。
+
+2.2 优化：使用等待组替代通道简化同步
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "net"
+       "sync"
+       "time"
+   )
+
+   func socketRecv(conn net.Conn,  wg *sync.WaitGroup) {
+       // 创建一个接收的缓冲
+       buff := make([]byte, 1024)
+       // 不停地接收数据
+       for  {
+           // 从套接字中读取数据
+           _, err := conn.Read(buff)
+           // 需要结束接收，退出循环
+           if err != nil {
+               break
+           }
+       }
+       // 接收完成后，使用wg.Done()方法将等待组计数器减一。
+       wg.Done()
+   }
+   func main() {
+       // 连接一个地址
+       conn, err := net.Dial("tcp", "www.163.com:80")
+       // 发生错误时打印错误退出
+       if err != nil {
+           fmt.Println(err)
+           return
+       }
+
+       // 退出通道
+       var wg sync.WaitGroup
+       // 为等待组的计数器加1，表示需要完成一个任务。
+       wg.Add(1)
+
+       // 将等待组的指针传入接收函数。
+       go socketRecv(conn, &wg)
+       time.Sleep(time.Second)
+       conn.Close()
+
+       // 等待等待组的完成，完成后打印提示。
+       wg.Wait()
+       fmt.Println("recv done")
+
+   }
+
+3.反射:性能和灵活性的双刃剑
+---------------------------
+
+要用好反射这把双刃剑，就需要详细了解反射的性能。下面的一些基准测试从多方面对比了原生调用和反射调用的区别。
+
+3.1 结构体成员赋值对比
+~~~~~~~~~~~~~~~~~~~~~~
+
+反射经常被使用在结构体上，因此结构体的成员访问性能就成为了关注的重点。
+
+下面例子中使用一个被实例化的结构体，访问它的成员，然后使用Go语言的基准化测试可以迅速测试出结果。
+
+反射性能测试
+
+.. code:: go
+
+   package example03
+
+   import (
+       "reflect"
+       "testing"
+   )
+
+   type data struct {
+       Hp int
+   }
+
+   // ----------------------------------------
+   // 结构体成员赋值对比
+   func BenchmarkNativeAssign(b *testing.B) {
+       // 实例化结构体
+       v := data{Hp: 2}
+       // 停止基准测试的计时器
+       b.StopTimer()
+       // 重置基准测试计时器数据
+       b.ResetTimer()
+       // 重新启动基准测试计时器
+       b.StartTimer()
+       // 根据基准测试数据进行循环测试
+       for i := 0; i < b.N; i++ {
+           v.Hp = 3
+       }
+   }
+
+   // 原生结构体的赋值过程
+   func BenchmarkReflectAssign(b *testing.B) {
+       v := data{Hp: 2}
+       // 取出结构体指针的反射值对象并取其元素
+       vv := reflect.ValueOf(&v).Elem()
+
+       // 根据名字取结构体成员
+       f := vv.FieldByName("Hp")
+       b.StopTimer()
+       b.ResetTimer()
+       b.StartTimer()
+       for i := 0; i < b.N; i++ {
+           f.SetInt(3)
+       }
+   }
+
+
+
+   // ----------------------------------------
+   // 结构体成员搜索并赋值对比
+   func BenchmarkReflectFindFieldAndAssign(b *testing.B) {
+       v := data{Hp: 2}
+       // 取出结构体指针的反射值对象并取其元素
+       vv := reflect.ValueOf(&v).Elem()
+       b.StopTimer()
+       b.ResetTimer()
+       b.StartTimer()
+       // 这段代码将反射值对象的FieldByName()方法与SetInt()方法放在循环里进行检测，
+       // 主要对比测试FieldByName()方法对性能的影响。
+       for i := 0; i < b.N; i++ {
+           vv.FieldByName("Hp").SetInt(3)
+       }
+   }
+
+
+   // --------------------------------------------------------
+   // 调用函数对比
+   // 一个普通函数
+   func foo(v int) {
+   }
+   func BenchmarkNativeCall(b *testing.B) {
+       for i := 0; i < b.N; i++ {
+           // 原生函数调用
+           foo(0)
+       }
+   }
+   func BenchmarkReflectCall(b *testing.B) {
+       // 取函数的反射值对象
+       v := reflect.ValueOf(foo)
+       b.StopTimer()
+       b.ResetTimer()
+       b.StartTimer()
+       for i := 0; i < b.N; i++ {
+           // 反射调用函数
+           v.Call([]reflect.Value{reflect.ValueOf(2)})
+       }
+   }
+
+3.2 基准测试结果对比
+~~~~~~~~~~~~~~~~~~~~
+
+测试结果如下：
+
+::
+
+   $ go test -v -bench=.
+   goos: linux
+   goarch: amd64
+   BenchmarkNativeAssign-4                        2000000000               0.32 ns/op
+   BenchmarkReflectAssign-4                       300000000               4.42 ns/op
+   BenchmarkReflectFindFieldAndAssign-4           20000000               91.6 ns/op
+   BenchmarkNativeCall-4                          2000000000               0.33 ns/op
+   BenchmarkReflectCall-4                         10000000               163 ns/op
+   PASS
+
+经过基准测试结果的数值分析及对比，最终得出以下结论：
+
+-  能使用原生代码时，尽量避免反射操作。
+-  提前缓冲反射值对象，对性能有很大的帮助。
+-  避免反射函数调用，实在需要调用时，先提前缓冲函数参数列表，并且尽量少地使用返回值。
+
+4.接口的nil判断
+---------------
+
+nil在Go语言中只能被赋值给指针和接口。
+
+接口在底层的实现有两个部分：type和data。
+
+在源码中，显式地将nil赋值给接口时，接口的type和data都将为nil。
+
+此时，接口与nil值判断是相等的。但如果将一个带有类型的nil赋值给接口时，只有data为nil，而type为nil，此时，接口与nil判断将不相等。
+
+4.1 接口与nil不相等
+~~~~~~~~~~~~~~~~~~~
+
+下面代码使用 MyImplement() 实现 fmt 包中的 Stringer
+接口，这个接口的定义如下：
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 定义一个结构体
+   type MyImplement struct{}
+
+   // 实现fmt.Stringer的String方法
+   func (m *MyImplement) String() string {
+       return "hi"
+   }
+
+   // 在函数中返回fmt.Stringer接口
+   func GetStringer() fmt.Stringer {
+       // 赋nil
+       var s *MyImplement = nil
+       // 返回变量
+       return s
+   }
+   func main() {
+       // 判断返回值是否为nil
+       if GetStringer() == nil {
+           fmt.Println("GetStringer() == nil")
+       } else {
+           fmt.Println("GetStringer() != nil")
+       }
+   }
+
+使用 GetStringer() 的返回值与 nil 判断时，虽然接口里的 value 为 nil，但
+type 带有 \*MyImplement 信息，使用 == 判断相等时，依然不为 nil。
+
+**发现 nil 类型值返回时直接返回 nil**
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 定义一个结构体
+   type MyImplement struct{}
+
+   // 实现fmt.Stringer的String方法
+   func (m *MyImplement) String() string {
+       return "hi"
+   }
+
+   // 在函数中返回fmt.Stringer接口
+   func GetStringer() fmt.Stringer {
+       var s *MyImplement = nil
+       if s == nil {
+           return nil
+       }
+       return s
+   }
+
+   func main() {
+       // 判断返回值是否为nil
+       if GetStringer() == nil {
+           fmt.Println("GetStringer() == nil")
+       } else {
+           fmt.Println("GetStringer() != nil")
+       }
+   }

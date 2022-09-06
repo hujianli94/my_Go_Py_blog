@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12.21. 解析XML文档 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="12.22. getopt模块" href="22.getopt%E6%A8%A1%E5%9D%97.html" />
+    <link rel="prev" title="12.20. argparse解析命令行参数" href="20.argparse%E8%A7%A3%E6%9E%90%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">12. Python 标准库学习</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.csv%E6%A8%A1%E5%9D%97%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99.html">12.1. csv模块文件读写</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.json%E3%80%81pickle%E3%80%81shelve%E6%A8%A1%E5%9D%97.html">12.2. Json和Pickle序列化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.shutil%E6%A8%A1%E5%9D%97.html">12.3. shutil模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.time-datetime%E6%A8%A1%E5%9D%97.html">12.4. time-datetime模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.randome%E6%A8%A1%E5%9D%97.html">12.5. randome模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.os%28%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9D%97%29.html">12.6. os模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.sys%28%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%E6%A8%A1%E5%9D%97%29.html">12.7. sys系统操作模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.configparser%E6%A8%A1%E5%9D%97.html">12.8. configparser模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.hashlib%E6%A8%A1%E5%9D%97.html">12.9. hashlib算法库模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.re%E6%A8%A1%E5%9D%97.html">12.10. re模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.logging%E6%A8%A1%E5%9D%97.html">12.11. logging模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.zipfile-tarfile%E6%A8%A1%E5%9D%97%E5%AD%A6%E4%B9%A0.html">12.12. zipfile、tarfile模块学习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.subprocess%E6%A8%A1%E5%9D%97.html">12.13. subprocess模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.collections%E6%A8%A1%E5%9D%97.html">12.14. collections模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.Redis%E6%A8%A1%E5%9D%97.html">12.15. Python标准库系列之Redis模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.urlib%E6%A8%A1%E5%9D%97.html">12.16. urllib模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.Stringw%E6%96%87%E6%9C%AC%E5%B8%B8%E9%87%8F%E5%92%8C%E6%A8%A1%E5%9D%97.html">12.17. Stringw文本常量和模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.math%E6%A8%A1%E5%9D%97.html">12.18. math模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.tempfile%E6%A8%A1%E5%9D%97.html">12.19. tempfile模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.argparse%E8%A7%A3%E6%9E%90%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0.html">12.20. argparse解析命令行参数</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">12.21. 解析XML文档</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">12.21.1. 读取XML文件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xpath">12.21.2. 使用XPath</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="22.getopt%E6%A8%A1%E5%9D%97.html">12.22. getopt模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.pymysql%2Blog%2Bconfigparser%E5%B0%81%E8%A3%85.html">12.23. pymysql+log+configparser封装</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.python%E5%8E%8B%E7%BC%A9%E6%96%87%E4%BB%B6%E6%96%B9%E6%B3%95%E6%B1%87%E6%80%BB.html">12.24. Python压缩文件方法汇总</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.requests%E6%A8%A1%E5%9D%97.html">12.25. requests模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">12. </span>Python 标准库学习</a> &raquo;</li>
+      <li><span class="section-number">12.21. </span>解析XML文档</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/12.Python标准库/21.解析XML文档.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#xml" id="id3">解析XML文档</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id4">读取XML文件</a></p></li>
+<li><p><a class="reference internal" href="#xpath" id="id5">使用XPath</a></p>
+<ul>
+<li><p><a class="reference internal" href="#xpath-htmlxml" id="id6">使用XPath 定位html文件或xml文件</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="xml">
+<h1><a class="toc-backref" href="#id3"><span class="section-number">12.21. </span>解析XML文档</a><a class="headerlink" href="#xml" title="Permalink to this headline">¶</a></h1>
+<p>示例文件 Notes.xml</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+&lt;Notes&gt;
+    &lt;Note id=&quot;1&quot;&gt;
+        &lt;CDdate&gt;2019-6-20&lt;/CDdate&gt;
+        &lt;Countent&gt; 发布Python0&lt;/Countent&gt;
+        &lt;UserID&gt;tony1&lt;/UserID&gt;
+    &lt;/Note&gt;
+
+    &lt;Note id=&quot;2&quot;&gt;
+        &lt;CDdate&gt;2019-6-21&lt;/CDdate&gt;
+        &lt;Countent&gt; 发布Python1&lt;/Countent&gt;
+        &lt;UserID&gt;tony2&lt;/UserID&gt;
+    &lt;/Note&gt;
+
+    &lt;Note id=&quot;3&quot;&gt;
+        &lt;CDdate&gt;2019-6-22&lt;/CDdate&gt;
+        &lt;Countent&gt; 发布Python2&lt;/Countent&gt;
+        &lt;UserID&gt;tony3&lt;/UserID&gt;
+    &lt;/Note&gt;
+
+    &lt;Note id=&quot;4&quot;&gt;
+        &lt;CDdate&gt;2019-6-23&lt;/CDdate&gt;
+        &lt;Countent&gt; 发布Python3&lt;/Countent&gt;
+        &lt;UserID&gt;tony4&lt;/UserID&gt;
+    &lt;/Note&gt;
+
+    &lt;Note id=&quot;5&quot;&gt;
+        &lt;CDdate&gt;2019-6-24&lt;/CDdate&gt;
+        &lt;Countent&gt; 发布Python4&lt;/Countent&gt;
+        &lt;UserID&gt;tony5&lt;/UserID&gt;
+    &lt;/Note&gt;
+&lt;/Notes&gt;
+</pre></div>
+</div>
+<section id="id1">
+<h2><a class="toc-backref" href="#id4"><span class="section-number">12.21.1. </span>读取XML文件</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/23 8:45</span>
+<span class="c1"># filename: 1.读取xml文件.py</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;Notes.xml&quot;</span><span class="p">)</span>  <span class="c1"># 创建xml文档树</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">tree</span><span class="p">))</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>  <span class="c1"># root是根元素</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">root</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;第</span><span class="si">{}</span><span class="s2">个</span><span class="si">{}</span><span class="s2">元素，属性</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">attrib</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">child_child</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">child</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     标签：</span><span class="si">{}</span><span class="s2">，内容：</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">child_child</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">child_child</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>输出信息:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;xml.etree.ElementTree.ElementTree&#39;&gt;
+&lt;class &#39;xml.etree.ElementTree.Element&#39;&gt;
+Notes
+第0个Note元素，属性{&#39;id&#39;: &#39;1&#39;}
+     标签：CDdate，内容：2019-6-20
+     标签：Countent，内容： 发布Python0
+     标签：UserID，内容：tony
+第1个Note元素，属性{&#39;id&#39;: &#39;2&#39;}
+     标签：CDdate，内容：2019-6-21
+     标签：Countent，内容： 发布Python1
+     标签：UserID，内容：tony2
+第2个Note元素，属性{&#39;id&#39;: &#39;3&#39;}
+     标签：CDdate，内容：2019-6-22
+     标签：Countent，内容： 发布Python2
+     标签：UserID，内容：tony3
+第3个Note元素，属性{&#39;id&#39;: &#39;4&#39;}
+     标签：CDdate，内容：2019-6-23
+     标签：Countent，内容： 发布Python3
+     标签：UserID，内容：tony4
+第4个Note元素，属性{&#39;id&#39;: &#39;5&#39;}
+     标签：CDdate，内容：2019-6-24
+     标签：Countent，内容： 发布Python4
+     标签：UserID，内容：tony5
+</pre></div>
+</div>
+</section>
+<section id="xpath">
+<h2><a class="toc-backref" href="#id5"><span class="section-number">12.21.2. </span>使用XPath</a><a class="headerlink" href="#xpath" title="Permalink to this headline">¶</a></h2>
+<p><img alt="image1" src="../../_images/xpath0001.png" /> <img alt="image2" src="../../_images/xpath0002.png" /></p>
+<section id="xpath-htmlxml">
+<h3><a class="toc-backref" href="#id6">使用XPath 定位html文件或xml文件</a><a class="headerlink" href="#xpath-htmlxml" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/23 8:54</span>
+<span class="c1"># filename: 使用XPath寻找xml文件指定内容.py</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;Notes.xml&quot;</span><span class="p">)</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+<span class="n">node</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./Note&quot;</span><span class="p">)</span>      <span class="c1"># 查找当前接电线的第一个Note子节点</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+<span class="n">node</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./Note/CDate&quot;</span><span class="p">)</span>    <span class="c1"># 查找Note子节点下的第一个CDdate节点</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">node</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./Note/CDate/..&quot;</span><span class="p">)</span>     <span class="c1"># Note节点</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+
+<span class="n">node</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//CDate&quot;</span><span class="p">)</span>        <span class="c1"># 当前节点查找所有后代节点中第一个CDate节点</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">node</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./Note[@id]&quot;</span><span class="p">)</span>     <span class="c1"># 具有id属性的Note节点</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+
+<span class="n">node</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./Note[@id=&#39;2&#39;]&quot;</span><span class="p">)</span>     <span class="c1"># id属性等于&#39;2&#39;的Note节点</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+
+<span class="n">node</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./Note[2]&quot;</span><span class="p">)</span>     <span class="c1"># 第二个Note节点</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+
+<span class="n">node</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./Note[last()]&quot;</span><span class="p">)</span>     <span class="c1"># 最后一个Note节点</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+
+<span class="n">node</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;./Note[last()-2]&quot;</span><span class="p">)</span>     <span class="c1"># 倒数第三个Note节点</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>输出内容：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Note</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">}</span>
+<span class="mi">2019</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">20</span>
+<span class="n">Note</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">}</span>
+<span class="mi">2019</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">20</span>
+<span class="n">Note</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">}</span>
+<span class="n">Note</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;2&#39;</span><span class="p">}</span>
+<span class="n">Note</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;2&#39;</span><span class="p">}</span>
+<span class="n">Note</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;5&#39;</span><span class="p">}</span>
+<span class="n">Note</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;3&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<section id="id2">
+<h4>xpath用于数据爬取<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">&lt;div&gt;</span>
+<span class="s1">&lt;ul&gt;</span>
+<span class="s1">    &lt;li class=&quot;red&quot;&lt;h1&gt;red flowers&lt;/h1&gt;&lt;/li&gt;</span>
+<span class="s1">    &lt;li class=&quot;yellow&quot;&lt;h1&gt;yellow flowers&lt;/h2&gt;&lt;/li&gt;</span>
+<span class="s1">    &lt;li class=&quot;white&quot;&lt;h1&gt;white flowers&lt;/h3&gt;&lt;/li&gt;</span>
+<span class="s1">    &lt;li class=&quot;black&quot;&lt;h1&gt;black flowers&lt;/h4&gt;&lt;/li&gt;</span>
+<span class="s1">    &lt;li class=&quot;blue&quot;&lt;h1&gt;blue flowers&lt;/h5&gt;&lt;/li&gt;</span>
+<span class="s1">&lt;/ul&gt;</span>
+
+<span class="s1">&lt;/div&gt;</span>
+
+<span class="s1">&#39;&#39;&#39;</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>语法解析：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">            节点选择</span>
+<span class="sd">表达式</span>
+<span class="sd">nodename            #选取此节点的所有子节点</span>
+<span class="sd">/                   #从根节点选取</span>
+<span class="sd">//                  #从匹配当前节点选择文档中的节点，不考虑它们的位置</span>
+<span class="sd">.                   #选取当前节点</span>
+<span class="sd">..                  #选取当前节点的父节点</span>
+<span class="sd">@                   #选取属性</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        谓语</span>
+<span class="sd">路径表达式</span>
+<span class="sd">/user_database/user[1]      #选取属于user_database子元素的第一个user元素</span>
+<span class="sd">//li[@attribute]            #选取所有拥有名为attribute属性的li元素</span>
+<span class="sd">//li[@attribute=&#39;red&#39;]      #选取所有li元素，且这些元素用于值为red的attribute属性</span>
+<span class="sd">*                           #可以匹配任何元素节点</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">//*[@id=&quot;qiushi_tag_121402573&quot;]/div[1]/a[2]/h2</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1">#获取单个用户的id</span>
+<span class="c1"># import requests</span>
+<span class="c1"># from lxml import etree</span>
+<span class="c1">#</span>
+<span class="c1"># headers = {</span>
+<span class="c1"># &quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 &quot;</span>
+<span class="c1">#               &quot;(KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36&quot;</span>
+<span class="c1"># }</span>
+<span class="c1"># url = &quot;https://www.qiushibaike.com/text/&quot;</span>
+<span class="c1"># res = requests.get(url, headers=headers)</span>
+<span class="c1"># selector = etree.HTML(res.text)</span>
+<span class="c1"># id = selector.xpath(&#39;//*[@id=&quot;qiushi_tag_121431185&quot;]/div[1]/a[2]/h2/text()&#39;)</span>
+<span class="c1"># # id = selector.xpath(&#39;//*[@id=&quot;qiushi_tag_121431185&quot;]/div[1]/a[2]/h2/text()&#39;)[0]</span>
+<span class="c1"># print(id)</span>
+
+
+
+<span class="c1">#批量获取用户的id</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">//div[@class=&quot;article block untagged mb15]&#39;</span>
+<span class="sd">div[1]/a[2]/h2          #用户id信息</span>
+<span class="sd">#content-left</span>
+<span class="sd">//*[@id=&quot;content-left&quot;]</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36&quot;</span>
+<span class="p">}</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.qiushibaike.com/text/&quot;</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="n">selector</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="n">url_infos</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//div[@class=&quot;article block untagged mb15 typs_hot&quot;]&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">url_infos</span><span class="p">:</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;div[1]/a[2]/h2/text()&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>参考文献：</p>
+<p><a class="reference external" href="https://www.cnblogs.com/derek1184405959/p/8449682.html">https://www.cnblogs.com/derek1184405959/p/8449682.html</a></p>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="20.argparse%E8%A7%A3%E6%9E%90%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0.html" class="btn btn-neutral float-left" title="12.20. argparse解析命令行参数" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="22.getopt%E6%A8%A1%E5%9D%97.html" class="btn btn-neutral float-right" title="12.22. getopt模块" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

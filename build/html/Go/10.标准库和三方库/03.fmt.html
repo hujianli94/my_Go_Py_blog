@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10.3. fmt &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10.4. Json" href="04.Json.html" />
+    <link rel="prev" title="10.2. bytes" href="02.bytes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">10. 标准库和三方库</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.strings.html">10.1. strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.bytes.html">10.2. bytes</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">10.3. fmt</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">10.3.1. 1.数值类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">10.3.2. 2.字符类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">10.3.3. 3.布尔类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">10.3.4. 4.其他</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">10.3.5. 5.fmt占位符</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">10.3.6. 6.错误类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">10.3.7. 7.输出定制化</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#verb">10.3.8. 8.格式化verb应用</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="04.Json.html">10.4. Json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.strconv.html">10.5. strconv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.ioutil-bufio.html">10.6. ioutil/bufio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.time.html">10.7. time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.os-path-filepath.html">10.8. os/path/filepath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.regexp.html">10.9. regexp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.log.html">10.10. log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.reflect-unsafe.html">10.11. reflect/unsafe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.unicode.html">10.12. unicode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.flag%E5%92%8Cgo-flags.html">10.13. flag和go-flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.net-url.html">10.14. net/url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.sort.html">10.15. sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.net-http.html">10.16. net/http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.error.html">10.17. error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.template%E6%A8%A1%E6%9D%BF.html">10.18. template模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.%E6%93%8D%E4%BD%9Cmysql.html">10.19. 操作mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html">10.20. Go语言常用资料及工具详细汇总</a></li>
+<li class="toctree-l3"><a class="reference internal" href="21.Socket%E7%BD%91%E7%BB%9C.html">10.21. Socket网络</a></li>
+<li class="toctree-l3"><a class="reference internal" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html">10.22. go标准库和三方库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.cobra.html">10.23. cobra</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.viper.html">10.24. viper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.math-rand.html">10.25. math-rand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="26.zap-%E6%97%A5%E5%BF%97%E6%A8%A1%E5%9D%97.html">10.26. zap-日志模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">10. </span>标准库和三方库</a> &raquo;</li>
+      <li><span class="section-number">10.3. </span>fmt</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/10.标准库和三方库/03.fmt.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#fmt" id="id8">fmt</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id9">1.数值类型</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id10">2.字符类型</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id11">3.布尔类型</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id12">4.其他</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id13">5.fmt占位符</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id14">6.错误类型</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id15">7.输出定制化</a></p></li>
+<li><p><a class="reference internal" href="#verb" id="id16">8.格式化verb应用</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="fmt">
+<h1><a class="toc-backref" href="#id8"><span class="section-number">10.3. </span>fmt</a><a class="headerlink" href="#fmt" title="Permalink to this headline">¶</a></h1>
+<p>fmt实现了格式化输出，并提供了相应的占位符。</p>
+<p>fmt支持的占位符比较多。</p>
+<p>Go语言内部支持的数据类型如下：</p>
+<p>数值类型：整数类型、浮点类型。</p>
+<p>字符类型。</p>
+<p>指针类型。</p>
+<p>布尔类型。</p>
+<p>其他。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">10.3.1. </span>1.数值类型</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>%b：二进制。
+%o：八进制。
+%x：十六进制。
+%X：十六进制。
+%d：十进制。
+%f：浮点类型。
+%e：科学记数法。
+%E：科学记数法。
+%c：该值对应的unicode码值
+%q：该值对应的单引号括起来的go语法字符字面值，必要时会采用安全的转义表示
+%U: 表示为Unicode格式：U+1234，等价于&quot;U+%04X&quot;
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">FmtUsage</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">number</span> <span class="p">=</span> <span class="mf">100.203</span>
+    <span class="kd">var</span> <span class="nx">numberInt</span> <span class="p">=</span> <span class="mi">100</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%d\n&quot;</span><span class="p">,</span> <span class="nx">numberInt</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%o\n&quot;</span><span class="p">,</span> <span class="nx">numberInt</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%x\n&quot;</span><span class="p">,</span> <span class="nx">numberInt</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%X\n&quot;</span><span class="p">,</span> <span class="nx">numberInt</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%b\n&quot;</span><span class="p">,</span> <span class="nx">numberInt</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%f\n&quot;</span><span class="p">,</span> <span class="nx">number</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%e\n&quot;</span><span class="p">,</span> <span class="nx">number</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%E\n&quot;</span><span class="p">,</span> <span class="nx">number</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id10"><span class="section-number">10.3.2. </span>2.字符类型</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>%s    直接输出字符串或者[]byte
+%q    该值对应的双引号括起来的go语法字符串字面值，必要时会采用安全的转义表示
+%x    每个字节用两字符十六进制数表示（使用a-f）
+%X    每个字节用两字符十六进制数表示（使用A-F）
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">FmtStringUsage</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">values</span> <span class="p">=</span> <span class="s">&quot;golang&quot;</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nx">values</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%q\n&quot;</span><span class="p">,</span> <span class="nx">values</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">10.3.3. </span>3.布尔类型</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>%t：布尔类型。
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">FmtBoolUsage</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">ok</span> <span class="p">=</span> <span class="kc">true</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%t\n&quot;</span><span class="p">,</span> <span class="nx">ok</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">10.3.4. </span>4.其他</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>%T：判断类型。
+%p：指针类型。
+%v：默认格式。
+%#v：带语法的格式。
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">FmtOtherUsage</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">a</span> <span class="p">=</span> <span class="mi">1</span>
+    <span class="kd">var</span> <span class="nx">b</span> <span class="p">=</span> <span class="mf">2.0</span>
+    <span class="kd">var</span> <span class="nx">ok</span> <span class="p">=</span> <span class="kc">true</span>
+    <span class="nx">number</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">a</span>
+    <span class="kd">var</span> <span class="nx">s</span> <span class="p">=</span> <span class="kd">struct</span> <span class="p">{</span>
+        <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:&quot;name&quot;`</span>
+    <span class="p">}{</span>
+        <span class="nx">Name</span><span class="p">:</span> <span class="s">&quot;Go&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%T\n&quot;</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span>                   <span class="c1">//int</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%T\n&quot;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>                   <span class="c1">//float64</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%T\n&quot;</span><span class="p">,</span> <span class="nx">ok</span><span class="p">)</span>                  <span class="c1">//bool</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%p\n%d\n&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">a</span><span class="p">,</span> <span class="nx">number</span><span class="p">)</span>      <span class="c1">//0xc00012805   8824634933336</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%v\n&quot;</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span>        <span class="c1">//{Go}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v\n&quot;</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span>      <span class="c1">//struct { Name string &quot;json:\&quot;name\&quot;&quot; }{Name:&quot;Go&quot;}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">10.3.5. </span>5.fmt占位符</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<img alt="../../_images/image-20220704135818383.png" src="../../_images/image-20220704135818383.png" />
+<p>fmt对不同的功能提供了非常类似的API：</p>
+<ul class="simple">
+<li><p>Fprint/Fprintf/Fprintln：带格式的输出。</p></li>
+<li><p>Print/Printf/Println：标准输出。</p></li>
+<li><p>Sprint/Sprintf/Sprintln：格式化内容为string。</p></li>
+</ul>
+<p>其中，Fprint/Print/Sprint表示使用默认的格式输出或格式化内容。</p>
+<p>Fprintf/Printf/Sprintf表示使用指定的格式输出或格式化内容。</p>
+<p>Fprintln/Println/Sprintln表示使用默认的格式输出或格式化内容，同时会在最后加上换行符（‘’）。</p>
+<p>Print/Printf/Println是将内容输出到标准输出设备，底层调用的是Fprint/Fprintf/Fprintln，只是将第一个参数设置为os.Stdout（标准输出设备）。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">Fprintln</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">p</span> <span class="o">:=</span> <span class="nx">newPrinter</span><span class="p">()</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">doPrintln</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+    <span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">Write</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">free</span><span class="p">()</span>
+    <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">Println</span><span class="p">(</span><span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">Fprintln</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="nx">a</span><span class="o">...</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>总之，常用的是标准输出Print/Printf/Println方法和格式化字符串输出Sprint/Sprintf/Sprintln方法。</p>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">10.3.6. </span>6.错误类型</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>创建一个错误类型有两种方式：</p>
+<p>errors.New()</p>
+<p>fmt.Errorf</p>
+<p>其实，fmt.Errorf底层就是调用errors.New来格式化字符串的。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">Errorf</span><span class="p">(</span><span class="nx">format</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">a</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="nx">p</span> <span class="o">:=</span> <span class="nx">newPrinter</span><span class="p">()</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">wrapErrs</span> <span class="p">=</span> <span class="kc">true</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">doPrintf</span><span class="p">(</span><span class="nx">format</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span>
+    <span class="nx">s</span> <span class="o">:=</span> <span class="nb">string</span><span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span>
+    <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">wrappedErr</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">err</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">wrapError</span><span class="p">{</span><span class="nx">s</span><span class="p">,</span> <span class="nx">p</span><span class="p">.</span><span class="nx">wrappedErr</span><span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">free</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nx">err</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id15"><span class="section-number">10.3.7. </span>7.输出定制化</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>fmt还提供了几个接口，有些结构体实现了接口内定义的方法就能定制化输出。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// Stringer is implemented by any value that has a String method,</span>
+<span class="c1">// which defines the ``native&#39;&#39; format for that value.</span>
+<span class="c1">// The String method is used to print values passed as an operand</span>
+<span class="c1">// to any format that accepts a string or to an unformatted printer</span>
+<span class="c1">// such as Print.</span>
+<span class="kd">type</span> <span class="nx">Stringer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">String</span><span class="p">()</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// GoStringer is implemented by any value that has a GoString method,</span>
+<span class="c1">// which defines the Go syntax for that value.</span>
+<span class="c1">// The GoString method is used to print values passed as an operand</span>
+<span class="c1">// to a %#v format.</span>
+<span class="kd">type</span> <span class="nx">GoStringer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">GoString</span><span class="p">()</span> <span class="kt">string</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">type</span> <span class="nx">Val</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:&quot;name&quot;`</span>
+    <span class="nx">Age</span>  <span class="kt">int</span>    <span class="s">`json:&quot;age&quot;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="nx">Val</span><span class="p">)</span> <span class="nx">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%s + %d&quot;</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="nx">Val</span><span class="p">)</span> <span class="nx">GoString</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%s + %d&quot;</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Name</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">v</span> <span class="o">:=</span> <span class="nx">Val</span><span class="p">{</span>
+        <span class="nx">Name</span><span class="p">:</span> <span class="s">&quot;hujianli&quot;</span><span class="p">,</span>
+        <span class="nx">Age</span><span class="p">:</span>  <span class="mi">10</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v\n&quot;</span><span class="p">,</span><span class="nx">v</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看到结构体实现了Stringer和GoStringer接口，即实现了定制化输出。</p>
+</section>
+<section id="verb">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">10.3.8. </span>8.格式化verb应用</a><a class="headerlink" href="#verb" title="Permalink to this headline">¶</a></h2>
+<p>代码示例</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">name</span> <span class="kt">string</span>
+    <span class="nx">age</span>  <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">valF</span> <span class="kt">float64</span> <span class="p">=</span> <span class="mf">32.9983</span>
+<span class="kd">var</span> <span class="nx">valI</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">89</span>
+<span class="kd">var</span> <span class="nx">valS</span> <span class="kt">string</span> <span class="p">=</span> <span class="s">&quot;Go is an open source programmig language that makes it&quot;</span>
+<span class="kd">var</span> <span class="nx">valB</span> <span class="kt">bool</span> <span class="p">=</span> <span class="kc">true</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">p</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span>
+        <span class="nx">name</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">,</span>
+        <span class="nx">age</span><span class="p">:</span>  <span class="mi">18</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf struct %%v: %v\n&quot;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf struct %%+v: %+v\n&quot;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf struct %%#v: %#v\n&quot;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf struct %%T: %T\n&quot;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf struct %%p: %p\n&quot;</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;-------------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%v: %v\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%+v: %+v\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%#v: %#v\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%T: %T\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%f: %f\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%4.3f: %4.3f\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%8.3f: %8.3f\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%-8.3f: %-8.3f\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%e: %e\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf float64 %%E: %E\n&quot;</span><span class="p">,</span> <span class="nx">valF</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;-------------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%v: %v\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%+v: %+v\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%#v: %#v\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%T: %T\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%d: %d\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%8d: %8d\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%-8d: %-8d\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%b: %b\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%c: %c\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%o: %o\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%U: %U\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%q: %q\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf int %%x: %x\n&quot;</span><span class="p">,</span> <span class="nx">valI</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;-------------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf string %%v:%v\n&quot;</span><span class="p">,</span> <span class="nx">valS</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf string %%+v:%+v\n&quot;</span><span class="p">,</span> <span class="nx">valS</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf string %%#v:%#v\n&quot;</span><span class="p">,</span> <span class="nx">valS</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf string %%T:%T\n&quot;</span><span class="p">,</span> <span class="nx">valS</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf string %%X:%X\n&quot;</span><span class="p">,</span> <span class="nx">valS</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf string %%200s:%200s\n&quot;</span><span class="p">,</span> <span class="nx">valS</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf string %%-200s:%-200s\n&quot;</span><span class="p">,</span> <span class="nx">valS</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf string %%q:%q\n&quot;</span><span class="p">,</span> <span class="nx">valS</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;-------------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf bool %%v: %v\n&quot;</span><span class="p">,</span> <span class="nx">valB</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf bool %%+v: %+v\n&quot;</span><span class="p">,</span> <span class="nx">valB</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf bool %%#v: %#v\n&quot;</span><span class="p">,</span> <span class="nx">valB</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf bool %%T: %T\n&quot;</span><span class="p">,</span> <span class="nx">valB</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Printf bool %%t: %t\n&quot;</span><span class="p">,</span> <span class="nx">valB</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;-------------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="nx">s</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;a %s&quot;</span><span class="p">,</span> <span class="s">&quot;string&quot;</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span><span class="s">&quot;an %s\n&quot;</span><span class="p">,</span><span class="s">&quot;error&quot;</span><span class="p">)</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02.bytes.html" class="btn btn-neutral float-left" title="10.2. bytes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04.Json.html" class="btn btn-neutral float-right" title="10.4. Json" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

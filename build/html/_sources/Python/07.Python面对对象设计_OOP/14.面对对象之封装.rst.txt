@@ -1,0 +1,344 @@
+.. contents::
+   :depth: 3
+..
+
+面对对象之封装特性
+==================
+
+为属性添加限制，访问限制（隐藏和封装）
+--------------------------------------
+
+-  隐藏类的实现细节
+-  让使用者只能通过事先预定的方法来访问数据，可以在方法里面加入控制逻辑，限制对属性的不合理访问
+-  可以进行数据检查，有利于保证数据的完整性
+-  便于修改，提高代码的可维护性
+
+良好的封装，有两个方面： \*
+将对象的属性和实现细节隐藏起来，不允许外部直接访问 \*
+把方法暴露出来，让方法控制对这些属性进行安全的访问和操作
+
+该暴露的暴露出来，该隐藏的隐藏起来
+
+eg
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/10 16:59
+   # filename: 封装.py
+   class User:
+       def __hide(self):
+           return ("示范隐藏的hide方法")
+
+       def getname(self):
+           return self.__name
+
+       def setname(self,name):
+           if len(name) <3 or len(name) > 8:
+               raise ValueError("用户名长度必须在3~8之间")
+           self.__name = name
+
+       name = property(getname,setname)
+
+
+
+       def setage(self,age):
+           if age < 18 or age > 70:
+               raise ValueError("用户年龄必须在18~80之间")
+           self.__age = age
+
+       def getage(self):
+           return self.__age
+
+       age = property(getage, setage)
+
+
+
+   if __name__ == '__main__':
+       u = User()
+       u.name = "hujianli"
+       u.age = 19
+       print(u.name)
+       print(u.age)
+       print(dir(u))
+       print(u._User__hide())
+
+eg
+
+::
+
+   # !/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/18 7:38
+   # filename: 封装性,私有方法和私有属性.py
+   class Animal(object):
+       def __init__(self, age, sex=1, weight=0.0):
+           self.age = age
+           self.sex = sex
+           self.__weight = weight
+
+       def eat(self):
+           self.__weight += 0.5
+           self.__run()
+           print("eat.....")
+
+       def __run(self):
+           """
+           私有方法
+           :return:
+           """
+           self.__weight -= 0.01
+           print("run.....")
+
+
+   a1 = Animal(18, 0, 10.0)
+   # print(dir(a1))
+   a1.eat()
+   # a1.run()            #会报错，私有方法不能直接调用
+   # a1._Animal__run()
+   print(a1._Animal__weight)
+
+输出结果：
+
+::
+
+   run.....
+   eat.....
+   10.49
+
+私有属性设置说明
+~~~~~~~~~~~~~~~~
+
+::
+
+   _foo        #protected （保护类型）的成员，只允许类本身和子类可以访问，
+   单前置下划线,私有化属性或方法，禁止通过from modules import *导入,但是类对象和子类可以访问
+
+   __foo       #使用类型的成员，只允许定义它类本身可以访问，不可以通过实例名称来访问，
+   需要使用dir()查看后访问。通过“实例名.类名__xxxx”方式访问。
+
+   __foo__     #系统定义的名字，特殊的方法
+
+所有双下划线“\_\_”开始命名的成员都为私有成员。
+
+类的成员与下划线总结：
+
+::
+
+   _name、_name_、_name__:建议性的私有成员，不要在外部访问。
+   __name、 __name_ :强制的私有成员，但是你依然可以蛮横地在外部危险访问。
+   __name__:特殊成员，与私有性质无关，例如__doc__。
+   name_、name__:没有任何特殊性，普通的标识符，但最好不要这么起名。
+
+代码示例 1
+^^^^^^^^^^
+
+::
+
+   class Swan:
+       '''
+       天鹅类
+       '''
+       _neck_swan = '天鹅的脖子很长'      #受保护类型的属性
+       __neck_swan2 = '天鹅的脖子很长'      #私有类型的属性
+
+
+       def __init__(self):
+           print('这是构造方法中受到保护类型的属性', Swan.__neck_swan2)  #访问保护类型的属性
+
+       def my(self):
+           print("my方法: ", Swan.__neck_swan2)
+
+   swan = Swan()   #创建Swan类的实例(对象)
+   print('直接访问:', swan._neck_swan) #通过实例类型来访问受保护类型的属性
+
+   print()
+   swan1 = Swan()
+   print('私有类型的属性： ', swan1._Swan__neck_swan2)
+
+   swan1._Swan__neck_swan2 = "我修改了私有属性,天鹅的脖子很很很长"
+   print('修改私有属性后：',swan1._Swan__neck_swan2)
+
+   print()
+   swan1.my()      #修改的私有属性，在方法中不会生效
+
+代码示例 2
+^^^^^^^^^^
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   '''
+   要让内部的属性不被外部直接访问
+   '''
+   class Person(object):
+       def run(self):
+           print("run")
+
+       def eat(self,food):
+           print("eat " + food)
+
+       def __init__(self,name,age,height,weight,money,input_hu):
+           self.name = name
+           self.age = age
+           self.height = height
+           self.weight = weight
+           self.__money = money  #此属性已经变为'_Person__money'
+           self.__input__ = input_hu
+
+       #通过内部的方法，去修改私有属性
+       #通过自定义的方法实现对私有属性的赋值与取值
+       def set_Money(self,money):
+           #数据的过滤
+           if money < 0:
+               money = 0
+           else:
+               self.__money = money
+
+       def get_Money(self):
+           return self.__money
+
+       def __del__(self):
+           print("这里是析构函数")
+
+
+   per = Person("hujianli", 24, 180, 65,1000,"python")
+   print(dir(per))
+   print(dir(Person))
+   per.age = 18
+
+   #一般帅的人不这么使用，很不方便
+   per._Person__money = 22
+   print(per._Person__money)  #__money此时已经变成_Person__money了
+
+   #如果让内部属性不被外部直接访问，在属性前加__下划线
+   #如果在属性前加__下划线，那么这个属性就变成了私有属性,不能再实例化之后直接访问
+   # per.__money = 10
+
+
+   print(per.age)
+
+   print(per.get_Money())
+   print("开始赋值set_money" + " ====ing")
+   per.set_Money(100)
+   print("赋值之后的money是: {}".format(per.get_Money()))
+
+   #在python中__xxx___ 属于特殊变量，特殊变量的值可以直接访问
+   print("这是一个__xx__的特殊变量: %s" % per.__input__)
+
+   #一个下划线_xxx的变量，看到这样的变量时，表示当成私有属性，虽然可以直接在外部访问
+   #这是一个约定束城
+
+
+
+
+   class Student(object):
+       def __init__(self,name,score):
+           self.__name = name
+           self.__score = score
+
+       def info(self):
+           print("学生:{}； 分数{}".format(self.__name,self.__score))
+
+       def set_score(self,secore):
+           self.__score = secore
+
+       def get_score(self):
+           return self.__score
+
+   if __name__ == '__main__':
+       hu = Student("hujianli","100")
+       hu.info()
+       print("修改前的分数{}".format(hu.get_score()))
+       hu.set_score(90)
+       print("修改后的分数{}".format(hu.get_score()))
+
+
+私有属性的保护和设置
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   class Duck():
+       def __init__(self, input_name): #构造函数
+           self.__name = input_name
+
+       @property
+       def name(self):
+           print("inside the getter")
+           return self.__name
+
+       @name.setter
+       def set_name(self,put_name):
+           print("开始设置属性:name的值")
+           self.__name = put_name
+
+
+
+   if __name__ == '__main__':
+       name = "hujianli"
+       hu = Duck(name)
+       print(hu.name)
+       print("分割线".center(100, "-"))
+       hu.set_name = "xiaojian"
+       print(hu.name)
+       print()
+       print(hu._Duck__name)
+
+代码示例2
+~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+
+   #通过装饰器方法来获取私有属性
+   class TVShow:       #电视节目类
+       list_film = ["战狼2", "红海行动", "西游记女儿国", "熊出没变形记"]
+
+       def __init__(self, show):
+           self.__show = show
+
+       @property
+       def show(self):
+           '''
+           定义方法
+           :return:私有属性
+           '''
+           return self.__show      #返回类的实例
+
+       @show.setter                #让属性可以进行修改
+       def show(self, value):
+           if value in TVShow.list_film:       #判断值是否在列表中
+               self.__show = '您选择了《'+ value + "》,稍后将播放"    #修改返回值
+           else:
+               self.__show = "您点播的电影不存在"
+
+
+   tvshow = TVShow("战狼2")  #创建类的实例
+   print("正在播放:《", tvshow.show, "》")     #获取属性值
+   print("您可以从", TVShow.list_film, "中选择台点播的电影")
+
+   tvshow.show = '红海行动'
+   print(tvshow.show)      #获取属性值
+
+
+   '''
+   tvshow = TVShow("正在播放《战狼2》")  #创建类的实例
+   print("默认输出: ", tvshow.show)     #获取属性值
+
+   '''
+
+
+   #修改装饰器的值会报错
+   '''
+   tvshow.show = "正在播放《红海行动》"
+   print("默认输出: ", tvshow.show)     #获取属性值
+   '''

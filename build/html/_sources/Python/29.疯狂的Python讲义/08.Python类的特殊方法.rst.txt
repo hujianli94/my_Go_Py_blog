@@ -1,0 +1,727 @@
+.. contents::
+   :depth: 3
+..
+
+08.Python类的特殊方法
+=====================
+
+1. 对象转字符串与__repr__方法
+-----------------------------
+
+::
+
+   * __repr＿()是一个非常特殊 的方法，它是一个“ 自我描述” 的方法，
+   该方法通常用 于实现这样一个功能:当程序员直接打印该对象时，系统将会输出该对象的“自我描述”信息,
+   用来告诉外界该对象具有的状态信息。
+
+::
+
+   class Apple:
+       # 实现构造器
+       def __init__(self, color, weight):
+           self.color = color
+           self.weight = weight
+
+       # 重写tostring方法用于实现Apple对象的“自我描述”
+       def __repr__(self):
+           return "Apple[color=" + self.color + ",weight =" + str(self.weight) + "]"
+
+
+   a = Apple("红色", 5.68)
+   # 打印Apple对象
+   print(a)  # Apple[color=红色,weight =5.68]
+
+2. 对象的析构方法__del_\_
+-------------------------
+
+::
+
+   * 与__init__()方法对应的是__del__()方法: __init__()方法用于初始化 Python 对象，
+   而__del__()则用于销毁 Python 对象 在任何 Python 对象将要被系统回收之时，
+   系统都会自动调用该对象的__del__()方法。 
+
+::
+
+   class Item:
+       def __init__(self, name, price):
+           self.name = name
+           self.price = price
+
+       # 定义析构函数
+       def __del__(self):
+           print('del删除对象')
+
+
+   # 创建一个Item对象，将之赋给im变量
+   im = Item('鼠标', 29.8)
+   # x = im   
+   ##将im赋值给变量x，此时程序中有两个变量引用Item对象，当del im 代码删除im对象后，由于还有变量引用，
+   # 程序并不会回收Item对象。只有等到程序执行将要结束时(系统必须收回所有对象)，系统才会回收Item对象。
+   # 打印im所引用的Item对象
+   del im
+   print('--------------')
+
+3.__dir__方法
+-------------
+
+::
+
+   * __dir__方法用于列出该对象内部的所有属性（包括方法）名，
+   该方法将会返回包含所有属性（方法）名的序列 
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/26 11:08
+   # filename: sample03.py
+   class Item:
+       def __init__(self, name, price):
+           self.name = name
+           self.price = price
+
+   def info():
+       pass
+
+
+   # 创建一个Item对象，将之赋给im变量
+   im = Item('鼠标', 29.8)
+   print(im.__dir__())  # 返回所有属性（包括方法）组成列表
+   print(dir(im))  # 返回所有属性（包括方法）排序之后的列表
+
+4.__dict__属性
+--------------
+
+::
+
+   * __dict__属性用于查看对象内部存储的所有属性名和属性值组成的字典， 
+   通常程序直接使用该属性即可 。 
+   程序使用__dict__属性既可查看对象的所有内部状态，
+   也可通过字典语法来访问或修改指定属性的值。 
+
+::
+
+   class Item:
+       def __init__ (self, name, price):
+           self.name = name
+           self.price = price
+   im = Item('鼠标', 28.9)
+   print(im.__dict__)  # ①
+   # 通过__dict__访问name属性
+   print(im.__dict__['name'])
+   # 通过__dict__访问price属性
+   print(im.__dict__['price'])
+   im.__dict__['name'] = '键盘'
+   im.__dict__['price'] = 32.8
+   print(im.name) # 键盘
+   print(im.price) # 32.8
+
+5.使用__getattr__等方法监听属性访问
+-----------------------------------
+
+当程序操作（包括访问、设置、删除）对象的属性时， Python
+系统同样会执行该对象特定的方法 。 这些方法共涉及如下几个 。
+
+::
+
+   __getattribute__(self,name)： 当程序访 问对象的name属性时被自动调用。 
+   __getattr__(self,name)： 当程序访问对象的name属性且该属性不存在时被自动调用。
+   __setattr__(self,name,value)：当程序对对象的name属性赋值时被自动调用。 
+   __delattr__(self,name)：当程序删除对象的name属性时被自动调用。
+
+::
+
+   # 1.
+   class Rectangle:
+       def __init__ (self, width, height):
+           self.width = width
+           self.height = height
+       def __setattr__(self, name, value):
+           print('----设置%s属性----' % name)
+           if name == 'size':
+               self.width, self.height = value
+           else:
+               self.__dict__[name] = value
+       def __getattr__(self, name):
+           print('----读取%s属性----' % name)
+           if name == 'size':
+               return self.width, self.height
+           else:
+               raise AttributeError
+       def __delattr__(self, name):
+           print('----删除%s属性----' % name)
+           if name == 'size':
+               self.__dict__['width'] = 0
+               self.__dict__['height'] = 0
+
+   rect = Rectangle(3, 4)
+   print(rect.size)
+   rect.size = 6, 8
+   print(rect.width)
+   del rect.size
+   print(rect.size)
+
+   # 2.
+   class User:
+       def __init__ (self, name, age):
+           self.name = name
+           self.age = age
+       # 重写__setattr__()方法对设置的属性值进行检查
+       def __setattr__ (self, name, value):
+           # 如果正在设置name属性
+           if name == 'name':
+               if 2 < len(value) <= 8 or len(value) > 8:
+                   self.__dict__['name'] = value
+               else:
+                   raise ValueError('name的长度必须在2～8之间')
+
+           elif name == 'age':
+               if 10 < value < 60:
+                   self.__dict__['age'] = value
+               else:
+                   raise ValueError('age值必须在10～60之间')
+
+   u = User('fkit', 24)
+   print(u.name)
+   print(u.age)
+   #u.name = 'fk' # 引发异常
+   u.age = 2  # 引发异常
+
+6.反射相关的动态操作属性和方法
+------------------------------
+
+动态操作属性
+~~~~~~~~~~~~
+
+::
+
+   在动态检查对象是否包含某些属性（包括方法〉相关的函数有如下几个。 
+
+   hasattr(obj,name）：检查obj对象是否包含名为name的属性或方法 。 
+   getattr(object, name[, default］)：获取object对象中名为name的属性的属性值。 
+   setattr(obj , name, value，／）：将obj对象的name属性设为value 。
+
+::
+
+   class Comment:
+       def __init__ (self, detail, view_times):
+           self.detail = detail
+           self.view_times = view_times
+       def info ():
+           print("一条简单的评论，内容是%s" % self.detail)
+
+   c = Comment('疯狂Python讲义很不错', 20)
+   # 判断是否包含指定的属性或方法
+   print(hasattr(c, 'detail')) # True
+   print(hasattr(c, 'view_times')) # True
+   print(hasattr(c, 'info')) # True
+   # 获取指定属性的属性值
+   print(getattr(c, 'detail')) # '疯狂Python讲义很不错'
+   print(getattr(c, 'view_times')) # 20
+   # 由于info是方法，故下面代码会提示：name 'info' is not defined
+   #print(getattr(c, info, '默认值'))
+   # 为指定属性设置属性值
+   setattr(c, 'detail', '天气不错')
+   setattr(c, 'view_times', 32)
+   # 输出重新设置后的属性值
+   print(c.detail)
+   print(c.view_times)
+
+   # 设置不存在的属性，即为对象添加属性
+   setattr(c, 'test', '新增的测试属性')
+   print(c.test) # 新增的测试属性
+
+   def bar ():
+       print('一个简单的bar方法')
+   # 将c的info方法设为bar函数    
+   setattr(c, 'info', bar)
+   c.info()
+
+   # 将c的info设置为字符串'fkit'
+   setattr(c, 'info', 'fkit')
+   c.info()
+
+7.__call__属性
+--------------
+
+``* 程序可通过判断该属性（或方法）是否包含__call__ 属性来确定它是否可调用。``
+
+::
+
+   class User:
+       def __init__(self, name, passwd):
+           self.name = name
+           self.passwd = passwd
+       def validLogin (self):
+           print('验证%s的登录' % self.name)        
+   u = User('crazyit', 'leegang')
+   # 判断u.name是否包含__call__方法，即判断是否可调用
+   print(hasattr(u.name, '__call__')) # False
+   # 判断u.passwd是否包含__call__方法，即判断是否可调用
+   print(hasattr(u.passwd, '__call__')) # False
+   # 判断u.validLogin是否包含__call__方法，即判断是否可调用
+   print(hasattr(u.validLogin, '__call__')) # True
+
+   # 定义Role类
+   class Role:
+       def __init__ (self, name):
+           self.name = name
+       # 定义__call__方法
+       def __call__(self):
+           print('执行Role对象')
+   r = Role('管理员')
+   # 直接调用Role对象，就是调用该对象的__call__方法
+   r()
+
+   def foo ():
+       print('--foo函数--')
+   # 下面示范了2种方式调用foo()函数
+   foo()
+   foo.__call__()
+
+8.与序列相关的特殊方法
+----------------------
+
+``* 序列最重要的特征就是可包含多个元素,因此和序列有关的特殊方法有如下几个。``
+
+::
+
+   __len__(self) :该方法的返回值决定序列中元素的个数。 
+   __getitem__ (self, key）:该方法获取指定索引对应的元素。该方法的 key 应该是整数值或 slice对象，否则该方法会引发 KeyError 异常。
+   __contains__（self, item）： 该方法判断序列是否包含指定元素。 __setitem__ (self, key, valu e） ： 该方法设置指定索引对应的元素 。 该方法的 key 应该是整数值或 slice 对象，否则该方法会 引 发 KeyError 异常。
+   __delitem__（ self, key） ： 该方法删除指定索引对应的元素。 
+
+.. code:: python
+
+
+   def check_key (key):
+       '''
+       该函数将会负责检查序列的索引，该索引必须是整数值，否则引发TypeError
+       且程序要求索引必须为非负整数，否则引发IndexError
+       '''
+       if not isinstance(key, int): raise TypeError('索引值必须是整数')
+       if key < 0: raise IndexError('索引值必须是非负整数')
+       if key >= 26 ** 3: raise IndexError('索引值不能超过%d' % 26 ** 3)   
+   class StringSeq:
+       def __init__(self):
+           # 用于存储被修改的数据
+           self.__changed = {}
+           # 用于存储已删除元素的索引
+           self.__deleted = []
+       def __len__(self):
+           return 26 ** 3
+       def __getitem__(self, key):
+           '''
+           根据索引获取序列中元素
+           '''
+           check_key(key)
+           # 如果在self.__changed中找到已经修改后的数据
+           if key in self.__changed :
+               return self.__changed[key]
+           # 如果key在self.__deleted中，说明该元素已被删除
+           if key in self.__deleted :
+               return None
+           # 否则根据计算规则返回序列元素
+           three = key // (26 * 26)
+           two = ( key - three * 26 * 26) // 26
+           one = key % 26
+           return chr(65 + three) + chr(65 + two) + chr(65 + one) 
+       def __setitem__(self, key, value):
+           '''
+           根据索引修改序列中元素
+           '''
+           check_key(key)
+           # 将修改的元素以key-value对的形式保存在__changed中
+           self.__changed[key] = value
+       def __delitem__(self, key):
+           '''
+           根据索引删除序列中元素
+           '''
+           check_key(key)
+           # 如果__deleted列表中没有包含被删除key，添加被删除的key
+           if key not in self.__deleted : self.__deleted.append(key)
+           # 如果__changed中包含被删除key，删除它
+           if key in self.__changed : del self.__changed[key]
+   # 创建序列
+   sq = StringSeq()
+   # 获取序列的长度，实际上就是返回__len__()方法的返回值
+   print(len(sq))
+   print(sq[26*26])
+   # 打印没修改之后的sq[1]
+   print(sq[1]) # 'AAB'
+   # 修改sq[1]元素
+   sq[1] = 'fkit'
+   # 打印修改之后的sq[1]
+   print(sq[1]) # 'fkit'
+   # 删除sq[1]
+   del sq[1]
+   print(sq[1]) # None
+   # 再次对sq[1]赋值
+   sq[1] = 'crazyit'
+   print(sq[1]) # crazyit
+
+9.与迭代器相关的特殊方法
+------------------------
+
+for循环遍历列表、元祖和字典。这些对象都是可迭代的，因此它们都属于迭代器。
+
+如果开发者需要实现迭代器，只要实现如下两个方法即可。
+
+::
+
+   * __iter__(self): 该方法返回一个迭代器(iterator)，迭代器必须包括一个__next()方法，该方法返回迭代器的下一个元素。
+
+   * __reversed__(self)：该方法主要为内建的reversed()反转函数提供支持，当程序调用reversed()函数对指定迭代器执行反转时，实际上是由该方法实现的。
+
+.. code:: python
+
+   # 定义一个代表斐波那契数列的迭代器
+   class Fibs:
+       def __init__(self, len):
+           self.first = 0
+           self.sec = 1
+           self.__len = len
+       # 定义迭代器所需的__next__方法
+       def __next__(self):
+           # 如果__len__属性为0，结束迭代
+           if self.__len == 0:
+               raise StopIteration
+           # 完成数列计算：
+           self.first, self.sec = self.sec, self.first + self.sec
+           # 数列长度减1
+           self.__len -= 1
+           return self.first
+       # 定义__iter__方法，该方法返回迭代器
+       def __iter__(self):
+           return self
+   # 创建Fibs对象
+   fibs = Fibs(10)
+   # 获取迭代器的下一个元素
+   print(next(fibs))
+   # 使用for循环遍历迭代器
+   for el in fibs:
+       print(el, end=' ')
+   # 将列表转换为迭代器
+   my_iter = iter([2, 'fkit', 4])
+   # 依次获取迭代器的下一个元素
+   print(my_iter.__next__()) # 2
+   print(my_iter.__next__()) # fkit 
+
+10.扩展列表、元组和字典
+-----------------------
+
+如果程序明确需要一个特殊的列表、元祖或字典类，我们有两种选择：
+
+::
+
+   * 自己实现序列、迭代器等各种方法，自己来实现这个特殊的类。
+   * 扩展系统已有的列表、元祖或字典。
+
+很明显，第一种方式有点繁琐，因此这意味着开发者要把所有方法都自己实现一遍，第二种方式就简单多了，
+只需要继承系统已有的列表、元祖或字典类，然后重写或新增方法即可。
+
+根据value，获取所有key所组成的列表信息
+
+扩展字典类：
+~~~~~~~~~~~~
+
+.. code:: python
+
+
+   # 定义ValueDict类，继承dict类
+   class ValueDict(dict):
+       # 定义构造函数
+       def __init__(self, *args, **kwargs):
+           # 调用父类的构造函数
+           super().__init__(*args, **kwargs)
+       # 新增getkeys方法
+       def getkeys(self, val):
+           result = []
+           for key, value in self.items():
+               if value == val: result.append(key)
+           return result
+   my_dict = ValueDict(语文 = 92, 数学 = 89, 英语 = 92)
+   # 获取92对应的所有key
+   print(my_dict.getkeys(92)) # ['语文', '英语']
+   my_dict['编程'] = 92
+   print(my_dict.getkeys(92)) # ['语文', '英语', '编程']
+
+11.生成器函数和生成器对象
+-------------------------
+
+::
+
+   * 生成器与迭代器的区别在于 ： 迭代器通常是先定义一个法代器类 ， 然后通过创建实例来创建迭代器；而生成器则是先定义一个包含 yield 语句的函数，然后通过调用该函数来创建生成器。
+
+::
+
+   def test(val, step):
+       print("--------函数开始执行------")
+       cur = 0
+       # 遍历0～val
+       for i in range(val):
+           # cur添加i*step
+           cur += i * step
+           yield cur
+   #        print(cur, end=' ')
+   # 执行函数，返回生成器
+   t = test(10, 2)
+   print('=================')
+   # 获取生成器的第一个值
+   print(next(t)) # 0，生成器“冻结”在yield处
+   print(next(t)) # 2，生成器再次“冻结”在yield处
+
+   for ele in t:
+       print(ele, end=' ')
+
+   # 再次创建生成器
+   t = test(10, 1)
+   # 将生成器转换成列表
+   print(list(t))
+   # 再次创建生成器
+   t = test(10, 3)
+   # 将生成器转换成列表
+   print(tuple(t))
+
+12.生成器方法和使用生成器
+-------------------------
+
+::
+
+   * 当生成器运行起来之后，开发者还可以为生成器提供值，通过这种方式让生成器与“外部程序”动态地交换数据。`
+
+::
+
+   def square_gen(val):
+       i = 0
+       out_val = None
+       while True:
+           # 使用yield语句生成值，使用out_val接收send()方法发送的参数值
+           out_val = (yield out_val ** 2) if out_val is not None else (yield i ** 2)
+           # 如果程序使用send()方法获取下一个值，out_val会获取send()方法的参数
+           if out_val is not None : print("====%d" % out_val)
+           i += 1
+
+   sg = square_gen(5)
+   # 第一次调用send()方法获取值，只能传入None作为参数
+   print(sg.send(None))  # 0
+   print(next(sg))  # 1
+   print('--------------')
+   # 调用send()方法获取生成器的下一个值，参数9会被发送给生成器
+   print(sg.send(9))  # 81
+   # 再次调用next()函数获取生成器的下一个值
+   print(next(sg))  # 9
+
+   # 让生成器引发异常
+   #sg.throw(ValueError)
+
+   # 关闭生成器
+   sg.close()
+   print(next(sg)) # StopIteration
+
+13.与数值运算符相关的特殊方法
+-----------------------------
+
+::
+
+   class Rectangle:
+       def __init__(self, width, height):
+           self.width = width
+           self.height = height
+       # 定义setSize()函数
+       def setSize (self , size):
+           self.width, self.height = size
+       # 定义getSize()函数
+       def getSize (self):
+           return self.width, self.height
+       # 使用property定义属性
+       size = property(getSize, setSize)
+       # 定义__add__方法，该对象可执行+运算
+       def __add__(self, other):
+           # 要求参与+运算的另一个运算数必须是Rectangle
+           if not isinstance(other, Rectangle):
+               raise TypeError('+运算要求目标是Rectangle')
+           return Rectangle(self.width + other.width, self.height + other.height)
+       def __repr__(self):
+           return 'Rectangle(width=%g, height=%g)' % (self.width, self.height)
+   r1 = Rectangle(4, 5)
+   r2 = Rectangle(3, 4)
+   # 对两个Rectangle执行加法运算
+   r = r1 + r2
+   print(r) # Rectangle(width=7, height=9)
+
+14.与比较运算符相关的特殊方法
+-----------------------------
+
+::
+
+   class Rectangle:
+       def __init__(self, width, height):
+           self.width = width
+           self.height = height
+       # 定义setSize()函数
+       def setSize (self , size):
+           self.width, self.height = size
+       # 定义getSize()函数
+       def getSize (self):
+           return self.width, self.height
+       # 使用property定义属性
+       size = property(getSize, setSize)
+       # 定义__gt__方法，该对象可支持>和<比较
+       def __gt__(self, other):
+           # 要求参与>运算的另一个运算数必须是Rectangle
+           if not isinstance(other, Rectangle):
+               raise TypeError('>运算要求目标是Rectangle')
+           return True if self.width * self.height > other.width * other.height else False
+       # 定义__eq__方法，该对象可支持==和!=比较
+       def __eq__(self, other):
+           # 要求参与==运算的另一个运算数必须是Rectangle
+           if not isinstance(other, Rectangle):
+               raise TypeError('==运算要求目标是Rectangle')
+           return True if self.width * self.height == other.width * other.height else False
+       # 定义__ge__方法，该对象可支持>=和<=比较
+       def __ge__(self, other):
+           # 要求参与>=运算的另一个运算数必须是Rectangle
+           if not isinstance(other, Rectangle):
+               raise TypeError('>=运算要求目标是Rectangle')
+           return True if self.width * self.height >= other.width * other.height else False 
+       def __repr__(self):
+           return 'Rectangle(width=%g, height=%g)' % (self.width, self.height)
+   r1 = Rectangle(4, 5)
+   r2 = Rectangle(3, 4)
+   print(r1 > r2) # True
+   print(r1 >= r2) # True
+   print(r1 < r2) # False
+   print(r1 <= r2) # False
+   print(r1 == r2) # False
+   print(r1 != r2) # True
+   print('------------------')
+   r3 = Rectangle(2, 6)
+   print(r2 >= r3) # True
+   print(r2 > r3) # False
+   print(r2 <= r3) # True
+   print(r2 < r3) # False
+   print(r2 == r3) # True
+   print(r2 != r3) # False
+
+15.与单目运算符相关的特殊方法
+-----------------------------
+
+::
+
+   * object.__neg__(self): 为单目求负(-)运算符提供支持。
+
+   * object.__pos__(self): 为单目求正(+)运算符提供支持。
+
+   * object.__invert__(self): 为单目取反(~)运算符提供支持。
+
+下面程序为Rectangle类实现了一个__neg__()方法,该方法用于控制将矩形的宽、高交换。
+
+::
+
+   class Rectangle:
+       def __init__(self, width, height):
+           self.width = width
+           self.height = height
+       # 定义setSize()函数
+       def setSize (self , size):
+           self.width, self.height = size
+       # 定义getSize()函数
+       def getSize (self):
+           return self.width, self.height
+       # 使用property定义属性
+       size = property(getSize, setSize)
+       # 定义__neg__方法，该对象可执行求负（-）运算
+       def __neg__(self):
+           self.width, self.height = self.height, self.width
+       def __repr__(self):
+           return 'Rectangle(width=%g, height=%g)' % (self.width, self.height)
+   r = Rectangle(4, 5)
+   # 对Rectangle执行求负运算
+   -r
+   print(r) # Rectangle(width=5, height=4)
+
+16.与类型转换相关的特殊方法
+---------------------------
+
+Python提供了str()、int()、float()、complex()等函数，可以将其他类型的对象转换成字符串、整数、浮点数和复数，
+这些转换同样是由特殊方法在底层提供支持的。如下：
+
+::
+
+   * object.__str__(self): 对应于调用内置的str()函数将该对象转换成字符串。
+   * object.__bytes__(self): 对应于调用内置的bytes()函数将该对象转换成字节内容。该方法应该返回bytes对象。
+   * object.__complex__(self): 对应于调用内置的complex()函数将该对象转换成复数。该方法应该返回complex对象。
+   * object.__int__(self): 对应于调用内置的int()函数将该对象转换成整数。该方法应该返回int对象。
+   * object.__float__(self): 对应于调用内置的float()函数将该对象转换成浮点数。该方法应该返回float对象。
+
+下面以自定义的Rectangle为例，程序为该类提供了了一个__int__()方法，这样程序就可用int()函数将Rectangle对象转换成整数了。
+
+::
+
+   class Rectangle:
+       def __init__(self, width, height):
+           self.width = width
+           self.height = height
+       # 定义setSize()函数
+       def setSize (self , size):
+           self.width, self.height = size
+       # 定义getSize()函数
+       def getSize (self):
+           return self.width, self.height
+       # 使用property定义属性
+       size = property(getSize, setSize)
+       # 定义__int__方法，程序可调用int()函数将该对象转成整数
+       def __int__(self):
+           return int(self.width * self.height)
+       def __repr__(self):
+           return 'Rectangle(width=%g, height=%g)' % (self.width, self.height)
+   r = Rectangle(4, 5)
+   print(int(r)) # 20
+
+17.与常见的内建函数相关的特殊方法
+---------------------------------
+
+Python还提供了一些常见的内建函数，这些内建的函数处理对象时，实际上也是由以下特殊方法来提供支持的。
+
+::
+
+   * object.__format__(self,format_spec):对应于调用内置的format()函数将对象转换成格式化字符串。
+   * object.__hash__(self):对应于调用内置的hash()函数来获取该对象的hash码。
+   * object.__abs__(self):对应于调用内置的abs()函数返回绝对值。
+   * object.__round__(self,\[,ndigits]):对应于调用内置的round()函数执行四舍五入取整。
+   * object.__trunc__(self):对应于调用内置的trunc()函数执行截断取整。
+
+   注意： 内置的int()函数将对象转换成整数时，底层将由__trunc__(self)方法提供支持。
+
+   * object.__floor__(self):对应于调用内置的floor()函数执行向下取整。
+   * object.__ceil__(self):对应于调用内置的ceil()函数执行向上取整。
+
+下面程序示范了为Rectangle类定义一个__round__()方法，程序就可以调用round()函数对Rectangle对象执行四舍五入取整了。
+
+::
+
+   class Rectangle:
+       def __init__(self, width, height):
+           self.width = width
+           self.height = height
+       # 定义setSize()函数
+       def setSize (self , size):
+           self.width, self.height = size
+       # 定义getSize()函数
+       def getSize (self):
+           return self.width, self.height
+       # 使用property定义属性
+       size = property(getSize, setSize)
+       # 定义__round__方法，程序可调用round()函数将该对象执行四舍五入取整
+       def __round__(self, ndigits=0):
+           self.width, self.height = round(self.width, ndigits), round(self.height, ndigits)
+           return self
+       def __repr__(self):
+           return 'Rectangle(width=%g, height=%g)' % (self.width, self.height)
+   r = Rectangle(4.13, 5.56)
+   # 对Rectangle对象执行四舍五入取整
+   result = round(r, 1)
+   print(r) # Rectangle(width=4.1, height=5.6)
+   print(result) # Rectangle(width=4.1, height=5.6)

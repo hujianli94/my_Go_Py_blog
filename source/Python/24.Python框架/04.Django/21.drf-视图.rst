@@ -1,0 +1,437 @@
+.. contents::
+   :depth: 3
+..
+
+drf视图
+=======
+
+之前在\ ``Django``\ 中，我们已经接触了视图。在\ ``DRF``\ 中对视图做了进一步的封装。
+
+1.请求与响应
+------------
+
+request
+~~~~~~~
+
+``DRF``\ 传入视图的\ ``request``\ 对象不再是\ ``Django``\ 默认的\ ``HttpRequest``\ 对象（\ ``from django.http import HttpRequest``\ ），而是\ ``DRF``\ 提供的\ ``Request``\ 对象（\ ``from rest_framework.views import Request``\ ）。
+
+``DRF``
+提供了\ ``Parser``\ 解析器，在接收到请求后会自动根据\ ``Content-Type``\ 指明的请求数据类型（如JSON、表单等）将请求数据进行\ ``parse``\ 解析，解析为类字典对象保存到\ ``Request``\ 对象中。
+
+**request.data**
+
+``request.data``
+返回解析之后的请求体数据。类似于\ ``Django``\ 中标准的\ ``request.POST``\ 和
+``request.FILES``\ 属性，但提供如下特性：
+
+-  包含了解析之后的文件和非文件数据；
+-  包含了对\ ``POST``\ 、\ ``PUT``\ 、\ ``PATCH``\ 请求方式解析后的数据；
+-  利用了\ ``DRF``\ 的\ ``parsers``\ 解析器，不仅支持表单类型数据，也支持\ ``JSON``\ 数据；
+
+**request.query_params**
+
+``request.query_params``\ 与\ ``Django``\ 标准的\ ``request.GET``\ 相同，只是更换了更正确的名称而已。
+
+Response
+~~~~~~~~
+
+::
+
+   from rest_framework.response import Response
+
+``DRF``\ 提供了一个响应类\ ``Response``\ ，使用该类构造响应对象时，响应的具体数据内容会被转换（\ ``render``\ 渲染）成符合前端需求的类型
+
+::
+
+   Response(data, status=None, template_name=None, headers=None, content_type=None)
+
+参数说明:
+
+-  ``data``: 为响应准备的序列化处理后的数据；
+-  ``status``: 状态码，默认200；
+-  ``template_name``: 模板名称，如果使用\ ``HTMLRenderer`` 时需指明；
+-  ``headers``: 用于存放响应头信息的字典；
+-  ``content_type``: 响应数据的Content-Type，通常此参数无需传递，REST
+   framework会根据前端所需类型数据来设置该参数。
+
+``data``\ 数据不要是\ ``render``\ 处理之后的数据，\ *只需传递\ ``python``\ 的内建类型数据即可*\ ，\ ``DRF``\ 会使用\ ``renderer``\ 渲染器处理\ ``data``\ （例如会渲染成前端可以识别的\ ``json``\ 格式）。
+
+``DRF``\ 提供了\ ``Renderer``\ 渲染器，用来根据请求头中的\ ``Accept``\ （接收数据类型声明）来自动转换响应数据到对应格式，如果前端请求中未进行\ ``Accept``\ 声明，则采用默认方式处理响应数据。我们可以通过配置来修改默认响应格式。
+
+.. code:: python
+
+   REST_FRAMEWORK = {
+       'DEFAULT_RENDERER_CLASSES': (   #  设置全局的默认渲染器
+           'rest_framework.renderers.JSONRenderer',  # json渲染器
+           'rest_framework.renderers.BrowsableAPIRenderer',  # 浏览API渲染器,上线后尽量关闭
+       )
+   }
+
+``data``\ 不能是复杂结构的数据，如\ ``Django``\ 的模型类对象，对于这样的数据我们可以使用\ ``Serializer``\ 序列化器序列化处理后（转为了\ ``Python``\ 字典类型）再传递给\ ``data``\ 参数。
+
+状态码
+~~~~~~
+
+为了方便设置状态码，\ ``DRF``\ 在\ ``rest_framework.status``\ 模块中提供了常用状态码常量（用于\ ``Response(status=status.HTTP_200_OK)``\ ）。
+
+::
+
+   # 信息告知 - 1xx
+   HTTP_100_CONTINUE
+   HTTP_101_SWITCHING_PROTOCOLS
+
+   # 成功 - 2xx
+   HTTP_200_OK
+   HTTP_201_CREATED
+   HTTP_202_ACCEPTED
+   HTTP_203_NON_AUTHORITATIVE_INFORMATION
+   HTTP_204_NO_CONTENT
+   HTTP_205_RESET_CONTENT
+   HTTP_206_PARTIAL_CONTENT
+   HTTP_207_MULTI_STATUS
+
+   # 重定向 - 3xx
+   HTTP_300_MULTIPLE_CHOICES
+   HTTP_301_MOVED_PERMANENTLY
+   HTTP_302_FOUND
+   HTTP_303_SEE_OTHER
+   HTTP_304_NOT_MODIFIED
+   HTTP_305_USE_PROXY
+   HTTP_306_RESERVED
+   HTTP_307_TEMPORARY_REDIRECT
+
+   # 客户端错误 - 4xx
+   HTTP_400_BAD_REQUEST
+   HTTP_401_UNAUTHORIZED
+   HTTP_402_PAYMENT_REQUIRED
+   HTTP_403_FORBIDDEN
+   HTTP_404_NOT_FOUND
+   HTTP_405_METHOD_NOT_ALLOWED
+   HTTP_406_NOT_ACCEPTABLE
+   HTTP_407_PROXY_AUTHENTICATION_REQUIRED
+   HTTP_408_REQUEST_TIMEOUT
+   HTTP_409_CONFLICT
+   HTTP_410_GONE
+   HTTP_411_LENGTH_REQUIRED
+   HTTP_412_PRECONDITION_FAILED
+   HTTP_413_REQUEST_ENTITY_TOO_LARGE
+   HTTP_414_REQUEST_URI_TOO_LONG
+   HTTP_415_UNSUPPORTED_MEDIA_TYPE
+   HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE
+   HTTP_417_EXPECTATION_FAILED
+   HTTP_422_UNPROCESSABLE_ENTITY
+   HTTP_423_LOCKED
+   HTTP_424_FAILED_DEPENDENCY
+   HTTP_428_PRECONDITION_REQUIRED
+   HTTP_429_TOO_MANY_REQUESTS
+   HTTP_431_REQUEST_HEADER_FIELDS_TOO_LARGE
+   HTTP_451_UNAVAILABLE_FOR_LEGAL_REASONS
+
+
+   # 服务器错误 - 5xx
+   HTTP_500_INTERNAL_SERVER_ERROR
+   HTTP_501_NOT_IMPLEMENTED
+   HTTP_502_BAD_GATEWAY
+   HTTP_503_SERVICE_UNAVAILABLE
+   HTTP_504_GATEWAY_TIMEOUT
+   HTTP_505_HTTP_VERSION_NOT_SUPPORTED
+   HTTP_507_INSUFFICIENT_STORAGE
+   HTTP_511_NETWORK_AUTHENTICATION_REQUIRED
+
+在\ ``DRF``\ 中最基本的视图就是\ ``APIView``\ ，它直接继承\ ``django``\ 中\ ``View``\ 类，在它的基础上对\ ``request``\ 进一步封装，加了权限，认证，限流。
+
+2.APIView
+---------
+
+2.1 支持定义的属性
+~~~~~~~~~~~~~~~~~~
+
+-  **authentication_classes** 列表或元祖，身份认证类
+-  **permissoin_classes** 列表或元祖，权限检查类
+-  **throttle_classes** 列表或元祖，流量控制类
+
+在\ ``APIView``\ 中仍以常规的类视图定义方法来实现\ ``get()``
+、\ ``post()``\ 或者其他请求方式的方法。
+
+2.2 模型
+~~~~~~~~
+
+.. code:: python
+
+   from django.db import models
+
+
+   # Create your models here.
+   class Column(models.Model):
+       """栏目"""
+       name = models.CharField(max_length=20, unique=True, verbose_name='栏目')
+       # link_url = models.URLField(verbose_name= '链接')
+       link_url = models.CharField(max_length=200, verbose_name='链接')
+
+       index = models.IntegerField(verbose_name='位置', default=1)
+
+       class Meta:  # 模型元选项
+           db_table = 'tb_column'  # 在数据库中的表名，否则Django自动生成为app名字_类名
+           ordering = ['index']
+           verbose_name = '栏目'
+           verbose_name_plural = verbose_name
+
+       def __str__(self):
+           return self.name
+
+2.3 序列化
+~~~~~~~~~~
+
+.. code:: python
+
+   from rest_framework import serializers
+   from app1.models import BookInfo, Column
+
+
+   class BookInfoSerializer(serializers.ModelSerializer):
+       """图书数据序列化器"""
+
+       class Meta:
+           mode = BookInfo
+           filelds = "__all__"
+
+
+   class ColumnSerializer(serializers.ModelSerializer):
+       class Meta:
+           model = Column
+           fields = '__all__'
+
+2.4 视图：
+~~~~~~~~~~
+
+2.4.1 查询所有栏目
+^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+   import json
+   from django.http import JsonResponse
+   from django.views import View
+   from rest_framework import status
+   from rest_framework.response import Response
+   from rest_framework.views import APIView
+   from app1.models import BookInfo, Column
+   from app1.serializers import BookInfoSerializer, ColumnSerializer
+
+
+   class BooksView(View):
+
+       def get(self, request):
+           """
+           :param request:
+           :return: 查询所有图书
+           """
+           books = BookInfo.objects.all()
+           ser = BookInfoSerializer(books, many=True)
+           data = ser.data
+           return JsonResponse(data, safe=False)
+
+
+   class ColumnView(APIView):
+       """ 查询所有的栏目 """
+       def get(self, request):
+           columns = Column.objects.all()
+           serializers = ColumnSerializer(instance=columns, many=True)
+           return Response(serializers.data, status=status.HTTP_200_OK)
+
+我们可以用\ ``postman``\ 和网页同时测试一下。
+
+表面看结果是一样的，但是其实渲染的不一样，使用浏览器请求结果渲染成\ ``HTML``\ 了。
+
+``DRF``\ 根据请求头\ ``Accept: text/html``\ ，将结果渲染为\ ``HTML``\ 。
+
+而使用\ ``POSTMAN``\ ，未进行\ ``Accept``\ 声明，则采用默认方式处理响应数据，即\ ``JSON``\ 格式，我们可以手工在\ ``postman``\ 请求头中设置\ ``Accept=text/html``\ 。
+
+2.4.2 新增一条数据
+^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+   class ColumnView(APIView):
+       """ 查询所有的栏目 """
+       def get(self, request):
+           columns = Column.objects.all()
+           serializers = ColumnSerializer(instance=columns, many=True)
+           return Response(serializers.data, status=status.HTTP_200_OK)
+
+       def post(self, request):
+           # 1、接收参数，获取参数
+           # Django：request.POST，request.body
+           # DRF：request.data
+           data = request.data
+           print(data)
+
+           # 2、反序列化数据
+           serializer = ColumnSerializer(data=data)
+
+           # 3、验证数据
+           if serializer.is_valid():
+               # 4、保存数据
+               serializer.save()
+               # 返回响应
+               return Response(serializer.data)
+
+           return Response(serializer.errors)
+
+使用\ ``postman``\ 测试
+
+2.4.3 查看某一个分类的数据
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+   class ColumnDetailView(APIView):
+       def get(self, request):
+           # 获取参数
+           # Django：request.GET
+           # DRF：request.query_params
+
+           # 测试使用URL:http://47.107.69.21:5044/articles/columns?id=1
+           # print(request.query_params)  # <QueryDict: {'id': ['1']}>
+           # print(request.query_params.get('id'))  # 1
+           id = request.query_params.get('id')
+           column = Column.objects.get(pk=id)
+           serializer = ColumnSerializer(instance=column)
+           if serializer.is_valid():
+               return Response(serializer.data)
+           return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+上面查询集参数，只是为了演示\ ``request.query_params``\ 属性，按照\ ``RESTful``\ 风格，路径，标识\ ``api``\ 的具体网址，每个网址代表一种资源。
+
+如果要查某一个分类\ ``column``\ 信息，建议改写成：
+
+.. code:: python
+
+   class ColumnDetailViewid(APIView):
+       def get(self, request, id):  # 这个参数需要与url中的参数一致
+           """
+           查询某个对象
+           """
+           column = Column.objects.get(pk=id)
+           serializer = ColumnSerializer(instance=column)
+           return Response(serializer.data)
+
+2.4.4 修改和删除
+^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+   class ColumnDetailViewid(APIView):
+       def get(self, request, id):  # 这个参数需要与url中的参数一致
+           """
+           查询某个对象
+           """
+           column = Column.objects.get(pk=id)
+           serializer = ColumnSerializer(instance=column)
+           return Response(serializer.data)
+
+       def put(self, request, id):
+           """ 修改某个对象"""
+           column = Column.objects.get(pk=id)
+           serializer = ColumnSerializer(instance=column, data=request.data)
+
+           if serializer.is_valid():
+               serializer.save()
+               return Response(serializer.data)
+           return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+       def delete(self, request, id):
+           """删除文章"""
+           Column.objects.get(pk=id).delete()
+           return Response(status=status.HTTP_204_NO_CONTENT)
+
+分别使用postman进行测试，验证数据的正确性。
+
+2.4.5 总结方法
+^^^^^^^^^^^^^^
+
+基于DRF的增删改查操作
+
+.. _apiview-1:
+
+APIView
+'''''''
+
+``urls.py``
+
+::
+
+   from django.urls import path
+   from .views import PersontView
+   app_name = 'classview'
+   urlpatterns = [
+       # 列表： /person/ get
+       # 新增： /person/ post
+       # 详情： /person/[pk]/ get
+       # 修改： /person/[pk]/ put
+       # 删除： /person/[pk]/ delete
+       path('person/',PersontView.as_view()),
+       path('person/<int:pk>/',PersontView.as_view()),
+   ]
+
+``view.py``
+
+.. code:: python
+
+   from rest_framework.views import APIView
+   from django.http import Http404
+   from rest_framework.response import Response
+   from apps.drf_demo.models import Person
+   from .serializers import PersonSerializer
+   from rest_framework import status
+
+   class PersontView(APIView):
+       """
+       检索, 更新和删除一个merchant实例对象.
+       """
+       def get_object(self, pk):
+           try:
+               return Person.objects.get(pk=pk)
+           except Person.DoesNotExist:
+               raise Http404
+
+       def get(self, request, pk=None):
+           if pk:
+               merchant= self.get_object(pk)
+               serializer = PersonSerializer(merchant)
+               return Response(serializer.data)
+           else:
+               queryset = Person.objects.all()
+               serializer = PersonSerializer(instance=queryset,many=True)
+               return Response(serializer.data)
+
+       def put(self, request, pk):
+           merchant = self.get_object(pk)
+           serializer = PersonSerializer(merchant, data=request.data)
+           if serializer.is_valid():
+               serializer.save()
+               return Response(serializer.data)
+           return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+       def delete(self, request, pk):
+           merchant= self.get_object(pk)
+           merchant.delete()
+           return Response(status=status.HTTP_204_NO_CONTENT)
+
+..
+
+   参考文献：
+
+   https://blog.csdn.net/qq_41375318/article/details/115354026
+
+3. GenericAPIView
+-----------------
+
+   .. rubric:: 参考如下文献
+      :name: 参考如下文献
+
+   Django REST framework - 视图组件
+
+   https://www.cnblogs.com/gengfenglog/p/14665086.html
+
+   https://mp.weixin.qq.com/s/U9qzsO91_xXP_oKO-oGM0w

@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23.7.5. 实现优酷和爱奇艺会员的VIP模式 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="23.7.6. 违禁词自审查功能" href="06.%E8%BF%9D%E7%A6%81%E8%AF%8D%E8%87%AA%E5%AE%A1%E6%9F%A5%E5%8A%9F%E8%83%BD.html" />
+    <link rel="prev" title="23.7.4. 区块链时代与Token登录" href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">23. Python框架</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../01.%E5%B8%B8%E7%94%A8%E7%9A%84GUI%E6%A1%86%E6%9E%B6/index.html">23.1. 常用的GUI框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02.Flask/index.html">23.2. Flask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../03.Scrapy/index.html">23.3. Scrapy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../04.Django/index.html">23.4. Django</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05.Tornado/index.html">23.5. Tornado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../06.Python%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Django-Flask/index.html">23.6. Python高效开发实战-Django、Flask</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">23.7. Python-Django-Web典型模块开发实战</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="01.Django-RESTful-API%E5%9F%BA%E7%A1%80.html">23.7.1. Django-RESTful-API基础</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02.%E7%94%A8Django-REST-framework%E5%AE%9E%E7%8E%B0%E8%B1%86%E7%93%A3API%E5%BA%94%E7%94%A8.html">23.7.2. 用Django REST framework实现豆瓣API应用</a></li>
+<li class="toctree-l4"><a class="reference internal" href="03.%E7%94%A8Django%E5%AE%9E%E7%8E%B0%E7%99%BE%E5%BA%A6%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A4%E8%AF%81%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9E%8B.html">23.7.3. 用Django实现百度开发者认证业务模型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html">23.7.4. 区块链时代与Token登录</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">23.7.5. 实现优酷和爱奇艺会员的VIP模式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06.%E8%BF%9D%E7%A6%81%E8%AF%8D%E8%87%AA%E5%AE%A1%E6%9F%A5%E5%8A%9F%E8%83%BD.html">23.7.6. 违禁词自审查功能</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07.%E5%88%86%E6%9E%90%E5%90%BE%E7%88%B1%E7%A0%B4%E8%A7%A3%E8%AE%BA%E5%9D%9B%E5%8F%8D%E7%88%AC%E8%99%AB%E6%9C%BA%E5%88%B6.html">23.7.7. 分析吾爱破解论坛反爬虫机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html">23.7.8. 关于跨域问题的解决办法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="09.Django%E5%AE%9E%E7%8E%B0%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6.html">23.7.9. Django实现缓存机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html">23.7.10. 附1.Vue前端项目</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%842.%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E4%B8%8A%E7%BA%BF%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8.html">23.7.11. 附2.前后端分离项目上线部署到云服务器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="../index.html"><span class="section-number">23. </span>Python框架</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">23.7. </span>Python-Django-Web典型模块开发实战</a> &raquo;</li>
+      <li><span class="section-number">23.7.5. </span>实现优酷和爱奇艺会员的VIP模式</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Python/24.Python框架/07.Python-Django-Web典型模块开发实战/05.实现优酷和爱奇艺会员的VIP模式.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vip" id="id8">实现优酷和爱奇艺会员的VIP模式</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id9">1.内容付费是趋势</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id10">1.1 网速提升对产品设计的影响</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id11">1.2 内容付费模式介绍</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#django" id="id12">2.Django权限管理的实现</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id13">2.1 什么是权限</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id14">2.2 新建项目来完成权限管理雏形演示</a></p></li>
+<li><p><a class="reference internal" href="#rbac" id="id15">2.3 什么是RBAC</a></p></li>
+<li><p><a class="reference internal" href="#djangorbac" id="id16">2.4 Django项目中使用RBAC</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id6" id="id17">3. Django基于中间件的权限验证</a></p>
+<ul>
+<li><p><a class="reference internal" href="#django-rest-framework" id="id18">3.1 Django REST framework实现权限管理</a></p></li>
+<li><p><a class="reference internal" href="#demo6-drf" id="id19">3.2 为demo6_drf添加身份验证功能</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id20">3.3 验证demo6_drf权限管理的功能</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="vip">
+<h1><a class="toc-backref" href="#id8"><span class="section-number">23.7.5. </span>实现优酷和爱奇艺会员的VIP模式</a><a class="headerlink" href="#vip" title="Permalink to this headline">¶</a></h1>
+<p>Django的权限管理。首先从技术和产品角度分析权限管理在目前的互联网市场中的重要程度；然后新建一个Django项目实例，通过实例将权限管理细致入微地为大家讲解；</p>
+<p>最后使用Django REST
+framework的权限管理组件，介绍前后端分离的项目中如何使用权限管理。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id9">1.内容付费是趋势</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>目前，内容付费市场如烈火烹油一般的繁荣，与各大互联网企业布局内容产业，并投入大量资本有关。</p>
+<section id="id2">
+<h3><a class="toc-backref" href="#id10">1.1 网速提升对产品设计的影响</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>当用户听说某款应用程序，只要在自己的终端设备上单击一下即可打开并使用，而无需下载和安装，所见即所得，使用所有的应用程序都像打开网页一样简单。</p>
+<p>到了那个时候，设计一款应用程序所秉持的理念、思路将更加聚焦，从“流量为王”向“内容为王”转变，如开发两款同类型应用A和B，在功能没有巨大差距的前提下，A应用大小为30MB，B应用大小为300MB，B应用就会被A应用碾压，这样的论点将一去不复返。开发人员可以将他们的聪明才智从思考怎样把自己的应用程序写得更小，转移到怎样创造更多独具匠心的细节，让用户可以会心一笑上。</p>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id11">1.2 内容付费模式介绍</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>VIP会员收费模式，是目前经过市场检验相对成功的一种内容收费模式。假如用户在一个视频网站追看一部电视剧，购买了一个月VIP会员，那么很有可能他追的电视剧在半个月内就完结了；</p>
+<p>剩下的半个月VIP会员时长，用户为了自己的利益最大化，就有可能追一部新的电视剧，而这部新的电视剧半个月之内没有播完，这时，用户为了追这部新的电视剧会继续购买一个月的VIP会员。</p>
+</section>
+</section>
+<section id="django">
+<h2><a class="toc-backref" href="#id12">2.Django权限管理的实现</a><a class="headerlink" href="#django" title="Permalink to this headline">¶</a></h2>
+<section id="id4">
+<h3><a class="toc-backref" href="#id13">2.1 什么是权限</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>说到权限管理，首先要了解，在网站中权限到底是什么？如图所示，这是一个简单的网站后端访问的生命周期。</p>
+<img alt="../../../_images/django_quanxian01.png" src="../../../_images/django_quanxian01.png" />
+<p>用户通过URL地址，进入网站的后端逻辑，从而对网站的数据库进行操作管理（增、删、改、查）。如果想要让拥有操作管理权限的用户来完成这个生命周期，而没有权限的用户无法完成这个生命周期，应该在哪一步进行设置呢？</p>
+<p>很显然，这一步应该在进入Views之前完成，也就是说，权限管理与Views和Models阶段无关。</p>
+<p>我们可以得出一个结论，<strong>权限管理发生在用户请求进入Views之前</strong>，那么我们判断用户是否有某种权限，只能通过URL来判断了。我们可以理解为，<strong>所谓网站的权限，就是指用户是否能访问特定的URL。</strong></p>
+<p>为验证权限的流程图。从图中我们可以直观的看出一个权限管理的前提，那就是用户的登录。可以说没有登录成功，就不存在所谓的权限管理。</p>
+<p>验证权限流程图</p>
+<img alt="../../../_images/django_quanxian02.png" src="../../../_images/django_quanxian02.png" />
+<p>新建项目来完成权限管理雏形演示</p>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id14">2.2 新建项目来完成权限管理雏形演示</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>建立项目demo6，新建用户表和权限表备用，以及手动插入一些用来演示权限验证的数据</p>
+<p>（1）新建Django项目demo6，同时新建App并命名为app01。</p>
+<p>（2）在app01/models.py中建立权限表和用户表类：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+
+<span class="c1"># Create your models here.</span>
+<span class="k">class</span> <span class="nc">Permission</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    权限表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;权限表&quot;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+
+<span class="k">class</span> <span class="nc">Userinfor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">pwd</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">permission</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Permission</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;用户表&quot;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+</div>
+<p>（3）执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>注意：
+这里为了演示的简单，新建立了一个用户表，而不是使用Django自带的用户表。</p>
+</div></blockquote>
+<p>这里数据库里面生成两张表，分别是app01_permission、app01_userinfor</p>
+<p>（4）执行新建超级用户的命令，新建超级用户root，密码设置为root1234。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">createsuperuser</span>
+</pre></div>
+</div>
+<p>（5）在app01/admin.py中注册这两个表，Permission和Userinfor：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Permission</span><span class="p">,</span> <span class="n">Userinfor</span>
+
+<span class="c1"># Register your models here.</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Permission</span><span class="p">)</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Userinfor</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（6）运行demo6项目，然后访问http://127.0.0.1:8000/admin</p>
+<blockquote>
+<div><p>注意：
+登录界面的URL并不是我们开始访问的/admin，而是进行了一次重定向。</p>
+</div></blockquote>
+<p>（7）如图所示，增加权限记录：</p>
+<img alt="../../../_images/django_quanxian03.png" src="../../../_images/django_quanxian03.png" />
+<p>Url字段添加/userinfo01/，Title字段添加“查看用户1”。因为只做演示用，所以在权限表中，我们暂时只添加这一条记录。在实际的项目生产中，权限表中的记录一般有很多条，大家要对权限记录的数量级别做好一个心理准备。</p>
+<img alt="../../../_images/django_quanxian04.png" src="../../../_images/django_quanxian04.png" />
+<p>（8）在用户表中新建两个用户记录user1和user2，其中给user1绑定查看用户1的权限，user2不绑定任何权限。</p>
+<p>账号 user1/pwd1 user2/pwd2</p>
+<img alt="../../../_images/django_quanxian05.png" src="../../../_images/django_quanxian05.png" />
+<p>（9）在app01/views.py内编写登录逻辑和访问、查看用户逻辑：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Userinfor</span><span class="p">,</span> <span class="n">Permission</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pwd&#39;</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">Userinfor</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">pwd</span><span class="o">=</span><span class="n">pwd</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="c1"># 验证身份</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">pk</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;登录成功&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;login.html&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">userinfo</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c1"># 首先进行身份验证</span>
+    <span class="n">pk</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pk</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/login/&quot;</span><span class="p">)</span>
+    <span class="c1"># 然后进行权限验证</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">Userinfor</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">p_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">p_queryset</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">permission</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="c1"># 获取用户的权限列表</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_queryset</span><span class="p">:</span>
+        <span class="n">p_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+    <span class="c1"># 去重</span>
+    <span class="n">p_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">p_list</span><span class="p">))</span>
+    <span class="c1"># print(p_list)</span>
+    <span class="c1"># 获取URL</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path_info</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">p_list</span><span class="p">:</span>
+        <span class="n">u_queryset</span> <span class="o">=</span> <span class="n">Userinfor</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;userinfo.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;u_queryset&quot;</span><span class="p">:</span> <span class="n">u_queryset</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;没有权限访问该页面&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（10）在demo6/urls.py内配置路由代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">login</span><span class="p">,</span> <span class="n">userinfo</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;login/&#39;</span><span class="p">,</span> <span class="n">login</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;userinfo01/&#39;</span><span class="p">,</span> <span class="n">userinfo</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（11）在templates目录下新建html文件login.html：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h4&gt;用户登录&lt;/h4&gt;
+&lt;form action=&quot;/login/&quot; method=&quot;post&quot;&gt;
+    {% csrf_token %}
+    用户名：&lt;input type=&quot;text&quot; name=&quot;username&quot;&gt;
+    密码：&lt;input type=&quot;password&quot; name=&quot;pwd&quot;&gt;
+    &lt;input type=&quot;submit&quot;&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<p>运行demo6，访问：<a class="reference external" href="http://127.0.0.1:8000/login/">http://127.0.0.1:8000/login/</a></p>
+<img alt="../../../_images/django_quanxian06.png" src="../../../_images/django_quanxian06.png" />
+<p>输入用户名：user1，密码：pwd1进行登录，显示登录成功</p>
+<p>（12）在templates目录下新建userinfo.html文件</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h4&gt;用户&lt;/h4&gt;
+{% for user in u_queryset %}
+    &lt;li&gt;{{ user.name }}&lt;/li&gt;
+{% endfor %}
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<p>第(8)步在新建user1时，给user1访问“查看用户1”的权限，所以，当重启demo6以后，再访问http://127.0.0.1:8000/userinfo01/</p>
+<p>（13）user1可以成功访问/userinfo01/路由，这还不能完全证明我们的权限管理项目设计成功了，这只证明了有权限的用户可以通过权限验证，还没有证明没有权限的用户无法通过权限验证</p>
+<img alt="../../../_images/django_quanxian07.png" src="../../../_images/django_quanxian07.png" />
+<p>我们再次访问<a class="reference external" href="http://127.0.0.1:8000/login/">http://127.0.0.1:8000/login/</a>，然后输入用户名user2，密码pwd2进行登录。</p>
+<img alt="../../../_images/django_quanxian08.png" src="../../../_images/django_quanxian08.png" />
+<p>至此，我们根据权限管理的原理，建立了demo6，不论有多少种权限管理方案，都是基于这个原理设计的。</p>
+</section>
+<section id="rbac">
+<h3><a class="toc-backref" href="#id15">2.3 什么是RBAC</a><a class="headerlink" href="#rbac" title="Permalink to this headline">¶</a></h3>
+<p>其实在互联网行业中，解决权限管理的方案有一个很有名的模式叫RBAC。RBAC模式之于权限管理就如同JWT之于登录验证，无论是使用Java、PHP、C#还是Python开发网站，RBAC模式都被广泛应用。</p>
+<p>RBAC（Role-Based Access
+Control，基于角色的访问控制），如图所示，与我们在之前所介绍的权限管理的生命周期不同，在RBAC模式的生命周期中，增加了“角色”这个概念。</p>
+<p>RBAC生命周期</p>
+<img alt="../../../_images/django_rbac001.png" src="../../../_images/django_rbac001.png" />
+<p>RBAC生命周期介绍如下：</p>
+<p>（1）用户登录验证。</p>
+<p>（2）根据用户身份验证信息，获取用户的角色。</p>
+<p>（3）通过用户所绑定的角色（有可能不止一个），获取这个角色绑定的所有权限，并去重。</p>
+<p>（4）查询用户所访问的URL是否在角色的权限内，如果在，则继续访问，如果不在，则拒绝访问。</p>
+</section>
+<section id="djangorbac">
+<h3><a class="toc-backref" href="#id16">2.4 Django项目中使用RBAC</a><a class="headerlink" href="#djangorbac" title="Permalink to this headline">¶</a></h3>
+<p>在这一节中对demo6进行改造，给demo6增加RBAC的功能，实现角色权限管理的业务需求，具体步骤如下所述。</p>
+<p>（1）在demo6中执行新建App命令，将其命名为rbac：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">startapp</span> <span class="n">rbac</span>
+</pre></div>
+</div>
+<p>（2）在settings.py中添加RBAC的注册代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rbac.apps.RbacConfig&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>注意： 如果不在settings.py中注册新建的App，新建的App数据将无法更新。</p>
+</div></blockquote>
+<p>( 3）在rbac/model.py中新建权限管理所需的表类：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+
+<span class="c1"># Create your models here.</span>
+<span class="k">class</span> <span class="nc">Permission</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    权限表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;权限表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+
+<span class="k">class</span> <span class="nc">Role</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    角色表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">permission</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Permission</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;角色表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">pwd</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">role</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Role</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;用户表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+</div>
+<p>（4）在rbac/admin.py中写入注册用户表、权限表、角色表的代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span><span class="n">Role</span><span class="p">,</span><span class="n">Permission</span>
+
+<span class="c1"># Register your models here.</span>
+
+<span class="c1"># Register your models here.</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Permission</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Role</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">User</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（5）执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<p>更新完数据，生成了5张表。</p>
+<p><code class="docutils literal notranslate"><span class="pre">rbac_permission</span></code>、<code class="docutils literal notranslate"><span class="pre">rbac_role</span></code>、<code class="docutils literal notranslate"><span class="pre">rbac_role_permission</span></code>、<code class="docutils literal notranslate"><span class="pre">rbac_user</span></code>、<code class="docutils literal notranslate"><span class="pre">rbac_user_role</span></code></p>
+<p>（6）运行demo6项目，访问：<a class="reference external" href="http://127.0.0.1:8000/admin/">http://127.0.0.1:8000/admin/</a>，如图6-20所示，在Django自带的admin后台，已经可以查看到RBAC下的3个表。</p>
+<img alt="../../../_images/django_rbac002.png" src="../../../_images/django_rbac002.png" />
+<p>（7）如图所示，在Rbac下的权限表内增加权限记录。</p>
+<img alt="../../../_images/django_rbac003.png" src="../../../_images/django_rbac003.png" />
+<p>（8）如图所示，在Rbac下的角色表里增加一条角色记录，角色：人力资源总监，权限：查看用户2。</p>
+<img alt="../../../_images/django_rbac004.png" src="../../../_images/django_rbac004.png" />
+<p>（9）如图所示，在Rbac下的用户表里新增两条记录，user11给角色设定为“人力资源总监”，user22不设定任何角色。</p>
+<img alt="../../../_images/django_rbac005.png" src="../../../_images/django_rbac005.png" />
+<p>（10）重写登录验证逻辑：将demo6/urls.py中与userinfo相关的路由配置代码删除。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">login</span><span class="p">,</span> <span class="n">userinfo</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;login/&#39;</span><span class="p">,</span> <span class="n">login</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>然后重写app01/views.py中的login函数，login函数在“查询角色所对应的权限”环节，有两种写法。</p>
+<p>写法1：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">rbac.models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Permission</span><span class="p">,</span> <span class="n">Role</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pwd&#39;</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">pwd</span><span class="o">=</span><span class="n">pwd</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="c1"># 验证身份</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">pk</span>
+
+            <span class="c1"># 查询角色</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">role</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>  <span class="c1"># &lt;QuerySet [&lt;Role: 人力资源总监&gt;]&gt;</span>
+
+            <span class="c1"># 查询角色所对应的权限</span>
+            <span class="n">re</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">role</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;permission__url&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">re</span><span class="p">)</span>  <span class="c1"># &lt;QuerySet [{&#39;permission__url&#39;: &#39;/users/&#39;}]&gt;</span>
+            <span class="n">permission_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">re</span><span class="p">:</span>
+                <span class="n">permission_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;permission__url&quot;</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">permission_list</span><span class="p">)</span>  <span class="c1"># [&#39;/users/&#39;]</span>
+
+            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;permission_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_list</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;登录成功&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;login.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>写法2</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">rbac.models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Permission</span><span class="p">,</span> <span class="n">Role</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pwd&#39;</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">pwd</span><span class="o">=</span><span class="n">pwd</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="c1"># 验证身份</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">pk</span>
+
+            <span class="c1"># 查询角色</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">role</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="c1"># print(ret)#&lt;QuerySet [&lt;Role: 人力资源总监&gt;]&gt;</span>
+
+            <span class="c1"># 查询角色所对应的权限</span>
+            <span class="n">permission_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">item1</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
+                <span class="c1"># 多对多连表查询</span>
+                <span class="n">rep</span> <span class="o">=</span> <span class="n">Permission</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role__title</span><span class="o">=</span><span class="n">item1</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">rep</span><span class="p">:</span>
+                    <span class="c1"># print(item2.url)#/users/</span>
+                    <span class="n">permission_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item2</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">permission_list</span><span class="p">)</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;permission_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_list</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;登录成功&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;login.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>第一种写法并不是经常使用，程序员长时间不使用，容易遗忘相关的知识点。所以，第一种写法偏“炫技”，第二种写法比较朴实。笔者的编程哲学：“代码写成什么样机器都看得懂，最重要的是代码也要能让人看得懂”，所以推荐使用第二种写法。</p>
+<p>（11）权限验证：在app01/views.py中，编写查看用户函数，内含权限验证代码。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="k">def</span> <span class="nf">user</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c1"># 获取session键值，如果不存在不报错，返回None</span>
+    <span class="n">permission_list</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;permission_list&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="c1"># print(permission_list)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path_info</span>
+    <span class="c1"># print(path)</span>
+    <span class="n">flag</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">permission</span> <span class="ow">in</span> <span class="n">permission_list</span><span class="p">:</span>
+        <span class="n">permission</span> <span class="o">=</span> <span class="s2">&quot;^</span><span class="si">%s</span><span class="s2">$&quot;</span> <span class="o">%</span> <span class="n">permission</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">permission</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ret</span><span class="p">:</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+
+    <span class="c1"># print(flag)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;无访问权限！&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;查看用户&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在urls.py内配置路径：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">login</span><span class="p">,</span> <span class="n">user</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;login/&#39;</span><span class="p">,</span> <span class="n">login</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;users/&#39;</span><span class="p">,</span> <span class="n">user</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（12）验证user11可以通过权限验证。如图所示，访问<a class="reference external" href="http://127.0.0.1:8000/login/">http://127.0.0.1:8000/login/</a>，然后登录user11，用户名：user11，密码：pwd11。</p>
+<p>验证权限控制效果。</p>
+<p>user11能访问http://127.0.0.1:8000/users/</p>
+<p>user22没有权限访问http://127.0.0.1:8000/users/</p>
+</section>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id17">3. Django基于中间件的权限验证</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>权限验证几乎是每个用户的数据请求都需要经历的过程。如果给每一个视图函数都加一遍权限验证代码，或者写一个装饰器的封装权限验证逻辑，然后给每一个视图函数添加装饰器，都会大大地增加工作量，而将权限验证设置为中间件，就可以在权限验证这个业务下一劳永逸啦！</p>
+<p>（1）如图所示，在rbac目录下新建包service，然后在service目录下新建rbac.py模块文件。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django.utils.deprecation</span> <span class="kn">import</span> <span class="n">MiddlewareMixin</span>
+
+
+<span class="k">class</span> <span class="nc">ValidPermission</span><span class="p">(</span><span class="n">MiddlewareMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">      权限验证中间件类</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1">######################中间件内容start###############</span>
+        <span class="c1"># 获取session键值，如果不存在，不报错，返回[]</span>
+        <span class="n">permission_list</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;permission_list&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="c1"># print(permission_list)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path_info</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="n">flag</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">permission</span> <span class="ow">in</span> <span class="n">permission_list</span><span class="p">:</span>
+            <span class="n">permission</span> <span class="o">=</span> <span class="s2">&quot;^</span><span class="si">%s</span><span class="s2">$&quot;</span> <span class="o">%</span> <span class="n">permission</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">permission</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ret</span><span class="p">:</span>
+                <span class="n">flag</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;无访问权限!&quot;</span><span class="p">)</span>
+
+        <span class="c1">##################中间件内容end###################</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>（2）在settings.py内配置中间件：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MIDDLEWARE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.middleware.security.SecurityMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions.middleware.SessionMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.common.CommonMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.csrf.CsrfViewMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages.middleware.MessageMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rbac.service.rbac.ValidPermission&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>注意：
+新建的中间件应该加在编写中间件所使用的中间件的后面。比如我们编写的权限验证中间件中使用到了Session，那么新建的中间件应该加在Session中间件的后面，这样可以确保不会出现错误。</p>
+<p>（3）设置白名单。当我们想要换一个用户名登录时，访问：
+<a class="reference external" href="http://127.0.0.1:8000/login/">http://127.0.0.1:8000/login/</a>，会发现在登录之前被要求权限验证。</p>
+<p>从逻辑上来说，应该先进行身份验证，再进行权限验证，如果没有身份验证，权限验证将无从谈起。所以，所有与身份验证相关的权限（URL），都不应该受到权限验证中间件的影响。我们将中间件代码加以优化，将登录、注册、后台管理相关的URL都加入白名单中。将rbac/service/rbac.py中的代码改写为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django.utils.deprecation</span> <span class="kn">import</span> <span class="n">MiddlewareMixin</span>
+
+
+<span class="k">class</span> <span class="nc">ValidPermission</span><span class="p">(</span><span class="n">MiddlewareMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">      权限验证中间件类</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1">######################中间件内容start###############</span>
+        <span class="c1"># 获取session键值，如果不存在，不报错，返回[]</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path_info</span>
+        <span class="c1"># print(path)</span>
+
+        <span class="c1"># 查看是否属于白名单</span>
+        <span class="c1"># valid_url_list=[&#39;/login/&#39;,&#39;/register/&#39;,&#39;/admin/.*&#39;]</span>
+        <span class="c1">#for valid_url in valid_url_list:</span>
+        <span class="c1">#     ret=re.match(valid_url,path)</span>
+        <span class="c1">#     if ret:</span>
+        <span class="c1">#         return None</span>
+
+        <span class="c1"># 获取session键值，如果不存在，不报错，返回None</span>
+        <span class="n">permission_list</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;permission_list&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="c1"># print(permission_list)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path_info</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="n">flag</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">permission</span> <span class="ow">in</span> <span class="n">permission_list</span><span class="p">:</span>
+            <span class="n">permission</span> <span class="o">=</span> <span class="s2">&quot;^</span><span class="si">%s</span><span class="s2">$&quot;</span> <span class="o">%</span> <span class="n">permission</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">permission</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ret</span><span class="p">:</span>
+                <span class="n">flag</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;无访问权限!&quot;</span><span class="p">)</span>
+
+        <span class="c1">##################中间件内容end###################</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>（4）解耦。我们再回来看app01/views.py中的login函数：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">rbac.models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Permission</span><span class="p">,</span> <span class="n">Role</span>
+<span class="kn">from</span> <span class="nn">rbac.service.permission</span> <span class="kn">import</span> <span class="n">initial_permission</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pwd&#39;</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">pwd</span><span class="o">=</span><span class="n">pwd</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="c1"># 验证身份</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">pk</span>
+            <span class="c1"># 查询角色</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">role</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="c1"># print(ret)#&lt;QuerySet [&lt;Role: 人力资源总监&gt;]&gt;</span>
+
+            <span class="c1"># 查询角色所对应的权限</span>
+            <span class="n">permission_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">item1</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
+                <span class="c1"># 多对多连表查询</span>
+                <span class="n">rep</span> <span class="o">=</span> <span class="n">Permission</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role__title</span><span class="o">=</span><span class="n">item1</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">rep</span><span class="p">:</span>
+                    <span class="c1"># print(item2.url)#/users/</span>
+                    <span class="n">permission_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item2</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">permission_list</span><span class="p">)</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;permission_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_list</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;登录成功&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;login.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在函数体中，查询角色和查询角色所对应的权限，应该属于权限校验，而非身份校验，这显然是存在耦合性过高的情况，应该将权限校验进行解耦。</p>
+<p>在rbac/service下新建permission.py模块文件：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rbac.models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Permission</span><span class="p">,</span> <span class="n">Role</span>
+
+
+<span class="k">def</span> <span class="nf">initial_permission</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+    <span class="c1"># 查询角色</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">role</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="c1"># print(ret)#&lt;QuerySet [&lt;Role: 人力资源总监&gt;]&gt;</span>
+
+    <span class="c1"># 查询角色所对应的权限</span>
+    <span class="n">permission_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item1</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
+        <span class="c1"># 多对多连表查询</span>
+        <span class="n">rep</span> <span class="o">=</span> <span class="n">Permission</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role__title</span><span class="o">=</span><span class="n">item1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item2</span> <span class="ow">in</span> <span class="n">rep</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">item2</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>  <span class="c1"># /users/</span>
+            <span class="n">permission_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item2</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">permission_list</span><span class="p">)</span>
+
+    <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;permission_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_list</span>
+</pre></div>
+</div>
+<p>然后，我们将app01/views.py中的login函数，改写为</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">rbac.models</span> <span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Permission</span><span class="p">,</span> <span class="n">Role</span>
+<span class="kn">from</span> <span class="nn">rbac.service.permission</span> <span class="kn">import</span> <span class="n">initial_permission</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pwd&#39;</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">pwd</span><span class="o">=</span><span class="n">pwd</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="c1"># 验证身份</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;user_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">pk</span>
+            <span class="n">initial_permission</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;登录成功&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;login.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="django-rest-framework">
+<h3><a class="toc-backref" href="#id18">3.1 Django REST framework实现权限管理</a><a class="headerlink" href="#django-rest-framework" title="Permalink to this headline">¶</a></h3>
+<p>准备演示权限管理的初始代码</p>
+<p>根据权限的定义我们知道，权限的基础是身份验证，身份验证的基础是登录验证。所以我们要搭建权限管理系统就要先搭建一个具备登录功能的项目。</p>
+<p>（1）如图所示，新建项目demo6_drf，新建App，命名为app01。</p>
+<p>（2）在app01/models.py内新建相关表类：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<span class="c1"># Create your models here.</span>
+<span class="k">class</span> <span class="nc">UserInfo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_type_chioces</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;普通用户&quot;</span><span class="p">),</span>
+                         <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;VIP&quot;</span><span class="p">),</span>
+                         <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;SVIP&quot;</span><span class="p">),</span>
+                         <span class="p">)</span>
+    <span class="n">user_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">user_type_chioces</span><span class="p">)</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;用户表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span>
+
+
+<span class="k">class</span> <span class="nc">UserToken</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Token表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">UserInfo</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;token表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span>
+
+
+<span class="k">class</span> <span class="nc">CommonVideo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    普通视频</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;资源地址&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;普通视频表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+
+<span class="k">class</span> <span class="nc">VIPVideo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    会员视频</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;资源地址&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;会员视频表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+
+<span class="k">class</span> <span class="nc">SVIPVideo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    超级会员视频</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;资源地址&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;超级会员视频表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+</pre></div>
+</div>
+<p>（3）执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<p>在app01下，生成5张表格以备后面使用.</p>
+<p>（4）手动向自定义的用户表内添加3个用户</p>
+<p>（5）在普通视频表、会员视频表、超级会员视频表中，分别手动加入一条记录</p>
+<p>（6）安装Django REST framework相关依赖：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">djangorestframework</span> <span class="n">markdown</span> <span class="n">django</span><span class="o">-</span><span class="nb">filter</span>
+</pre></div>
+</div>
+<p>（7）在settings.py中添加注册配置代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（8）在app01/views.py内编写用户登录逻辑代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">def</span> <span class="nf">md5</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">hashlib</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+    <span class="n">ctime</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">ctime</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">AuthView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    登录</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;登录成功！&#39;</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+            <span class="n">pwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">)</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">UserInfo</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">pwd</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="p">:</span>
+                <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1001</span>
+                <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;用户名或密码错误&#39;</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+            <span class="c1"># 为登录用户创建token</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">md5</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="c1"># 存在则更新，不存在的创建</span>
+            <span class="n">UserToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">update_or_create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;token&#39;</span><span class="p">:</span> <span class="n">token</span><span class="p">})</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1002</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;请求异常&#39;</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（9）在urls.py中配置路由：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">AuthView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;auth/&#39;</span><span class="p">,</span> <span class="n">AuthView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;auth&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（10）如图所示，使用Postman以post的方式，向：<a class="reference external" href="http://127.0.0.1:8000/auth/">http://127.0.0.1:8000/auth/</a>
+，提交数据：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>{
+
+  &quot;username&quot;:&quot;user1&quot;,
+
+  &quot;password&quot;:’111&quot;
+
+}
+</pre></div>
+</div>
+<p>得到返回数据：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;登录成功！&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="s2">&quot;101c55385a0c502ea6440806fdda8af2&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>至此，成功获取了登录令牌Token。如图所示，可以通过Database直接查看Usertoken表，印证这里已经产生了一条Token记录，并且与我们通过Postman获取的Token相同。</p>
+</section>
+<section id="demo6-drf">
+<h3><a class="toc-backref" href="#id19">3.2 为demo6_drf添加身份验证功能</a><a class="headerlink" href="#demo6-drf" title="Permalink to this headline">¶</a></h3>
+<p>我们已经成功实现了通过Token的方式进行登录的业务模型。接下来将开发身份验证的功能，步骤如下：</p>
+<p>（1）在app01目录下新建序列化模块文件serializers.py：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">serializers</span>
+
+<span class="c1"># 引入数据表类</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">CommonVideo</span><span class="p">,</span> <span class="n">VIPVideo</span><span class="p">,</span> <span class="n">SVIPVideo</span>
+
+
+<span class="c1"># 将3个数据库类进行序列化</span>
+<span class="k">class</span> <span class="nc">CommonVideoSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CommonVideo</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;__all__&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">VIPVideoSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">VIPVideo</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;__all__&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">SVIPVideoSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">SVIPVideo</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;__all__&quot;</span>
+</pre></div>
+</div>
+<p>（2）在app01/views.py中编写身份认证类Authtication和登录后即可访问的内容资源类CommonVideoView：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="c1"># 引入所有数据表</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># 引入所有序列化类</span>
+<span class="kn">from</span> <span class="nn">.serializers</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="c1"># 引入drf相关模块</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework.renderers</span> <span class="kn">import</span> <span class="n">JSONRenderer</span><span class="p">,</span> <span class="n">BrowsableAPIRenderer</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">exceptions</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">def</span> <span class="nf">md5</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">hashlib</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+    <span class="n">ctime</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">ctime</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">AuthView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    登录</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;登录成功！&#39;</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+            <span class="n">pwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">)</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">UserInfo</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">pwd</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="p">:</span>
+                <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1001</span>
+                <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;用户名或密码错误&#39;</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+            <span class="c1"># 为登录用户创建token</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">md5</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="c1"># 存在则更新，不存在的创建</span>
+            <span class="n">UserToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">update_or_create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;token&#39;</span><span class="p">:</span> <span class="n">token</span><span class="p">})</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1002</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;请求异常&#39;</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">class</span> <span class="nc">Authtication</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1"># 验证是否已经登录,函数名必须为：authenticate</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;token&#39;</span><span class="p">)</span>
+        <span class="n">token_obj</span> <span class="o">=</span> <span class="n">UserToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">token_obj</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">AuthenticationFailed</span><span class="p">(</span><span class="s1">&#39;用户认证失败。&#39;</span><span class="p">)</span>
+        <span class="c1"># 在rest_framework内部会将以下两个元素赋值到request，以供后续使用</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">token_obj</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">token_obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">authenticate_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1"># 这个函数可以没内容，但是必须要有</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">CommonVideoView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    登录后即可访问的内容资源</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renderer_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSONRenderer</span><span class="p">]</span>  <span class="c1"># 渲染器</span>
+    <span class="n">authentication_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Authtication</span><span class="p">,</span> <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1"># print(request.user,request.auth)#user1 user1</span>
+        <span class="n">video_list</span> <span class="o">=</span> <span class="n">CommonVideo</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">re</span> <span class="o">=</span> <span class="n">CommonVideoSerializer</span><span class="p">(</span><span class="n">video_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（3）在urls.py中配置路由：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">AuthView</span><span class="p">,</span> <span class="n">CommonVideoView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;auth/&#39;</span><span class="p">,</span> <span class="n">AuthView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;auth&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;common/&#39;</span><span class="p">,</span> <span class="n">CommonVideoView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;common&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（4）运行项目，如图6-43所示，使用Postman以get的方式携带Token，向http://127.0.0.1:8000/common/?token=5dabaf29e3559be4526e16041a1a9fe6
+发送网络请求，成功获取到了数据</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;红楼梦预告&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;add_time&quot;</span><span class="p">:</span> <span class="n">null</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>如果不携带Token，则会提示“用户认证失败”。</p>
+<p>说明我们的身份认证功能已经实现了。</p>
+<p>（5）解耦。应该把认证类和视图逻辑类分开。在app01下新建目录utils，在utils目录下新建auth.py，然后将身份认证类Authtication及其相关代码迁移到auth.py中：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 引入所有数据表</span>
+<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># 引入drf相关模块</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">exceptions</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">class</span> <span class="nc">Authtication</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1"># 验证是否已经登录,函数名必须为：authenticate</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;token&#39;</span><span class="p">)</span>
+        <span class="n">token_obj</span> <span class="o">=</span> <span class="n">UserToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">token_obj</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">AuthenticationFailed</span><span class="p">(</span><span class="s1">&#39;用户认证失败。&#39;</span><span class="p">)</span>
+        <span class="c1"># 在rest_framework内部会将以下两个元素赋值到request，以供后续使用</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">token_obj</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">token_obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">authenticate_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1">#这个函数可以没有内容，但是必须要有这个函数</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+<p>在app01/views.py中加入引入代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.utils.auth</span> <span class="kn">import</span> <span class="n">Authtication</span>
+</pre></div>
+</div>
+<p>（6）全局身份验证配置。如果所有的视图函数，都需要身份验证才可以访问，那么首先在settings.py里追加配置代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">REST_FRAMEWORK</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s1">&#39;DEFAULT_AUTHENTICATION_CLASSES&#39;</span><span class="p">:</span> <span class="p">(</span>
+
+        <span class="s1">&#39;app01.utils.auth.Authtication&#39;</span><span class="p">,</span>
+
+    <span class="p">)</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后在views.py中的登录类中设置代码，令其不受全局身份验证的影响：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AuthView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    登录</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">authentication_classes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;登录成功！&#39;</span><span class="p">}</span>
+        <span class="o">.....</span>
+</pre></div>
+</div>
+<p>为demo6_drf添加权限管理功能</p>
+<p>以上一节全局身份验证为基础，本节将添加权限管理功能。</p>
+<p>（1）在app01/utils/auth.py内新增VIP和SVIP权限验证代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">VIP</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    验证VIP权限</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">has_permission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">view</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">user_type</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">class</span> <span class="nc">SVIP</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    验证SVIP权限</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">has_permission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">view</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">user_type</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>（2）在app01/views.py内新增获取VIP资源和SVIP资源的视图函数：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">VIPVideoView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    VIP可访问的资源</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renderer_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSONRenderer</span><span class="p">]</span>  <span class="c1"># 渲染器</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">VIP</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">video_list</span> <span class="o">=</span> <span class="n">VIPVideo</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">re</span> <span class="o">=</span> <span class="n">VIPVideoSerializer</span><span class="p">(</span><span class="n">video_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">SVIPVideoView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SVIP可访问的资源</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renderer_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSONRenderer</span><span class="p">]</span>  <span class="c1"># 渲染器</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">SVIP</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">video_list</span> <span class="o">=</span> <span class="n">SVIPVideo</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">re</span> <span class="o">=</span> <span class="n">SVIPVideoSerializer</span><span class="p">(</span><span class="n">video_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（3）在urls.py内新增路由代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">AuthView</span><span class="p">,</span> <span class="n">CommonVideoView</span><span class="p">,</span> <span class="n">VIPVideoView</span><span class="p">,</span> <span class="n">SVIPVideoView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="c1"># 登录验证</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;auth/&#39;</span><span class="p">,</span> <span class="n">AuthView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;auth&#39;</span><span class="p">),</span>
+    <span class="c1"># 获取普通资源</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;common/&#39;</span><span class="p">,</span> <span class="n">CommonVideoView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;common&#39;</span><span class="p">),</span>
+    <span class="c1"># 获取VIP资源</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;vip/&#39;</span><span class="p">,</span> <span class="n">VIPVideoView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;vip&#39;</span><span class="p">),</span>
+    <span class="c1"># 获取SVIP资源</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;svip/&#39;</span><span class="p">,</span> <span class="n">SVIPVideoView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;svip&#39;</span><span class="p">),</span>
+
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id20">3.3 验证demo6_drf权限管理的功能</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>现在运行demo6_drf，让我们来测试一下普通用户user1，VIP用户user2和SVIP用户user3在权限管理系统下是否能够达到预期效果。</p>
+<p>（1）登录user1。如图所示，使用Postman，以post的方式向：<a class="reference external" href="http://127.0.0.1:8000/auth/">http://127.0.0.1:8000/auth/</a>
+提交数据：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="s2">&quot;登录成功！&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="s2">&quot;882130f89bed2f9f99372745ee831c9d&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>（2）测试user1获取普通数据。如图所示，携带user1用户的Token，<a class="reference external" href="http://127.0.0.1:8000/common/">http://127.0.0.1:8000/common/</a>?token=882130f89bed2f9f99372745ee831c9d以get的方式访问：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;红楼梦预告&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;add_time&quot;</span><span class="p">:</span> <span class="n">null</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（3）测试user1获取VIP数据资源。如图6-47所示，使用user1的Token访问：<a class="reference external" href="http://127.0.0.1:8000/vip/?token=882130f89bed2f9f99372745ee831c9d">http://127.0.0.1:8000/vip/?token=882130f89bed2f9f99372745ee831c9d</a>
+，将返回没有通过权限验证的提示信息。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="s2">&quot;You do not have permission to perform this action.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>（4）测试user1获取SVIP数据资源。如图所示，使用user1的Token获取SVIP的资源，返回了与获取VIP的资源一样的结果，提示没有通过权限验证。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="s2">&quot;You do not have permission to perform this action.&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用user2的token访问http://127.0.0.1:8000/vip/?token=ca6ad66339faab2d5cf7f93f042e0caa
+vip资源，返回如下信息：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;红楼梦-会员完整版&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;add_time&quot;</span><span class="p">:</span> <span class="n">null</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>使用user3的token访问http://127.0.0.1:8000/svip/?token=1cb102142157d2ab83547a9980381113
+vip资源，返回如下信息：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;红楼梦-会员-未删减版&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;add_time&quot;</span><span class="p">:</span> <span class="n">null</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html" class="btn btn-neutral float-left" title="23.7.4. 区块链时代与Token登录" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="06.%E8%BF%9D%E7%A6%81%E8%AF%8D%E8%87%AA%E5%AE%A1%E6%9F%A5%E5%8A%9F%E8%83%BD.html" class="btn btn-neutral float-right" title="23.7.6. 违禁词自审查功能" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+.. contents::
+   :depth: 3
+..
+
+闭包使用外围作用域变量
+======================
+
+我们要给列表中的元素排序，而且要优先把某个群组之中的元素放在其他元素的前面。例如，渲染用户界面时，可能就需要这样做，因为关键的消息和特殊的事件应该优先显示在其他信息之前。实现这种做法的一种常见方案，是把辅助函数通过key参数传给列表的sort方法。
+
+.. code:: python
+
+   def sort_priority(values, group):
+       def helper(x):
+           if x in group:
+               return (0, x)
+           return (1, x)
+       values.sort(key=helper)
+
+
+   numbers = [8, 3, 1, 2, 5, 4, 7, 6]
+   group = [2, 3, 5, 7]
+   sort_priority(numbers, group)
+   print(numbers)
+
+Python支持闭包（closure），这让定义在大函数里面的小函数也能引用大函数之中的变量。具体到这个例子，sort_priority函数里面的那个helper函数也能够引用前者的group参数。函数在Python里是头等对象（first-class
+object），所以你可以像操作其他对象那样，直接引用它们、
+
+把它们赋给变量、将它们当成参数传给其他函数，或是在in表达式与if语句里面对它做比较，等等。闭包函数也是函数，所以，同样可以传给sort方法的key参数。
+
+.. code:: python
+
+   def sort_priority(numbers, group):
+       found = False
+
+       def helper(x):
+           if x in group:
+               found = True
+               return (0, x)
+           return (1, x)
+
+       numbers.sort(key=helper)
+       return found
+
+
+   numbers = [8, 3, 1, 2, 5, 4, 7, 6]
+   group = [2, 3, 5, 7]
+   found = sort_priority(numbers, group)
+   print("Found:", found)
+   print(numbers)
+
+排序结果没有问题，可以看到：在排过序的numbers里面，重要群组group里的那些元素（2、3、5、7），确实出现在了其他元素前面。
+
+既然这样，那表示函数返回值的found变量就应该是True，但我们看到的却是False，这是为什么？在表达式中引用某个变量时，Python解释器会按照下面的顺序，在各个作用域（scope）里面查找这个变量，以解析（resolve）这次引用。
+
+   1）当前函数的作用域。
+
+   2）外围作用域（例如包含当前函数的其他函数所对应的作用域）。
+
+   3）包含当前代码的那个模块所对应的作用域（也叫全局作用域，globalscope）。
+
+   4）内置作用域（built-in
+   scope，也就是包含len与str等函数的那个作用域）。
+
+如果这些作用域中都没有定义名称相符的变量，那么程序就抛出NameError异常。
+
+这种问题有时也称作作用域bug（scoping
+bug），Python新手可能认为这样的赋值规则很奇怪，但实际上Python是故意这么设计的。
+
+**因为这样可以防止函数中的局部变量污染外围模块。**\ 假如不这样做，那么函数里的每条赋值语句都有可能影响全局作用域的变量，这样不仅混乱，而且会让全局变量之间彼此交互影响，从而导致很多难以探查的bug。
+
+Python有一种特殊的写法，可以把闭包里面的数据赋给闭包外面的变量。
+
+**用nonlocal语句描述变量，就可以让系统在处理针对这个变量的赋值操作时，去外围作用域查找。**
+
+然而，nonlocal有个限制，就是不能侵入模块级别的作用域（以防污染全局作用域）。
+
+.. code:: python
+
+   def sort_priority(numbers, group):
+       found = False
+
+       def helper(x):
+           nonlocal found
+           if x in group:
+               found = True
+               return (0, x)
+           return (1, x)
+
+       numbers.sort(key=helper)
+       return found
+
+如果nonlocal的用法比较复杂，那最好是改用辅助类来封装状态。下面就定义了这样一个类，用来实现与刚才那种写法相同的效果。这样虽然稍微长一点，但看起来更清晰易读（__call__这个特殊方法)。
+
+::
+
+   class Sorter:
+       def __init__(self, group):
+           self.group = group
+           self.found = False
+
+       def __call__(self, x):
+           if x in self.group:
+               self.found = True
+               return (0, x)
+           return (1, x)
+
+
+   numbers = [8, 3, 1, 2, 5, 4, 7, 6]
+   group = [2, 3, 5, 7]
+   sorter = Sorter(group)
+   numbers.sort(key=sorter)
+   assert sorter.found == True
+   print(numbers)
+
+..
+
+   要点:
+
+   闭包函数可以引用定义它们的那个外围作用域之中的变量。
+
+   按照默认的写法，在\ *闭包里面给变量赋值并不会改变外围作用域中的同名变量*\ 。
+
+   *先用nonlocal语句说明，然后赋值，可以修改外围作用域中的变量*\ 。除特别简单的函数外，尽量少用nonlocal语句。

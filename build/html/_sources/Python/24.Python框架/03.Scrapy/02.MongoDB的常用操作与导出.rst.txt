@@ -1,0 +1,139 @@
+.. contents::
+   :depth: 3
+..
+
+MongoDB的常用操作与导出
+=======================
+
+参考以下链接：
+
+``http://blog.csdn.net/zwq912318834/article/details/77689568``
+
+简单示例
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/29 16:08
+   # filename: 01.study001.py
+   import pymongo
+
+   # mongodb服务器地址和端口
+   mongo_url = "127.0.0.1:27017"
+
+   client = pymongo.MongoClient(mongo_url)
+
+   # 连接到数据库
+   DATABASE = "mydb"
+   db = client[DATABASE]
+
+   # 连接到集合
+   Coll = "taobao_renaiping"
+   db_coll = db[Coll]
+
+   # 根据城市是广东、广州的记录，然后进行价格排序，从高到低
+   city = {"城市": "广东 广州"}
+   search_res = db_coll.find(city).sort("价格", -1)
+   for record in search_res:
+       # print(record)
+       print(record['_id'], record['商店名称'], record['商品'], record['购买人数'], record['价格'])
+
+对表（集合collection）的操作
+
+::
+
+   from pymongo import MongoClient
+
+   stus = MongoClient().mydb.taobao_renaiping  # 一条语句实现连接到集合
+
+   for stu in stus.find():
+       print(stu)
+
+查找记录：find
+
+(1）指定返回哪些字段
+
+::
+
+   queryArgs = {}
+   projectionFields = {'_id': True, '城市': True}  # 用字典指定
+   searchRes = stus.find(queryArgs, projection=projectionFields)
+   for info in searchRes:
+       print(info)
+
+返回结果
+
+::
+
+   {'城市': '广东 广州', '_id': ObjectId('5d391faec987ddf6abd31842')}
+
+(2) 指定去掉哪些字段
+
+::
+
+   queryArgs = {}
+   projectionFields = {'_id': False, '城市': False}  # 用字典指定
+   searchRes = stus.find(queryArgs, projection=projectionFields)
+   for info in searchRes:
+       print(info)
+
+返回结果
+
+::
+
+   {'价格': '45.00', '商店名称': '迅飞旗舰店', '商品': '篮球服套装男球衣定制夏季大学生运动比赛训练篮球衣队服背心印字', '购买人数': '1.0万+人付款', '商品链接': 'https:////detail.tmall.com/item.htm?id=561567445908&ad_id=&am_id=&cm_id=140105335569ed55e27b&pm_id=&abbucket=6'}
+
+…….
+
+将mongodb数据写入csv文件中
+--------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/29 16:33
+   # filename: mongodb写入csv文件.py
+   # 导出数据库所有记录的标准模版
+   from pymongo import MongoClient
+   import csv
+
+   # 初始化数据库
+   stus = MongoClient().mydb.taobao_renaiping  # 一条语句实现连接到集合
+
+   # 将数据写入到CSV文件中
+   # 如果直接从mongod booster导出, 一旦有部分出现字段缺失，那么会出现结果错位的问题
+
+   # newline='' 的作用是防止结果数据中出现空行，专属于python3
+   with open("mongo-csv.csv", "w", newline='', encoding='gbk') as csvfileWriter:
+       writer = csv.writer(csvfileWriter)
+       # 先写列名
+       # 写第一行，字段名
+       fieldList = [
+           "_id",
+           "商店名称",
+           "价格",
+           "商品链接",
+           "购买人数",
+           "商品",
+           "城市",
+       ]
+       writer.writerow(fieldList)
+
+       allRecordRes = stus.find()
+       # 写入多行数据
+       for record in allRecordRes:
+           # print("record = {record}")
+           recordValueLst = []
+           for field in fieldList:
+               if field not in record:
+                   recordValueLst.append("None")
+               else:
+                   recordValueLst.append(record[field])
+           try:
+               writer.writerow(recordValueLst)
+           except Exception as e:
+               print("write csv exception. e = {e}")

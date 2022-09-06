@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Vue.js的组件化 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="9. Vue.js的vue-router库" href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html" />
+    <link rel="prev" title="7. Vue.js的模板语法" href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js+Node.js开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%87%86%E5%A4%87.html">1. 开发一个网站的准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Nodejs_vue%E5%9F%BA%E7%A1%80.html">2. Nodejs+vue基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html">3. 项目开发准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.%E9%A1%B9%E7%9B%AE%E5%90%8E%E5%8F%B0%E6%8A%80%E6%9C%AFExpress.html">4. 项目后台技术Express</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html">5. Vue.js开发基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue.js%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.html">6. Vue的生命周期</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html">7. Vue.js的模板语法</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8. Vue.js的组件化</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">8.1. 1.组件化简介</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">8.2. 2.组件的创建</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">8.3. 3.组件的注册</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">8.3.1. 3.1 全局注册</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">8.3.2. 3.2 局部注册</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">8.4. 4.组件间的数据传递</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">8.4.1. 5.监听子组件事件</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">8.5. 5.通过插槽分发内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">8.6. 小结</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html">9. Vue.js的vue-router库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue.js%E7%9A%84%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E5%BA%93Vuex%E5%92%8CPinia.html">10. Vue.js的状态管理库Vuex和Pinia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.Vue-UI%E5%BA%93.html">11. Vue-UI库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.%E9%A1%B9%E7%9B%AE%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E.html">12. 项目需求分析和功能说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.%E9%A1%B9%E7%9B%AE%E7%AD%96%E5%88%92%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AE%BE%E8%AE%A1.html">13. 项目策划和功能设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14.%E9%A1%B9%E7%9B%AE%E5%90%8E%E7%AB%AFAPI%E5%BC%80%E5%8F%91.html">14. 项目后端API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15.%E9%80%9A%E7%94%A8API%E5%BC%80%E5%8F%91.html">15. 通用API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">16. 用户权限相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17.%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">17. 后台管理相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18.%E5%B0%8F%E7%BB%93.html">18. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19.%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%BC%80%E5%8F%91.html">19. 前端页面开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="20.%E4%B8%BB%E8%A6%81%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%BC%80%E5%8F%91.html">20. 主要页面的开发</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js+Node.js开发实战</a> &raquo;</li>
+      <li><span class="section-number">8. </span>Vue.js的组件化</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue_Node.js/08.Vue.js的组件化.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vue-js" id="id10">Vue.js的组件化</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id11">1.组件化简介</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id12">2.组件的创建</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id13">3.组件的注册</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id14">3.1 全局注册</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id15">3.2 局部注册</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id6" id="id16">4.组件间的数据传递</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id7" id="id17">5.监听子组件事件</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id8" id="id18">5.通过插槽分发内容</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id19">小结</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="vue-js">
+<h1><a class="toc-backref" href="#id10"><span class="section-number">8. </span>Vue.js的组件化</a><a class="headerlink" href="#vue-js" title="Permalink to this headline">¶</a></h1>
+<p>在Vue.js实现的单页面应用中，最重要的就是组件，因为单一页面实现的关键就是通过切换引入的组件来达到“页面切换”的效果。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">8.1. </span>1.组件化简介</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>组件本身是一个可以被复用的Vue.js实例，带有name属性。</p>
+<p>在前面介绍的所有单页面实例代码中，Vue.js实例本质上也是一个“组件”，不同的是页面只有一个组件，并且被挂载到了根节点上，没有实现复用。</p>
+<p><strong>在一个复杂的站点中，将能复用的部分提取出来单独写成.vue文件，这就是Vue.js的组件化。</strong></p>
+<p>前面说.vue文件，后面说组件，读者可能会被“绕晕”。</p>
+<p>简单来说，一个Vue.js实现的页面可能因为功能不同被划分为很多不同的模块，尤其是一些被重复使用的模块，这类模块就可以被编写成组件，通过全局注册，这些组件在所有的页面中都能被随时使用。</p>
+<p>例如，在同一个网站中，一个页面的头部（header）、底部（footer）或主菜单的样式与其他页面中基本雷同，那么头部、底部、主菜单也都是被复用的模块。</p>
+<p>这些被复用的模块都可以写成组件。在Vue.js中，每个自定义组件都需要继承Vue.component。</p>
+<p>Vue.component本身也拥有Vue.js实例的所有属性，包括完整的生命周期、v-bind的传值形式，以及v-if、v-on等指令的模板支持。</p>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">8.2. </span>2.组件的创建</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Vue.js创建一个新的组件应当基于Vue.component进行相应的实例化，该组件不一定在一个独立的.vue文件中。</p>
+<p>【示例】创建一个名为button-counter、功能为单击按钮显示单击次数的组件。</p>
+<p>代码如下（编写在main.js文件中）：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import Vue from &#39;vue&#39;;
+import App from &#39;./5-4-2&#39;;
+
+import &#39;./common.css&#39;;
+
+Vue.component(&#39;button-counter&#39;, {
+    name: &#39;button-counter&#39;,
+    data: function () {
+        return {
+            count: 0
+        }
+    },
+    template: &#39;&lt;button v-on:click=&quot;count++&quot;&gt;You clicked me {{ count }} times.&lt;/button&gt;&#39;
+})
+new Vue({
+  render: h =&gt; h(App)
+}).$mount(&quot;#app&quot;)
+</pre></div>
+</div>
+<p>上述代码来自Vue.js官方文档，目的是创建一个名为button-counter的组件。</p>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">8.3. </span>3.组件的注册</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>组件创建后还需要注册。Vue.js支持两种形式的注册：全局注册和局部注册。</p>
+<section id="id4">
+<h3><a class="toc-backref" href="#id14"><span class="section-number">8.3.1. </span>3.1 全局注册</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>如果是全局注册，组件可以在所有的页面和组件中使用，类似于自行建立了一个内置的HTML标签。</p>
+<p>编辑webpack.config.js，增加测试环境中对Vue.js运行版本的支持，更改resolve参数，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resolve</span><span class="p">:</span> <span class="p">{</span>
+  <span class="n">alias</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;vue$&#39;</span><span class="p">:</span> <span class="s1">&#39;vue/dist/vue.esm.js&#39;</span>
+  <span class="p">},</span>
+  <span class="n">extensions</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;.js&#39;</span><span class="p">,</span> <span class="s1">&#39;.vue&#39;</span><span class="p">,</span> <span class="s1">&#39;.json&#39;</span><span class="p">]</span>
+<span class="p">},</span>
+</pre></div>
+</div>
+<p>编写一个页面，内容如下，无须任何引入，直接使用之前示例在main.js中定义的组件。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">button</span><span class="o">-</span><span class="n">counter</span><span class="o">&gt;&lt;/</span><span class="n">button</span><span class="o">-</span><span class="n">counter</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span>
+  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>重新运行dev服务器，页面如图所示。每单击一次按钮，次数就加1。</p>
+<img alt="../_images/image-20220224113804757.png" src="../_images/image-20220224113804757.png" />
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id15"><span class="section-number">8.3.2. </span>3.2 局部注册</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>以全局方式注册的组件，虽然可以在任何地方使用，但大量注册可能会出现启动缓慢的情况，并且很多组件（类似于只在文章页面出现的评论组件）并不需要全局注册。</p>
+<p>Vue.js提供了第2种注册方式：局部注册，只在进入需要该组件的页面时才注册组件。</p>
+<p>【示例】创建一个名为text-show.vue的文件，并将该文件写成一个单独的组件，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div&gt;
+    &lt;h3&gt;这是标题&lt;/h3&gt;
+    &lt;p&gt;这是评论内容，这是评论内容，这是评论内容，这是评论内容&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &quot;text-show&quot;,
+  data() {
+    return {}
+  },
+  created: function () {
+    // 实例化组件的提示
+    console.log(&quot;组件被创建&quot;)
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>新建一个项目，引入该组件，代码如下，在组件注册后可以正常使用。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">text</span><span class="o">-</span><span class="n">show</span><span class="o">&gt;&lt;/</span><span class="n">text</span><span class="o">-</span><span class="n">show</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">TextShow</span> <span class="kn">from</span> <span class="s2">&quot;./text-show&quot;</span><span class="p">;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span><span class="n">TextShow</span><span class="p">},</span>
+  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">....</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>显示效果如图</p>
+<img alt="../_images/image-20220224115624794.png" src="../_images/image-20220224115624794.png" />
+</section>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">8.4. </span>4.组件间的数据传递</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>组件中数据的传递最常见的是父组件传值给子组件，常用于可循环类数据的显示，如列表、评论等内容的展示。</p>
+<p>例如评论组件，可以通过v-bind传输数据。</p>
+<blockquote>
+<div><p><strong>需要注意的是，子组件中必须声明props接收数据的变量。</strong></p>
+</div></blockquote>
+<p>【示例】父子组件的传值。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">h3</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">title</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">h3</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">context</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;text-show&quot;</span><span class="p">,</span>
+  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{}</span>
+  <span class="p">},</span>
+  <span class="n">created</span><span class="p">:</span> <span class="n">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">实例化组件的提示</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;组件被创建&quot;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="n">props</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;context&#39;</span><span class="p">],</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>在父组件中需要定义和传递数据，这里结合v-for指令循环输出组件，同时将数据传入子组件，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">div</span> <span class="n">v</span><span class="o">-</span><span class="k">for</span><span class="o">=</span><span class="s2">&quot;item in contexts&quot;</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">text</span><span class="o">-</span><span class="n">show</span> <span class="p">:</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;item.title&quot;</span> <span class="p">:</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;item.context&quot;</span><span class="o">&gt;&lt;/</span><span class="n">text</span><span class="o">-</span><span class="n">show</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">TextShow</span> <span class="kn">from</span> <span class="s2">&quot;./text-show&quot;</span><span class="p">;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span><span class="n">TextShow</span><span class="p">},</span>
+  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="p">{</span>
+        <span class="n">contexts</span><span class="p">:</span> <span class="p">[</span>
+          <span class="p">{</span><span class="n">title</span><span class="p">:</span> <span class="s1">&#39;你好&#39;</span><span class="p">,</span><span class="n">context</span><span class="p">:</span><span class="s1">&#39;这是第1条评论&#39;</span><span class="p">},</span>
+          <span class="p">{</span><span class="n">title</span><span class="p">:</span> <span class="s1">&#39;你也好呀&#39;</span><span class="p">,</span><span class="n">context</span><span class="p">:</span><span class="s1">&#39;这是第2条评论&#39;</span><span class="p">},</span>
+          <span class="p">{</span><span class="n">title</span><span class="p">:</span> <span class="s1">&#39;第三条&#39;</span><span class="p">,</span><span class="n">context</span><span class="p">:</span><span class="s1">&#39;这是第3条评论&#39;</span><span class="p">},</span>
+          <span class="p">{</span><span class="n">title</span><span class="p">:</span> <span class="s1">&#39;哈哈哈&#39;</span><span class="p">,</span><span class="n">context</span><span class="p">:</span><span class="s1">&#39;这是第4条评论&#39;</span><span class="p">},</span>
+        <span class="p">]</span>
+      <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="c1">#app {</span>
+  <span class="n">font</span><span class="o">-</span><span class="n">family</span><span class="p">:</span> <span class="s1">&#39;Avenir&#39;</span><span class="p">,</span> <span class="n">Helvetica</span><span class="p">,</span> <span class="n">Arial</span><span class="p">,</span> <span class="n">sans</span><span class="o">-</span><span class="n">serif</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">font</span><span class="o">-</span><span class="n">smoothing</span><span class="p">:</span> <span class="n">antialiased</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">osx</span><span class="o">-</span><span class="n">font</span><span class="o">-</span><span class="n">smoothing</span><span class="p">:</span> <span class="n">grayscale</span><span class="p">;</span>
+  <span class="n">text</span><span class="o">-</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span><span class="p">;</span>
+  <span class="n">color</span><span class="p">:</span> <span class="c1">#2c3e50;</span>
+  <span class="n">margin</span><span class="o">-</span><span class="n">top</span><span class="p">:</span> <span class="mi">60</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">h1</span><span class="p">,</span> <span class="n">h2</span> <span class="p">{</span>
+  <span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="n">normal</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">ul</span> <span class="p">{</span>
+  <span class="nb">list</span><span class="o">-</span><span class="n">style</span><span class="o">-</span><span class="nb">type</span><span class="p">:</span> <span class="n">none</span><span class="p">;</span>
+  <span class="n">padding</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">li</span> <span class="p">{</span>
+  <span class="n">display</span><span class="p">:</span> <span class="n">inline</span><span class="o">-</span><span class="n">block</span><span class="p">;</span>
+  <span class="n">margin</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">10</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">a</span> <span class="p">{</span>
+  <span class="n">color</span><span class="p">:</span> <span class="c1">#42b983;</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>所有评论内容都出现在页面中,如下所示。</p>
+<img alt="../_images/image-20220224132936245.png" src="../_images/image-20220224132936245.png" />
+<section id="id7">
+<h3><a class="toc-backref" href="#id17"><span class="section-number">8.4.1. </span>5.监听子组件事件</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>虽然子组件可以通过父组件传递值，但是子组件并不能更改来自父组件的数组。例如，如果需要为每一条评论设置删除按钮，应该如何处理呢？</p>
+<p>为每条评论设置删除按钮，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div&gt;
+    &lt;h3&gt;{{ title }}&lt;/h3&gt;
+    &lt;p&gt;{{ context }}&lt;/p&gt;
+&lt;!-- 单击该按钮后会调用del()方法并且传递一个title参数，该参数是当前评论中默认传入的title。--&gt;
+    &lt;button v-on:click=&quot;del(title)&quot;&gt;删除该评论&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &quot;text-show&quot;,
+  data() {
+    return {}
+  },
+  methods: {
+    del: function (title) {
+      console.log(title)
+
+      // $emit对象，作用就是子组件向父组件暴露方法.
+      this.$emit(&#39;del&#39;, title)
+
+    }
+  },
+  props: [&#39;title&#39;, &#39;context&#39;],
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>这里使用v-on属性绑定了两个方法，其中delItem()是父组件中定义的方法，用来删除数组，完整的业务逻辑代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;div v-for=&quot;item in contexts&quot;&gt;
+&lt;!--      父组件拿到暴露的del()方法，并且传递title参数，--&gt;
+&lt;!--      该方法需要在父组件调用子组件时进行v-on属性的绑定声明，循环使用子组件时该父组件代码如下：--&gt;
+      &lt;text-show v-on:del=&quot;delItem&quot; :title=&quot;item.title&quot; :context=&quot;item.context&quot;&gt;&lt;/text-show&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import TextShow from &quot;./text-show&quot;;
+
+export default {
+  name: &#39;app&#39;,
+  components: {TextShow},
+  data() {
+    return {
+      contexts: [
+        {title: &#39;你好&#39;, context: &#39;这是第1条评论&#39;},
+        {title: &#39;你也好呀&#39;, context: &#39;这是第2条评论&#39;},
+        {title: &#39;第三条&#39;, context: &#39;这是第3条评论&#39;},
+        {title: &#39;哈哈哈&#39;, context: &#39;这是第4条评论&#39;},
+        {title: &#39;呵呵呵&#39;, context: &#39;这是第5条评论&#39;},
+      ]
+    }
+  },
+  methods: {
+    delItem: function (title) {
+      let that = this
+      this.contexts.map(function (item, index, arr) {
+        if (item.title == title) {
+          arr.splice(index, 1);
+          that.context = arr
+        }
+      })
+    }
+  }
+}
+&lt;/script&gt;
+
+
+&lt;style&gt;
+#app {
+  font-family: &#39;Avenir&#39;, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+
+h1, h2 {
+  font-weight: normal;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+a {
+  color: #42b983;
+}
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>最终的代码执行效果,点击删除会删除对应的评论信息。</p>
+<blockquote>
+<div><p>注意：Vue.js提供了很多以$开头的对象，尤其是实例部分，这些对象可以完成很多不同的功能，阅读官方的API文档可以查看具体的实例与介绍。</p>
+</div></blockquote>
+</section>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">8.5. </span>5.通过插槽分发内容</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>Vue.js不仅提供了组件，还提供了内容分发的API，这套API实现了组件的插槽功能。</p>
+<p>那么什么是插槽呢？插槽其实就是一组<code class="docutils literal notranslate"><span class="pre">&lt;slot&gt;&lt;/slot&gt;</span></code>元素，该元素可以被放置在任何组件中，渲染组件时，它可以被替换成任何包含模板的代码，包括HTML、文本或其他自定义组件。</p>
+<p>使用插槽，可以实现一些需要全局显示的警告、通知或消息提示等内容。</p>
+<p>【示例】在子组件中增加一组<code class="docutils literal notranslate"><span class="pre">&lt;slot&gt;&lt;/slot&gt;</span></code>元素作为插槽，并且在父组件调用子组件时进行传值。代码如下：</p>
+<p>slot-test.vue</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">这是子组件的插槽</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">slot</span><span class="o">&gt;</span><span class="n">这是子组件的默认值</span><span class="o">&lt;/</span><span class="n">slot</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;slot-test&quot;</span><span class="p">,</span>
+  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{}</span>
+  <span class="p">},</span>
+  <span class="n">created</span><span class="p">()</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">实例化组件的提示</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;组件被创建&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>子组件在<code class="docutils literal notranslate"><span class="pre">&lt;slot&gt;&lt;/slot&gt;</span></code>元素中的内容是默认值，即当该插槽没有被定义时，其本身会显示的内容。</p>
+<p>如果插槽中显示的内容被定义，则默认内容不会显示。引入该组件的父组件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">slot</span><span class="o">-</span><span class="n">test</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="o">&gt;&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">父组件显示内容</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;&lt;/</span><span class="n">slot</span><span class="o">-</span><span class="n">test</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="kn">import</span> <span class="nn">SlotTest</span> <span class="kn">from</span> <span class="s2">&quot;./slot-test&quot;</span><span class="p">;</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span><span class="n">SlotTest</span><span class="p">},</span>
+  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{}</span>
+  <span class="p">},</span>
+
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>上述代码中引入了子组件slot-test.vue，并且对其中的插槽进行了内容填充，页面最终效果如图:</p>
+<img alt="../_images/image-20220224143549331.png" src="../_images/image-20220224143549331.png" />
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id19"><span class="section-number">8.6. </span>小结</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>我们介绍了大量Vue.js的基础知识，包括渲染、生命周期、模板语法、组件的创建和注册等。</p>
+<p>通过这些学习，我们可以了解什么是Vue.js的组件化、如何创建组件，以及组件的整个生命周期都有哪些函数。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html" class="btn btn-neutral float-left" title="7. Vue.js的模板语法" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html" class="btn btn-neutral float-right" title="9. Vue.js的vue-router库" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

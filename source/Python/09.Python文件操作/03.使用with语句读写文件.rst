@@ -1,0 +1,466 @@
+.. contents::
+   :depth: 3
+..
+
+使用with语句读写文件
+====================
+
+1.with语句介绍
+--------------
+
+with语句为上下文管理器，\ **enter** 和
+\__exit__两个方法实现，使用with操作文件会自动关闭文件句柄，无需额外进行file.close()
+
+2.with工作原理
+--------------
+
+1. 紧跟with后面的语句被求值后，返回对象的“\__enter__()”方法被调用，这个方法的返回值将被赋值给as后面的变量；
+2. 当with后面的代码块全部被执行完之后，将调用前面返回对象的“\__exit__()”方法。
+
+代码演示
+~~~~~~~~
+
+.. code:: python
+
+   class Sample:
+       def __enter__(self):
+           print("in __enter__")
+           return "Foo"
+       def __exit__(self, exc_type, exc_val, exc_tb):
+           print("in __exit__")
+   def get_sample():
+       return Sample()
+   with get_sample() as sample:
+       print("Sample: ", sample)
+
+整个运行过程如下：
+~~~~~~~~~~~~~~~~~~
+
+1. \__enter__()方法被执行；
+2. \__enter__()方法返回的值，在这个例子中是”Foo”，赋值给变量sample；
+3. 执行代码块，打印sample变量的值为”Foo”；
+4. \__exit__()方法被调用；
+
+3.用于替代finally语句清理资源
+-----------------------------
+
+在编写try语句时，finally关键字经常用来做一些资源清理类工作，比如关闭已创建的网络连接：
+
+可以用上下文管理器来替代finally语句。做起来很简单，只要在__exit__里增加需要的回收语句即可：
+
+::
+
+   conn = create_conn(host, port, timeout=None)
+   try:
+       conn.send_text('Hello, world!')
+   except Exception as e:
+       print(f'Unable to use connection: {e}')
+   finally:
+       conn.close()
+
+
+   class create_conn_obj:
+       """创建连接对象，并在退出上下文时自动关闭"""
+
+       def __init__(self, host, port, timeout=None):
+           self.conn = create_conn(host, port, timeout=timeout)
+
+       def __enter__(self):
+           return self.conn
+
+       def __exit__(self, exc_type, exc_val, exc_tb):
+           # 退出管理器时关闭连接
+           self.conn.close()
+           return False
+           
+   with create_conn_obj(host, port, timeout=None) as conn:
+       try:
+           conn.send_text('Hello, world!')
+       except Exception as e:
+           print(f'Unable to use connection: {e}')
+
+4.上下文管理器与with语句
+------------------------
+
+4.1 使用contextmanager装饰器
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+这个类对现有列表进行一系列的修改，但这些修改只有在没发生异常时才会生效，发生了异常，原始列表将保持不变。
+
+.. code:: python
+
+   class ListTransaction(object):
+       def __init__(self, thelist):
+           self.thelist = thelist
+
+       def __enter__(self):
+           self.workingcopy = self.thelist
+           return self.workingcopy
+
+       def __exit__(self, exc_type, exc_val, exc_tb):
+           if exc_type is None:
+               self.thelist[:] = self.workingcopy
+           return False
+
+
+   items = [1, 2, 3]
+   with ListTransaction(items) as working:
+       working.append(4)
+       working.append(5)
+   print(items)
+
+   try:
+       with ListTransaction(items) as working:
+           working.append(6)
+           working.append(7)
+           raise RuntimeError("We're hosed!")
+   except RuntimeError:
+       pass
+
+   print(items)
+
+通过包装生成器函数，contextlib模块，可以更加容易实现自定义上下文管理器。例如：
+
+.. code:: python
+
+   #!/usr/bin/env python
+   from contextlib import contextmanager
+
+
+   @contextmanager
+   def ListTransaction(thelist):
+       print("before..........")
+       workingcopy = list(thelist)
+       yield workingcopy
+       # 仅在没有出现错误时才会修改原始列表
+       thelist[:] = workingcopy
+       print(workingcopy)
+       print("after...........")
+
+
+   mylist = [1, 2, 3]
+   with ListTransaction(mylist) as working:
+       working.append(4)
+       working.append(5)
+       working.append(6)
+
+@contextmanager位于内置模块contextlib下，它可以把任何一个生成器函数直接转换为一个上下文管理器。
+
+举个例子，我在前面实现的自动关闭连接的create_conn_obj上下文管理器，假如用函数来改写，可以简化成下面这样：
+
+.. code:: python
+
+   from contextlib import contextmanager
+
+   @contextmanager
+   def create_conn_obj(host, port, timeout=None):
+       """创建连接对象，并在退出上下文时自动关闭"""
+       conn = create_conn(host, port, timeout=timeout)
+       try:
+           yield conn
+       finally:
+           conn.close()
+
+4.2 使用with处理文件打开
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   ##不推荐
+   f = open("some_file.txt")
+   try:
+     data = f.read()
+     # 其他文件操作..
+   finally:
+     f.close()
+     
+       
+       
+   ##推荐
+   with open("some_file.txt") as f:
+     data = f.read()
+     # 其他文件操作..
+
+4.3 使用with忽视异常(仅限Python 3)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   ##不推荐
+   try:
+     os.remove("somefile.txt")
+   except OSError:
+     pass
+     
+     
+     
+   ##推荐
+   from contextlib import ignored              # Python 3 only
+   with ignored(OSError):
+     os.remove("somefile.txt")
+
+.. code:: python
+
+   class ignore_closed:
+       """忽略已经关闭的连接"""
+
+       def __enter__(self):
+           pass
+
+       def __exit__(self, exc_type, exc_value, traceback):
+           if exc_type == AlreadyClosedError:
+               return True
+           return False
+
+
+   with ignore_closed():
+       close_conn(conn)
+
+4.4 同时打开多个文件
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   with open('log1') as obj1, open('log2') as obj2:
+       pass
+
+4.5 使用with读取文件
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/28 12:51
+   # filename: 处理文件中数据.py
+   def file_hdl(name="test_num.txt"):
+       res = 0  # 累加计数器
+       i = 0  # 行数计数器
+       with open(name,encoding="utf8") as f:
+           # with打开文件后会自动关闭，上下文管理器
+           for line in f:
+               i += 1
+               print("第{}行的数据为:{}".format(i, line.strip()))
+               res += int(line)
+           print("{}文件中数的和为{}".format(name, res))
+
+   file_hdl()
+
+输出信息
+
+::
+
+   第1行的数据为:1
+   第2行的数据为:2
+   第3行的数据为:3
+   第4行的数据为:4
+   第5行的数据为:5
+   第6行的数据为:6
+   第7行的数据为:7
+   第8行的数据为:8
+   第9行的数据为:99
+   第10行的数据为:88
+   第11行的数据为:77
+   第12行的数据为:66
+   第13行的数据为:55
+   第14行的数据为:44
+   test_num.txt文件中数的和为465
+
+4.6 同时开启2个文件修改后改名
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+代码示例
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   import os
+   src_txt = "a.txt"
+   dst_txt = "a_bak.txt"
+   with open(src_txt,"w") as f:
+       f.write("花儿呀。\n"
+               "花儿呀")
+
+   with open(src_txt) as fr,open(dst_txt,"w") as fw:
+       for line in fr:
+           lines = line.replace("花","flower")
+           fw.write(lines)
+
+   os.remove(src_txt)
+   os.rename(dst_txt,src_txt)
+
+4.7 模拟copy文件操作
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/21 18:01
+   # filename: 同时对文件进行读写.py
+
+   # 模拟一个复制文件的操作
+   with open("foo_bak.txt", "r", encoding="utf-8") as file_read:
+       lines = file_read.readlines()
+       print(lines)
+       copy_file = "foo_bak_01.txt"
+       with open(copy_file, "w", encoding="utf-8") as file_write:
+           file_write.writelines(lines)
+           print("文件复制成功")
+
+4.8 模拟copy二进制（图片、音影）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/21 18:01
+   # filename: 同时对文件进行读写.py
+
+   f_name = "a.jpg"
+   # 模拟一个复制文件的操作
+   with open(f_name, "rb", encoding="utf-8") as file_read:
+       lines = file_read.readlines()
+       print(lines)
+       copy_file = "copy.jpg"
+       with open(copy_file, "wb", encoding="utf-8") as file_write:
+           file_write.writelines(lines)
+           print("文件复制成功")
+
+4.9 定义一个类似open函数的上下文管理器
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+代码示例
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   import os
+   import shutil
+   file_info = "hujianli.py"
+   write_info='''#!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   print("test")
+   print()
+   '''
+
+   def create_file(file):
+       if not os.path.exists(file):
+           with open(file,"w") as f:
+               f.write(write_info)
+       else:
+           number = 1
+           Flag = True
+           while Flag:
+               file_info_name = file.split('.')
+               file_name = file_info_name[0] + "_bak" + str(number) +"."+file_info_name[1]
+               if not os.path.exists(file_name):
+                   with open(file) as f1,open(file_name,"w") as f2:
+                       f2.write(f1.read())
+                       Flag = False
+               number +=1
+
+   class FileMgr:
+       '自定义一个打开文件，后自动关闭文件的上下文管理器'
+       def __init__(self,filename):
+           self.filename = filename
+           self.f = None
+
+       def __enter__(self):
+           self.f = open(self.filename,encoding='utf-8')
+           return self.f
+
+       def __exit__(self, exc_type, exc_val, exc_tb):
+           if self.f:
+               self.f.close()
+
+   if __name__ == "__main__":
+       create_file(file_info)
+       with FileMgr(file_info) as f:
+           for line in f.readlines():
+               print(line,end='')
+
+5.文件操作,读写实现用户注册登录
+-------------------------------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/11/10 10:26
+   # filename: 用户注册登录.py
+
+   class UserInfo:
+       def __init__(self):
+           self.__username = None
+           self.__password = None
+
+       def __str__(self):
+           return self.__username
+
+       def login(self):
+           """
+           用户登录
+           :return:
+           """
+           print("--------------------欢迎来到登录界面---------------------")
+           self.__username = input("请输入登录的用户名：")
+           self.__password = input("请输入登录的密码：")
+           with open("user.txt", encoding="utf-8") as rs:
+               info = rs.readlines()
+               for i in info:
+                   user = i.replace("\n", "")
+                   u_p = user.split()
+                   if self.__username == u_p[0] and self.__password == u_p[1]:
+                       print("用户登录成功")
+                       return False
+                   else:
+                       print("用户登录失败")
+                       return True
+
+       def regiested(self):
+           """
+           用户注册
+           :return:
+           """
+           print("---------------------欢迎来到用户注册------------------------")
+           self.__username = input("请输入注册的用户名：")
+           self.__password = input("请输入注册的密码：")
+           if self.__username and self.__password:
+               with open("user.txt", "a", encoding="utf-8") as ws:
+                   ws.write(self.__username + "\t" + self.__password + "\n")
+                   print("注册用户成功！")
+           else:
+               print("用户密码不能为空")
+
+
+   def main():
+       Flag = True
+       hu = UserInfo()
+       hu.regiested()
+       while Flag:
+           Flag = hu.login()
+
+
+   if __name__ == '__main__':
+       main()
+
+6.总结
+------
+
+实际上，在with后面的代码块抛出异常时，exit()方法被执行。开发库时，清理资源，关闭文件等操作，都可以放在exit()方法中。
+
+总之，with-as表达式极大的简化了每次写finally的工作，这对代码的优雅性是有极大帮助的。
+如果有多项，可以这样写：
+
+::
+
+   with open('1.txt') as f1, open('2.txt') as  f2:
+       #do something

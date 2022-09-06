@@ -1,0 +1,93 @@
+.. contents::
+   :depth: 3
+..
+
+字典很多时候是无序的
+====================
+
+从Python3.6开始，字典会保留键值对在添加时所用的顺序。
+
+.. code:: python
+
+   In [7]: baby_names = {    'cat': 'kitten',    'dog': 'puppy',}
+
+   In [8]: print(baby_names)
+   {'cat': 'kitten', 'dog': 'puppy'}
+
+   In [9]: print(baby_names)
+   {'cat': 'kitten', 'dog': 'puppy'}
+
+在Python3.5之前的版本中，\ ``dict``\ 所提供的许多方法都不保证固定的顺序，所以让人觉得好像是随机处理的。
+
+在新版的Python中，这些方法可以按照当初添加键值对的顺序来处理了。
+
+这项变化对Python中那些依赖字典类型及其实现细节的特性产生了很多影响。
+函数的关键字参数，以前是按照近乎随机的顺序出现，现在，这些关键字参数总能保留调用函数时所指定的那套顺序。
+
+.. code:: python
+
+   In [1]: def my_func(**kwargs):
+      ...:     for key, value in kwargs.items():
+      ...:         print(f'{key} = {value}')
+      ...:
+      ...: my_func(goose='gosling', kangaroo='joey')
+      ...:
+      ...: 
+   goose = gosling
+   kangaroo = joey
+
+另外，类也会利用字典来保存这个类的实例所具备的一些数据。
+
+.. code:: python
+
+   In [1]:  class MyClass:
+      ...:     def __init__(self):
+      ...:        self.alligator = "hatchling"
+      ...:        self.elephant = "calf"
+      ...:  a = MyClass()
+      ...: for key,value in a.__dict__.items():
+      ...:     print(f"{key} = {value}")
+      ...:
+   alligator = hatchling
+   elephant = calf
+
+Python不是静态类型的语音，大多数代码都以鸭子类型机制运作（即对象支持什么样的行为，就可以当成什么样的数据使用，而不用执着于它在类体系中的地位）。这种特性可能会产生意想不到的问题。
+
+统计各种小动物的受欢迎程度。我们可以设定一个字典，把每种动物和它得到的票数关联起来。
+
+.. code:: python
+
+   In [2]: votes = {
+      ...:     'otter': 1281,
+      ...:     'polar bear': 587,
+      ...:     'fox': 863,
+      ...: }
+
+   In [3]:
+
+
+   #现在定义一个函数来处理投票数据。用户可以把空的字典传给这个函数，这样的话，它就会把每个动物及其排名放到这个字典中。
+   In [3]: def populate_ranks(votes, ranks):
+      ...:     names = list(votes.keys())
+      ...:     names.sort(key=votes.get, reverse=True)
+      ...:     for i, name in enumerate(names, 1):
+      ...:         ranks[name] = i
+      ...:
+
+   #我们还需要写一个函数查出人气最高的动物。这个函数假定populate_ranks总是会按照升序向字典写入键值对，这样第一个出现在字典里的就应该是排名最靠前的动物。
+   In [4]: def get_winner(ranks):
+      ...:     return next(iter(ranks))
+      ...:
+      ...:
+
+   In [5]: ranks = {}
+      ...: populate_ranks(votes, ranks)
+      ...: print(ranks)
+      ...: winner = get_winner(ranks)
+      ...: print(winner)
+      ...:
+      ...:
+   {'otter': 1, 'fox': 2, 'polar bear': 3}
+   otter
+
+假设现在需求变了，我们想要按照字母顺序在UI中显示。为了实现这种效果，我们用内置的\ ``collections.abc``\ 模块定义这样一个类。这个类的功能和字典一样，而且会按照字母顺序迭代其中的内容。

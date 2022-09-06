@@ -1,0 +1,215 @@
+.. contents::
+   :depth: 3
+..
+
+Go语言实现有限状态机-FSM
+========================
+
+有限状态机又简称 FSM（Finite-State Machine
+的首字母缩写），也可以称为有限状态自动机。
+
+它是为研究有限内存的计算过程和某些语言类而抽象出的一种计算模型。
+有限状态机拥有有限数量的状态，每个状态可以迁移到零个或多个状态，输入字串决定执行哪个状态的迁移。
+
+现实生活中，状态是随处可见的，并且通过不同的状态来做不同的事。比如冷了加衣服、饿了吃饭、困了睡觉等。这里的冷了、饿了、困了是三种不同的状态，并且根据这三个状态的转变驱动了不同行为的产生（加衣服、吃饭和睡觉）。
+
+有限状态机的组成
+有限状态机有两个必要的特点，一是离散的，二是有限的。基于这两点，现实世界上绝大多数事物因为复杂的状态而无法用有限状态机表示。
+
+而描述事物的有限状态机模型的元素由以下组成：
+
+::
+
+   · 状态（State）：事物的状态，包括初始状态和所有事件触发后的状态。
+   · 事件（Event）：触发状态变化或者保持原状态的事件。
+   · 行为或转换（Action/Transition）：执行状态转换的过程。
+   · 检测器（Guard）：检测某种状态要转换成另一种状态的条件是否满足。
+
+1.有限状态机的举例
+------------------
+
+::
+
+   FSM 持有有限多个状态集合，有当前状态、默认状态、接收的外部数据等。
+   并且 FSM 有一系列的行为：启动 FSM、退出 FSM 以及状态转移等。
+
+   State（状态）也会有一系列的行为：
+   进入状态，转移状态等。
+   并且 State 还有动作行为，比如电视机当前频道正在播放西游记，切换频道后就变成了播放封神榜，原理上是一样的。
+
+【示例】下面以游戏中的宠物为例，将这个宠物看做一个 FSM，比如这个宠物每天
+8 点开始挣金币，中午 12 点开始打坐练功，8 点和 12 点就是对这个 FSM
+的输入语句，对应的状态则开始执行，代码如下所示：
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 接口
+   type IFSMState interface {
+       Enter()
+       Exit()
+       CheckTransition(hour int) bool
+       Hour() int
+   }
+
+   // State父struct
+   type FSMState struct{}
+
+   // 进入状态
+   func (this *FSMState) Enter() {
+       //
+   }
+
+   // 退出状态
+   func (this *FSMState) Exit() {
+       //
+   }
+
+   // 状态转移检测
+   func (this *FSMState) CheckTransition(hour int) {
+       //
+   }
+
+   // 打坐
+   type ZazenState struct {
+       hour int
+       FSMState
+   }
+
+   func NewZazenState() *ZazenState {
+       return &ZazenState{hour: 8}
+   }
+
+   func (this *ZazenState) Enter() {
+       fmt.Println("ZazenState: 开始打坐")
+   }
+
+   func (this *ZazenState) Exit() {
+       fmt.Println("Zazenstate: 退出打坐")
+   }
+
+   func (this *ZazenState) Hour() int {
+       return this.hour
+   }
+
+   // 状态转移检测
+   func (this *ZazenState) CheckTransition(hour int) bool {
+       if hour == this.hour {
+           return true
+       }
+       return false
+   }
+
+   // 工作
+   type WorkerState struct {
+       hour int
+       FSMState
+   }
+   func NewWorkerState() *WorkerState {
+       return &WorkerState{hour: 12}
+   }
+   func (this *WorkerState) Enter() {
+       fmt.Println("WorkerState: 开始工作")
+   }
+   func (this *WorkerState) Exit() {
+       fmt.Println("WorkerState: 退出工作")
+   }
+   func (this *WorkerState) Hour() int {
+       return this.hour
+   }
+   // 状态转移检测
+   func (this *WorkerState) CheckTransition(hour int) bool {
+       if hour == this.hour {
+           return true
+       }
+       return false
+   }
+
+   type FSM struct {
+       // 持有状态集合
+       states map[string]IFSMState
+       // 当前状态
+       current_state IFSMState
+       // 默认状态
+       default_state IFSMState
+       // 外部输入数据
+       input_data int
+       // 是否初始化
+       inited bool
+   }
+
+   // 初始化FSM
+   func (this *FSM) Init() {
+       this.Reset()
+   }
+   // 添加状态到FSM
+   func (this *FSM) AddState(key string, state IFSMState) {
+       if this.states == nil {
+           this.states = make(map[string]IFSMState, 2)
+       }
+       this.states[key] = state
+   }
+   // 设置默认的State
+   func (this *FSM) SetDefaultState(state IFSMState) {
+       this.default_state = state
+   }
+   // 转移状态
+   func (this *FSM) TransitionState() {
+       nextState := this.default_state
+       input_data := this.input_data
+       if this.inited {
+           for _, v := range this.states {
+               if input_data == v.Hour() {
+                   nextState = v
+                   break
+               }
+           }
+       }
+       if ok := nextState.CheckTransition(this.input_data); ok {
+           if this.current_state != nil {
+               // 退出前一个状态
+               this.current_state.Exit()
+           }
+           this.current_state = nextState
+           this.inited = true
+           nextState.Enter()
+       }
+   }
+   // 设置输入数据
+   func (this *FSM) SetInputData(inputData int) {
+       this.input_data = inputData
+       this.TransitionState()
+   }
+   // 重置
+   func (this *FSM) Reset() {
+       this.inited = false
+   }
+   func main() {
+       zazenState := NewZazenState()
+       workerState := NewWorkerState()
+       fsm := new(FSM)
+       fsm.AddState("ZazenState", zazenState)
+       fsm.AddState("WorkerState", workerState)
+       fsm.SetDefaultState(zazenState)
+       fsm.Init()
+       fsm.SetInputData(8)
+       fsm.SetInputData(12)
+       fsm.SetInputData(12)
+       fsm.SetInputData(8)
+       fsm.SetInputData(12)
+   }
+
+   /*
+   ZazenState: 开始打坐
+   Zazenstate: 退出打坐
+   WorkerState: 开始工作
+   WorkerState: 退出工作
+   WorkerState: 开始工作
+   WorkerState: 退出工作
+   ZazenState: 开始打坐
+   Zazenstate: 退出打坐
+   WorkerState: 开始工作
+    */

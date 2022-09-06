@@ -1,0 +1,285 @@
+.. contents::
+   :depth: 3
+..
+
+通过Telnet和SSH远程控制主机
+===========================
+
+学习大纲
+
+-  ``telnetlib`` 模块。
+-  ``subprocess`` 模块。
+-  使用\ ``fabric`` 模块执行SSH。
+-  使用\ ``paramiko`` 模块执行SSH。
+-  使用\ ``netmiko`` 模块执行SSH。
+
+telnetlib模块
+-------------
+
+Telnet是一种允许用户与远程服务器通信的网络协议，它经常被网络管理员用来远程访问和管理设备。在终端中运行Telnet命令，并给出远程服务器的IP地址或主机名，即可访问远程设备。
+
+Telnet基于TCP，默认端口号为23。首先请确保它已安装在我们的系统上，如果没有安装，运行以下命令进行安装
+
+.. code:: shell
+
+   $ sudo apt-get install telnetd
+
+Telnet连接远程设备或路由器之前，请确保已正确配置它们，如果没有，则可以在路由器终端中运行以下命令进行基本配置。
+
+``telnet_example.py``
+
+.. code:: python
+
+   import telnetlib
+   import getpass
+   import sys
+
+
+   HOST_IP = "your host ip address"
+   host_user = input("Enter your telnet username: ")
+   password = getpass.getpass()
+   t = telnetlib.Telnet(HOST_IP)
+   t.read_until(b"Username:")
+   t.write(host_user.encode("ascii") + b"\n")
+   if password:
+       t.read_until(b"Password:")
+       t.write(password.encode("ascii") + b"\n")
+   t.write(b"enable\n")
+   t.write(b"enter_remote_device_password\n")          #远程设备的密码
+   t.write(b"conf t\n")
+   t.write(b"int loop 1\n")
+   t.write(b"ip add 10.1.1.1 255.255.255.255\n")
+   t.write(b"int loop 2\n")
+   t.write(b"ip add 20.2.2.2 255.255.255.255\n")
+   t.write(b"end\n")
+   t.write(b"exit\n")
+   print(t.read_all().decode("ascii") )
+
+上面的示例程序使用\ ``telnetlib``
+模块访问和配置了Cisco路由器。首先从用户那里获取用户名和密码，以初始化与远程设备的Telnet连接。建立连接后，在远程设备上进行了进一步配置。远程登录后，用户将能够访问远程服务器或设备，但是这个Telnet协议有一个非常严重的缺点，即所有数据，包括用户名和密码都是以明文方式通过网络发送的，这会有安全风险。因此，现在我们很少使用Telnet，并且它被一个非常安全的协议Secure
+Shell所取代，简称SSH。
+
+SSH
+---
+
+SSH是一种网络协议，用于远程访问，并管理一个或多个设备。SSH使用公钥加密来实现安全性。Telnet和SSH之间的重要区别在于SSH使用加密，这意味着通过网络传输的所有SSH数据都可以防止未经授权的实时拦截。
+
+访问远程服务器或设备的用户需要安装SSH客户端。在终端中运行以下命令来安装SSH。
+
+.. code:: shell
+
+   $ sudo apt install ssh
+
+Python中的不同模块来执行SSH，这些模块分别是\ ``subprocess``
+、\ ``fabric`` 、\ ``Netmiko`` 和\ ``Paramiko``
+
+subprocess模块
+~~~~~~~~~~~~~~
+
+Popen类用于创建和管理进程，使用此类可以让开发人员处理不太常见的情况，子程序将在新进程中被执行完成。在UNIX/Linux中执行子程序，该类会使用\ ``os.execvp()``
+函数。而在Windows中执行子程序，该类将使用\ ``CreateProcess()`` 函数。
+
+我们来看一下\ ``subprocess.Popen()`` 的一些常用参数。
+
+.. code:: python
+
+   class subprocess.Popen(args, bufsize=0, executable=None,stdin=None,stdout=None, close_fds=False, shell=False, universal_newlines=False,
+                          stderr=None, preexec_fn=None,cwd=None, env=None, startupinfo=None, creationflags=0)
+
+各个参数如下所示。
+
+-  ``args`` ：它可以是一系列程序参数或单个字符串。如果\ ``args``
+   是一个序列，则\ ``args`` 中的第一项将作为程序被执行。如果\ ``args``
+   是一个字符串，则会将\ ``args`` 作为序列传递。
+-  ``bufsize`` ：如果\ ``bufsize``
+   为0（默认情况下为0），则表示无缓冲。如果\ ``bufsize``
+   为1，则表示行缓冲。如果\ ``bufsize``
+   是任何其他正值，则使用给定大小的缓冲区。如果\ ``bufsize``
+   是任何其他负值，则表示完全缓冲。
+-  ``executable`` ：指定替换程序。
+-  ``stdin`` 、\ ``stdout`` 和\ ``stderr``
+   ：这些参数分别定义标准输入、标准输出和标准错误。
+-  ``close_fds`` ：在Linux中，如果\ ``close_fds`` 为\ ``True``
+   ，则程序在执行子进程之前将关闭除0、1和2之外的所有文件描述符。在Windows中，如果\ ``close_fds``
+   为\ ``True`` ，则子进程将不继承句柄。
+-  ``shell：`` 它表示是否使用Shell执行程序，默认为\ ``False``
+   。如果\ ``shell`` 为\ ``True`` ，则会将\ ``args``
+   作为字符串传递。在Linux中，如果\ ``shell`` 为\ ``True``
+   ，则Shell程序默认为\ ``/bin/sh`` 。如果\ ``args``
+   是一个字符串，则该字符串指定要通过Shell执行的命令。
+-  ``preexec_fn`` ：设置可调用对象，将在执行子进程之前调用。
+-  ``env`` ：如果值不是None，则映射将为新进程定义环境变量。
+-  ``universal_newlines`` ：如果值为\ ``True`` ，则\ ``stdout``
+   和\ ``stderr`` 将以自动换行模式打开文本文件。
+
+subprocess.Popen()
+的示例程序。创建一个脚本，命名为\ ``ssh_using_sub.py``.
+
+.. code:: python
+
+   import subprocess
+   import sys
+
+   HOST="your host username@host ip"
+   COMMAND= "ls"
+   ssh_obj = subprocess.Popen(["ssh", "%s" % HOST, COMMAND],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+   result = ssh_obj.stdout.readlines()
+   if result == []:
+       err = ssh_obj.stderr.readlines()
+       print(sys.stderr, "ERROR: %s" % err)
+   else:
+       print(result)
+
+上面的示例程序首先导入了subprocess模块，然后声明了要建立SSH连接的远程设备地址，之后给出了一个通过远程设备执行的简单命令。完成这些设置后，这些信息将被传递给\ ``subprocess.Popen()``
+函数，此函数以该函数内定义的参数创建与远程设备的连接。建立SSH连接后，执行事先定义的命令并返回结果，最后在终端上输出执行SSH的结果。
+
+使用fabric模块执行SSH
+~~~~~~~~~~~~~~~~~~~~~
+
+fabric是Python库中的一个模块，也是一个命令行工具。我们可以用它通过网络进行系统管理和应用程序部署，也可以通过SSH执行Shell命令。
+
+要使用fabric模块，需要使用以下命令安装它。
+
+.. code:: shell
+
+   $ pip3 install fabric3
+
+创建一个脚本，命名为\ ``fabfile.py`` ，并写入以下代码。
+
+.. code:: python
+
+   from fabric.api import *
+
+   env.hosts=["host_name@host_ip"]
+   env.password='your password'
+
+   def dir():
+       run('mkdir fabric')
+       print('Directory named fabric has been created on your host network')
+   def diskspace():
+       run('df')
+
+运行脚本程序，如下所示。
+
+::
+
+   student@ubuntu:~$ fab dir
+
+上面的示例程序首先导入了\ ``fabric.api``
+模块，然后设置主机名和密码，用于与服务器建立连接。之后，设置了不同的SSH任务。接下来执行该程序，这里使用了\ ``fab``
+命令（\ ``fab dir`` ），而不是Python 3 ``fabfile.py``
+。最后会根据\ ``fabfile.py``
+脚本执行任务。在这个例子中，程序执行了\ ``dir``
+任务，它在远程设备上创建了一个名为\ ``fabric``
+的目录。我们也可以在Python文件中添加特定任务。其他任务也可以使用\ ``fabric``\ 模块的\ ``fab``
+命令执行。
+
+使用paramiko模块执行SSH
+~~~~~~~~~~~~~~~~~~~~~~~
+
+``paramiko``
+是一个实现了SSHv2协议的模块，用于与远程设备建立安全连接。同时，\ ``paramiko``
+也是一个关于SSH的纯Python接口。
+
+在使用\ ``paramiko``
+之前，请确保已在系统上正确安装。如果未安装，我们可以在终端中运行以下命令来安装。
+
+.. code:: shell
+
+   $ sudo pip3 install paramiko
+
+``paramiko``
+支持基于密码和基于密钥对的身份验证，以实现与服务器的安全连接。
+
+创建一个脚本，命名为\ ``pmiko.py`` ，并写入以下代码。
+
+.. code:: python
+
+   import paramiko
+   import time
+
+
+   ip_address = "host_ip_address"
+   usr = "host_username"
+   pwd = "host_password"
+
+   c = paramiko.SSHClient()
+   c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   c.connect(hostname=ip_address,username=usr,password=pwd)
+   print("SSH connection is successfully established with ", ip_address)
+   rc = c.invoke_shell()
+
+   for n in range (2,6):
+       print("Creating VLAN " + str(n))
+       rc.send("vlan database\n")
+       rc.send("vlan " + str(n) +  "\n")
+       rc.send("exit\n")
+       time.sleep(0.5)
+   time.sleep(1)
+   output = rc.recv(65535)
+   print(output)
+   c.close
+
+上面的示例程序首先导入了\ ``paramiko``
+模块，然后定义了连接远程设备所需的SSH凭据。提供凭据后，创建了一个\ ``paramiko.SSHclient()``
+的实例’c’，它是与远程设备建立连接并执行命令或操作的主要客户端，这里的\ ``SSHClient``
+对象允许我们使用\ ``connect()``
+函数建立远程连接。然后，设置了\ ``paramiko``
+连接策略，因为默认情况下，\ ``paramiko. SSHclient()``
+将SSH策略设置为拒绝状态，这表示在没有任何验证的情况下拒绝任何SSH连接。在这个程序中，我们通过使用\ ``AutoAddPolicy()``
+函数消除了SSH连接不上的可能性，该函数自动添加服务器的主机密钥而不显示提示。这里将此策略用于测试目的，但出于安全考虑，这在生产环境中不是一个好的选择。
+
+建立SSH连接后，我们可以在远程设备上执行所需的任何配置或操作。在程序中，我们在远程设备上创建了一些VLAN。创建VLAN后，程序关闭了连接。
+
+使用netmiko模块执行SSH
+~~~~~~~~~~~~~~~~~~~~~~
+
+``netmiko`` 模块是\ ``paramiko`` 的进阶版本，它是一个基于\ ``paramiko``
+的\ ``multi_vendor`` 模块。\ ``netmiko``
+简化了与远程设备的SSH连接，并对远程设备执行了特殊操作。在对远程设备或多层路由器进行SSH连接之前，请确保它们已正确配置，如果没有，则我们可以通过\ ``paramiko``
+中提到的命令进行基本配置。
+
+现在我们来看一个示例程序。创建一个脚本，命名为\ ``nmiko.py``
+
+.. code:: python
+
+   from netmiko import ConnectHandler
+
+
+   remote_device={
+       'device_type': 'cisco_ios',
+       'ip':  'your remote_device ip address',
+       'username': 'username',
+       'password': 'password',
+   }
+
+   remote_connection = ConnectHandler(**remote_device)
+   #net_connect.find_prompt()
+
+   for n in range (2,6):
+       print("Creating VLAN " + str(n))
+       commands = ['exit','vlan database','vlan ' + str(n), 'exit']
+       output = remote_connection.send_config_set(commands)
+       print(output)
+       command = remote_connection.send_command('show vlan-switch brief')
+       print(command)
+
+运行脚本程序，如下所示。
+
+::
+
+   student@ubuntu:~$ python3 nmiko.py
+
+上面的示例程序使用\ ``netmiko`` 模块而不是\ ``paramiko``
+来执行SSH。首先从\ ``netmiko`` 模块中导入了\ ``ConnectHandler``
+，然后通过传入一个包含设备信息的字典来建立与远程网络设备的SSH连接。在程序中，这个字典是\ ``remote_device``
+。建立连接后，通过使用\ ``send_config_set()``\ 函数执行配置命令以创建多个VLAN。
+
+总结
+----
+
+我们学习了Telnet和SSH，还学习了不同的Python模块，如\ ``telnetlib``
+、\ ``subprocess`` 、\ ``fabric`` 、\ ``netmiko`` 和\ ``paramiko``
+，而且还使用它们执行Telnet和SSH。
+
+SSH使用公钥加密来实现安全性，比Telnet更安全。

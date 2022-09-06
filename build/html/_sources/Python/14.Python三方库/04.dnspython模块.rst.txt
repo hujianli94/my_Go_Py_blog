@@ -1,0 +1,125 @@
+.. contents::
+   :depth: 3
+..
+
+DNS处理模块dnspython
+====================
+
+源码安装
+--------
+
+::
+
+   首先介绍dnspython 模块的安装， 这里采用源码的安装方式，最新版本为1.9.4,如下：
+   wget http://www.dnspython.org/kits/1.9.4/dnspython-1.9.4.tar.gz
+
+   tar zxvf dnspython-1.9.4.tar.gz 
+   cd dnspython-1.9.4
+   python setup.py install
+   python -c "import dns"
+
+pip安装
+-------
+
+``pip install dnspython``
+
+eg
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/4/17 12:43
+   # filename: test.py
+   import dns.resolver
+
+   domain = "www.baidu.com"
+   A_domain_list = []
+   A = dns.resolver.query(domain, 'A')
+   for i in A.response.answer:
+       for j in i:
+           if j.rdtype == 1:
+               A_domain_list.append(j)
+   for index, A_jilu in enumerate(A_domain_list):
+       print(domain + "的第{}条A记录为：{}".format(index, A_jilu))
+
+
+
+
+   # （2）MX记录，邮件交换记录，定义邮件服务器的域名
+   import dns.resolver
+
+   mx = dns.resolver.query('163.com', 'MX')
+   for i in mx.response.answer:
+       for j in i:
+           print(j)
+
+eg
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/4/17 11:03
+   # filename: Dns模块.py
+
+   # 检测ip域名是否正常
+   # 1)实现对域名解析，然后将A记录追加到list
+   # 2)对IP列表中的ip实现HTTP级别的探测
+
+   import os
+   import dns.resolver
+   import socket
+
+   list_ip = []
+   appdomain = "www.baidu.com"  # 定义域名
+
+
+   def get_ip_list(domain=""):
+       try:
+           A = dns.resolver.query(domain, "A")
+       except Exception as e:
+           print("dns resolver error: " + str(e))
+           return
+       for i in A.response.answer:
+           for j in i.items:
+               if j.rdtype == 1:
+                   list_ip.append(j)
+       return True
+
+
+   def checkip(address, port=80):
+       s = socket.socket()
+       print('Attempting to connect to %s on port %s' % (address, port))
+       try:
+           s.connect((address, port))
+           print('Connected to %s on port %s status                  【OK】' % (address, port))
+           print()
+           return True
+       except socket.error as e:
+           print('Connection to %s on port %s 【failed】: %s' % (address, port, e))
+           return False
+       finally:
+           s.close()
+
+
+   if __name__ == '__main__':
+       if get_ip_list(appdomain) and len(list_ip) > 0:
+           for i in list_ip:
+               checkip(str(i))
+       else:
+           print("DNS resolver error........")
+
+输出结果如下：
+
+::
+
+   Attempting to connect to 220.181.111.37 on port 80
+   Connected to 220.181.111.37 on port 80 status                  【OK】
+
+   Attempting to connect to 220.181.112.244 on port 80
+   Connected to 220.181.112.244 on port 80 status                  【OK】
+
+`http.client模块参考 <https://docs.python.org/3.4/library/http.client.html>`__

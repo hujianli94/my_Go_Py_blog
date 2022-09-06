@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>16. Python 进程和线程 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="16.1. 进程" href="01.%E8%BF%9B%E7%A8%8B.html" />
+    <link rel="prev" title="15.7. 07.创建一个简单的REST接口" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/07.%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84REST%E6%8E%A5%E5%8F%A3.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">16. Python 进程和线程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html">16.1. 进程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html">16.2. 线程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html">16.3. 协程与微线程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html">16.4. Python程序中concurrent模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB.html">16.5. 多线程和多进程的区别</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E5%88%86%E5%B8%83%E5%BC%8F%E8%BF%9B%E7%A8%8B.html">16.6. 分布式进程</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+      <li><span class="section-number">16. </span>Python 进程和线程</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/16.Python线程和进程/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="python">
+<h1><span class="section-number">16. </span>Python 进程和线程<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html">16.1. 进程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#multiprocessing">16.1.1. multiprocessing模块</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#join">join()方法的使用</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#process">16.1.2. Process子类创建进程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#id2">16.1.3. 进程同步</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#multiprocess-lock">1.multiprocess.Lock：锁</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#multiprocess-semaphore">2. multiprocess.Semaphore：信号量</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#multiprocess-event">3. multiprocess.Event</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#pool">16.1.4. 使用进程池Pool创建进程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#id3">进程池扫描主机端口实例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#id4">16.1.5. 进程间通信</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#queue">Queue多进程队列的使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html#pipe">Pipe常用来在两个进程间进行通信，</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html">16.2. 线程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id2">16.2.1. 线程初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#thread">16.2.2. 调用Thread类来创建多线程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id3">代码示例1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id4">代码示例2</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id5">16.2.3. 继承Thread类创建多线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#deamon">16.2.4. 演示deamon属性的作用 后台线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id6">16.2.5. 线程管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id7">等待线程结束</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id8">线程停止</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id9">16.2.6. 线程安全</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id10">16.2.7. 什么是互斥锁</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#lock">Lock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#rlock">RLock</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id13">16.2.8. 使用信号量同步多线程之间的执行顺序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id14">16.2.9. 创建定时触发程序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id15">16.2.10. 循环定时触发程序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id16">16.2.11. 设置定时间隔和结束定时器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id17">16.2.12. 使用线程池提升运行效率</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id18">线程池实现主机端口扫描实例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id19">16.2.13. 使用队列实现线程间通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#condition">16.2.14. 使用Condition实现线程间通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#event">16.2.15. 使用Event实现线程间通信</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html#id20">模拟人物对话</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html">16.3. 协程与微线程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html#id2">16.3.1. 协程的实现步骤</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html#id3">16.3.2. 使用协程实现任务提交和结果接收</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html#id4">16.3.3. 使用协程批量修改文件扩展名</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html#geventpython">16.3.4. gevent库为Python提供了比较完善的协程支持</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html">16.4. Python程序中concurrent模块</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html#concurrent">16.4.1. concurrent模块的介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html#id1">16.4.2. 基本方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html#id2">16.4.3. 进程池和线程池</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html#id3">进程池</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html#id4">线程池</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html#map">Map的用法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html#id5">同步和异步</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html#id6">回调函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html#id7">例子</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB.html">16.5. 多线程和多进程的区别</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06.%E5%88%86%E5%B8%83%E5%BC%8F%E8%BF%9B%E7%A8%8B.html">16.6. 分布式进程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="06.%E5%88%86%E5%B8%83%E5%BC%8F%E8%BF%9B%E7%A8%8B.html#id2">16.6.1. 分布式进程案例1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.%E5%88%86%E5%B8%83%E5%BC%8F%E8%BF%9B%E7%A8%8B.html#id3">16.6.2. 分布式进程案例2</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/07.%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84REST%E6%8E%A5%E5%8F%A3.html" class="btn btn-neutral float-left" title="15.7. 07.创建一个简单的REST接口" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="01.%E8%BF%9B%E7%A8%8B.html" class="btn btn-neutral float-right" title="16.1. 进程" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>21.2. Python的网络请求 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="21.3. 爬虫原理" href="02.%E7%88%AC%E8%99%AB%E5%8E%9F%E7%90%86%E5%92%8C%E7%BD%91%E9%A1%B5%E7%BB%93%E6%9E%84.html" />
+    <link rel="prev" title="21.1. 基础语法复习" href="01.%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95%E5%A4%8D%E4%B9%A0.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">21. Python网络爬虫</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95%E5%A4%8D%E4%B9%A0.html">21.1. 基础语法复习</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">21.2. Python的网络请求</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#urllib">21.2.1. urllib</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#downloader">21.2.2. Downloader下载图片</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">21.2.3. 总结下载图片的几种方式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#urllib3">21.2.4. urllib3</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#requests">21.2.5. requests</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">21.2.6. 网络超时</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ip">21.2.7. 代理IP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cookie">21.2.8. cookie处理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">21.2.9. 伪装成浏览器</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">21.2.10. 获取网页源码的函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">21.2.11. 几个图片爬取的示例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">21.2.12. 根据输入爬取百度图片</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">21.2.13. 图片爬虫</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">21.2.14. 链接爬虫</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%88%AC%E8%99%AB%E5%8E%9F%E7%90%86%E5%92%8C%E7%BD%91%E9%A1%B5%E7%BB%93%E6%9E%84.html">21.3. 爬虫原理</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%88%AC%E8%99%AB%E7%A8%8B%E5%BA%8F.html">21.4. 我的第一个爬虫程序</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F.html">21.5. 正则表达式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.re%E6%A8%A1%E5%9D%97%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95.html">21.6. re模块的常用方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.Lxml%E5%BA%93%E5%92%8CXpath%E8%AF%AD%E6%B3%95.html">21.7. Lxml库和Xpath语法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E4%B8%89%E7%A7%8D%E7%88%AC%E8%99%AB%E6%A8%A1%E5%BC%8F%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94.html">21.8. 3种爬虫模式性能对比</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E4%BD%BF%E7%94%A8API.html">21.9. 使用API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%98%E5%82%A8.html">21.10. 数据的存储</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%88%AC%E8%99%AB.html">21.11. 多进程爬虫</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BD.html">21.12. 异步加载</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.%E8%A1%A8%E5%8D%95%E4%BA%A4%E4%BA%92%E4%B8%8E%E6%A8%A1%E6%8B%9F%E7%99%BB%E5%BD%95.html">21.13. 表单交互与模拟登陆</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.Selenium%E6%A8%A1%E6%8B%9F%E6%B5%8F%E8%A7%88%E5%99%A8.html">21.14. Selenium模拟浏览器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.%E6%89%8B%E5%86%99Python%E7%88%AC%E8%99%AB.html">21.15. 手写python爬虫</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.Python%E7%88%AC%E8%99%AB%E9%A1%B9%E7%9B%AE%E5%90%88%E9%9B%86.html">21.16. python爬虫项目合集</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E4%B8%AD%E5%9B%BD%E5%A4%A9%E6%B0%94%E7%BD%91%E5%9B%BE%E7%89%87.html">21.17. 案例：爬取中国天气网图片</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E5%B0%8F%E8%AF%B4.html">21.18. 案例：爬取小说</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1TOP100%E6%8E%92%E8%A1%8C.html">21.19. 案例：爬取猫眼电影TOP100排行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E4%BD%BF%E7%94%A8BeautifulSoup%E7%88%AC%E5%8F%96%E7%A7%9F%E6%88%BF%E4%BF%A1%E6%81%AF.html">21.20. 使用BeautifulSoup爬取租房信息</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E7%B3%97%E4%BA%8B%E7%99%BE%E7%A7%91%E5%86%85%E5%AE%B9.html">21.21. 爬取糗事百科内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E7%BA%B3%E6%96%AF%E8%BE%BE%E5%85%8B%E8%82%A1%E7%A5%A8%E6%95%B0%E6%8D%AE.html">21.22. 案例：爬取纳斯达克股票数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%82%A1%E7%A5%A8%E7%BD%91%E7%AB%99%E6%95%B0%E6%8D%AE%E8%BD%AC%E4%B8%BAjson.html">21.23. 案例：爬取股票网站数据转为json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%B1%86%E7%93%A3TOP250%E7%9A%84%E7%94%B5%E5%BD%B1%E5%92%8C%E4%B9%A6%E7%B1%8D.html">21.24. 案例：爬取豆瓣TOP250的电影和书籍</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E8%B5%B7%E7%82%B9%E4%B8%AD%E6%96%87%E7%BD%91%E6%95%B0%E6%8D%AE%E5%AD%98%E5%88%B0excel%E4%B8%AD.html">21.25. 案例：爬取起点中文网数据存到excel中</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E9%85%B7%E7%8B%97TOP500%E7%9A%84%E6%95%B0%E6%8D%AE.html">21.26. 爬取酷狗TOP500的数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%88%AC%E5%8F%96%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1%E4%BF%A1%E6%81%AF%28Ajax%29.html">21.27. 案例：爬取今日头条信息(Ajax)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">21. </span>Python网络爬虫</a> &raquo;</li>
+      <li><span class="section-number">21.2. </span>Python的网络请求</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/22.Python网络爬虫/01_1.Python的网络请求.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#python" id="id15">Python的网络请求</a></p>
+<ul>
+<li><p><a class="reference internal" href="#urllib" id="id16">urllib</a></p>
+<ul>
+<li><p><a class="reference internal" href="#python2python3urllib" id="id17">python2和python3的urllib区别</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id18">获取服务响应信息</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#downloader" id="id19">Downloader下载图片</a></p>
+<ul>
+<li><p><a class="reference internal" href="#request" id="id20">使用request下载图片</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id21">使用urllib下载图片</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id3" id="id22">总结下载图片的几种方式</a></p></li>
+<li><p><a class="reference internal" href="#urllib3" id="id23">urllib3</a></p></li>
+<li><p><a class="reference internal" href="#requests" id="id24">requests</a></p>
+<ul>
+<li><p><a class="reference internal" href="#requests-get" id="id25">下载网页使用requests.get()方法</a></p></li>
+<li><p><a class="reference internal" href="#response" id="id26">认识Response对象</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id27">搜索页特定内容</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id28">Request伪装成浏览器</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id29">存储下载网页</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id7" id="id30">网络超时</a></p></li>
+<li><p><a class="reference internal" href="#ip" id="id31">代理IP</a></p></li>
+<li><p><a class="reference internal" href="#cookie" id="id32">cookie处理</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id33">伪装成浏览器</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id34">获取网页源码的函数</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id35">几个图片爬取的示例</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id11" id="id36">下载搜狗图片示例</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id12" id="id37">根据输入爬取百度图片</a></p></li>
+<li><p><a class="reference internal" href="#id13" id="id38">图片爬虫</a></p></li>
+<li><p><a class="reference internal" href="#id14" id="id39">链接爬虫</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="python">
+<h1><a class="toc-backref" href="#id15"><span class="section-number">21.2. </span>Python的网络请求</a><a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h1>
+<section id="urllib">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">21.2.1. </span>urllib</a><a class="headerlink" href="#urllib" title="Permalink to this headline">¶</a></h2>
+<p>Python 的urllib 库其中包含了如下4 个模块。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>urllib.request 模块：用于打开和读写URL 资源。
+urllib.error 模块：包含了由urllib. request 引发的异常。
+urllib.parse 模块：用于解析URL 。
+urllib.robotparser 模块：分析robots.txt 文件
+
+在访问互联网资源时主要使用的模块是urllib.request 、urllib.parse 和urllib.error ，
+其中最核心的是urllib.request 模块
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>在urllib.request 模块中访问互联网资源
+主要使用urllib.request.urlopen() 函数和
+urllib.request.Request 对象，
+urllib .request. urlopen() 函数可以用于简单的网络资访问，
+而urllib.request.Request 对象可以访问复杂网络资源。
+
+urllib.request.urltetrieve()函数可以把对应的文件下载到本地
+</pre></div>
+</div>
+<p>下载文件</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="s2">&quot;https://mbd.baidu.com&quot;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;test.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>python2和python3的Urllib库的区别：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python2X  中 import urlparse ------ python3X 使用 import urllib.parse
+python2X  中 import urllib2 ------ python3X 使用 import urllib.request,urllib.error
+python2X  中 import urllib ------ python3X 使用 import urllib.request,urllib.error，urllib.parse
+python2X  中 import urllib2.urlopen ------ python3X 使用 import urllib.request.urlopen
+python2X  中 urllib.quote ------ python3X 使用 import urllib.request.quote
+python2X  中 urllib2.Request ------ python3X 使用 import urllib.request.Request
+python2X  中 cookielib.CookieJar------ python3X 使用 http.CookieJar
+python2X  中 import urllib2.urlencode ------ python3X 使用 import urllib.parse.urlencode
+</pre></div>
+</div>
+<section id="python2python3urllib">
+<h3><a class="toc-backref" href="#id17">python2和python3的urllib区别</a><a class="headerlink" href="#python2python3urllib" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/19 15:03</span>
+<span class="c1"># filename: urllib-urlopen函数.py</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">#高级用法</span>
+<span class="sd">import urllib.request</span>
+
+<span class="sd">response = urllib.request.urlopen(&quot;http://www.python.org&quot;)</span>
+<span class="sd">print(response.read().decode(&#39;utf-8&#39;))</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># python3</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;http://www.python.org&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>              <span class="c1">#200</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">getheaders</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">&#39;Server&#39;</span><span class="p">))</span>     <span class="c1">#nginx</span>
+
+
+
+<span class="c1">#python2</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">import urllib2</span>
+<span class="sd">response = urllib2.urlopen(&quot;http://www.python.org&quot;)</span>
+<span class="sd">print(response.status)              #200</span>
+<span class="sd">print(response.getheaders())</span>
+<span class="sd">print(response.getheader(&#39;Server&#39;))     #nginx</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>代码示例：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 导入urllib</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="c1"># 打开URL</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s1">&#39;https://movie.douban.com/&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="c1"># 读取返回的内容</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
+<span class="c1"># 写入txt</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;code1.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/5/22 14:03</span>
+<span class="c1"># filename: urllib模块.py</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+<span class="c1">#使用urlopen()函数打开网站。使用with as代码块自动管理资源释放</span>
+<span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;http://www.sina.com.cn/&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+    <span class="c1">#读取数据，该数据是字节序列数据</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="c1"># 将字节序列数据转换为字符串</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>urllib.request.urlopen()函数可以很轻松地打开一个网站，读取网页信息。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+
+<span class="c1"># urlopen()函数既可以打开对象，也可以是字符串</span>
+<span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s2">&quot;http://fanyi.baidu.com&quot;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1">#打开字符串</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;http://fanyi.baidu.com&quot;</span><span class="p">)</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h3><a class="toc-backref" href="#id18">获取服务响应信息</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<section id="get">
+<h4>发送get请求<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/24 14:17</span>
+<span class="c1"># filename: 获取服务器的响应信息.py</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;https://fanyi.baidu.com/&quot;</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="c1"># 返回请求HTTP后的状态，reason返回未被响应的原因</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status:&quot;</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
+
+<span class="c1"># 返回HTTP响应的头信息</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">getheaders</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/24 14:23</span>
+<span class="c1"># filename: urllib中Response对象的一些方法.py</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+
+<span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s2">&quot;https://fanyi.baidu.com/&quot;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+
+<span class="c1">#获取url地址</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;geturl打印信息:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">geturl</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+<span class="c1">#获取响应信息</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;info打印信息;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">info</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="c1">#获取响应HTTP状态码</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;getcode打印信息:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">getcode</span><span class="p">()))</span>
+</pre></div>
+</div>
+<p>获得静态数据</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/5/22 16:27</span>
+<span class="c1"># filename: 获得静态数据.py</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://q.stock.sohu.com/cn/bk_4188.shtml&quot;</span>
+<span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">htmlstr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;gbk&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">htmlstr</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="post">
+<h4>发送post网络请求<a class="headerlink" href="#post" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>  <span class="c1"># 导入解析模块</span>
+
+<span class="c1"># 创建参数</span>
+<span class="n">data</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">({</span><span class="s2">&quot;word&quot;</span><span class="p">:</span> <span class="s2">&quot;hello&quot;</span><span class="p">}),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+<span class="c1"># 发送post网络请求</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;http://httpbin.org/post&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="downloader">
+<h2><a class="toc-backref" href="#id19"><span class="section-number">21.2.2. </span>Downloader下载图片</a><a class="headerlink" href="#downloader" title="Permalink to this headline">¶</a></h2>
+<p>下载并保存到文件的完整过程如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1．调用 requests.get()下载该文件。
+2．用&#39;wb&#39;调用 open()，以写二进制的方式打开一个新文件。
+3．利用 Respose 对象的 iter_content()方法做循环。
+4．在每次迭代中调用 write()，将内容写入该文件。
+5．调用 close()关闭该文件。
+</pre></div>
+</div>
+<section id="request">
+<h3><a class="toc-backref" href="#id20">使用request下载图片</a><a class="headerlink" href="#request" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/22 22:46</span>
+<span class="c1"># filename: web下载.py</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://cdn.fuhao321.com/uploads/1811/1-1Q12G04221108.jpg&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">方式1</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;image.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="mi">100000</span><span class="p">):</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">方式2</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># if response.status_code == 200:</span>
+<span class="c1">#     code_image = response.content</span>
+<span class="c1">#     with open(&quot;image.jpg&quot;, &quot;wb&quot;) as f:</span>
+<span class="c1">#         f.write(code_image)</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3><a class="toc-backref" href="#id21">使用urllib下载图片</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/5/22 14:08</span>
+<span class="c1"># filename: urlib模块2.py</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.cncrk.com/up/1801/201801051228459384.jpg&quot;</span>
+<span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">f_name</span> <span class="o">=</span> <span class="s2">&quot;download.png&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_name</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;下载文件成功....&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">writeImage</span><span class="p">(</span><span class="n">link</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        作用：将html内容写入到本地</span>
+<span class="sd">        link：图片连接</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#print &quot;正在保存 &quot; + filename</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span> <span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36&quot;</span><span class="p">}</span>
+    <span class="c1"># 文件写入</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+    <span class="c1"># 图片原始数据</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="c1"># 取出连接后10位做为文件名</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">link</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>
+    <span class="c1"># 写入到本地磁盘文件内</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s2">&quot;已经成功下载 &quot;</span><span class="o">+</span> <span class="n">filename</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">21.2.3. </span>总结下载图片的几种方式</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 方式1</span>
+<span class="c1"># filename: 01.图片文件下载到本地-方式1.py</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+
+<span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+    <span class="s2">&quot;https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1565931658646&amp;di=7481c26c3e7334361c58239fdba0b7d3&amp;imgtype=0&amp;src=http%3A</span><span class="si">%2F%2F</span><span class="s2">downhdlogo.yy.com</span><span class="si">%2F</span><span class="s2">hdlogo</span><span class="si">%2F</span><span class="s2">640640</span><span class="si">%2F</span><span class="s2">640</span><span class="si">%2F</span><span class="s2">640</span><span class="si">%2F</span><span class="s2">45</span><span class="si">%2F</span><span class="s2">1662457261</span><span class="si">%2F</span><span class="s2">u1662457261wYlxdOY.jpeg&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;cat.jpg&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>函数原型如下：</p>
+<hr class="docutils" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reporthook</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>以天堂图片网为例（<a class="reference external" href="http://www.ivsky.com/tupian/ziranfengguang/">http://www.ivsky.com/tupian/ziranfengguang/</a>
+），提取当前网址中的图片链接，并将图片下载到当前目录下。代码如下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/5/6 13:19</span>
+<span class="c1"># filename: sample01.py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">Base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span> <span class="o">+</span> <span class="s2">&quot;/photo&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">mkdir_dir</span><span class="p">(</span><span class="n">pathname</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pathname</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">Schedule</span><span class="p">(</span><span class="n">blocknum</span><span class="p">,</span> <span class="n">blocksize</span><span class="p">,</span> <span class="n">totalsize</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;&#39;&#39;</span>
+<span class="sd">    blocknum:已经下载的数据块</span>
+<span class="sd">    blocksize:数据块的大小</span>
+<span class="sd">    totalsize:远程文件的大小</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">per</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">blocknum</span> <span class="o">*</span> <span class="n">blocksize</span> <span class="o">/</span> <span class="n">totalsize</span>
+    <span class="k">if</span> <span class="n">per</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="n">per</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;当前下载进度：</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">per</span><span class="p">)</span>
+
+
+<span class="n">user_agent</span> <span class="o">=</span> <span class="s1">&#39;Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)&#39;</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">user_agent</span><span class="p">}</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://www.ivsky.com/tupian/ziranfengguang/&#39;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="c1"># 使用lxml解析网页</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="n">img_urls</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;.// img/@src&#39;</span><span class="p">)</span>  <span class="c1"># 先找到所有的img</span>
+
+<span class="n">mkdir_dir</span><span class="p">(</span><span class="n">Base_path</span><span class="p">)</span>
+
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">img_url</span> <span class="ow">in</span> <span class="n">img_urls</span><span class="p">:</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="s2">&quot;https:&quot;</span> <span class="o">+</span> <span class="n">img_url</span>
+    <span class="n">image_name</span> <span class="o">=</span> <span class="s1">&#39;img&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.jpg&#39;</span>
+    <span class="c1"># print(images)</span>
+    <span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">Base_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">image_name</span><span class="p">,</span> <span class="n">Schedule</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 方式2</span>
+<span class="c1"># filename: 02.图片下载到本地-方式2.py</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1565931658646&amp;di=7481c26c3e7334361c58239fdba0b7d3&amp;imgtype=0&amp;src=http%3A</span><span class="si">%2F%2F</span><span class="s2">downhdlogo.yy.com</span><span class="si">%2F</span><span class="s2">hdlogo</span><span class="si">%2F</span><span class="s2">640640</span><span class="si">%2F</span><span class="s2">640</span><span class="si">%2F</span><span class="s2">640</span><span class="si">%2F</span><span class="s2">45</span><span class="si">%2F</span><span class="s2">1662457261</span><span class="si">%2F</span><span class="s2">u1662457261wYlxdOY.jpeg&quot;</span>
+<span class="n">url1</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>  <span class="c1"># Request()函数将url添加到头部，模拟浏览器访问</span>
+
+<span class="n">page</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url1</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># 将url页面的源码保存成字符串</span>
+
+<span class="c1"># 下载图片write()方式</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;cat2.jpg&quot;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 方式3</span>
+<span class="c1">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/5/22 14:08</span>
+<span class="c1"># filename: urlib模块2.py</span>
+<span class="kn">import</span> <span class="nn">urllib.parse</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.cncrk.com/up/1801/201801051228459384.jpg&quot;</span>
+
+<span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">f_name</span> <span class="o">=</span> <span class="s2">&quot;download.png&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f_name</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;下载文件成功....&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http:&quot;</span> <span class="o">+</span> <span class="n">photo_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>  <span class="c1"># 把图片内容写入文件</span>
+
+
+<span class="n">或者</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;image.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="mi">100000</span><span class="p">):</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="urllib3">
+<h2><a class="toc-backref" href="#id23"><span class="section-number">21.2.4. </span>urllib3</a><a class="headerlink" href="#urllib3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">urllib3</span>  <span class="c1"># 导入标准库升级版模块</span>
+
+<span class="c1"># 创建PoolManager对象，用于处理与线程的连接以及线程安全</span>
+<span class="n">http</span> <span class="o">=</span> <span class="n">urllib3</span><span class="o">.</span><span class="n">PoolManager</span><span class="p">()</span>
+
+<span class="c1"># 发送网络请求</span>
+<span class="c1"># response = http.request(&quot;GET&quot;, &quot;http://www.baidu.com&quot;)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="s2">&quot;http://httpbin.org/post&quot;</span><span class="p">,</span><span class="n">fields</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;word&quot;</span><span class="p">:</span> <span class="s2">&quot;hello&quot;</span><span class="p">})</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="requests">
+<h2><a class="toc-backref" href="#id24"><span class="section-number">21.2.5. </span>requests</a><a class="headerlink" href="#requests" title="Permalink to this headline">¶</a></h2>
+<section id="requests-get">
+<h3><a class="toc-backref" href="#id25">下载网页使用requests.get()方法</a><a class="headerlink" href="#requests-get" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.deepstone.com.tw/&quot;</span>
+<span class="n">htmlfile</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">htmlfile</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;取得网页内容成功&quot;</span><span class="p">)</span>       <span class="c1"># 取得网页内容成功</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;取得网页内容失败&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;网页内容大小:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">htmlfile</span><span class="o">.</span><span class="n">text</span><span class="p">)))</span>       <span class="c1">#网页内容大小:26649</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;网页源码内容如下:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">htmlfile</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="response">
+<h3><a class="toc-backref" href="#id26">认识Response对象</a><a class="headerlink" href="#response" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">htmlfile</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;网页内容大小:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">htmlfile</span><span class="o">.</span><span class="n">text</span><span class="p">)))</span>       <span class="c1">#网页内容大小:26649</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;网页源码内容如下:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">htmlfile</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id27">搜索页特定内容</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.deepstone.com.tw/&quot;</span>
+<span class="n">htmlfile</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">htmlfile</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入要搜索的字符串：&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">htmlfile</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;搜索</span><span class="si">%s</span><span class="s2">成功&quot;</span> <span class="o">%</span> <span class="n">pattern</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;搜索</span><span class="si">%s</span><span class="s2">失败&quot;</span> <span class="o">%</span> <span class="n">pattern</span><span class="p">)</span>
+
+    <span class="c1"># 使用方法2</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">htmlfile</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> 出现 </span><span class="si">%d</span><span class="s2"> 次&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> 出现 0 次&quot;</span> <span class="o">%</span> <span class="n">pattern</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;网页下载失败&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># 请输入要搜索的字符串：上奇科技</span>
+<span class="c1"># 搜索上奇科技成功</span>
+<span class="c1"># 上奇科技 出现 6 次</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id28">Request伪装成浏览器</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.deepstone.com.tw/&quot;</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&quot;</span>
+        <span class="p">}</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">htmlfile</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">htmlfile</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;下载成功,且伪装成浏览器提取网络数据&quot;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+
+<span class="k">def</span> <span class="nf">get_one_page</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取源码</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&quot;</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id29">存储下载网页</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.deepstone.com.tw/files/file_pool/2/0K021134525097875375/9789865004286_300.jpg&quot;</span>
+
+<span class="k">def</span> <span class="nf">get_one_page</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取源码</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&quot;</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="c1"># 使用request下载图片</span>
+<span class="n">html_text</span> <span class="o">=</span> <span class="n">get_one_page</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">name_url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">name_url</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_Obj</span><span class="p">:</span>
+    <span class="n">file_Obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_text</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>  <span class="c1"># 导入网络请求模块</span>
+<span class="c1">#表单参数</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;word&quot;</span><span class="p">:</span><span class="s2">&quot;hello&quot;</span><span class="p">}</span>
+<span class="c1"># 发送网络请求</span>
+<span class="c1"># response = requests.get(&quot;http://www.baidu.com/&quot;)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;http://httpbin.org/post&quot;</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+
+<span class="c1"># # 打印状态码</span>
+<span class="c1"># print(&quot;状态码：&quot;, response.status_code)</span>
+<span class="c1">#</span>
+<span class="c1"># # 打印请求地址</span>
+<span class="c1"># print(&quot;请求地址&quot;, response.url)</span>
+<span class="c1">#</span>
+<span class="c1"># # 打印头部信息</span>
+<span class="c1"># print(&quot;打印头部信息&quot;, response.headers)</span>
+<span class="c1"># # 打印cookies信息</span>
+<span class="c1"># print(&quot;cookie信息&quot;, response.cookies)</span>
+<span class="c1"># # 打印文本源码</span>
+<span class="c1"># print(&quot;打印文本源码&quot;, response.text)</span>
+
+<span class="c1"># print(&quot;encoding----&gt;&quot;, response.encoding)</span>
+<span class="c1"># # 打印字节流源码</span>
+<span class="c1"># print(&quot;打印字节码源码&quot;, response.content)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/5/6 10:35</span>
+<span class="c1"># filename: sample01.py</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="c1"># 以GET请求为例，最简单的形式如下：</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://www.baidu.com&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># 演示一下POST请求，同样是非常简短，更加具有Python风格</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">postdata</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;value&#39;</span><span class="p">}</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;https://www.douban.com/&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">postdata</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># 请求头headers处理</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">user_agent</span> <span class="o">=</span> <span class="s1">&#39;Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)&#39;</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">user_agent</span><span class="p">}</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://www.baidu.com&#39;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># Cookie处理</span>
+
+<span class="c1"># 如果响应中包含Cookie的值，可以如下方式获取Cookie字段的值，示例如下：</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">user_agent</span> <span class="o">=</span> <span class="s1">&#39;Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)&#39;</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">user_agent</span><span class="p">}</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://www.baidu.com&#39;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="c1"># 遍历出所有的cookie字段的值</span>
+<span class="k">for</span> <span class="n">cookie</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cookie</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cookie</span><span class="p">))</span>
+
+<span class="c1"># 重定向与历史信息</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://github.com&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">history</span><span class="p">)</span>
+
+<span class="c1"># 超时设置</span>
+<span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://github.com&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="c1"># 代理设置</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;http&quot;</span><span class="p">:</span> <span class="s2">&quot;http://0.10.1.10:3128&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https&quot;</span><span class="p">:</span> <span class="s2">&quot;http://10.10.1.10:1080&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://example.org&quot;</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id30"><span class="section-number">21.2.6. </span>网络超时</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="c1">#导入网络请求模块中的三种异常类</span>
+<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">ReadTimeout</span><span class="p">,</span><span class="n">HTTPError</span><span class="p">,</span><span class="n">RequestException</span>
+
+<span class="c1"># 循环发送50次网络请求</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://www.whatismyip.com/&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>    <span class="c1">#打印请求码</span>
+
+    <span class="k">except</span> <span class="n">ReadTimeout</span><span class="p">:</span>
+        <span class="c1"># print(&quot;异常&quot;+str(e))          #打印异常</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout &quot;</span><span class="p">)</span>
+
+
+    <span class="k">except</span> <span class="n">HTTPError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Http error&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">RequestException</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;requerror&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="ip">
+<h2><a class="toc-backref" href="#id31"><span class="section-number">21.2.7. </span>代理IP</a><a class="headerlink" href="#ip" title="Permalink to this headline">¶</a></h2>
+<p>国内代理服务器IP地址：</p>
+<p><code class="docutils literal notranslate"><span class="pre">https://www.xicidaili.com/</span></code></p>
+<p>方式一</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">proxy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;https&quot;</span><span class="p">:</span> <span class="s2">&quot;124.205.155.146:9090&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;http&quot;</span><span class="p">:</span> <span class="s2">&quot;218.64.69.79:8080&quot;</span><span class="p">}</span>
+
+
+
+<span class="n">respones</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://www.mingrisoft.com/&quot;</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="n">proxy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">respones</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>方式二</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/11 21:30</span>
+<span class="c1"># filename: 代理服务器的设置.py</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+
+<span class="k">def</span> <span class="nf">use_proxy</span><span class="p">(</span><span class="n">proxy_addr</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="n">proxy</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">({</span><span class="s2">&quot;http&quot;</span><span class="p">:</span> <span class="n">proxy_addr</span><span class="p">})</span>
+    <span class="n">opener</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">proxy</span><span class="p">,</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">HTTPHandler</span><span class="p">)</span>
+    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="n">proxy_addr</span> <span class="o">=</span> <span class="s2">&quot;222.249.238.138:8080&quot;</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">use_proxy</span><span class="p">(</span><span class="n">proxy_addr</span><span class="p">,</span> <span class="s2">&quot;https://movie.douban.com/&quot;</span><span class="p">)</span>
+<span class="c1"># print(len(data))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://movie.douban.com/&#39;</span>
+<span class="c1"># 设置代理IP</span>
+<span class="n">proxy_handler</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">({</span>
+    <span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="s1">&#39;218.56.132.157:8080&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;https&#39;</span><span class="p">:</span> <span class="s1">&#39;183.30.197.29:9797&#39;</span><span class="p">})</span>
+<span class="c1"># 必须使用build_opener()函数来创建带有代理IP功能的opener对象</span>
+<span class="n">opener</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">proxy_handler</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;code3.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="cookie">
+<h2><a class="toc-backref" href="#id32"><span class="section-number">21.2.8. </span>cookie处理</a><a class="headerlink" href="#cookie" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/12 23:05</span>
+<span class="c1"># filename: example.py</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span><span class="n">parse</span>
+<span class="kn">from</span> <span class="nn">http.cookiejar</span> <span class="kn">import</span> <span class="n">CookieJar</span>
+
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36&#39;</span>
+<span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">get_opener</span><span class="p">():</span>
+    <span class="n">cookiejar</span> <span class="o">=</span> <span class="n">CookieJar</span><span class="p">()</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">HTTPCookieProcessor</span><span class="p">(</span><span class="n">cookiejar</span><span class="p">)</span>
+    <span class="n">opener</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">opener</span>
+
+<span class="k">def</span> <span class="nf">login_renren</span><span class="p">(</span><span class="n">opener</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;13262662216&quot;</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;cu0gu0ai@94&quot;</span><span class="p">}</span><span class="c1">#邮箱密码请设置成自己的</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">login_url</span> <span class="o">=</span> <span class="s2">&quot;http://www.renren.com/PLogin.do&quot;</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">login_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">visit_profile</span><span class="p">(</span><span class="n">opener</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://www.renren.com/880151247/profile&#39;</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;renren.html&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">opener</span> <span class="o">=</span> <span class="n">get_opener</span><span class="p">()</span>
+    <span class="n">login_renren</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
+    <span class="n">visit_profile</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id33"><span class="section-number">21.2.9. </span>伪装成浏览器</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">使用headers头部信息</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/27 14:39</span>
+<span class="c1"># filename: 伪装成浏览器.py</span>
+
+
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://www.ctrip.com/&#39;</span>
+
+<span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">req</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;Mozilla/5.0 (iPhone; CPU iPhone OS 10_2_1 like Mac OS X) AppleWebKit/602.4.6 (KHTML, like Gecko) Version/10.0 Mobile/14D27 Safari/602.1&#39;</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">htmlstr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">htmlstr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;mobile&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;移动版&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 导入urllib</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://movie.douban.com/&#39;</span>
+<span class="c1"># 自定义请求头</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)&#39;</span>
+    <span class="s1">&#39;Chrome/45.0.2454.85 Safari/537.36 115Browser/6.0.3&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Referer&#39;</span><span class="p">:</span> <span class="s1">&#39;https://movie.douban.com/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Connection&#39;</span><span class="p">:</span> <span class="s1">&#39;keep-alive&#39;</span><span class="p">}</span>
+<span class="c1"># 设置request的请求头</span>
+<span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+<span class="c1"># 使用urlopen打开req</span>
+<span class="n">html</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="c1"># 写入文件</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;code2.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id34"><span class="section-number">21.2.10. </span>获取网页源码的函数</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">request</span></code>方式一</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="k">def</span> <span class="nf">get_one_page</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取源码</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&quot;</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">request</span></code>方式二</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/7/8 16:36</span>
+<span class="c1"># filename: 01.浏览器模拟-headers属性01.py</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="k">def</span> <span class="nf">get_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36&quot;</span>
+    <span class="p">}</span>
+
+    <span class="c1">#使用请求头部之后，对请求进行了包装</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;拒绝连接&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">request</span></code>方式</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="k">def</span> <span class="nf">get_html</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">return</span> <span class="n">html</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">urllib</span></code>方式三</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/12 22:53</span>
+<span class="c1"># filename: example01.py</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<span class="k">def</span> <span class="nf">getHtmlCode</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取url返回的源代码</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36&quot;</span><span class="p">}</span>
+
+    <span class="n">url1</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>  <span class="c1">## Request()函数将url添加到头部，模拟浏览器访问</span>
+
+
+    <span class="n">page</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url1</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># 将url页面的源代码保存成字符串</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>  <span class="c1"># 字符串转码</span>
+    <span class="k">return</span> <span class="n">page</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">getHtmlCode</span><span class="p">(</span><span class="s2">&quot;https://movie.douban.com/&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id35"><span class="section-number">21.2.11. </span>几个图片爬取的示例</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<p>下载网页图片示例 (<code class="docutils literal notranslate"><span class="pre">爬取指定网页中的图片(re).py</span></code> 使用正则表达式)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/16 10:20</span>
+<span class="c1"># filename: 03.爬取指定网页中的图片(re).py</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="n">head</span> <span class="o">=</span> <span class="s2">&quot;https&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">getHtmlCode</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取url返回的源代码</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;user-agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#39;</span><span class="p">}</span>
+
+    <span class="n">url1</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>  <span class="c1">## Request()函数将url添加到头部，模拟浏览器访问</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url1</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># 将url页面的源代码保存成字符串</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>  <span class="c1"># 字符串转码</span>
+    <span class="k">return</span> <span class="n">page</span>
+
+
+<span class="k">def</span> <span class="nf">getImg</span><span class="p">(</span><span class="n">page</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    该方法传入html源码，经过re获取img标签，将图片保存到本地</span>
+<span class="sd">    :param page:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">imgList</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(http:[^\s]*?(jpg|png|gif))&#39;</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>  <span class="c1"># 匹配非[^\s]空白字符</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">imgUrl</span> <span class="ow">in</span> <span class="n">imgList</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;正在下载:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">imgUrl</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="c1"># urllib.request.urlretrieve(url,local)</span>
+            <span class="n">p_name</span> <span class="o">=</span> <span class="n">imgUrl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">p_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">p_name</span>
+
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">imgUrl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                       <span class="s1">&#39;D:/21-DAY-Python/21.python项目开发案例入门到实战/06.抓取百度图片/photo/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p_name</span><span class="p">))</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.xz577.com/e/cxsj/&quot;</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">getHtmlCode</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">getImg</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/re-down-photo001.png" src="../../_images/re-down-photo001.png" />
+<p>下载网页图片示例 (<code class="docutils literal notranslate"><span class="pre">爬取指定网页中的图片(Beautifulsoup).py</span></code>
+使用Beautifulsoup实现)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/16 10:20</span>
+<span class="c1"># filename: 03.爬取指定网页中的图片(Beautiful).py</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+<span class="n">head</span> <span class="o">=</span> <span class="s2">&quot;https&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">getHtmlCode</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取url返回的源代码</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;user-agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#39;</span><span class="p">}</span>
+
+    <span class="n">url1</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>  <span class="c1">## Request()函数将url添加到头部，模拟浏览器访问</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url1</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># 将url页面的源代码保存成字符串</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>  <span class="c1"># 字符串转码</span>
+    <span class="k">return</span> <span class="n">page</span>
+
+
+<span class="k">def</span> <span class="nf">getImg</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">LocalPath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    该方法传入html源码，经过re获取img标签，将图片保存到本地</span>
+<span class="sd">    :param page:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>  <span class="c1"># 按照lxml格式解析页面</span>
+    <span class="n">imgList</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">)</span>  <span class="c1"># 返回包含所有img标签的列表</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">imgUrl</span> <span class="ow">in</span> <span class="n">imgList</span><span class="p">:</span>
+        <span class="n">imgUrl_info</span> <span class="o">=</span> <span class="n">imgUrl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;正在下载:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">imgUrl_info</span><span class="p">))</span>
+            <span class="c1"># urllib.request.urlretrieve(url,local)</span>
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">imgUrl_info</span><span class="p">,</span>
+                                       <span class="n">LocalPath</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">.jpg&quot;</span> <span class="o">%</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.xz577.com/e/cxsj/&quot;</span>
+    <span class="n">LocalPath</span> <span class="o">=</span> <span class="s2">&quot;D:/21-DAY-Python/21.python项目开发案例入门到实战/06.抓取百度图片/photo/&quot;</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">getHtmlCode</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">getImg</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">LocalPath</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">使用request库和Beautiful完成图片爬取</span></code></p>
+<p>request库使用</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/16 11:30</span>
+<span class="c1"># filename: 04.使用request库和Beautiful完成图片爬取.py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+
+<span class="k">def</span> <span class="nf">getHtmkCode</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取网页源码</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&quot;</span><span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>  <span class="c1"># 指定网页解析的编码格式</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># 获取url页面的源码字符串文本</span>
+    <span class="k">return</span> <span class="n">page</span>
+
+
+<span class="k">def</span> <span class="nf">getImg</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">localPath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    下载图片</span>
+<span class="sd">    :param page: 源码</span>
+<span class="sd">    :param localPath: 本地存放路径</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">localPath</span><span class="p">):</span>  <span class="c1"># 新建文件夹</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">localPath</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="s1">&#39;lxml&#39;</span><span class="p">)</span>  <span class="c1"># 按照lxml格式去解析页面</span>
+    <span class="n">imgList</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">)</span>  <span class="c1"># 包含所有img标签的列表</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;http://www.zut.edu.cn/&quot;</span>
+    <span class="k">for</span> <span class="n">imgUrl</span> <span class="ow">in</span> <span class="n">imgList</span><span class="p">:</span>
+        <span class="c1"># 循环列表</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;正在下载：</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">imgUrl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="s2">&quot;http://&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">imgUrl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">):</span>  <span class="c1"># 不是绝对路径http开始</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">base_url</span> <span class="o">+</span> <span class="n">imgUrl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;正在下载：</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+                <span class="n">ir</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">base_url</span> <span class="o">+</span> <span class="n">imgUrl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ir</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">imgUrl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">))</span>
+                <span class="c1"># 使用write()方法写入本地文件中</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">localPath</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">.jpg&quot;</span> <span class="o">%</span> <span class="n">x</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://www.zut.edu.cn/&quot;</span>
+    <span class="n">localPath</span> <span class="o">=</span> <span class="s2">&quot;D:/21-DAY-Python/21.python项目开发案例入门到实战/06.抓取百度图片/request_download/&quot;</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">getHtmkCode</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">getImg</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">localPath</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id11">
+<h3><a class="toc-backref" href="#id36">下载搜狗图片示例</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/16 13:32</span>
+<span class="c1"># filename: 05.爬取搜狗图片例子.py</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">https://pic.sogou.com/pics?query=%D0%A3%BB%A8&amp;mode=1&amp;start=144&amp;reqType=ajax&amp;reqFrom=result&amp;tn=0</span>
+<span class="sd">https://pic.sogou.com/pics?query=%D0%A3%BB%A8&amp;mode=1&amp;start=192&amp;reqType=ajax&amp;reqFrom=result&amp;tn=0</span>
+<span class="sd">https://pic.sogou.com/pics?query=%D0%A3%BB%A8&amp;mode=1&amp;start=240&amp;reqType=ajax&amp;reqFrom=result&amp;tn=0</span>
+<span class="sd">https://pic.sogou.com/pics?query=%D0%A3%BB%A8&amp;mode=1&amp;start=288&amp;reqType=ajax&amp;reqFrom=result&amp;tn=0</span>
+
+<span class="sd">start=48的规律进行翻页操作</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">image_urls</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">def</span> <span class="nf">getSogouImage</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">m</span>
+
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#39;</span><span class="p">}</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span>
+    <span class="c1"># cate = category</span>
+    <span class="n">imgs</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;https://pic.sogou.com/pics?query=%D0%A3%BB%A8&amp;mode=1&amp;start=</span><span class="si">{}</span><span class="s2">&amp;reqType=ajax&amp;reqFrom=result&amp;tn=0&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">),</span>
+        <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+    <span class="n">jd</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">imgs</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">jd</span> <span class="o">=</span> <span class="n">jd</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">jd</span><span class="p">:</span>
+        <span class="n">image_urls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;pic_url&#39;</span><span class="p">])</span>
+
+
+    <span class="k">for</span> <span class="n">img_url</span> <span class="ow">in</span> <span class="n">image_urls</span><span class="p">:</span>
+        <span class="c1"># print(i)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;****Downloading【</span><span class="si">{0}</span><span class="s2">】 ---&gt;</span><span class="si">{1}</span><span class="s2">.jpg *********&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img_url</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">img_url</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.jpg&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">m</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*******************【Download completed page！】**********************************************************&quot;</span><span class="p">)</span>
+
+
+    <span class="c1"># try:</span>
+    <span class="c1">#     with urllib.request.urlopen(img_url) as response:</span>
+    <span class="c1">#         data = response.read()</span>
+    <span class="c1">#         f_name = path + str(m) + &quot;.jpg&quot;</span>
+    <span class="c1">#         with open(f_name, &quot;wb&quot;) as f:</span>
+    <span class="c1">#             f.write(data)</span>
+    <span class="c1"># except:</span>
+    <span class="c1">#     continue</span>
+    <span class="c1"># m += 1</span>
+
+    <span class="c1"># print(&quot;Download completed page！！&quot;)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">localPath</span> <span class="o">=</span> <span class="s2">&quot;D:/21-DAY-Python/21.python项目开发案例入门到实战/06.抓取百度图片/ajax_download/&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">localPath</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">localPath</span><span class="p">)</span>
+
+    <span class="c1"># 进行翻页操作</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">144</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">48</span><span class="p">):</span>
+        <span class="n">getSogouImage</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">localPath</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/sougou_download0001.png" src="../../_images/sougou_download0001.png" />
+<img alt="../../_images/download_sougou0002.png" src="../../_images/download_sougou0002.png" />
+</section>
+</section>
+<section id="id12">
+<h2><a class="toc-backref" href="#id37"><span class="section-number">21.2.12. </span>根据输入爬取百度图片</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<p>代码示例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/26 13:20</span>
+<span class="c1"># filename: te01.py</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">https://image.baidu.com/search/acjson?tn=resultjson_com&amp;ipn=rj&amp;ct=201326592&amp;is=&amp;fp=result&amp;queryWord=宝马&amp;cl=2&amp;lm=-1&amp;ie=utf-8&amp;oe=utf-8&amp;adpicid=&amp;st=-1&amp;z=&amp;ic=0&amp;hd=&amp;latest=&amp;copyright=&amp;word=宝马&amp;s=&amp;se=&amp;tab=&amp;width=&amp;height=&amp;face=0&amp;istype=2&amp;qc=&amp;nc=1&amp;fr=&amp;expermode=&amp;force=&amp;pn=30&amp;rn=30&amp;gsm=5a&amp;1566797235407=</span>
+<span class="sd">https://image.baidu.com/search/acjson?tn=resultjson_com&amp;ipn=rj&amp;ct=201326592&amp;is=&amp;fp=result&amp;queryWord=宝马&amp;cl=2&amp;lm=-1&amp;ie=utf-8&amp;oe=utf-8&amp;adpicid=&amp;st=-1&amp;z=&amp;ic=0&amp;hd=&amp;latest=&amp;copyright=&amp;word=宝马&amp;s=&amp;se=&amp;tab=&amp;width=&amp;height=&amp;face=0&amp;istype=2&amp;qc=&amp;nc=1&amp;fr=&amp;expermode=&amp;force=&amp;pn=60&amp;rn=30&amp;gsm=5a&amp;1566797235407=</span>
+<span class="sd">https://image.baidu.com/search/acjson?tn=resultjson_com&amp;ipn=rj&amp;ct=201326592&amp;is=&amp;fp=result&amp;queryWord=宝马&amp;cl=2&amp;lm=-1&amp;ie=utf-8&amp;oe=utf-8&amp;adpicid=&amp;st=-1&amp;z=&amp;ic=0&amp;hd=&amp;latest=&amp;copyright=&amp;word=宝马&amp;s=&amp;se=&amp;tab=&amp;width=&amp;height=&amp;face=0&amp;istype=2&amp;qc=&amp;nc=1&amp;fr=&amp;expermode=&amp;force=&amp;pn=90&amp;rn=30&amp;gsm=5a&amp;1566797235407=</span>
+<span class="sd">https://image.baidu.com/search/acjson?tn=resultjson_com&amp;ipn=rj&amp;ct=201326592&amp;is=&amp;fp=result&amp;queryWord=宝马&amp;cl=2&amp;lm=-1&amp;ie=utf-8&amp;oe=utf-8&amp;adpicid=&amp;st=-1&amp;z=&amp;ic=0&amp;hd=&amp;latest=&amp;copyright=&amp;word=宝马&amp;s=&amp;se=&amp;tab=&amp;width=&amp;height=&amp;face=0&amp;istype=2&amp;qc=&amp;nc=1&amp;fr=&amp;expermode=&amp;force=&amp;pn=120&amp;rn=30&amp;gsm=5a&amp;1566797235407=</span>
+
+<span class="sd">翻页30一页</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+
+<span class="n">Download_dir</span> <span class="o">=</span> <span class="s2">&quot;images&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">get_one_page</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取源码</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&quot;</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="c1"># url = &#39;https://image.baidu.com/search/acjson?tn=resultjson_com&amp;ipn=rj&amp;ct=201326592&amp;is=&amp;fp=result&amp;queryWord=%E5%AE%9D%E9%A9%AC&amp;cl=2&amp;lm=-1&amp;ie=utf-8&amp;oe=utf-8&amp;adpicid=&amp;st=-1&amp;z=&amp;ic=0&amp;hd=&amp;latest=&amp;copyright=&amp;word=%E5%AE%9D%E9%A9%AC&amp;s=&amp;se=&amp;tab=&amp;width=&amp;height=&amp;face=0&amp;istype=2&amp;qc=&amp;nc=1&amp;fr=&amp;expermode=&amp;force=&amp;pn=30&amp;rn=30&amp;gsm=1e&amp;1566797233720=&#39;</span>
+
+<span class="k">def</span> <span class="nf">search_info</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    抓取信息函数</span>
+<span class="sd">    :param url:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">get_one_page</span><span class="p">(</span><span class="n">url</span><span class="p">))[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+
+    <span class="n">Title</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">Photo_Url</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;fromPageTitleEnc&#39;</span><span class="p">]:</span>
+                <span class="n">Title</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;fromPageTitleEnc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Title</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+            <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;hoverURL&#39;</span><span class="p">]:</span>
+                <span class="n">Photo_Url</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;hoverURL&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Photo_Url</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+            <span class="c1"># print(Download_dir + &quot;/&quot; + str(flag) + &quot;_&quot; + Title + &quot;.jpg&quot;)</span>
+            <span class="n">url_jpg</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">Photo_Url</span><span class="p">)</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url_jpg</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># 将url页面的源码保存成字符串</span>
+            <span class="n">image_names</span> <span class="o">=</span> <span class="n">Download_dir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">Title</span> <span class="o">+</span> <span class="s2">&quot;.jpg&quot;</span>
+            <span class="c1"># 下载图片write()方式</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">image_names</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+            <span class="n">flag</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;正在下载：</span><span class="si">{0}</span><span class="s2">.图片下载地址：</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Title</span><span class="p">,</span> <span class="n">Photo_Url</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">Download_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">Download_dir</span><span class="p">)</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://image.baidu.com/search/acjson?tn=resultjson_com&amp;ipn=rj&amp;ct=201326592&amp;is=&amp;fp=result&amp;queryWord=</span><span class="si">{0}</span><span class="s1">&amp;cl=2&amp;lm=-1&amp;ie=utf-8&amp;oe=utf-8&amp;adpicid=&amp;st=-1&amp;z=&amp;ic=0&amp;hd=&amp;latest=&amp;copyright=&amp;word=</span><span class="si">{1}</span><span class="s1">&amp;s=&amp;se=&amp;tab=&amp;width=&amp;height=&amp;face=0&amp;istype=2&amp;qc=&amp;nc=1&amp;fr=&amp;expermode=&amp;force=&amp;pn=</span><span class="si">{2}</span><span class="s1">&amp;rn=30&amp;gsm=5a&amp;1566797235407=&#39;</span>
+    <span class="n">input_info</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入要搜索并爬取的图片：&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">30</span><span class="p">):</span>
+        <span class="c1"># print(url.format(input_info, input_info, i))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">search_info</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_info</span><span class="p">,</span> <span class="n">input_info</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/baidu_paqu0001.png" src="../../_images/baidu_paqu0001.png" />
+<p>示例代码</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/26 13:10</span>
+<span class="c1"># filename: example.py</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1"># 设置默认配置</span>
+<span class="n">MaxSearchPage</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># 搜索页数</span>
+<span class="n">CurrentPage</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 当前正在搜索的页数</span>
+<span class="n">DefaultPath</span> <span class="o">=</span> <span class="s2">&quot;pictures&quot;</span>  <span class="c1"># 默认存储位置</span>
+<span class="n">NeedSave</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 是否需要存储</span>
+
+
+<span class="k">def</span> <span class="nf">imageFiler</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    通过正则获取当前页面的图片地址数组</span>
+<span class="sd">    :param content:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&quot;objURL&quot;:&quot;(.*?)&quot;&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">nextSource</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    通过正则获取下一页的网址</span>
+<span class="sd">    :param content:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">next</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&lt;div id =&quot;page&quot;&gt;.*&lt;a href=&quot;(.*?)&quot; class=&quot;n&quot;&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-------------------------&quot;</span> <span class="o">+</span> <span class="s2">&quot;http://image.baidu.com&quot;</span> <span class="o">+</span> <span class="nb">next</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">next</span>
+
+
+<span class="k">def</span> <span class="nf">spidler</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    爬虫主体</span>
+<span class="sd">    :param source:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># 通过连接获取内容</span>
+    <span class="n">imageArr</span> <span class="o">=</span> <span class="n">imageFiler</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>  <span class="c1"># 获取图片数组</span>
+    <span class="k">global</span> <span class="n">CurrentPage</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Current page:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">CurrentPage</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;*******************&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">imageUrl</span> <span class="ow">in</span> <span class="n">imageArr</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">imageUrl</span><span class="p">)</span>
+        <span class="k">global</span> <span class="n">NeedSave</span>
+        <span class="k">if</span> <span class="n">NeedSave</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">DefaultPath</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">picture</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">imageUrl</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Download image error! errorUrl:&quot;</span> <span class="o">+</span> <span class="n">imageUrl</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># 创建图片保存路径</span>
+            <span class="n">imageUrl</span> <span class="o">=</span> <span class="n">imageUrl</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">pictureSacePATH</span> <span class="o">=</span> <span class="n">DefaultPath</span> <span class="o">+</span> <span class="n">imageUrl</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pictureSacePATH</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fb</span><span class="p">:</span>
+                <span class="n">fb</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">picture</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+            <span class="k">global</span> <span class="n">MaxSearchPage</span>
+            <span class="k">if</span> <span class="n">CurrentPage</span> <span class="o">&lt;=</span> <span class="n">MaxSearchPage</span><span class="p">:</span>  <span class="c1"># 继续下一页爬取</span>
+                <span class="k">if</span> <span class="n">nextSource</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+                    <span class="n">CurrentPage</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="c1"># 爬取完毕后通过下一页地址继续爬起</span>
+                    <span class="n">spidler</span><span class="p">(</span><span class="s2">&quot;http://image.baidu.com&quot;</span> <span class="o">+</span> <span class="n">nextSource</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">beginSearch</span><span class="p">(</span><span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">savePath</span><span class="o">=</span><span class="s2">&quot;prctures/&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    爬虫的开启方法</span>
+<span class="sd">    :param page: 爬取页数</span>
+<span class="sd">    :param save: 是否存储,0为不存储，1为存储</span>
+<span class="sd">    :param savePath: 默认存储路径</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">MaxSearchPage</span><span class="p">,</span> <span class="n">NeedSave</span><span class="p">,</span> <span class="n">DefaultPath</span>
+    <span class="n">MaxSearchPage</span> <span class="o">=</span> <span class="n">page</span>
+    <span class="n">NeedSave</span> <span class="o">=</span> <span class="n">save</span>  <span class="c1"># 是否保存</span>
+    <span class="n">DefaultPath</span> <span class="o">=</span> <span class="n">savePath</span>  <span class="c1"># 图片保存位置</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入you want search: &quot;</span><span class="p">)</span>
+    <span class="n">StartSource</span> <span class="o">=</span> <span class="s2">&quot;https://image.baidu.com/search/acjson?tn=resultjson_com&amp;ipn=rj&amp;ct=201326592&amp;is=&amp;fp=result&amp;queryWord=</span><span class="si">{0}</span><span class="s2">&amp;cl=2&amp;lm=-1&amp;ie=utf-8&amp;oe=utf-8&amp;adpicid=&amp;st=-1&amp;z=&amp;ic=0&amp;hd=&amp;latest=&amp;copyright=&amp;word=</span><span class="si">{1}</span><span class="s2">&amp;s=&amp;se=&amp;tab=&amp;width=&amp;height=&amp;face=0&amp;istype=2&amp;qc=&amp;nc=1&amp;fr=&amp;expermode=&amp;force=&amp;pn=30&amp;rn=30&amp;gsm=5a&amp;1566797235407=&quot;</span>
+    <span class="n">StartSource</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="n">spidler</span><span class="p">(</span><span class="n">StartSource</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">beginSearch</span><span class="p">(</span><span class="n">page</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h2><a class="toc-backref" href="#id38"><span class="section-number">21.2.13. </span>图片爬虫</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/19 15:53</span>
+<span class="c1"># filename: 01.图片爬虫实战.py</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">翻页信息</span>
+<span class="sd">http://www.xz577.com/e/python/2.html</span>
+<span class="sd">http://www.xz577.com/e/python/3.html</span>
+<span class="sd">http://www.xz577.com/e/python/4.html</span>
+<span class="sd">http://www.xz577.com/e/python/5.html</span>
+<span class="sd">http://www.xz577.com/e/python/6.html</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">request</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">class</span> <span class="nc">Book_spider</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36&quot;</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_page</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title_html</span> <span class="o">=</span> <span class="s2">&quot;http://www.xz577.com&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;http://www.xz577.com/e/python/&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">get_books_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">html</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_page</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.html&quot;</span>
+            <span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">page</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;抓取失败，失败原因:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">get_image_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_books_info</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;正在获取第</span><span class="si">{}</span><span class="s2">页数据&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;爬取的网站是: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">html</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_page</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.html&quot;</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------------------------------------------------------------------------------------&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="n">pat1</span> <span class="o">=</span> <span class="s1">&#39;&lt;a href=(.*?) title=(.*?)target=&quot;_blank&quot;&gt;.*?&lt;/a&gt;&#39;</span>
+        <span class="n">pat2</span> <span class="o">=</span> <span class="s1">&#39;&lt;img src=(.*?) alt=.*?&gt;&#39;</span>
+        <span class="n">result1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pat1</span><span class="p">)</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+        <span class="n">result2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pat2</span><span class="p">)</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+
+        <span class="n">links</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">books_name</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">book_path</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result1</span><span class="p">:</span>
+            <span class="n">link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">title_html</span> <span class="o">+</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">book_name</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+            <span class="n">books_name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">book_name</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">books_name</span><span class="p">:</span>
+            <span class="n">file_dir_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">book_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_dir_name</span><span class="p">)</span>
+
+        <span class="c1"># print(books_name)</span>
+
+        <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">photo_link</span><span class="p">,</span> <span class="n">book_name</span><span class="p">,</span> <span class="n">link</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">book_path</span><span class="p">,</span> <span class="n">result2</span><span class="p">,</span> <span class="n">books_name</span><span class="p">,</span> <span class="n">links</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">image_jpg_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;.jpg&#39;</span>
+            <span class="n">photo_link</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">photo_link</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="c1"># # print(&quot;正在下载:{!r} 【图片下载地址】：{!r}&quot;.format(image_jpg_name, photo_link))</span>
+            <span class="c1"># # print(&quot;书籍名称:{!r}  下载链接：{!r}&quot;.format(book_name, link))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">photo_link</span><span class="p">,</span> <span class="n">image_jpg_name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="n">path_book_txt</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;.txt&#39;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_book_txt</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;书籍名称：</span><span class="si">{!r}</span><span class="se">\n</span><span class="s2">下载链接地址：</span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">book_name</span><span class="p">,</span> <span class="n">link</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_image_down</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_page</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">Book_spider</span><span class="p">()</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h2><a class="toc-backref" href="#id39"><span class="section-number">21.2.14. </span>链接爬虫</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/20 19:08</span>
+<span class="c1"># filename: 02.链接爬虫2.py</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;user-agent&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://blog.csdn.net&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="c1"># 模拟成浏览器</span>
+        <span class="n">opener</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">()</span>
+        <span class="n">opener</span><span class="o">.</span><span class="n">addheaders</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">]</span>
+        <span class="c1"># 将opener安装为全局</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span><span class="n">opener</span><span class="p">)</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">get_link</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_html</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">pat1</span> <span class="o">=</span> <span class="s1">&#39;(https?://[^\s)&quot;;]+\.(\w|/)*)&#39;</span>
+        <span class="n">re_data</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pat1</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">S</span><span class="p">)</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">list_links</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">re_data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">list_links</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+    <span class="n">links</span> <span class="o">=</span> <span class="n">h1</span><span class="o">.</span><span class="n">get_link</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01.%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95%E5%A4%8D%E4%B9%A0.html" class="btn btn-neutral float-left" title="21.1. 基础语法复习" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02.%E7%88%AC%E8%99%AB%E5%8E%9F%E7%90%86%E5%92%8C%E7%BD%91%E9%A1%B5%E7%BB%93%E6%9E%84.html" class="btn btn-neutral float-right" title="21.3. 爬虫原理" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

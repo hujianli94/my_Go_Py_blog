@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23.7.11. 附2.前后端分离项目上线部署到云服务器 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="24. Python开发环境部署" href="../../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html" />
+    <link rel="prev" title="23.7.10. 附1.Vue前端项目" href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">23. Python框架</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../01.%E5%B8%B8%E7%94%A8%E7%9A%84GUI%E6%A1%86%E6%9E%B6/index.html">23.1. 常用的GUI框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02.Flask/index.html">23.2. Flask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../03.Scrapy/index.html">23.3. Scrapy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../04.Django/index.html">23.4. Django</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05.Tornado/index.html">23.5. Tornado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../06.Python%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Django-Flask/index.html">23.6. Python高效开发实战-Django、Flask</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">23.7. Python-Django-Web典型模块开发实战</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="01.Django-RESTful-API%E5%9F%BA%E7%A1%80.html">23.7.1. Django-RESTful-API基础</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02.%E7%94%A8Django-REST-framework%E5%AE%9E%E7%8E%B0%E8%B1%86%E7%93%A3API%E5%BA%94%E7%94%A8.html">23.7.2. 用Django REST framework实现豆瓣API应用</a></li>
+<li class="toctree-l4"><a class="reference internal" href="03.%E7%94%A8Django%E5%AE%9E%E7%8E%B0%E7%99%BE%E5%BA%A6%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A4%E8%AF%81%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9E%8B.html">23.7.3. 用Django实现百度开发者认证业务模型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html">23.7.4. 区块链时代与Token登录</a></li>
+<li class="toctree-l4"><a class="reference internal" href="05.%E5%AE%9E%E7%8E%B0%E4%BC%98%E9%85%B7%E5%92%8C%E7%88%B1%E5%A5%87%E8%89%BA%E4%BC%9A%E5%91%98%E7%9A%84VIP%E6%A8%A1%E5%BC%8F.html">23.7.5. 实现优酷和爱奇艺会员的VIP模式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06.%E8%BF%9D%E7%A6%81%E8%AF%8D%E8%87%AA%E5%AE%A1%E6%9F%A5%E5%8A%9F%E8%83%BD.html">23.7.6. 违禁词自审查功能</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07.%E5%88%86%E6%9E%90%E5%90%BE%E7%88%B1%E7%A0%B4%E8%A7%A3%E8%AE%BA%E5%9D%9B%E5%8F%8D%E7%88%AC%E8%99%AB%E6%9C%BA%E5%88%B6.html">23.7.7. 分析吾爱破解论坛反爬虫机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html">23.7.8. 关于跨域问题的解决办法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="09.Django%E5%AE%9E%E7%8E%B0%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6.html">23.7.9. Django实现缓存机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html">23.7.10. 附1.Vue前端项目</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">23.7.11. 附2.前后端分离项目上线部署到云服务器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="../index.html"><span class="section-number">23. </span>Python框架</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">23.7. </span>Python-Django-Web典型模块开发实战</a> &raquo;</li>
+      <li><span class="section-number">23.7.11. </span>附2.前后端分离项目上线部署到云服务器</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Python/24.Python框架/07.Python-Django-Web典型模块开发实战/附2.前后端分离项目上线部署到云服务器.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id11">附2.前后端分离项目上线部署到云服务器</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id12">1.准备一个前后端分离项目</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id13">1.1 准备一个最基础的前后端分离项目</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id14">1.2 对前后端分离项目进行改造</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id5" id="id15">2.云服务器的准备</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id6" id="id16">2.1 购买云服务器(阿里云、腾讯云)</a></p></li>
+<li><p><a class="reference internal" href="#mysql-5-7" id="id17">2.2 服务器端安装MySQL 5.7</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id18">2.3 压缩项目</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id19">2.4 上传部署包到服务器端</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id20">2.5 远程同步数据库</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id10" id="id21">3. 正式开始部署</a></p>
+<ul>
+<li><p><a class="reference internal" href="#demo12b" id="id22">3.1 部署前端项目demo12b</a></p></li>
+<li><p><a class="reference internal" href="#demo12a" id="id23">3.2 部署后端项目demo12a</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#docker" id="id24">4. 使用Docker部署</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id11"><span class="section-number">23.7.11. </span>附2.前后端分离项目上线部署到云服务器</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>当一个项目开发完成后，接下来要做的事情就是将项目上线部署到云服务器上。国内的网站部署到云服务器上，一般都会选择两个比较主流的系统:</p>
+<ul class="simple">
+<li><p>Ubuntu系统</p></li>
+<li><p>CentOS系统。</p></li>
+</ul>
+<p>这两个系统都是基于Linux的系统，交互方式也都是基于Linux命令行的形式。</p>
+<p>我们新建一个前后端分离的项目实例，然后部署到Ubuntu系统上，以此分析Django项目上线部署到云服务器相关的知识点。</p>
+<section id="id2">
+<h2><a class="toc-backref" href="#id12">1.准备一个前后端分离项目</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<section id="id3">
+<h3><a class="toc-backref" href="#id13">1.1 准备一个最基础的前后端分离项目</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>一个前后端分离项目，其实是由两个相对独立的项目组成。不论是前端项目，还是后端项目，如果独立运行，理论上都可以完成一个网站所需的一切功能。所以，新建一个最基础的前后端分离项目，其本质就是分别建立一个后端项目和一个前端项目。具体步骤如下：</p>
+<p>（1）使用PyCharm新建Django项目，命名为demo12a，新建App并名为app01</p>
+<img alt="../../../_images/drf_vue001.png" src="../../../_images/drf_vue001.png" />
+<p>（2）安装Django REST framework及其依赖包markdown和Django-filter。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">djangorestframework</span> <span class="n">markdown</span> <span class="n">Django</span><span class="o">-</span><span class="nb">filter</span>
+</pre></div>
+</div>
+<p>（3）在settings中注册rest_framework，如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>注意： 目前为止，Ubuntu系统18.04版本内置了Python 2.7和Python
+3.6。为了方便起见，我们在新建Django项目的时候，可以把Python环境切换成Python
+3.6，这样在部署的时候可以方便很多。当然，也可以在Ubuntu系统上安装Python
+3.7，只是多了一些步骤</p>
+<p>（4）如图所示，新建Vue项目demo12b：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cnpm install –global vue-cli
+
+vue init webpack demo12b
+
+cd demo12b
+
+cnpm install
+</pre></div>
+</div>
+<img alt="../../../_images/drf_vue002.png" src="../../../_images/drf_vue002.png" />
+<p>（5）在demo12中安装axios：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 更换npm的源</span>
+<span class="n">npm</span> <span class="n">config</span> <span class="nb">set</span> <span class="n">registry</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">registry</span><span class="o">.</span><span class="n">npm</span><span class="o">.</span><span class="n">taobao</span><span class="o">.</span><span class="n">org</span><span class="o">/</span>
+<span class="n">cnpm</span> <span class="n">install</span> <span class="n">axios</span> <span class="o">--</span><span class="n">save</span>
+</pre></div>
+</div>
+<p>（6）初始化demo12项目，将src/App.vue内的代码修改为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;t&quot;</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">title</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">Axios</span> <span class="kn">from</span> <span class="s1">&#39;axios&#39;</span><span class="p">;</span>
+
+
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span>
+  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="n">title</span><span class="p">:</span> <span class="s1">&#39;首页&#39;</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">GetData</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">const</span> <span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:8000&#39;</span>
+      <span class="n">var</span> <span class="n">api</span> <span class="o">=</span> <span class="n">host</span> <span class="o">+</span> <span class="s1">&#39;/getgoodlist/&#39;</span><span class="p">;</span>
+      <span class="n">Axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api</span><span class="p">)</span>
+          <span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">function</span> <span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+          <span class="p">})</span>
+          <span class="o">.</span><span class="n">catch</span><span class="p">(</span><span class="n">function</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">error</span><span class="p">);</span>
+          <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="n">mounted</span><span class="p">()</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">this</span><span class="o">.</span><span class="n">GetData</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">.</span><span class="n">t</span> <span class="p">{</span>
+  <span class="n">width</span><span class="p">:</span> <span class="mi">100</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">height</span><span class="p">:</span> <span class="mi">100</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">background</span><span class="o">-</span><span class="n">color</span><span class="p">:</span> <span class="n">brown</span><span class="p">;</span>
+  <span class="n">line</span><span class="o">-</span><span class="n">height</span><span class="p">:</span> <span class="mi">100</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">text</span><span class="o">-</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>（7）启动项目demo12b：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vue</span><span class="o">-</span><span class="n">cli</span><span class="o">-</span><span class="n">service</span> <span class="n">serve</span>
+<span class="n">或者</span>
+<span class="n">vue</span><span class="o">-</span><span class="n">cli</span><span class="o">-</span><span class="n">service</span> <span class="n">serve</span>
+</pre></div>
+</div>
+<p>使用浏览器访问
+<a class="reference external" href="http://127.0.0.1:8080/#/">http://127.0.0.1:8080/#/</a>，即显示我们所初始化的前端首页。</p>
+<img alt="../../../_images/drf_vue005.png" src="../../../_images/drf_vue005.png" />
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id14">1.2 对前后端分离项目进行改造</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>实际上，一个公司开发一款用于商业的前后端分离项目，前端部分要从后端获取数据和媒体文件，后端项目也极少只有一个App的情况，而且使用的数据库也不会是Django自带的SQLite3，大多为MySQL。我们对新建的前后端分离项目进行完善和改造，让这个项目更贴近实际项目的需求，步骤如下所述。</p>
+<p>（1）下载和安装MySQL5.7</p>
+<p>下载地址为<a class="reference external" href="https://dev.mysql.com/downloads/mysql/5.7.html#downloads">https://dev.mysql.com/downloads/mysql/5.7.html#downloads</a>，对于MySQL的安装，网上有很多教程各不相同，笔者建议采用最方便的方法进行安装，即双击安装包以后，所有的选项都选择默认的，提示设置密码的时候自行设置密码。</p>
+<p>2）新建MySQL数据库12a，如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show</span> <span class="n">databases</span><span class="p">;</span>
+
+<span class="n">create</span> <span class="n">database</span> <span class="mi">12</span><span class="n">a</span> <span class="n">default</span> <span class="n">character</span> <span class="nb">set</span> <span class="n">utf8</span> <span class="n">collate</span> <span class="n">utf8_general_ci</span><span class="p">;</span>
+
+<span class="n">show</span> <span class="n">databases</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>（3）demo12a连接MySQL数据库，在settings中将数据库配置代码修改为：</p>
+<p>将原本的数据库配置代码注释掉，然后填入新的配置代码，否则后面填入的配置代码是不起作用的。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATABASES = {</span>
+<span class="c1">#     &#39;default&#39;: {</span>
+<span class="c1">#         &#39;ENGINE&#39;: &#39;django.db.backends.sqlite3&#39;,</span>
+<span class="c1">#         &#39;NAME&#39;: BASE_DIR / &#39;db.sqlite3&#39;,</span>
+<span class="c1">#     }</span>
+<span class="c1"># }</span>
+
+
+<span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;12a&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;OSChina@2020&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;HOST&#39;</span><span class="p">:</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span>
+        <span class="c1"># 第三方登录功能必须加上</span>
+        <span class="s2">&quot;OPTIONS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;init_command&quot;</span><span class="p">:</span> <span class="s2">&quot;SET default_storage_engine=INNODB;&quot;</span><span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后，安装PyMYSQL：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">PyMYSQL</span>
+</pre></div>
+</div>
+<p>在demo12a/demo12a/__init__.py中加入代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pymysql</span>
+
+<span class="n">pymysql</span><span class="o">.</span><span class="n">install_as_MySQLdb</span><span class="p">()</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>提示pychrm支持mysql的数据连接驱动</p>
+<p>PyCharm的Database面板中可以打开与MySQL管理连接的面板。</p>
+<p>输入要连接的MySQL数据库信息，然后单击Test
+Connection按钮，如果出现：Successful
+Detail，则证明项目demo12a已经成功与MySQL数据库</p>
+</div></blockquote>
+<p>（4）因为在实际项目中，很少有一个后端项目中只有一个App的情况，所以我们要新建一个App命名为goods，作为实验使用。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">startapp</span> <span class="n">goods</span>
+</pre></div>
+</div>
+<p>（5）整理demo12a项目的目录。</p>
+<ul class="simple">
+<li><p>新建目录apps，然后将app01和goods目录都导入apps目录下；</p></li>
+<li><p>新建extra_apps目录，用来存放第三方应用文件；</p></li>
+<li><p>新建static目录，用来存放静态文件；</p></li>
+<li><p>新建media目录，用来存放媒体文件。</p></li>
+</ul>
+<p>（6）配置demo12a相关的目录。</p>
+<p>首先，在settings文件中追加代码，配置静态文件和媒体文件路径：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">STATIC_ROOT</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span><span class="s1">&#39;static&#39;</span><span class="p">)</span>
+<span class="n">STATICFILES_DIR</span><span class="o">=</span><span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span><span class="s1">&#39;static&#39;</span><span class="p">),]</span>
+
+<span class="n">MEDIA_URL</span><span class="o">=</span><span class="s1">&#39;/media/&#39;</span>
+<span class="n">MEDIA_ROOT</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span><span class="s1">&#39;media&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在settings文件中插入路径配置代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">BASE_DIR</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span><span class="s1">&#39;apps&#39;</span><span class="p">))</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span><span class="s1">&#39;extra_apps&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>分别Mark一下apps和extra_apps目录。</p>
+<img alt="../../../_images/drf_vue006.png" src="../../../_images/drf_vue006.png" />
+<p>（7）在apps/goods/models.py内新建一个图文的数据类，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<span class="c1"># Create your models here.</span>
+
+<span class="k">class</span> <span class="nc">TuWen</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    图文表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">upload_to</span><span class="o">=</span><span class="s1">&#39;images/&#39;</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;图片&#39;</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;文本&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;图文信息&quot;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+</pre></div>
+</div>
+<p>修改setting.py文件,新增goods应用</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;apps.app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;goods&#39;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>安装处理图片的依赖包Pillow，如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">Pillow</span>
+</pre></div>
+</div>
+<p>执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 生成数据建库文件</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+
+<span class="c1">#迁移文件到数据库</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<p>（8）加入实验数据。建立超级用户，用户名root，密码root1234：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">createsuperuser</span>
+</pre></div>
+</div>
+<p>运行demo12a，然后使用浏览器访问
+<a class="reference external" href="http://127.0.0.1:8000/admin">http://127.0.0.1:8888/admin</a>，使用超级用户的用户名和密码登录。</p>
+<p>在apps/goods/admin.py中加入models的注册信息：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">TuWen</span>
+
+<span class="c1"># Register your models here.</span>
+
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">TuWen</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>然后刷新浏览器，即可看到图文信息。</p>
+<p>添加一条图文信息记录作为实验数据。</p>
+<p>（9）在apps/app01目录下新建序列化文件serializers.py，序列化图文表，代码如下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">serializers</span>
+<span class="kn">from</span> <span class="nn">apps.goods.models</span> <span class="kn">import</span> <span class="n">TuWen</span>
+
+
+<span class="k">class</span> <span class="nc">TuWenModelSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">TuWen</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;__all__&quot;</span>
+</pre></div>
+</div>
+<p>（10）在apps/app01/views.py中编写获取图文列表的视图类，代码如下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">apps.goods.models</span> <span class="kn">import</span> <span class="n">TuWen</span>  <span class="c1"># 引入图文</span>
+<span class="kn">from</span> <span class="nn">.serializers</span> <span class="kn">import</span> <span class="n">TuWenModelSerializer</span>  <span class="c1"># 引入图文表的序列化类</span>
+
+<span class="c1"># 引入drf的功能组件</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework.renderers</span> <span class="kn">import</span> <span class="n">JSONRenderer</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">class</span> <span class="nc">GetTuWenView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取图文列表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renderer_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSONRenderer</span><span class="p">]</span>  <span class="c1"># 渲染器</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">t_list</span> <span class="o">=</span> <span class="n">TuWen</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">re</span> <span class="o">=</span> <span class="n">TuWenModelSerializer</span><span class="p">(</span><span class="n">t_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（11）在urls.py内配置路由代码如下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+
+<span class="c1"># 配置媒体文件路径</span>
+<span class="kn">from</span> <span class="nn">django.views.static</span> <span class="kn">import</span> <span class="n">serve</span>
+<span class="kn">from</span> <span class="nn">demo12a.settings</span> <span class="kn">import</span> <span class="n">MEDIA_ROOT</span>
+
+<span class="c1"># 获取图文信息的视图类</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">GetTuWenView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;media/&lt;path:path&gt;&#39;</span><span class="p">,</span> <span class="n">serve</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;document_root&#39;</span><span class="p">:</span> <span class="n">MEDIA_ROOT</span><span class="p">}),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;getdata/&#39;</span><span class="p">,</span> <span class="n">GetTuWenView</span><span class="o">.</span><span class="n">as_view</span><span class="p">())</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（12）测试。启动项目，访问：<a class="reference external" href="http://127.0.0.1:8000/getdata/">http://127.0.0.1:8000/getdata/</a>，即可获取图文数据</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;image&quot;</span><span class="p">:</span><span class="s2">&quot;/media/images/96440.jpg&quot;</span><span class="p">,</span><span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;这是一个图文信息&quot;</span><span class="p">,</span><span class="s2">&quot;add_time&quot;</span><span class="p">:</span><span class="s2">&quot;2021-11-22T16:39:07Z&quot;</span><span class="p">}]</span>
+</pre></div>
+</div>
+<p>（13）解决跨域。安装跨域模块：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">django</span><span class="o">-</span><span class="n">cors</span><span class="o">-</span><span class="n">headers</span>
+</pre></div>
+</div>
+<p>在settings中注册跨域模块：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Application definition</span>
+<span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;apps.app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;goods&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;corsheaders&#39;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>在settings.py增加中间件的配置代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MIDDLEWARE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;corsheaders.middleware.CorsMiddleware&#39;</span><span class="p">,</span>  <span class="c1"># 放到中间件顶部</span>
+    <span class="s1">&#39;django.middleware.security.SecurityMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions.middleware.SessionMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.common.CommonMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.csrf.CsrfViewMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages.middleware.MessageMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>在settings.py中新增配置项，即可解决本项目中的跨域问题。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CORS_ORIGIN_ALLOW_ALL</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>(14）修改前端项目demo12b/src/App.vue中的代码，让其访问后端API：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">div</span> <span class="n">v</span><span class="o">-</span><span class="k">for</span><span class="o">=</span><span class="s2">&quot;(item,index) in twdata&quot;</span> <span class="p">:</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">item</span><span class="o">.</span><span class="n">title</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">img</span> <span class="p">:</span><span class="n">src</span><span class="o">=</span><span class="s2">&quot;item.image&quot;</span> <span class="n">alt</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">Axios</span> <span class="kn">from</span> <span class="s1">&#39;axios&#39;</span><span class="p">;</span>
+
+
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;App&#39;</span><span class="p">,</span>
+  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="n">title</span><span class="p">:</span> <span class="s1">&#39;首页&#39;</span><span class="p">,</span>
+      <span class="n">twdata</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">GetData</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">var</span> <span class="n">that</span> <span class="o">=</span> <span class="n">this</span>
+      <span class="n">const</span> <span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:8888&#39;</span>
+      <span class="n">var</span> <span class="n">api</span> <span class="o">=</span> <span class="n">host</span> <span class="o">+</span> <span class="s1">&#39;/getdata/&#39;</span><span class="p">;</span>
+      <span class="n">Axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api</span><span class="p">)</span>
+          <span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">function</span> <span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">var</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+              <span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">host</span> <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">image</span>
+              <span class="o">//</span> <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+              <span class="n">that</span><span class="o">.</span><span class="n">twdata</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span>
+            <span class="p">}</span>
+          <span class="p">})</span>
+          <span class="o">.</span><span class="n">catch</span><span class="p">(</span><span class="n">function</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">error</span><span class="p">);</span>
+          <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="n">mounted</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">this</span><span class="o">.</span><span class="n">GetData</span><span class="p">()</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">.</span><span class="n">t</span> <span class="p">{</span>
+  <span class="n">width</span><span class="p">:</span> <span class="mi">100</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">height</span><span class="p">:</span> <span class="mi">100</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">background</span><span class="o">-</span><span class="n">color</span><span class="p">:</span> <span class="n">brown</span><span class="p">;</span>
+  <span class="n">line</span><span class="o">-</span><span class="n">height</span><span class="p">:</span> <span class="mi">100</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">text</span><span class="o">-</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">img</span> <span class="p">{</span>
+  <span class="n">width</span><span class="p">:</span> <span class="mi">200</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">height</span><span class="p">:</span> <span class="mi">200</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>（15）测试。运行demo12b，访问
+<a class="reference external" href="http://127.0.0.1:8080/#/">http://127.0.0.1:8080/#/</a>，可以看到从后端传过来的图文信息</p>
+<img alt="../../../_images/drf_vue008.png" src="../../../_images/drf_vue008.png" />
+</section>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id15">2.云服务器的准备</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<section id="id6">
+<h3><a class="toc-backref" href="#id16">2.1 购买云服务器(阿里云、腾讯云)</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>任意选择其中一个厂商的云服务器。</p>
+<p>规格为1GB内存，系统盘为40GB的硬盘，系统选择Ubuntu20.04，带宽为5Mbit/s。</p>
+</section>
+<section id="mysql-5-7">
+<h3><a class="toc-backref" href="#id17">2.2 服务器端安装MySQL 5.7</a><a class="headerlink" href="#mysql-5-7" title="Permalink to this headline">¶</a></h3>
+<p>（1）服务器安装MySQL代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">mysql</span><span class="o">-</span><span class="n">server</span> <span class="o">-</span><span class="n">y</span>
+
+<span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">mysql</span><span class="o">-</span><span class="n">client</span> <span class="o">-</span><span class="n">y</span>
+
+<span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">libmysqlclient</span><span class="o">-</span><span class="n">dev</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>配置MySQL密码。安装MySQL
+5.7的过程中是没有让用户输入初始密码这一步骤的，成功安装MySQL
+5.7之后，以root的身份，输入命令：</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mysql</span>
+<span class="n">show</span> <span class="n">databases</span><span class="p">;</span>
+
+<span class="n">use</span> <span class="n">mysql</span><span class="p">;</span>
+
+<span class="n">update</span> <span class="n">user</span> <span class="nb">set</span> <span class="n">authentication_string</span><span class="o">=</span><span class="n">PASSWORD</span><span class="p">(</span><span class="s2">&quot;与本地数据库密码一致&quot;</span><span class="p">)</span> <span class="n">where</span> <span class="n">user</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">;</span>
+
+<span class="n">update</span> <span class="n">user</span> <span class="nb">set</span> <span class="n">plugin</span><span class="o">=</span><span class="s2">&quot;mysql_native_password&quot;</span><span class="p">;</span>
+
+<span class="n">flush</span> <span class="n">privileges</span><span class="p">;</span>
+
+<span class="n">quit</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>重新启动MySQL服务：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">mysql</span> <span class="n">restart</span>
+</pre></div>
+</div>
+<p>使用修改后的密码登录MySQL，然后退出：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mysql</span> <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">p</span>
+<span class="o">//</span><span class="n">输入设置的密码</span><span class="o">+</span><span class="n">回车quit</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id18">2.3 压缩项目</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>通过文件夹的形式将项目从本地迁移到服务器端并不是不可以的，但是会很麻烦。所以我们需要将项目压缩为zip包，方便从本地传输到服务器端。在这之前，还需要对demo12a进行一些操作。</p>
+<p>（1）在demo12a/settings中配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DEBUG</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">ALLOWED_HOSTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;公网IP&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>（2）将项目的所有依赖库导出为文本文件，执行命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">freeze</span> <span class="o">&gt;</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>在项目目录下会生成一个文件名为requirements.txt的文本文件，内容为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">asgiref</span><span class="o">==</span><span class="mf">3.4</span><span class="o">.</span><span class="mi">1</span>
+<span class="n">Django</span><span class="o">==</span><span class="mf">3.2</span><span class="o">.</span><span class="mi">9</span>
+<span class="n">django</span><span class="o">-</span><span class="n">cors</span><span class="o">-</span><span class="n">headers</span><span class="o">==</span><span class="mf">3.10</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">django</span><span class="o">-</span><span class="nb">filter</span><span class="o">==</span><span class="mf">21.1</span>
+<span class="n">djangorestframework</span><span class="o">==</span><span class="mf">3.12</span><span class="o">.</span><span class="mi">4</span>
+<span class="n">importlib</span><span class="o">-</span><span class="n">metadata</span><span class="o">==</span><span class="mf">4.8</span><span class="o">.</span><span class="mi">2</span>
+<span class="n">Markdown</span><span class="o">==</span><span class="mf">3.3</span><span class="o">.</span><span class="mi">6</span>
+<span class="n">Pillow</span><span class="o">==</span><span class="mf">8.4</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">PyMySQL</span><span class="o">==</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">2</span>
+<span class="n">pytz</span><span class="o">==</span><span class="mf">2021.3</span>
+<span class="n">sqlparse</span><span class="o">==</span><span class="mf">0.4</span><span class="o">.</span><span class="mi">2</span>
+<span class="n">zipp</span><span class="o">==</span><span class="mf">3.6</span><span class="o">.</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>（3）将demo12a压缩为一个zip包。</p>
+<p>（4）将demo12b目录下的node_modules目录删除，然后将demo12b压缩为一个zip包。</p>
+</section>
+<section id="id8">
+<h3><a class="toc-backref" href="#id19">2.4 上传部署包到服务器端</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>使用FileZilla将demo12a.zip和demo12b.zip传到服务器端</p>
+</section>
+<section id="id9">
+<h3><a class="toc-backref" href="#id20">2.5 远程同步数据库</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li><p>修改MySQL的配置文件，注释掉绑定本地IP的语句：</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">mysqld</span><span class="o">.</span><span class="n">cnf</span>
+<span class="n">注释掉</span> <span class="n">bind</span><span class="o">-</span><span class="n">address</span> <span class="o">=</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span>
+</pre></div>
+</div>
+<p>（2）设置远程密码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mysql</span> <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">p</span> <span class="c1">#输入密码（不显示），登录MySQL</span>
+
+<span class="n">GRANT</span> <span class="n">ALL</span> <span class="n">PRIVILEGES</span> <span class="n">ON</span> <span class="o">*.*</span> <span class="n">TO</span> <span class="s1">&#39;root&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span> <span class="n">IDENTIFIED</span> <span class="n">BY</span> <span class="s1">&#39;123456&#39;</span> <span class="n">WITH</span> <span class="n">GRANT</span> <span class="n">OPTION</span><span class="p">;</span>
+<span class="n">flush</span> <span class="n">privileges</span><span class="p">;</span><span class="n">quit</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>（3）打开云控制台中的“安全组”页面，查看入口的端口,开启相应的端口。</p>
+<p>（4）使用Navicat新建MySQL连接，连接远程数据库。进行数据的同步，或者导出数据sql文件，导入到云平台中。<em>使用mysqldump</em></p>
+<p>（5）关闭远程访问权限：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">mysql</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">mysqld</span><span class="o">.</span><span class="n">cnf</span>
+<span class="c1">#去掉 bind-address = 127.0.0.1这行的注释</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id21">3. 正式开始部署</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<section id="demo12b">
+<h3><a class="toc-backref" href="#id22">3.1 部署前端项目demo12b</a><a class="headerlink" href="#demo12b" title="Permalink to this headline">¶</a></h3>
+<p>（1）安装node、npm、cnpm代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>apt install nodejs
+apt-get install npm
+
+node –v
+npm –v
+npm install cnpm -g --registry=HTTPS://registry.npm.taobao.org;
+cnpm -v
+</pre></div>
+</div>
+<p>（2）解压demo12b.zip文件：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span>
+<span class="n">apt</span> <span class="n">install</span> <span class="n">unzip</span>
+<span class="n">unzip</span> <span class="n">demo12b</span><span class="o">.</span><span class="n">zip</span>
+</pre></div>
+</div>
+<p>（3）安装demo12b的依赖包：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">demo12b</span>
+<span class="n">cnpm</span> <span class="n">install</span> <span class="n">demo12b</span>
+</pre></div>
+</div>
+<p>（4）将路由模式改成history模式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vim</span> <span class="n">src</span><span class="o">/</span><span class="n">router</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">js</span>
+<span class="c1">#加入mode: &#39;history&#39;</span>
+</pre></div>
+</div>
+<p>（5）执行命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vim</span> <span class="n">src</span><span class="o">/</span><span class="n">App</span><span class="o">.</span><span class="n">vue</span>
+</pre></div>
+</div>
+<p>将host中的回环地址改为公网IP地址。</p>
+<p>（6）打包：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">run</span> <span class="n">build</span>
+</pre></div>
+</div>
+<p>如果打包成功，会生成一个dist目录，dist目录下有index.html和static目录。</p>
+<p>（7）安装Nginx如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span>  <span class="n">nginx</span>
+</pre></div>
+</div>
+<p>（8）删除default，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#防止错误，先把default文件删除</span>
+<span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">available</span><span class="o">/</span>
+<span class="n">rm</span> <span class="n">default</span>
+
+<span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">enabled</span><span class="o">/</span>
+<span class="n">rm</span> <span class="n">default</span>
+</pre></div>
+</div>
+<p>（9）新建配置文件如下：</p>
+<p>cd /etc/nginx/sites-available/</p>
+<p>vim demo12.conf</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="p">{</span>
+        <span class="n">listen</span>       <span class="mi">80</span><span class="p">;</span>
+        <span class="n">server_name</span>  <span class="n">公网IP</span><span class="p">;</span>
+
+        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+            <span class="n">root</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">demo12b</span><span class="o">/</span><span class="n">dist</span><span class="p">;</span>
+            <span class="n">index</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+        <span class="p">}</span>
+   <span class="p">}</span>
+</pre></div>
+</div>
+<p>然后按Esc键，输入:wq保存并退出。</p>
+<p>（10）建立软连接如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span>
+<span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">available</span><span class="o">/</span><span class="n">demo12</span><span class="o">.</span><span class="n">conf</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">enabled</span><span class="o">/</span> <span class="n">demo12</span><span class="o">.</span><span class="n">conf</span>
+
+<span class="n">ls</span> <span class="n">sites</span><span class="o">-</span><span class="n">enabled</span><span class="o">/</span>
+
+<span class="n">nginx</span> <span class="o">-</span><span class="n">t</span>
+<span class="c1">#查看Nginx运行情况</span>
+
+<span class="n">service</span> <span class="n">nginx</span> <span class="n">restart</span>
+<span class="c1">#重启Nginx</span>
+</pre></div>
+</div>
+<p>（11）通过浏览器访问公网IP地址，通过按F12键，打开开发者模式，可以看到因为没有启动后端项目，所以报出了错误，没显示图片资源</p>
+</section>
+<section id="demo12a">
+<h3><a class="toc-backref" href="#id23">3.2 部署后端项目demo12a</a><a class="headerlink" href="#demo12a" title="Permalink to this headline">¶</a></h3>
+<p>接下来就是部署后端项目demo12a，部署完demo12a以后，前后端分离项目才算正式完成了上线部署。部署后端项目，<em>首先要配置虚拟环境，安装配置uwsgi，配置Nginx</em>，具体步骤如下：</p>
+<p>（1）解压demo12a.zip文件：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span>
+<span class="n">unzip</span> <span class="n">demo12a</span><span class="o">.</span><span class="n">zip</span>
+</pre></div>
+</div>
+<p>（2）安装配置虚拟环境如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#安装虚拟环境</span>
+<span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">Python3</span><span class="o">-</span><span class="n">venv</span>
+
+<span class="c1">#在当前目录下，创建一个Python3.6的虚拟环境，命名为env36</span>
+<span class="n">Python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="n">env36</span>
+<span class="o">.</span> <span class="n">env36</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+
+<span class="c1">#进入虚拟环境</span>
+<span class="c1">#退出虚拟环境</span>
+<span class="n">deactivate</span>
+
+<span class="n">cd</span> <span class="n">demo12a</span>
+<span class="n">pip3</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>（3）运行测试。执行运行项目命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">runserver</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">8888</span>
+</pre></div>
+</div>
+<p>通过浏览器访问公网IP，即可看到完整的项目首页，同时控制台也不报错。</p>
+<p>（4）安装uwsgi到系统环境下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#退出虚拟环境</span>
+<span class="n">deactivate</span>
+<span class="n">cd</span> <span class="o">..</span>
+<span class="n">apt</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">Python3</span><span class="o">-</span><span class="n">pip</span>
+
+<span class="n">pip3</span> <span class="n">install</span> <span class="n">uwsgi</span>
+
+<span class="c1">#使用uwsgi启动项目</span>
+<span class="n">uwsgi</span> <span class="o">--</span><span class="n">chdir</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">demo12a</span> <span class="o">--</span><span class="n">home</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">env36</span> <span class="o">--</span><span class="n">http</span> <span class="p">:</span><span class="mi">8000</span> <span class="o">--</span><span class="n">module</span> <span class="n">demo12a</span><span class="o">.</span><span class="n">wsgi</span>
+
+<span class="c1">#/home/demo12a 代表项目路径</span>
+<span class="c1">#/home/env36 代表虚拟环境路径</span>
+</pre></div>
+</div>
+<p>（5）配置uwsgi如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span>
+<span class="n">mkdir</span> <span class="n">demo12_uwsgi</span>              <span class="c1">#创建一个目录，专门存放uwsgi的相关文件</span>
+<span class="n">cd</span> <span class="n">demo12_uwsgi</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>vim demo12.ini</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">uwsgi</span><span class="p">]</span>
+<span class="c1">#项目目录</span>
+<span class="n">chdir</span><span class="o">=</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">demo12a</span>
+
+<span class="c1">#wsgi目录</span>
+<span class="n">module</span> <span class="o">=</span> <span class="n">demo12a</span><span class="o">.</span><span class="n">wsgi</span><span class="p">:</span><span class="n">application</span>
+
+<span class="c1">#虚拟环境</span>
+<span class="n">home</span> <span class="o">=</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">env36</span>
+<span class="n">master</span> <span class="o">=</span> <span class="n">true</span>
+<span class="n">processes</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">socket</span><span class="o">=</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">9000</span>
+<span class="n">vacuum</span><span class="o">=</span> <span class="n">true</span>
+
+<span class="c1">#后台运行uwsgi</span>
+<span class="n">daemonize</span><span class="o">=</span><span class="n">yes</span>
+</pre></div>
+</div>
+<p>（6）执行通过ini启动项目命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uwsgi</span> <span class="o">--</span><span class="n">ini</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">demo12_uwsgi</span><span class="o">/</span><span class="n">demo12</span><span class="o">.</span><span class="n">ini</span>
+</pre></div>
+</div>
+<p>（7）执行检验是否启动了多线程的命令，显示有多条线程运行，代表成功启动了多线程。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ps</span> <span class="o">-</span><span class="n">aux</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">uwsgi</span>
+</pre></div>
+</div>
+<p>（8）修改Nginx配置文件，在原本的配置代码后增加如下代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server</span> <span class="p">{</span>
+        <span class="n">listen</span>       <span class="mi">80</span><span class="p">;</span>
+        <span class="n">server_name</span>  <span class="n">公网IP</span><span class="p">;</span>
+
+        <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+            <span class="n">root</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">demo12b</span><span class="o">/</span><span class="n">dist</span><span class="p">;</span>
+            <span class="n">index</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">;</span>
+        <span class="p">}</span>
+   <span class="p">}</span>
+
+<span class="o">--------------------------------------------------------</span>
+<span class="n">如下为新增的代码</span>
+
+<span class="n">server</span><span class="p">{</span>
+  <span class="n">listen</span> <span class="mi">8000</span><span class="p">;</span>
+  <span class="n">server_name</span> <span class="mf">114.115</span><span class="o">.</span><span class="mf">163.50</span><span class="p">;</span>
+  <span class="n">charset</span> <span class="n">utf</span><span class="o">-</span><span class="mi">8</span><span class="p">;</span>
+  <span class="n">client_max_body_size</span> <span class="mi">75</span><span class="n">M</span><span class="p">;</span>
+
+      <span class="n">location</span> <span class="o">/</span><span class="n">static</span> <span class="p">{</span>
+          <span class="n">alias</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">demo12a</span><span class="o">/</span><span class="n">static</span><span class="p">;</span>
+      <span class="p">}</span>
+
+  <span class="n">location</span> <span class="o">/</span><span class="n">media</span> <span class="p">{</span>
+        <span class="n">alias</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">demo12a</span><span class="o">/</span><span class="n">media</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">location</span> <span class="o">/</span> <span class="p">{</span>
+      <span class="n">uwsgi_pass</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">9000</span><span class="p">;</span>
+      <span class="n">include</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">uwsgi_params</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后重启Nginx服务：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="n">nginx</span> <span class="n">restart</span> <span class="c1">#重启Nginx</span>
+</pre></div>
+</div>
+<p>（9）为了显示后台管理页面的样式，还需要收集静态文件：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span>
+<span class="o">.</span> <span class="n">env36</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">cd</span> <span class="n">chaoyuecun</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">collectstatic</span>
+</pre></div>
+</div>
+<p>至此，我们前后端分离项目上线部署成功。</p>
+</section>
+</section>
+<section id="docker">
+<h2><a class="toc-backref" href="#id24">4. 使用Docker部署</a><a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>参考文献：</p>
+<p><a class="reference external" href="http://www.liuqingzheng.top/python/%E8%B7%AF%E9%A3%9E%E9%A1%B9%E7%9B%AE/9-%E4%B8%8A%E7%BA%BF/1-docker/">http://www.liuqingzheng.top/python/%E8%B7%AF%E9%A3%9E%E9%A1%B9%E7%9B%AE/9-%E4%B8%8A%E7%BA%BF/1-docker/</a></p>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html" class="btn btn-neutral float-left" title="23.7.10. 附1.Vue前端项目" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html" class="btn btn-neutral float-right" title="24. Python开发环境部署" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

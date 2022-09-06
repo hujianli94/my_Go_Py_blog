@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10.10. log &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10.11. reflect/unsafe" href="11.reflect-unsafe.html" />
+    <link rel="prev" title="10.9. regexp" href="09.regexp.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">10. 标准库和三方库</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.strings.html">10.1. strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.bytes.html">10.2. bytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.fmt.html">10.3. fmt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Json.html">10.4. Json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.strconv.html">10.5. strconv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.ioutil-bufio.html">10.6. ioutil/bufio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.time.html">10.7. time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.os-path-filepath.html">10.8. os/path/filepath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.regexp.html">10.9. regexp</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">10.10. log</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">10.10.1. 1.默认日志格式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#logger">10.10.2. 2.配置logger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">10.10.3. 3.配置日志前缀</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">10.10.4. 4.配置日志输出位置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">10.10.5. 5.定制化日志格式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">10.10.6. 6.案例-log简易封装</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">10.10.7. 7.小结</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="11.reflect-unsafe.html">10.11. reflect/unsafe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.unicode.html">10.12. unicode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.flag%E5%92%8Cgo-flags.html">10.13. flag和go-flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.net-url.html">10.14. net/url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.sort.html">10.15. sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.net-http.html">10.16. net/http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.error.html">10.17. error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.template%E6%A8%A1%E6%9D%BF.html">10.18. template模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.%E6%93%8D%E4%BD%9Cmysql.html">10.19. 操作mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html">10.20. Go语言常用资料及工具详细汇总</a></li>
+<li class="toctree-l3"><a class="reference internal" href="21.Socket%E7%BD%91%E7%BB%9C.html">10.21. Socket网络</a></li>
+<li class="toctree-l3"><a class="reference internal" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html">10.22. go标准库和三方库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.cobra.html">10.23. cobra</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.viper.html">10.24. viper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.math-rand.html">10.25. math-rand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="26.zap-%E6%97%A5%E5%BF%97%E6%A8%A1%E5%9D%97.html">10.26. zap-日志模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">10. </span>标准库和三方库</a> &raquo;</li>
+      <li><span class="section-number">10.10. </span>log</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/10.标准库和三方库/10.log.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#log" id="id7">log</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id8">1.默认日志格式</a></p></li>
+<li><p><a class="reference internal" href="#logger" id="id9">2.配置logger</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id10">3.配置日志前缀</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id11">4.配置日志输出位置</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id12">5.定制化日志格式</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id13">6.案例-log简易封装</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id14">7.小结</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="log">
+<h1><a class="toc-backref" href="#id7"><span class="section-number">10.10. </span>log</a><a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h1>
+<p>在日常开发中，有效地处理日志信息对应用程序的调试和排错都非常重要。当系统不复杂时，在终端打印出有效的处理信息就能够完成查看等功能。但是如果系统报错，终端打印的信息是不会存储下来的，如果没有日志信息，就会错过一些重要的信息，不利于调试和排错。</p>
+<p>日志的级别：Print_X系列、Fatal_X系列、Panic_X系列。</p>
+<p>日志的格式：比如文件的名称、具体的报错位置、时间等，方便开发人员调试和排错。日志的输出：比如将日志存储在磁盘上。</p>
+<img alt="../../_images/image-20220704143959622.png" src="../../_images/image-20220704143959622.png" />
+<section id="id1">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">10.10.1. </span>1.默认日志格式</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">DefaultUsageForLog</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="s">&quot;Hello World, Golang&quot;</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Hello World, Golang&quot;</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Hello World, %s&quot;</span><span class="p">,</span> <span class="s">&quot;Golang&quot;</span><span class="p">)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;log Prefix&quot;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Prefix</span><span class="p">())</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;log Flags&quot;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Flags</span><span class="p">())</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>我们可以像下面的代码一样直接通过log包来调用上面提到的方法，默认它们会将日志信息打印到终端界面：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;log&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;这是一条很普通的日志.&quot;</span><span class="p">)</span>
+    <span class="nx">v</span> <span class="o">:=</span> <span class="s">&quot;很普通的&quot;</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;这是一条%s日志。\n&quot;</span><span class="p">,</span><span class="nx">v</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatalln</span><span class="p">(</span><span class="s">&quot;这是一条会触发fatal的日志。&quot;</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Panicln</span><span class="p">(</span><span class="s">&quot;这是一条会触发panic的日志。&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>logger会打印每条日志信息的日期、时间，默认输出到系统的标准错误。</p>
+<p>Fatal系列函数会在写入日志信息后调用os.Exit(1)。</p>
+<p>Panic系列函数会在写入日志信息后panic。</p>
+</section>
+<section id="logger">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">10.10.2. </span>2.配置logger</a><a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h2>
+<p>默认情况下的logger只会提供日志的时间信息，但是很多情况下我们希望得到更多信息，比如记录该日志的文件名和行号等。log标准库中为我们提供了定制这些设置的方法。</p>
+<p>log标准库中的Flags函数会返回标准logger的输出配置，而SetFlags函数用来设置标准logger的输出配置。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">Flags</span><span class="p">()</span> <span class="kt">int</span>
+<span class="kd">func</span> <span class="nx">SetFlags</span><span class="p">(</span><span class="nx">flag</span> <span class="kt">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>log标准库提供了如下的flag选项，它们是一系列定义好的常量。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span> <span class="p">(</span>
+    <span class="c1">// 控制输出日志信息的细节，不能控制输出的顺序和格式。</span>
+    <span class="c1">// 输出的日志在每一项后会有一个冒号分隔：例如2009/01/23 01:23:23.123123 /a/b/c/d.go:23: message</span>
+    <span class="nx">Ldate</span>         <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="kc">iota</span>     <span class="c1">// 日期：2009/01/23</span>
+    <span class="nx">Ltime</span>                         <span class="c1">// 时间：01:23:23</span>
+    <span class="nx">Lmicroseconds</span>                 <span class="c1">// 微秒级别的时间：01:23:23.123123（用于增强Ltime位）</span>
+    <span class="nx">Llongfile</span>                     <span class="c1">// 文件全路径名+行号： /a/b/c/d.go:23</span>
+    <span class="nx">Lshortfile</span>                    <span class="c1">// 文件名+行号：d.go:23（会覆盖掉Llongfile）</span>
+    <span class="nx">LUTC</span>                          <span class="c1">// 使用UTC时间</span>
+    <span class="nx">LstdFlags</span>     <span class="p">=</span> <span class="nx">Ldate</span> <span class="p">|</span> <span class="nx">Ltime</span> <span class="c1">// 标准logger的初始值</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>下面我们在记录日志之前先设置一下标准logger的输出选项如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;log&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">SetFlags</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">Llongfile</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lmicroseconds</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Ldate</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;这是一条很普通的日志。&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">//2020/09/21 14:26:10.276892 D:/go_studay/go_path/src/github.com/go_Test/go007/src/go_log02/main.go:7: 这是一条很普通的日志。</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id10"><span class="section-number">10.10.3. </span>3.配置日志前缀</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>log标准库中还提供了关于日志信息前缀的两个方法：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">Prefix</span><span class="p">()</span> <span class="kt">string</span>
+<span class="kd">func</span> <span class="nx">SetPrefix</span><span class="p">(</span><span class="nx">prefix</span> <span class="kt">string</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;log&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">SetFlags</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">Llongfile</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lmicroseconds</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Ldate</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;这是一条很普通的日志。&quot;</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">SetPrefix</span><span class="p">(</span><span class="s">&quot;[ttserver]&quot;</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;这是一条很普通的日志。&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">//2020/09/21 14:27:55.635287 D:/go_studay/go_path/src/github.com/go_Test/go007/src/go_log03/main.go:7: 这是一条很普通的日志。</span>
+
+<span class="c1">//[ttserver]2020/09/21 14:27:55.766934 D:/go_studay/go_path/src/github.com/go_Test/go007/src/go_log03/main.go:9: 这是一条很普通的日志。</span>
+</pre></div>
+</div>
+<p>这样我们就能够在代码中为我们的日志信息添加指定的前缀，方便之后对日志信息进行检索和处理。</p>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">10.10.4. </span>4.配置日志输出位置</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span> <span class="n">SetOutput</span><span class="p">(</span><span class="n">w</span> <span class="n">io</span><span class="o">.</span><span class="n">Writer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>SetOutput函数用来设置标准logger的输出目的地，默认是标准错误输出。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;log&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">logFile</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">OpenFile</span><span class="p">(</span><span class="s">&quot;./ttserver.log&quot;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">,</span> <span class="mo">0644</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;open log file failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">SetOutput</span><span class="p">(</span><span class="nx">logFile</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">SetFlags</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">Llongfile</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lmicroseconds</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Ldate</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;这是一条很普通的日志。&quot;</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">SetPrefix</span><span class="p">(</span><span class="s">&quot;[小王子]&quot;</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;这是一条很普通的日志。&quot;</span><span class="p">)</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果你要使用标准的logger，我们通常会把上面的配置操作写到init函数中。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">logFile</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">OpenFile</span><span class="p">(</span><span class="s">&quot;./xx.log&quot;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">,</span> <span class="mo">0644</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;open log file failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">SetOutput</span><span class="p">(</span><span class="nx">logFile</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">SetFlags</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">Llongfile</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lmicroseconds</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Ldate</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">10.10.5. </span>5.定制化日志格式</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>log标准库中还提供了一个创建新logger对象的构造函数–New，支持我们创建自己的logger示例。New函数的签名如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span> <span class="n">New</span><span class="p">(</span><span class="n">out</span> <span class="n">io</span><span class="o">.</span><span class="n">Writer</span><span class="p">,</span> <span class="n">prefix</span> <span class="n">string</span><span class="p">,</span> <span class="n">flag</span> <span class="nb">int</span><span class="p">)</span> <span class="o">*</span><span class="n">Logger</span>
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">SpecialUsageLog</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// 实例化 log.Logger 结构体</span>
+    <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="s">&quot;Golang &quot;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lshortfile</span><span class="p">)</span>
+    <span class="c1">//</span>
+    <span class="nx">logger</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Hello World, Golang&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">SpecialUsageWithBytes</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">buf</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+    <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">buf</span><span class="p">,</span> <span class="s">&quot;Hi! &quot;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lshortfile</span><span class="p">)</span>
+
+    <span class="nx">logger</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Hello World, Golang&quot;</span><span class="p">)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">buf</span><span class="p">.</span><span class="nx">String</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">SpecialUsageWithFile</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">file</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="s">&quot;log.log&quot;</span><span class="p">)</span>
+    <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="s">&quot;Hi!&quot;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lshortfile</span><span class="p">)</span>
+
+    <span class="nx">logger</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Hello World, Golang&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;log&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">logger</span> <span class="o">:=</span> <span class="nx">log</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span><span class="s">&quot;&lt;xtserver&gt;:&quot;</span><span class="p">,</span><span class="nx">log</span><span class="p">.</span><span class="nx">Lshortfile</span><span class="p">|</span><span class="nx">log</span><span class="p">.</span><span class="nx">Ldate</span><span class="p">|</span><span class="nx">log</span><span class="p">.</span><span class="nx">Ltime</span><span class="p">)</span>
+    <span class="nx">logger</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;这是自定义的logger记录的日志&quot;</span><span class="p">)</span>
+
+<span class="p">}</span>
+
+
+<span class="c1">// &lt;xtserver&gt;:2022/07/09 14:50:18 main.go:10: 这是自定义的logger记录的日志</span>
+</pre></div>
+</div>
+<p>参考文献：</p>
+<p><a class="reference external" href="https://www.cnblogs.com/zhangyafei/p/12952179.html">https://www.cnblogs.com/zhangyafei/p/12952179.html</a></p>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">10.10.6. </span>6.案例-log简易封装</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;log&quot;</span>
+    <span class="s">&quot;mime/multipart&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+    <span class="s">&quot;path&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// Level These are the integer logging levels used by the logger</span>
+<span class="kd">type</span> <span class="nx">Level</span> <span class="kt">int</span>
+
+<span class="c1">// Comment</span>
+<span class="kd">const</span> <span class="p">(</span>
+    <span class="nx">DEBUG</span> <span class="nx">Level</span> <span class="p">=</span> <span class="kc">iota</span>
+    <span class="nx">INFO</span>
+    <span class="nx">WARNING</span>
+    <span class="nx">ERROR</span>
+    <span class="nx">FATAL</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="p">(</span>
+    <span class="nx">logPrefix</span>  <span class="p">=</span> <span class="s">&quot;&quot;</span>
+    <span class="nx">levelFlags</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;DEBG&quot;</span><span class="p">,</span> <span class="s">&quot;INFO&quot;</span><span class="p">,</span> <span class="s">&quot;WARN&quot;</span><span class="p">,</span> <span class="s">&quot;ERRO&quot;</span><span class="p">,</span> <span class="s">&quot;FATL&quot;</span><span class="p">}</span>
+
+    <span class="nx">logger</span>  <span class="o">*</span><span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span>
+    <span class="nx">loggerf</span> <span class="o">*</span><span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span>
+
+    <span class="c1">// curLevel ...</span>
+    <span class="nx">curLevel</span> <span class="nx">Level</span>
+    <span class="c1">//</span>
+    <span class="nx">logfile</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">curLevel</span> <span class="p">=</span> <span class="nx">DEBUG</span>
+    <span class="nx">logger</span> <span class="p">=</span> <span class="nx">log</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="s">&quot;[default] &quot;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">LstdFlags</span><span class="p">)</span>
+    <span class="nx">logger</span><span class="p">.</span><span class="nx">SetFlags</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">Ldate</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lmicroseconds</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Llongfile</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// Println ..</span>
+<span class="kd">func</span> <span class="nx">Println</span><span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span><span class="p">,</span> <span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">l</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">l</span><span class="p">.</span><span class="nx">Output</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintln</span><span class="p">(</span><span class="nx">v</span><span class="o">...</span><span class="p">))</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="c1">// Fatalln is equivalent to l.Println() followed by a call to os.Exit(1).</span>
+<span class="kd">func</span> <span class="nx">Fatalln</span><span class="p">(</span><span class="nx">l</span> <span class="o">*</span><span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span><span class="p">,</span> <span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">l</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">l</span><span class="p">.</span><span class="nx">Output</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintln</span><span class="p">(</span><span class="nx">v</span><span class="o">...</span><span class="p">))</span>
+        <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Debug ...</span>
+<span class="kd">func</span> <span class="nx">Debug</span><span class="p">(</span><span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="nx">setPrefix</span><span class="p">(</span><span class="nx">DEBUG</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">DEBUG</span> <span class="o">&gt;=</span> <span class="nx">curLevel</span> <span class="p">{</span>
+        <span class="nx">Println</span><span class="p">(</span><span class="nx">logger</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+        <span class="nx">Println</span><span class="p">(</span><span class="nx">loggerf</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="c1">// Info ...</span>
+<span class="kd">func</span> <span class="nx">Info</span><span class="p">(</span><span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="nx">setPrefix</span><span class="p">(</span><span class="nx">INFO</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">INFO</span> <span class="o">&gt;=</span> <span class="nx">curLevel</span> <span class="p">{</span>
+        <span class="nx">Println</span><span class="p">(</span><span class="nx">logger</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+        <span class="nx">Println</span><span class="p">(</span><span class="nx">loggerf</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Warn ...</span>
+<span class="kd">func</span> <span class="nx">Warn</span><span class="p">(</span><span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="nx">setPrefix</span><span class="p">(</span><span class="nx">WARNING</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">WARNING</span> <span class="o">&gt;=</span> <span class="nx">curLevel</span> <span class="p">{</span>
+        <span class="nx">Println</span><span class="p">(</span><span class="nx">logger</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+        <span class="nx">Println</span><span class="p">(</span><span class="nx">loggerf</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Error Warn</span>
+<span class="kd">func</span> <span class="nx">Error</span><span class="p">(</span><span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="nx">setPrefix</span><span class="p">(</span><span class="nx">ERROR</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">ERROR</span> <span class="o">&gt;=</span> <span class="nx">curLevel</span> <span class="p">{</span>
+        <span class="nx">Println</span><span class="p">(</span><span class="nx">logger</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+        <span class="nx">Println</span><span class="p">(</span><span class="nx">loggerf</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Fatal ...</span>
+<span class="kd">func</span> <span class="nx">Fatal</span><span class="p">(</span><span class="nx">v</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="nx">setPrefix</span><span class="p">(</span><span class="nx">FATAL</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">FATAL</span> <span class="o">&gt;=</span> <span class="nx">curLevel</span> <span class="p">{</span>
+        <span class="nx">Fatalln</span><span class="p">(</span><span class="nx">logger</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+        <span class="nx">Fatalln</span><span class="p">(</span><span class="nx">loggerf</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">setPrefix</span><span class="p">(</span><span class="nx">level</span> <span class="nx">Level</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">logPrefix</span> <span class="p">=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;[%s] &quot;</span><span class="p">,</span> <span class="nx">levelFlags</span><span class="p">[</span><span class="nx">level</span><span class="p">])</span>
+    <span class="nx">logger</span><span class="p">.</span><span class="nx">SetPrefix</span><span class="p">(</span><span class="nx">logPrefix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">loggerf</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">loggerf</span><span class="p">.</span><span class="nx">SetPrefix</span><span class="p">(</span><span class="nx">logPrefix</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Config ..</span>
+<span class="kd">func</span> <span class="nx">Config</span><span class="p">(</span><span class="nx">level</span> <span class="nx">Level</span><span class="p">,</span> <span class="nx">lfile</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">curLevel</span> <span class="p">=</span> <span class="nx">level</span>
+    <span class="nx">loggerf</span> <span class="p">=</span> <span class="nx">log</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">lfile</span><span class="p">,</span> <span class="s">&quot;[default] &quot;</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">LstdFlags</span><span class="p">)</span>
+    <span class="nx">loggerf</span><span class="p">.</span><span class="nx">SetFlags</span><span class="p">(</span><span class="nx">log</span><span class="p">.</span><span class="nx">Ldate</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lmicroseconds</span> <span class="p">|</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Llongfile</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">lgfile</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">MustOpen</span><span class="p">(</span><span class="s">&quot;log.txt&quot;</span><span class="p">,</span> <span class="s">&quot;mylog1/&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">Error</span><span class="p">(</span><span class="s">&quot;Failed to open log file:&quot;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+    <span class="p">}</span>
+
+    <span class="nx">Config</span><span class="p">(</span><span class="nx">DEBUG</span><span class="p">,</span> <span class="nx">lgfile</span><span class="p">)</span>
+
+    <span class="nx">Debug</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">)</span>
+    <span class="nx">Info</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">)</span>
+    <span class="nx">Warn</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">)</span>
+    <span class="nx">Error</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>要支持文件，则再加上以下几个操作文件和目录的：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">GetSize</span><span class="p">(</span><span class="nx">f</span> <span class="nx">multipart</span><span class="p">.</span><span class="nx">File</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">content</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">content</span><span class="p">),</span> <span class="nx">err</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">GetExt</span><span class="p">(</span><span class="nx">fileName</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">path</span><span class="p">.</span><span class="nx">Ext</span><span class="p">(</span><span class="nx">fileName</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">CheckNotExist</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Stat</span><span class="p">(</span><span class="nx">src</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">os</span><span class="p">.</span><span class="nx">IsNotExist</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">CheckPermission</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Stat</span><span class="p">(</span><span class="nx">src</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">os</span><span class="p">.</span><span class="nx">IsPermission</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">IsNotExistMkDir</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">notExist</span> <span class="o">:=</span> <span class="nx">CheckNotExist</span><span class="p">(</span><span class="nx">src</span><span class="p">);</span> <span class="nx">notExist</span> <span class="o">==</span> <span class="kc">true</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">MkDir</span><span class="p">(</span><span class="nx">src</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">err</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">MkDir</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">MkdirAll</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">ModePerm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">Open</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">flag</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">perm</span> <span class="nx">os</span><span class="p">.</span><span class="nx">FileMode</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">OpenFile</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">flag</span><span class="p">,</span> <span class="nx">perm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">f</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">MustOpen</span><span class="p">(</span><span class="nx">fileName</span><span class="p">,</span> <span class="nx">filePath</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">dir</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Getwd</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;os.Getwd err: %v&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">src</span> <span class="o">:=</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="nx">filePath</span>
+    <span class="nx">perm</span> <span class="o">:=</span> <span class="nx">CheckPermission</span><span class="p">(</span><span class="nx">src</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">perm</span> <span class="o">==</span> <span class="kc">true</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;file.CheckPermission Permission denied src: %s&quot;</span><span class="p">,</span> <span class="nx">src</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">IsNotExistMkDir</span><span class="p">(</span><span class="nx">src</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;file.IsNotExistMkDir src: %s, err: %v&quot;</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">Open</span><span class="p">(</span><span class="nx">src</span><span class="o">+</span><span class="nx">fileName</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_APPEND</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_RDWR</span><span class="p">,</span> <span class="mo">0644</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;Fail to OpenFile :%v&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">f</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">10.10.7. </span>7.小结</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>其他log相关的三方库</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://links.jianshu.com/go?to=https%3A%2F%2Fdarjun.github.io%2F2020%2F02%2F07%2Fgodailylib%2Flogrus%2F">logrus</a>
+使用非常广泛的开源日志库。 Go的结构化记录器</p></li>
+</ul>
+<p>参考文献：<a class="reference external" href="https://darjun.github.io/2020/02/07/godailylib/logrus/">https://darjun.github.io/2020/02/07/godailylib/logrus/</a></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/uber-go/zap">zap</a> -
+Go中快速，结构化，分级的日志记录。</p></li>
+</ul>
+<p>其他：</p>
+<p><a class="reference external" href="https://www.topgoer.cn/docs/gokaiyuancangku/gokaiyuanLogging">https://www.topgoer.cn/docs/gokaiyuancangku/gokaiyuanLogging</a></p>
+<p>日志的有效使用能够让我们在遇到问题时快速定位问题，否则查找问题的效率将大打折扣。
+日志的使用需要注意以下三点：</p>
+<p>（1）正确使用日志的级别，什么时候使用输出级别，什么时候使用报错级别，等等。</p>
+<p>（2）默认的日志格式，实质上默认初始化了log.Logger结构体。</p>
+<p>（3）定制化日志格式，需要实例化log.Logger结构体，再调用相应的方法。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="09.regexp.html" class="btn btn-neutral float-left" title="10.9. regexp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="11.reflect-unsafe.html" class="btn btn-neutral float-right" title="10.11. reflect/unsafe" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

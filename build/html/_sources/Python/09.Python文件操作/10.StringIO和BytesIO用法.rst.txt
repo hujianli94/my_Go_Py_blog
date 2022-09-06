@@ -1,0 +1,146 @@
+.. contents::
+   :depth: 3
+..
+
+StringIO和BytesIO用法
+=====================
+
+StringIO
+--------
+
+StringIO提供了一种像操作文本磁盘文件一样对内存缓存区数据操作的方法，
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # @auther:   18793
+   # @Date：    2020/6/22 11:05
+   # @filename: sample01.py
+   # @Email:    1879324764@qq.com
+   # @Software: PyCharm
+   from io import StringIO
+
+   f = StringIO()
+   for x in ["aa", 123, "file1", "ddd"]:
+       if type(x) == str:
+           f.write(x)
+   f.seek(0)
+   xx = f.read()
+   print("xx = %s " % xx)
+   yy = f.getvalue()
+   print("yy = %s " % yy)
+
+代码示例 1
+~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/10 9:22
+   # filename: string_io.py
+   from io import StringIO
+
+   io_val = StringIO()
+   io_val.write("hello")
+
+   # getvalue()方法用于获得写入后的str
+   print("say:{}".format(io_val.getvalue()))
+
+   """
+   say:hello
+   """
+
+-  getvalue()方法用于获得写入后的str
+
+像读文件一样的使用StringIO
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+代码示例
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/10 9:24
+   # filename: str_io_read.py
+
+   from io import StringIO
+
+   io_val = StringIO("Hello\nWorld\nWellcome!")
+   while True:
+       line = io_val.readline()
+       if line == '':
+           break
+       print("line value:{}".format(line.strip()))
+       
+   """
+   line value:Hello
+   line value:World
+   line value:Wellcome!
+   """
+
+BytesIO
+-------
+
+-  BytesIO实现了在内存中读写bytes，我们创建一个BytesIO，然后写入一些bytes
+-  读写BytesIOBytesIO提供了一种像操作二进制磁盘文件一样对内存缓存区数据操作的方法
+
+代码示例
+
+.. code:: shell
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # @auther:   18793
+   # @Date：    2020/6/22 11:11
+   # @filename: sample01.py
+   # @Email:    1879324764@qq.com
+   # @Software: PyCharm
+   import pickle
+   from io import BytesIO
+
+   f = BytesIO()
+   for x in ["aa", 123, "file", "dddd", True]:
+       pickle.dump(x, f)
+
+   f.seek(0)
+
+   while True:
+       try:
+           xx = pickle.load(f)
+           print("xx = ", xx)
+       except EOFError:
+           break
+
+.. code:: python
+
+   In [22]: from io import BytesIO
+   In [23]: f = BytesIO(0
+      ....:
+   KeyboardInterrupt
+
+   In [23]: f = BytesIO()
+
+   In [24]: f.write('中文'.encode('utf-8'))
+   Out[24]: 6
+
+   In [25]: print(f.getvalue())
+   b'\xe4\xb8\xad\xe6\x96\x87'
+
+像读文件一样的使用BytesIO
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+代码示例
+
+::
+
+   In [26]: from io import BytesIO
+
+   In [27]: f = BytesIO(b'\xe4\xb8\xad\xe6\x96\x87')
+
+   In [28]: f.read()
+   Out[28]: b'\xe4\xb8\xad\xe6\x96\x87'

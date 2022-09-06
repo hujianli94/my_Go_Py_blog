@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23.7.9. Django实现缓存机制 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="23.7.10. 附1.Vue前端项目" href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html" />
+    <link rel="prev" title="23.7.8. 关于跨域问题的解决办法" href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">23. Python框架</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../01.%E5%B8%B8%E7%94%A8%E7%9A%84GUI%E6%A1%86%E6%9E%B6/index.html">23.1. 常用的GUI框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02.Flask/index.html">23.2. Flask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../03.Scrapy/index.html">23.3. Scrapy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../04.Django/index.html">23.4. Django</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05.Tornado/index.html">23.5. Tornado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../06.Python%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Django-Flask/index.html">23.6. Python高效开发实战-Django、Flask</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">23.7. Python-Django-Web典型模块开发实战</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="01.Django-RESTful-API%E5%9F%BA%E7%A1%80.html">23.7.1. Django-RESTful-API基础</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02.%E7%94%A8Django-REST-framework%E5%AE%9E%E7%8E%B0%E8%B1%86%E7%93%A3API%E5%BA%94%E7%94%A8.html">23.7.2. 用Django REST framework实现豆瓣API应用</a></li>
+<li class="toctree-l4"><a class="reference internal" href="03.%E7%94%A8Django%E5%AE%9E%E7%8E%B0%E7%99%BE%E5%BA%A6%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A4%E8%AF%81%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9E%8B.html">23.7.3. 用Django实现百度开发者认证业务模型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html">23.7.4. 区块链时代与Token登录</a></li>
+<li class="toctree-l4"><a class="reference internal" href="05.%E5%AE%9E%E7%8E%B0%E4%BC%98%E9%85%B7%E5%92%8C%E7%88%B1%E5%A5%87%E8%89%BA%E4%BC%9A%E5%91%98%E7%9A%84VIP%E6%A8%A1%E5%BC%8F.html">23.7.5. 实现优酷和爱奇艺会员的VIP模式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06.%E8%BF%9D%E7%A6%81%E8%AF%8D%E8%87%AA%E5%AE%A1%E6%9F%A5%E5%8A%9F%E8%83%BD.html">23.7.6. 违禁词自审查功能</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07.%E5%88%86%E6%9E%90%E5%90%BE%E7%88%B1%E7%A0%B4%E8%A7%A3%E8%AE%BA%E5%9D%9B%E5%8F%8D%E7%88%AC%E8%99%AB%E6%9C%BA%E5%88%B6.html">23.7.7. 分析吾爱破解论坛反爬虫机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html">23.7.8. 关于跨域问题的解决办法</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">23.7.9. Django实现缓存机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html">23.7.10. 附1.Vue前端项目</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%842.%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E4%B8%8A%E7%BA%BF%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8.html">23.7.11. 附2.前后端分离项目上线部署到云服务器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="../index.html"><span class="section-number">23. </span>Python框架</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">23.7. </span>Python-Django-Web典型模块开发实战</a> &raquo;</li>
+      <li><span class="section-number">23.7.9. </span>Django实现缓存机制</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Python/24.Python框架/07.Python-Django-Web典型模块开发实战/09.Django实现缓存机制.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#django" id="id7">Django实现缓存机制</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id8">1. 缓存的介绍</a></p></li>
+<li><p><a class="reference internal" href="#django6" id="id9">2. Django提供的6种缓存方式</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id10">3. 演示Django缓存机制项目</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id11">1 Django开发缓存功能</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id12">2 各种缓存配置</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#django-rest-framework" id="id13">4. Django REST framework实现缓存机制</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id14">4.1 新建演示Django REST framework实现缓存机制的项目</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id15">4.2 Django REST framework开发缓存机制</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#redis" id="id16">5. 缓存配置使用Redis</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="django">
+<h1><a class="toc-backref" href="#id7"><span class="section-number">23.7.9. </span>Django实现缓存机制</a><a class="headerlink" href="#django" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id8">1. 缓存的介绍</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>在网站上线后，用户在客户端向服务器端发送的所有数据请求，服务器都会在数据库中进行相应的管理操作，然后经过渲染模板，执行业务逻辑，最后生成用户看到的页面。</p>
+<p>当一个网站的用户访问量很大的时候，服务器端的数据操作量也会很大，这会消耗很多服务端资源。所以必须使用缓存来减轻后端服务器的压力。</p>
+<p>缓存是将一些常用的数据保存在内存或者Memcache中，在一定的时间内再次访问这些数据时，不用执行数据库及渲染等操作，而是直接从缓存中取得数据，返回给客户端。</p>
+</section>
+<section id="django6">
+<h2><a class="toc-backref" href="#id9">2. Django提供的6种缓存方式</a><a class="headerlink" href="#django6" title="Permalink to this headline">¶</a></h2>
+<p>Django提供的6种缓存方式如下：</p>
+<p>（1）开发调试缓存；</p>
+<p>（2）内存缓存；</p>
+<p>（3）文件缓存；</p>
+<p>（4）数据库缓存；</p>
+<p>（5）Memcache缓存（使用Python-memcached模块）；</p>
+<p>（6）Memcache缓存（使用pylibmc模块）。</p>
+<p>常用的缓存方式是文件缓存和Mencache缓存。</p>
+<p>注意：
+其中开发调试缓存，只用于开发调试期间，在正式应用时并不执行任何操作。Memcache相关的缓存，属于比较早期的解决方案，所以在本节中不做过多的分析。</p>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id10">3. 演示Django缓存机制项目</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>（1）新建Django项目，命名demo11，新建App，命名为app01</p>
+<p>（2）在app01/models.py内新建数据表类：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<span class="c1"># Create your models here.</span>
+
+<span class="k">class</span> <span class="nc">Books</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    图书表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;书名&#39;</span><span class="p">)</span>
+    <span class="n">pv</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;浏览量&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;图书表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+</pre></div>
+</div>
+<p>（3）执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python manage.py makemigrations
+$ python manage.py migrate
+</pre></div>
+</div>
+<p>（4）在图书表内手动添加两条实验数据：</p>
+<img alt="../../../_images/image-20220420173108476.png" src="../../../_images/image-20220420173108476.png" />
+<p>（5）在Templates目录下新建文件：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;en&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Title<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+{% for t in list %}
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/book/{{ t.id }}/&quot;</span><span class="p">&gt;</span>
+        书名：《{{ t.title }}》
+        <span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        浏览量：{{ t.pv }}
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+{% endfor %}
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>（6）在Templates目录下新建文件book.html：</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Title<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+       书名：《{{ t.title }}》
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+        浏览量：{{ t.pv }}
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>（7）在app01/views.py中编写逻辑代码：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">django.views.generic.base</span> <span class="kn">import</span> <span class="n">View</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Books</span>
+
+
+<span class="c1"># Create your views here.</span>
+
+<span class="k">class</span> <span class="nc">BookListView</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取读书列表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="nb">list</span> <span class="o">=</span> <span class="n">Books</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;booklist.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">})</span>
+
+
+<span class="k">class</span> <span class="nc">GetBookView</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取单个图书</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="n">book</span> <span class="o">=</span> <span class="n">Books</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">pv</span><span class="p">)</span>
+        <span class="n">book</span><span class="o">.</span><span class="n">pv</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">book</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;book.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="n">book</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>（8）在demo11/urls.py内配置路由代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">BookListView</span><span class="p">,</span> <span class="n">GetBookView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;booklist/&#39;</span><span class="p">,</span> <span class="n">BookListView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;booklist&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;book/&lt;id&gt;/&#39;</span><span class="p">,</span> <span class="n">GetBookView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;book&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（9）启动demo11，然后使用浏览器访问： <a class="reference external" href="http://127.0.0.1:8088/booklist/">http://127.0.0.1:8088/booklist/</a></p>
+<p>我们可以通过单击书名，跳转到单本图书的页面。</p>
+<img alt="../../../_images/image-20220420173926896.png" src="../../../_images/image-20220420173926896.png" />
+<p>（10）如图所示，通过单击书名链接，进入：<a class="reference external" href="http://127.0.0.1:8088/book/1/">http://127.0.0.1:8088/book/1/</a>
+页面，《赤峰不放羊》的浏览量就增加了1，然后刷新一次，浏览量又增加了1。</p>
+<section id="id3">
+<h3><a class="toc-backref" href="#id11">1 Django开发缓存功能</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>（1）在app01/views.py中对GetBookView进行改写：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.decorators.cache</span> <span class="kn">import</span> <span class="n">cache_page</span>
+<span class="kn">from</span> <span class="nn">django.utils.decorators</span> <span class="kn">import</span> <span class="n">method_decorator</span>
+
+<span class="k">class</span> <span class="nc">GetBookView</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取单个图书</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@method_decorator</span><span class="p">(</span><span class="n">cache_page</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="n">book</span> <span class="o">=</span> <span class="n">Books</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">pv</span><span class="p">)</span>
+        <span class="n">book</span><span class="o">.</span><span class="n">pv</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">book</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;book.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="n">book</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>（2）重新启动项目demo11，然后使用浏览器直接访问：<a class="reference external" href="http://127.0.0.1:8088/book/1/">http://127.0.0.1:8088/book/1/</a></p>
+<p>此时，我们立刻刷新网页，发现浏览量并没有像上一节介绍的那样增加，依然是28</p>
+<p>等待3秒以后，再次刷新网页，发现浏览量变成了30</p>
+<blockquote>
+<div><p>注意：
+虽然我们已经在开发测试阶段实现了缓存的功能，但是这种效果其实只能存在于开发测试阶段，一旦项目上线，这种缓存的功能就会消失。原因是，Django默认的缓存配置是开发调试模式，如果想要在项目上线以后还能继续使用缓存的功能，需要在settings.py中添加配置代码，用来指定缓存的存储方式。</p>
+</div></blockquote>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id12">2 各种缓存配置</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>缓存的存储位置，可以通过在项目的settings中配置，指定存储的位置。开发者可以根据项目的大小和业务模型的不同来决定将缓存具体存储在哪里。下面就来介绍将缓存存储在不同位置所需要做的配置。</p>
+<p>（1）开发调试（此模式为开发调试时使用，在项目上线后不再执行任何操作）settings.py中的文件配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CACHES</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s1">&#39;BACKEND&#39;</span><span class="p">:</span> <span class="s1">&#39;django.core.cache.backends.dummy.DummyCache&#39;</span><span class="p">,</span>  <span class="c1"># 缓存后台使用的引擎</span>
+  <span class="s1">&#39;TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>            <span class="c1"># 缓存超时时间（默认300秒，None表示永不过期，0表示立即过期）</span>
+  <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:{</span>
+   <span class="s1">&#39;MAX_ENTRIES&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>          <span class="c1"># 最大缓存记录的数量（默认300）</span>
+   <span class="s1">&#39;CULL_FREQUENCY&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>          <span class="c1"># 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）</span>
+  <span class="p">},</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>（2）内存缓存（将缓存内容保存至内存区域中），settings.py中的文件配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CACHES</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s1">&#39;BACKEND&#39;</span><span class="p">:</span> <span class="s1">&#39;django.core.cache.backends.locmem.LocMemCache&#39;</span><span class="p">,</span>  <span class="c1"># 指定缓存使用的引擎</span>
+  <span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span> <span class="s1">&#39;unique-snowflake&#39;</span><span class="p">,</span>         <span class="c1"># 写在内存中的变量的唯一值</span>
+  <span class="s1">&#39;TIMEOUT&#39;</span><span class="p">:</span><span class="mi">300</span><span class="p">,</span>             <span class="c1"># 缓存超时时间(默认为300秒,None表示永不过期)</span>
+  <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:{</span>
+   <span class="s1">&#39;MAX_ENTRIES&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>           <span class="c1"># 最大缓存记录的数量（默认300）</span>
+   <span class="s1">&#39;CULL_FREQUENCY&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>          <span class="c1"># 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）</span>
+  <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>（3）文件缓存（把缓存数据存储在文件中），settings.py中的文件配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CACHES</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s1">&#39;BACKEND&#39;</span><span class="p">:</span> <span class="s1">&#39;django.core.cache.backends.filebased.FileBasedCache&#39;</span><span class="p">,</span> <span class="c1">#指定缓存使用的引擎</span>
+  <span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span> <span class="s1">&#39;/var/tmp/django_cache&#39;</span><span class="p">,</span>        <span class="c1">#指定缓存的路径</span>
+  <span class="s1">&#39;TIMEOUT&#39;</span><span class="p">:</span><span class="mi">300</span><span class="p">,</span>              <span class="c1">#缓存超时时间(默认为300秒,None表示永不过期)</span>
+  <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:{</span>
+   <span class="s1">&#39;MAX_ENTRIES&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>            <span class="c1"># 最大缓存记录的数量（默认300）</span>
+   <span class="s1">&#39;CULL_FREQUENCY&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>           <span class="c1"># 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）</span>
+  <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>（4）数据库缓存（把缓存数据存储在数据库中），settings.py中的文件配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CACHES</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s1">&#39;BACKEND&#39;</span><span class="p">:</span> <span class="s1">&#39;django.core.cache.backends.db.DatabaseCache&#39;</span><span class="p">,</span>  <span class="c1"># 指定缓存使用的引擎</span>
+  <span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span> <span class="s1">&#39;cache_table&#39;</span><span class="p">,</span>          <span class="c1"># 数据库表</span>
+  <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:{</span>
+   <span class="s1">&#39;MAX_ENTRIES&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>           <span class="c1"># 最大缓存记录的数量（默认300）</span>
+   <span class="s1">&#39;CULL_FREQUENCY&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>          <span class="c1"># 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）</span>
+  <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>创建缓存的数据库表使用语句：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ python manage.py createcachetable
+</pre></div>
+</div>
+<p>（5）Memcache缓存（使用Python-memcached模块连接Memcache）。</p>
+<p>Memcached是Django原生支持的缓存系统。要使用Memcached，需要下载Memcached的支持库Python-memcached或pylibmc，settings.py中的文件配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CACHES</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s1">&#39;BACKEND&#39;</span><span class="p">:</span> <span class="s1">&#39;django.core.cache.backends.memcached.MemcachedCache&#39;</span><span class="p">,</span> <span class="c1"># 指定缓存使用的引擎</span>
+  <span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span> <span class="s1">&#39;222.169.10.100:11211&#39;</span><span class="p">,</span>         <span class="c1"># 指定Memcache缓存服务器的IP地址和端口</span>
+  <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:{</span>
+   <span class="s1">&#39;MAX_ENTRIES&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>            <span class="c1"># 最大缓存记录的数量（默认300）</span>
+   <span class="s1">&#39;CULL_FREQUENCY&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>           <span class="c1"># 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）</span>
+  <span class="p">}</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>LOCATION也可以配置成如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span> <span class="s1">&#39;unix:/tmp/memcached.sock&#39;</span><span class="p">,</span>   <span class="c1"># 指定局域网内的主机名加socket套接字为Memcache缓存服务器</span>
+<span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span> <span class="p">[</span>         <span class="c1"># 指定一台或多台其他主机ip地址加端口为Memcache缓存服务器</span>
+ <span class="s1">&#39;222.169.10.100:11211&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;222.169.10.101:11211&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;222.169.10.102:11211&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（6）Memcache缓存（使用pylibmc模块连接Memcache），settings.py中的文件配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CACHES</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+   <span class="s1">&#39;BACKEND&#39;</span><span class="p">:</span> <span class="s1">&#39;django.core.cache.backends.memcached.PyLibMCCache&#39;</span><span class="p">,</span>  <span class="c1"># 指定缓存使用的引擎</span>
+   <span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span><span class="s1">&#39;192.168.10.100:11211&#39;</span><span class="p">,</span>         <span class="c1"># 指定本机的11211端口为Memcache缓存服务器</span>
+   <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:{</span>
+    <span class="s1">&#39;MAX_ENTRIES&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>            <span class="c1"># 最大缓存记录的数量（默认300）</span>
+    <span class="s1">&#39;CULL_FREQUENCY&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>           <span class="c1"># 缓存到达最大个数之后，剔除缓存个数的比例，即：1/CULL_FREQUENCY（默认3）</span>
+   <span class="p">},</span>
+  <span class="p">}</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<p>LOCATION也可以配置成如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/memcached.sock&#39;</span><span class="p">,</span>  <span class="c1"># 指定某个路径为缓存目录</span>
+<span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span> <span class="p">[</span>       <span class="c1"># 分布式缓存,在多台服务器上运行Memcached进程,程序会把多台服务器当作一个单独的缓存,而不会在每台服务器上复制缓存值</span>
+ <span class="s1">&#39;192.168.10.100:11211&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;192.168.10.101:11211&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;192.168.10.102:11211&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>注意：
+Memcached是基于内存的缓存，数据存储在内存中，如果服务器死机，数据就会丢失，所以Memcached一般与其他缓存配合使用。</p>
+</section>
+</section>
+<section id="django-rest-framework">
+<h2><a class="toc-backref" href="#id13">4. Django REST framework实现缓存机制</a><a class="headerlink" href="#django-rest-framework" title="Permalink to this headline">¶</a></h2>
+<p>Django REST
+framework的缓存机制，是在Django的缓存机制的基础之上开发的。从用户体验角度上来说，缓存机制可以提升用户访问网站的响应速度。我们在这一节中，通过一个实例项目，向大家介绍如何使用Django
+REST framework来实现缓存机制。</p>
+<section id="id5">
+<h3><a class="toc-backref" href="#id14">4.1 新建演示Django REST framework实现缓存机制的项目</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>Django REST framework的缓存机制是Django REST
+framework比较经典的一个功能。在这一节中新建一个Django项目demo11_drf，然后安装和配置Django
+REST framework及其依赖库。具体步骤如下：</p>
+<p>（1）新建Django项目demo11_drf，新建App，命名为app01。</p>
+<p>（2）安装Django REST framework及其依赖包markdown和django-filter。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install djangorestframework markdown Django-filter
+</pre></div>
+</div>
+<p>（3）在settings中注册如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（4）在app01/models.py中构建商品表类：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="c1"># Create your models here.</span>
+<span class="k">class</span> <span class="nc">Goods</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    商品表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;商品名&#39;</span><span class="p">)</span>
+    <span class="n">pv</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;浏览量&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;商品表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+</pre></div>
+</div>
+<p>（5）执行数据更新命令：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ python manage.py makemigrations
+$ python manage.py migrate
+</pre></div>
+</div>
+<p>（6）在app01目录下新建序列化文件serializers.py：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">serializers</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Goods</span>
+
+
+<span class="k">class</span> <span class="nc">GoodsModelSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Goods</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;__all__&quot;</span>
+</pre></div>
+</div>
+<p>（7）如图所示，手动向商品表内添加两条实验数据。</p>
+<img alt="../../../_images/image-20220420181438596.png" src="../../../_images/image-20220420181438596.png" />
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id15">4.2 Django REST framework开发缓存机制</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>（1）安装依赖drf-extensions：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install drf-extensions
+</pre></div>
+</div>
+<p>（2）在app01/views.py中，在不加入缓存机制的情况下，查看商品列表的逻辑：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Goods</span>
+<span class="kn">from</span> <span class="nn">.serializers</span> <span class="kn">import</span> <span class="n">GoodsModelSerializer</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework_extensions.cache.mixins</span> <span class="kn">import</span> <span class="n">CacheResponseMixin</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">class</span> <span class="nc">GetGoodListView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取商品列表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">good_list</span> <span class="o">=</span> <span class="n">Goods</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">re</span> <span class="o">=</span> <span class="n">GoodsModelSerializer</span><span class="p">(</span><span class="n">good_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（3）在demo11_drf/urls.py中配置路由：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">GetGoodListView</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;goodlist/&#39;</span><span class="p">,</span><span class="n">GetGoodListView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;goodlist&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（4）在settings.py中配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># DRF扩展</span>
+<span class="n">REST_FRAMEWORK_EXTENSIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># 缓存时间</span>
+    <span class="s1">&#39;DEFAULT_CACHE_RESPONSE_TIMEOUT&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="c1"># 缓存存储</span>
+    <span class="s1">&#39;DEFAULT_USE_CACHE&#39;</span><span class="p">:</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在上述代码中，DEFAULT_CACHE_RESPONSE_TIMEOUT为缓存有效期，单位为秒。</p>
+<p>DEFAULT_USE_CACHE为缓存的存储方式，与配置文件中的CACHES的键对应。</p>
+<p>（5）运行项目demo11_drf，然后用浏览器访问：<a class="reference external" href="http://127.0.0.1:8088/goodlist/">http://127.0.0.1:8088/goodlist/</a></p>
+<p>如图所示，在没有加入缓存机制的情况下，每次刷新网页，访问获取商品列表所使用的时间，都在30~40ms。</p>
+<img alt="../../../_images/image-20220420182228065.png" src="../../../_images/image-20220420182228065.png" />
+<p>（6）在app01/views.py中，给GetGoodListView添加缓存机制。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Goods</span>
+<span class="kn">from</span> <span class="nn">.serializers</span> <span class="kn">import</span> <span class="n">GoodsModelSerializer</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework_extensions.cache.mixins</span> <span class="kn">import</span> <span class="n">CacheResponseMixin</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">class</span> <span class="nc">GetGoodListView</span><span class="p">(</span><span class="n">CacheResponseMixin</span><span class="p">,</span> <span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取商品列表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">good_list</span> <span class="o">=</span> <span class="n">Goods</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">re</span> <span class="o">=</span> <span class="n">GoodsModelSerializer</span><span class="p">(</span><span class="n">good_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（7）还有另外一种给GetGoodListView添加缓存机制的写法：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Goods</span>
+<span class="kn">from</span> <span class="nn">.serializers</span> <span class="kn">import</span> <span class="n">GoodsModelSerializer</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework_extensions.cache.mixins</span> <span class="kn">import</span> <span class="n">CacheResponseMixin</span>
+<span class="kn">from</span> <span class="nn">rest_framework_extensions.cache.decorators</span> <span class="kn">import</span> <span class="n">cache_response</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">class</span> <span class="nc">GetGoodListView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取商品列表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@cache_response</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">good_list</span> <span class="o">=</span> <span class="n">Goods</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">re</span> <span class="o">=</span> <span class="n">GoodsModelSerializer</span><span class="p">(</span><span class="n">good_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>cache_response装饰器可以接收两个参数：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@cache_response</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（8）再次运行demo11_demo11_drf，然后使用浏览器访问：<a class="reference external" href="http://127.0.0.1:8088/goodlist/">http://127.0.0.1:8088/goodlist/</a></p>
+<img alt="../../../_images/image-20220420182556809.png" src="../../../_images/image-20220420182556809.png" />
+<p>使用缓存机制以后，多次刷新网页，每次访问数据所需时间都在10~20ms之间。</p>
+<blockquote>
+<div><p>注意：
+本例中通过增加缓存的机制，让我们访问网页的速度提升了一倍。其实缓存能够提升的访问速度远不止这些，随着网页所获取的数据量越来越大，同时向网站服务器发送网络请求的数量越来越多，有缓存机制的网页访问速度可能会比没有缓存机制的网页快几百上千倍。</p>
+</div></blockquote>
+</section>
+</section>
+<section id="redis">
+<h2><a class="toc-backref" href="#id16">5. 缓存配置使用Redis</a><a class="headerlink" href="#redis" title="Permalink to this headline">¶</a></h2>
+<p>Redis是一种非关系型数据库。如果对Redis有所了解就会知道，因为本身代码逻辑的不同，非关系型数据库的运行速度要比关系型数据库快，所以如果想要让缓存更快，建议使用Redis来储存缓存。</p>
+<p>（1）确保Redis的server运行。</p>
+<p>（2）安装django-redis依赖。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install django-redis
+</pre></div>
+</div>
+<p>（3）在settings.py中增加配置代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 上面是django项目settings中的其他配置....</span>
+<span class="n">CACHES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;BACKEND&#39;</span><span class="p">:</span> <span class="s1">&#39;django_redis.cache.RedisCache&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;LOCATION&#39;</span><span class="p">:</span> <span class="s1">&#39;redis://192.168.1.107:6379/2&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;OPTIONS&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;CLIENT_CLASS&quot;</span><span class="p">:</span> <span class="s2">&quot;django_redis.client.DefaultClient&quot;</span><span class="p">,</span>
+            <span class="c1"># socket 建立连接超时设置</span>
+            <span class="s2">&quot;SOCKET_CONNECT_TIMEOUT&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="c1"># 连接建立后的读写操作超时设置</span>
+            <span class="s2">&quot;SOCKET_TIMEOUT&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">&quot;CONNECTION_POOL_KWARGS&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="c1"># 连接池最大数量</span>
+                <span class="s2">&quot;max_connections&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s2">&quot;encoding&quot;</span><span class="p">:</span> <span class="s1">&#39;utf-8&#39;</span>
+            <span class="p">},</span>
+             <span class="s2">&quot;PASSWORD&quot;</span><span class="p">:</span> <span class="s2">&quot;123456&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>至此，我们实现了Django REST framework缓存机制。</p>
+<blockquote>
+<div><p>参考文献：</p>
+<p><a class="reference external" href="https://www.yuque.com/keep_running/python/oyp0cx">https://www.yuque.com/keep_running/python/oyp0cx</a></p>
+<p><a class="reference external" href="https://django-redis-chs.readthedocs.io/zh_CN/latest/">https://django-redis-chs.readthedocs.io/zh_CN/latest/</a></p>
+<p><a class="reference external" href="https://www.cnblogs.com/Edmondhui/p/15952817.html">https://www.cnblogs.com/Edmondhui/p/15952817.html</a></p>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html" class="btn btn-neutral float-left" title="23.7.8. 关于跨域问题的解决办法" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html" class="btn btn-neutral float-right" title="23.7.10. 附1.Vue前端项目" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

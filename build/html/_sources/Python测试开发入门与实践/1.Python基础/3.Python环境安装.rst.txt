@@ -1,0 +1,325 @@
+.. role:: raw-latex(raw)
+   :format: latex
+..
+
+.. contents::
+   :depth: 3
+..
+
+Python环境安装
+==============
+
+1.Windows环境安装Python
+-----------------------
+
+1.1 下载地址
+~~~~~~~~~~~~
+
+最新安装包下载地址：
+
+::
+
+   https://www.python.org/downloads/windows/
+
+历史发布版本下载地址：
+
+::
+
+   https://www.python.org/ftp/python/3.9.11/python-3.9.11-amd64.exe
+   https://www.python.org/ftp/python/3.7.5/python-3.7.5-amd64.exe
+
+1.2 安装注意
+~~~~~~~~~~~~
+
+1. 勾选\ ``pip``\ 选项
+2. 添加到\ ``PATH``\ 路径
+3. 自定义安装路径
+4. ``python -V``\ 查看\ ``python``\ 版本
+5. ``pip -V``\ 查看\ ``pip``\ 版本
+
+1.3 安装三方包
+~~~~~~~~~~~~~~
+
+Python中安装三方包最好的方式就是通过\ ``pip install``\ 命令来安装。
+
+::
+
+   pip install package_name
+
+比如：安装\ ``requests``\ 包的命令如下：
+
+::
+
+   pip install requests
+
+2. Linux 环境多版本Python环境安装
+---------------------------------
+
+2.1 背景
+~~~~~~~~
+
+``Linux``\ 环境下容易出现多版本Python共存的情况，为了很好的隔离和维护不同版本的环境正常。因此，需要通过一套工具来专门对多版本环境进行管理。
+
+2.2 多版本工具
+~~~~~~~~~~~~~~
+
+``pyenv`` 是Python的一个多版本管理工具。它不仅支持 Python 2 和 Python 3
+版本的共存，还支持 Python 2.6、Python 2.7、Python 3.5、 Python 3.7
+的共存，甚至还支持 CPython 与
+PyPy、Jython、IronPython、Anaconda、ActivePython 等发行版的共存。
+
+2.3 安装
+~~~~~~~~
+
+一键安装
+
+.. code:: bash
+
+   curl https://pyenv.run | bash
+   #or
+   curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+   exec $SHELL
+
+手动安装
+
+::
+
+   git clone https://github.com/pyenv/pyenv.git ~/.pyenv 
+   echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile 
+   echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile 
+   echo 'eval "$(pyenv init --path)"' >> ~/.bash_profile 
+   echo 'eval "$(pyenv init -)"' >> ~/.bash_profile 
+   source ~/.bash_profile
+
+更多\ ``Linux``\ 系统安装\ ``pyenv``\ 的详细说明见官网\ `github <https://github.com/pyenv/pyenv.git>`__\ 。
+如果\ ``github``\ 下载不了的，可以从\ `这里 <https://download.csdn.net/download/five3/85056141>`__\ 下载zip包
+
+2.4 使用
+~~~~~~~~
+
+版本及帮助查看
+^^^^^^^^^^^^^^
+
+::
+
+   pyenv -v
+   pyenv -h
+
+install命令
+^^^^^^^^^^^
+
+``pyenv install`` 主要用于安装Python版本。
+
+::
+
+   pyenv install -l        # 查询可安装的Python版本
+   pyenv install 3.7.5     # 安装具体的Python版本
+
+注意：如果安装过程中出现失败，可能是因为缺少基础依赖库的原因。可通过如下命令来安装所需的依赖库。
+
+::
+
+   yum install -y gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel
+
+version/versions命令
+^^^^^^^^^^^^^^^^^^^^
+
+1. ``pyenv version`` 命令用于查看当前目录所使用的Python版。
+2. ``pyenv versions``
+   命令则是查看当前系统中全部已安装的Python版本。其中带\ ``*``\ 的则是当前目录的Python版本
+
+local/global命令
+^^^^^^^^^^^^^^^^
+
+1. ``pyenv local 3.7.5`` 设置当前目录使用\ ``3.7.5``\ 版本的Python。
+2. ``pyenv global 3.7.5``
+   设置当前系统全局环境默认使用\ ``3.7.5``\ 版本的Python。
+
+uninstall命令
+^^^^^^^^^^^^^
+
+``pyenv uninstall 3.7.5`` 用于卸载已经安装的\ ``3.7.5``\ 版本的Python。
+
+3.Python 虚拟环境安装
+---------------------
+
+.. _背景-1:
+
+3.1 背景
+~~~~~~~~
+
+多版本环境是指在一台电脑上安装多个版本的Python环境；
+虚拟环境则是指在一个\ ``Python``\ 环境中创建多个相对独立的软件执行环境。
+
+这些独立的虚拟环境共享一个\ ``Python``\ 的基础环境，即\ ``Python``\ 的解释器环境；
+但却拥有不同的\ ``三方库``\ 依赖环境，其主要解决不同项目间三方库冲突的问题。
+
+.. _安装-1:
+
+3.2 安装
+~~~~~~~~
+
+::
+
+   pip install pipenv
+   pipenv –-version
+
+3.3 创建虚拟环境
+~~~~~~~~~~~~~~~~
+
+.. code:: bash
+
+   # 创建一个空的虚拟环境
+   pipenv install
+   # 当前虚拟环境下安装requests库
+   pipenv install requests
+   # 安装指定依赖文件中的三方库
+   pipenv install -r /path/to/requirements.txt
+   # 安装setpu.py源码库
+   pipenv install -e .
+
+注意：安装前需要配置下虚拟环境目录下的\ ``Pipfile``\ 文件中url字段，更新为国内三方库的源（http://mirrors.aliyun.com/pypi/simple/）
+
+.. _使用-1:
+
+3.4 使用
+~~~~~~~~
+
+交互式虚拟环境
+
+::
+
+   pipenv shell
+   python /path/to/script.py
+
+一次性虚拟环境
+
+::
+
+   pipenv run python /path/to/script.py
+
+3.5 卸载三方库
+~~~~~~~~~~~~~~
+
+.. code:: bash
+
+   # 删除requests库
+   pipenv uninstall requests
+
+   # 删除所有已安装的三方库
+   pipenv uninstall –all
+
+3.6 三方库迁移备份
+~~~~~~~~~~~~~~~~~~
+
+pipenv还提供了一个依赖库迁移的功能，即可以把当前虚拟环境中已安装的依赖库信息导出到requirements.txt文件
+
+这样在新的环境中就可以通过该requirements.txt文件安装全部的依赖库，从而达到依赖库准确迁移的目的。提取依赖库的命令如下：
+
+::
+
+   pipenv lock -r
+
+该命令会生成一个名为\ ``requirements.txt``\ 的依赖库文件中，该文件包含了当前虚拟环境中的所有三方库的版本信息。
+
+4.Python第三方库安装
+--------------------
+
+Python中安装第三方库的方式有多种，具体如下。
+
+-  本地源码安装。
+-  通过easy_install包管理工具安装。
+-  通过pip包管理工具安装。
+
+4.1 本地源码安装
+~~~~~~~~~~~~~~~~
+
+.. code:: bash
+
+   $ python setup.py install
+
+通过该命令安装完成之后，对应的第三方库将会被安装到Python程序主目录下的Lib:raw-latex:`\site`-packages目录中。
+
+例如，Python程序被安装在C::raw-latex:`\Python目录下`，则第三方库将会被安装在C::raw-latex:`\Python`:raw-latex:`\Lib`:raw-latex:`\site`-packages目录下。
+
+默认情况下，Lib:raw-latex:`\site`-packages这个目录会被作为Python解释器查找第三方库的路径之一，所以通过源码方式安装的第三方库，在Python重启之后就可以直接引入并使用。
+
+4.2 easy_install安装
+~~~~~~~~~~~~~~~~~~~~
+
+当然，本地源码安装方式并不是最好的选择，通常我们都会使用Python的包管理工具来安装第三方库。在早期的Python版本中，通常都会自带一个easy_install工具，通过该工具就可以很方便地安装公开发布的第三方库。easy_install安装第三方库的命令如下：
+
+.. code:: bash
+
+   $ easy_install install requests
+
+执行该命令后，easy_install会从Python的第三方库发行站点——PyPI下载第三方库的安装包，并在本地自动进行解压和安装，其安装效果和本地源码安装方式一样。
+
+4.3 pip安装
+~~~~~~~~~~~
+
+在较新版本的Python中，easy_install已经被pip所替换。关于pip的安装和测试在前面的小节中已经有过介绍，这里我们重点介绍如何通过pip进行Python的第三方库管理。
+
+pip的常用命令如下：
+
+-  install
+-  list
+-  search
+-  freeze
+-  uninstall
+
+我们先来看下安装命令，同easy_install一样，pip安装第三方库也非常地简单，具体命令如下：
+
+.. code:: bash
+
+   $ pip install requests
+
+如果你想要安装指定版本的第三方库，只要在安装库名称后面加上版本号即可，比如：
+
+.. code:: bash
+
+   $ pip install requests==2.20.0
+
+或者你只是想升级当前版本的第三方库，则需要在使用install命令时，添加上升级选项，比如：
+
+.. code:: bash
+
+   $ pip install -U requests
+
+当你安装完第三方库之后，可能希望查看第三方库是否被成功地安装，或者你只是想了解下当前的Python环境中安装了哪些第三方库，那么就可以通过list命令来查看：
+
+.. code:: bash
+
+   $ pip list 
+
+把本地Python的安装包信息导出，然后在另外一个Python环境中安装这些第三方库，来确保程序能正常地迁移到另外的Python环境中。此时就可以使用freeze命令来完成，具体操作命令如下：
+
+.. code:: bash
+
+   #导出系统已安装包列表到requirements.txt文件
+   $ pip freeze > requirements.txt     
+
+执行该命令会在当前目录下生成一个requirements.txt文件，然后根据具体的需求，把requirements.txt文件复制到需要安装本地第三方库的Python机器上，并执行如下命令进行第三方库的全量安装：
+
+.. code:: bash
+
+   #从requirements.txt文件安装
+   $ pip install -r requirements.txt   
+
+   # 使用国内源加速安装requirements.txt三方库
+   $ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir -r requirements.txt
+
+   # 使用国内阿里源加速安装requirements
+   $ pip install --no-cache-dir -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple    
+
+uninstall命令来删除指定的第三方库，具体命令如下：
+
+.. code:: bash
+
+   $ pip uninstall requests
+
+..
+
+   提示:
+
+   pip和easy_install在使用方式和效果上都非常相似，之所以使用pip替换easy_install作为默认的Python包管理工具，是因为pip是easy_install的改进版。

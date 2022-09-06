@@ -1,0 +1,102 @@
+.. contents::
+   :depth: 3
+..
+
+Vuex状态管理
+============
+
+Vuex是一个专为Vue.js应用程序开发的状态管理工具。
+
+它采用了集中式存储管理应用的所有状态，并以相应的规则保证状态以一种可预测的方式发生变化。
+
+简单来说，Vuex是一个适用于在Vue项目开发时使用的状态管理工具，如果在一个项目开发过程中频繁地使用组件传参的方式实现数据的同步，那么在项目的扩展、管理和维护方面将是一个灾难。
+
+为此，Vue为这些被多个组件频繁使用的数据提供了一个统一的管理工具，即Vuex。
+
+在具有Vuex的Vue项目中，我们只需把这些值定义在Vuex的状态管理对象中，就可以在整个项目的组件内使用。
+
+1.Vuex的安装和使用
+------------------
+
+1.1 使用npm安装
+~~~~~~~~~~~~~~~
+
+.. code:: shell
+
+   $ npm install vuex@next --save
+
+1.2 使用yarn安装
+~~~~~~~~~~~~~~~~
+
+.. code:: shell
+
+   $ yarn add vuex@next --save
+
+在一个模块化的打包系统中，必须显式地通过Vue.use()来注册Vuex。
+
+``/src/store/index.js``\ 文件代码如下：
+
+::
+
+   import { createStore } from 'vuex'
+
+   export default createStore({
+     state: {
+     },
+     getters: {
+     },
+     mutations: {
+     },
+     actions: {
+     },
+     modules: {
+     }
+   })
+
+在\ ``main.js``\ 中
+
+::
+
+   import { createApp } from 'vue'
+   import App from './App.vue'
+   import router from './router'
+   import store from './store'
+   import ElementPlus from 'element-plus'
+   import 'element-plus/dist/index.css'
+
+   createApp(App).use(store).use(router).use(ElementPlus).mount('#app')
+
+2.Vuex核心概念
+--------------
+
+参考文献
+
+Vue 状态管理工具-Vuex
+
+https://juejin.cn/post/7047118350090469412
+
+3.Vuex规范目录结构
+------------------
+
+因为把整个store放到index.js中是不合理的，所以需要拆分。示例目录格式如下：
+
+::
+
+   ├── index.html
+   ├── main.js
+   ├── api
+   │   └── ... # 抽取出API请求
+   ├── components
+   │   ├── App.vue
+   │   └── ...
+   └── store
+       ├── index.js          # 我们组装模块并导出 store 的地方
+       ├── actions.js        # 根级别的 action
+       ├── mutations.js      # 根级别的 mutation
+       └── modules
+           ├── cart.js       # 购物车模块
+           └── products.js   # 产品模块
+
+对应的内容存放在对应的文件中，在/store/index.js文件中存放并导出store对象。
+
+state中的数据尽量放到index.js中。而modules中的Astore局部模块状态如果多也可以进行细分。

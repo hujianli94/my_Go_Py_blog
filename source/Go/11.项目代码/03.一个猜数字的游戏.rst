@@ -1,0 +1,72 @@
+.. contents::
+   :depth: 3
+..
+
+一个猜数字的游戏
+================
+
+代码示例
+--------
+
+``guess.go``
+
+.. code:: go
+
+   package main
+
+   import (
+       "bufio"
+       "fmt"
+       "log"
+       "math/rand"
+       "os"
+       "strconv"
+       "strings"
+       "time"
+   )
+
+   func main() {
+       second := time.Now().Unix()                 // 获取时间戳
+       rand.Seed(second)                           // 播种随机数生成器
+       target := rand.Intn(100) + 1                // 生成1~100之间的随机数
+       fmt.Println("开始生成1~100之间的随机数")
+       fmt.Println("Can you Guess it?")
+       //fmt.Println(target)
+
+       reader := bufio.NewReader(os.Stdin)         //读取键盘的输入
+
+       //定义标志符, 用于后面显示失败和成功信息返回
+       success := false
+       for x := 0; x < 10; x++ {
+           fmt.Printf("你有%d次机会进行猜测，good luck....\n", 10-x)
+           fmt.Println("Make a guess:")
+           input, err := reader.ReadString('\n')   //读取用户内容，直到输入回车
+           if err != nil {
+               log.Fatal(err)
+           }
+           input = strings.TrimSpace(input)        //删掉换行符
+           if len(input) == 0 {                    // 如果直接回车了，也算猜错
+               continue
+           }        
+           guess, err := strconv.Atoi(input)       //将输入的字符串转换为数字
+           if err != nil {
+               log.Fatal(err)
+           }
+           //将猜测与目标进行比对
+           if guess > target {
+               fmt.Println("你的猜测大了,再猜猜")
+           } else if guess < target {
+               fmt.Println("你的猜测小了,再猜猜")
+           } else {
+               success = true
+               break
+           }
+       }
+       // 失败的标语
+       if !success {
+           fmt.Printf("游戏你没法玩了,机会已经使用完了....正确的值是【%d】\n", target)
+           fmt.Println("See you again！！！！！")
+       } else if success {
+           fmt.Println("恭喜你猜对了,点击我继续进行抽奖吧...")             // 成功的标语
+       }
+   }

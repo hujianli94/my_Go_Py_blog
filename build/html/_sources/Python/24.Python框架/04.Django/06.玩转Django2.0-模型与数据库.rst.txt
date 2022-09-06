@@ -1,0 +1,717 @@
+.. contents::
+   :depth: 3
+..
+
+玩转Django2.0-模型与数据库
+==========================
+
+Django对各种数据库提供了很好的支持，包括：PostgreSQL、MySQL、SQLite和Oracle，而且为这些数据库提供了统一的调用API，这些API统称为ORM框架。通过使用Django内置的ORM框架可以实现数据库连接和读写操作。
+
+1. ORM优缺点
+------------
+
+ORM的优点
+~~~~~~~~~
+
+   1.符合python语法。
+
+   2.自己写的sql语句，效率不够高。因为它直接传参，就可以使用了。
+
+   3. 不需要自己写SQL，对于类的操作，会转换成相应的SQL语句，来操作数据库。(核心功能)
+
+   4.它不属于硬编码，它不针对于MySQL。比如公司发展了，需要换成oracle数据库。
+
+   如果项目中的sql语句写死了，那么项目中的所有的sql语句，都得更换。如果用了ORM，只需要改一处，
+   直接修改setting.py中的数据库引擎，换成oracle，就可以了。这样，方便数据库迭代，这是它最大的优点。
+
+ORM的缺点
+~~~~~~~~~
+
+   1.执行效率低。，它是从上层到下层的操作。
+   它有一个翻译的过程。所以不如直接写SQL操作的执行效率低。
+
+   但是影响不大。真遇到这种请情况，优化SQL就可以了。
+   效率问题，跟SQL有很大的关系。
+   现在不关心ORM效率问题。除非SQL语句的造诣达到一定级别的时候，就需要使用原生SQL语句。orm还提供了，执行原生SQL的接口。可以直接执行原生SQL。
+
+   刚开始写ORM时，一定要对应SQL语句，去写ORM
+
+-  *MVC或者MVC框架中包括一个重要的部分，就是ORM，它实现了数据模型与数据库的解耦，即数据模型的设计不需要依赖于特定的数据库，通过简单的配置就可以轻松更换数据库，这极大的减轻了开发人员的工作量，不需要面对因数据库变更而导致的无效劳动*
+-  *ORM是“对象-关系-映射”的简称。*
+
+ORM的映射关系
+~~~~~~~~~~~~~
+
+::
+
+             ORM引擎
+   python ---------------> sql
+
+   类名                        表名
+   属性变量                    字段
+   属性值                      约束条件
+
+   对象                        一条记录
+
+比如save()，就可以增加一条记录。所以是对象对应一条记录。
+
+写项目的注意点
+~~~~~~~~~~~~~~
+
+*写任何一个项目，* *第一件事情，就是产品经理给你提需求。*
+*最关键的时候，了解产品需求，逻辑关系。判断中途是否有bug！*
+
+*如果做不了，一定要直接说，不能藏着。否则后期拖进度，就麻烦了。*
+*一开始做宏观的梳理，否则后面会出现bug。导致项目推到重构！！！*
+
+*对于表的设计，要慎重考虑。*
+*早期，会经历很多碰壁的过程，这样你就能成长！*
+
+*先创建表，分模块来创建表。* *到了写代码的时候，反而是最简单的。*
+*比如一个商城项目，设计表，梳理流程，花了2个月。写代码，几个星期就完成了*
+
+2. 单表操作
+-----------
+
+2.1 创建库
+~~~~~~~~~~
+
+**ORM没法创建数据库，它只能操作表！手动创建数据库！！！**
+
+::
+
+   C:\Users\xiao>mysql -u root
+
+   mysql> CREATE DATABASE book DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+   Query OK, 1 row affected (0.01 sec)
+
+   mysql>
+
+2.2 创建表
+~~~~~~~~~~
+
+创建模型
+^^^^^^^^
+
+示例
+
+::
+
+   from django.db import models
+
+   # Create your models here.
+
+   class Book(models.Model):
+        id=models.AutoField(primary_key=True)
+        title=models.CharField(max_length=32)
+        state=models.BooleanField()
+        pub_date=models.DateField()
+        price=models.DecimalField(max_digits=8,decimal_places=2)
+        publish=models.CharField(max_length=32)
+
+类名，首先字母要大写，\ **它必须继承models.Model。这是固定写法！**
+
+**表名为 app名称_模型类名称**
+
+例如：
+
+表名: app01_book
+
+2.3 更多字段和参数
+~~~~~~~~~~~~~~~~~~
+
+最常用的字段
+^^^^^^^^^^^^
+
+::
+
+   <1> CharField
+           字符串字段, 用于较短的字符串.
+           CharField 要求必须有一个参数 maxlength, 用于从数据库层和Django校验层限制该字段所允许的最大字符数.
+    
+   <2> IntegerField
+          #用于保存一个整数.
+    
+   <3> FloatField
+           一个浮点数. 必须 提供两个参数:
+            
+           参数    描述
+           max_digits    总位数(不包括小数点和符号)
+           decimal_places    小数位数
+                   举例来说, 要保存最大值为 999 (小数点后保存2位),你要这样定义字段:
+                    
+                   models.FloatField(..., max_digits=5, decimal_places=2)
+                   要保存最大值一百万(小数点后保存10位)的话,你要这样定义:
+                    
+                   models.FloatField(..., max_digits=19, decimal_places=10)
+                   admin 用一个文本框(<input type="text">)表示该字段保存的数据.
+    
+   <4> AutoField
+           一个 IntegerField, 添加记录时它会自动增长. 你通常不需要直接使用这个字段;
+           自定义一个主键：my_id=models.AutoField(primary_key=True)
+           如果你不指定主键的话,系统会自动添加一个主键字段到你的 model.
+    
+   <5> BooleanField
+           A true/false field. admin 用 checkbox 来表示此类字段.
+    
+   <6> TextField
+           一个容量很大的文本字段.
+           admin 用一个 <textarea> (文本区域)表示该字段数据.(一个多行编辑框).
+    
+   <7> EmailField
+           一个带有检查Email合法性的 CharField,不接受 maxlength 参数.
+    
+   <8> DateField
+           一个日期字段. 共有下列额外的可选参数:
+           Argument    描述
+           auto_now    当对象被保存时,自动将该字段的值设置为当前时间.通常用于表示 "last-modified" 时间戳.
+           auto_now_add    当对象首次被创建时,自动将该字段的值设置为当前时间.通常用于表示对象创建时间.
+           （仅仅在admin中有意义...)
+    
+   <9> DateTimeField
+            一个日期时间字段. 类似 DateField 支持同样的附加选项.
+    
+   <10> ImageField
+           类似 FileField, 不过要校验上传对象是否是一个合法图片.#它有两个可选参数:height_field和width_field,
+           如果提供这两个参数,则图片将按提供的高度和宽度规格保存.    
+   <11> FileField
+        一个文件上传字段.
+        要求一个必须有的参数: upload_to, 一个用于保存上载文件的本地文件系统路径. 这个路径必须包含 strftime #formatting,
+        该格式将被上载文件的 date/time
+        替换(so that uploaded files don't fill up the given directory).
+        admin 用一个<input type="file">部件表示该字段保存的数据(一个文件上传部件) .
+    
+        注意：在一个 model 中使用 FileField 或 ImageField 需要以下步骤:
+               （1）在你的 settings 文件中, 定义一个完整路径给 MEDIA_ROOT 以便让 Django在此处保存上传文件.
+               (出于性能考虑,这些文件并不保存到数据库.) 定义MEDIA_URL 作为该目录的公共 URL. 要确保该目录对
+                WEB服务器用户帐号是可写的.
+               （2） 在你的 model 中添加 FileField 或 ImageField, 并确保定义了 upload_to 选项,以告诉 Django
+                使用 MEDIA_ROOT 的哪个子目录保存上传文件.你的数据库中要保存的只是文件的路径(相对于 MEDIA_ROOT).
+                出于习惯你一定很想使用 Django 提供的 get_<#fieldname>_url 函数.举例来说,如果你的 ImageField
+                叫作 mug_shot, 你就可以在模板中以 {{ object.#get_mug_shot_url }} 这样的方式得到图像的绝对路径.
+    
+   <12> URLField
+         用于保存 URL. 若 verify_exists 参数为 True (默认), 给定的 URL 会预先检查是否存在( 即URL是否被有效装入且
+         没有返回404响应).
+         admin 用一个 <input type="text"> 文本框表示该字段保存的数据(一个单行编辑框)
+    
+   <13> NullBooleanField
+          类似 BooleanField, 不过允许 NULL 作为其中一个选项. 推荐使用这个字段而不要用 BooleanField 加 null=True 选项
+          admin 用一个选择框 <select> (三个可选择的值: "Unknown", "Yes" 和 "No" ) 来表示这种字段数据.
+    
+   <14> SlugField
+          "Slug" 是一个报纸术语. slug 是某个东西的小小标记(短签), 只包含字母,数字,下划线和连字符.#它们通常用于URLs
+          若你使用 Django 开发版本,你可以指定 maxlength. 若 maxlength 未指定, Django 会使用默认长度: 50.  #在
+          以前的 Django 版本,没有任何办法改变50 这个长度.
+          这暗示了 db_index=True.
+          它接受一个额外的参数: prepopulate_from, which is a list of fields from which to auto-#populate
+          the slug, via JavaScript,in the object's admin form: models.SlugField
+          (prepopulate_from=("pre_name", "name"))prepopulate_from 不接受 DateTimeFields.
+    
+   <13> XMLField
+           一个校验值是否为合法XML的 TextField,必须提供参数: schema_path, 它是一个用来校验文本的 RelaxNG schema #的文件系统路径.
+    
+   <14> FilePathField
+           可选项目为某个特定目录下的文件名. 支持三个特殊的参数, 其中第一个是必须提供的.
+           参数    描述
+           path    必需参数. 一个目录的绝对文件系统路径. FilePathField 据此得到可选项目.
+           Example: "/home/images".
+           match    可选参数. 一个正则表达式, 作为一个字符串, FilePathField 将使用它过滤文件名. 
+           注意这个正则表达式只会应用到 base filename 而不是
+           路径全名. Example: "foo.*\.txt^", 将匹配文件 foo23.txt 却不匹配 bar.txt 或 foo23.gif.
+           recursive可选参数.要么 True 要么 False. 默认值是 False. 是否包括 path 下面的全部子目录.
+           这三个参数可以同时使用.
+           match 仅应用于 base filename, 而不是路径全名. 那么,这个例子:
+           FilePathField(path="/home/images", match="foo.*", recursive=True)
+           ...会匹配 /home/images/foo.gif 而不匹配 /home/images/foo/bar.gif
+    
+   <15> IPAddressField
+           一个字符串形式的 IP 地址, (i.e. "24.124.1.30").
+   <16> CommaSeparatedIntegerField
+           用于存放逗号分隔的整数值. 类似 CharField, 必须要有maxlength参数.
+
+常见的参数
+^^^^^^^^^^
+
+::
+
+   (1)null
+    
+   如果为True，Django 将用NULL 来在数据库中存储空值。 默认值是 False.
+    
+   (1)blank
+    
+   如果为True，该字段允许不填。默认为False。
+   要注意，这与 null 不同。null纯粹是数据库范畴的，而 blank 是数据验证范畴的。
+   如果一个字段的blank=True，表单的验证将允许该字段是空值。如果字段的blank=False，该字段就是必填的。
+    
+   (2)default
+    
+   字段的默认值。可以是一个值或者可调用对象。如果可调用 ，每有新对象被创建它都会被调用。
+    
+   (3)primary_key
+    
+   如果为True，那么这个字段就是模型的主键。如果你没有指定任何一个字段的primary_key=True，
+   Django 就会自动添加一个IntegerField字段做为主键，所以除非你想覆盖默认的主键行为，
+   否则没必要设置任何一个字段的primary_key=True。
+    
+   (4)unique
+    
+   如果该值设置为 True, 这个数据字段的值在整张表中必须是唯一的
+    
+   (5)choices
+   由二元组组成的一个可迭代对象（例如，列表或元组），用来给字段提供选择项。 如果设置了choices ，默认的表单将是一个选择框而不是标准的文本框，<br>而且这个选择框的选项就是choices 中的选项。
+
+..
+
+   参考django官方文档
+
+   模型字段参考
+
+   https://c.isme.pub/2018/08/29/python-django-model/
+
+   https://docs.djangoproject.com/zh-hans/3.2/ref/models/fields/#module-django.db.models.fields
+
+2.4 settings配置
+~~~~~~~~~~~~~~~~
+
+settings.py文件里面的INSTALLED_APPS。注册你的app
+
+::
+
+   INSTALLED_APPS = [
+       'django.contrib.admin',
+       'django.contrib.auth',
+       'django.contrib.contenttypes',
+       'django.contrib.sessions',
+       'django.contrib.messages',
+       'django.contrib.staticfiles',
+       'app01',
+   ]
+
+不注册它，你的数据库就不知道该给哪个app创建表。
+
+若想将模型转为mysql数据库中的表，需要在settings中配置：
+
+::
+
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.mysql',   # 数据库引擎mysql
+           'NAME': 'book',       # 你要存储数据的库名，事先要创建之
+           'USER': 'root',      # 数据库用户名
+           'PASSWORD': '',      # 密码
+           'HOST': 'localhost', # 主机
+           'PORT': '3306',      # 数据库使用的端口
+       }
+   }
+
+注意1：NAME即数据库的名字，在mysql连接前该数据库必须已经创建，而上面的sqlite数据库下的db.sqlite3则是项目自动创建
+USER和PASSWORD分别是数据库的用户名和密码。
+
+**由于ORM不能创建数据库，需要手动创建。**
+
+如步骤2.1上所示
+
+**django连接MySQL，使用的是pymysql模块，必须得安装2个模块。否则后面会创建表不成功！或者提示no
+module named MySQLdb**
+
+::
+
+   pip install PyMYSQL
+
+在project/project/__init__.py文件中加入代码：
+
+::
+
+   import pymysql
+
+   pymysql.install_as_MySQLdb()
+
+**注意：某些windows电脑安装 mysqlclient会提示C++缺失。使用如下办法：**
+
+   django连接MySQL，使用的是pymysql模块，必须得安装2个模块。否则后面会创建表不成功！或者提示no
+   module named MySQLdb
+
+   pip install pymysql pip install mysqlclient
+
+接下来要在pycharm的teminal中通过命令创建数据库的表了。有2条命令，分别是：
+
+::
+
+   python manage.py makemigrations
+   python manage.py migrate
+
+注意2: 如果想打印orm转换过程中的sql，需要在settings中进行如下配置：
+
+最后一行添加即可！
+
+::
+
+   LOGGING = {
+       'version': 1,
+       'disable_existing_loggers': False,
+       'handlers': {
+           'console':{
+               'level':'DEBUG',
+               'class':'logging.StreamHandler',
+           },
+       },
+       'loggers': {
+           'django.db.backends': {
+               'handlers': ['console'],
+               'propagate': True,
+               'level':'DEBUG',
+           },
+       }
+   }
+
+如果想删除数据库重新创建表，可以执行如下：
+
+::
+
+   mysql> drop database book;
+   Query OK, 11 rows affected (1.95 sec)
+
+   mysql> CREATE DATABASE book DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+   Query OK, 1 row affected (0.00 sec)
+
+重新执行上面2个命令
+
+::
+
+   python manage.py makemigrations
+   python manage.py migrate
+
+..
+
+   参考文献：
+
+   https://www.cnblogs.com/nulige/p/6590990.html
+
+   https://www.cnblogs.com/xiao987334176/p/9229163.html#autoid-4-2-3
+
+以MyDjangl项目为例，配置信息如下：
+
+::
+
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.mysql',
+           'NAME': 'mydjango',
+           'HOST': '127.0.0.1',
+           'USER': 'root',
+           'PASSWORD': 'admin#123',
+           'PORT': '3306',
+       }
+   }
+
+　　
+
+3.构建模型
+----------
+
+在项目index的models.py文件中定义模型如下：
+
+::
+
+   from django.db import models
+
+
+   # 创建产品分类表
+   class Type(models.Model):
+       id = models.AutoField(primary_key=True)
+       type_name = models.CharField(max_length=20)
+
+
+   class Product(models.Model):
+       id = models.IntegerField(primary_key=True, auto_created=True)
+       name = models.CharField(max_length=50)
+       weight = models.CharField(max_length=20)
+       size = models.CharField(max_length=20)
+       type = models.CharField(max_length=20)
+
+　　上述代码分别定义了模型Type和Product，说明如下：
+
+　　　　1、模型以类的形式进行定义，并且继承Django的models.Model类。一个类代表模板数据库的一张数据表，类的命名一般以首字母大写开头。
+
+　　　　2、模型的字段以类属性进行定义，如id=models.IntegerField(primary_key=True)代表在数据表Type中命名一个名为id的字段，该字段的数据类型为整型并设置为主键。
+
+　　完成模型的定义后，接着在目标数据库中创建相应的数据表，在模板数据库中创建表是通过Django的管理工具manage.py完成的，创建指令如下：
+
+::
+
+   #根据models.py内容生成相关的py文件，该文件用于创建数据表
+   python manage.py makemigrations
+   或者
+   python manage.py makemigrations index
+
+   #创建数据表
+   python manage.py migrate
+   #or
+   python manage.py migrate index
+
+4. 数据表的关系
+---------------
+
+一个模型对应目标数据库的一个数据表，但我们知道，每个数据表之间是可以存在关联的，表与表之间有三种关系：一对一/一对多和多对多。
+
+4.1 一对一关系
+~~~~~~~~~~~~~~
+
+　　一对一存在于在两个数据表中，第一个表的某一行数据只与第二个表的某一行数据相关，同时第二个表的某一行数据也只与第一个表的某一行数据相关，这种表关系被称为一对一关系。
+
+::
+
+   #一对一关系
+   class Performer(models.Model):
+       id = models.IntegerField(primary_key=True)
+       name = models.CharField(max_length=20)
+       nationality = models.CharField(max_length=20)
+       masterpiece = models.CharField(max_length=50)
+       
+   class Performer_info(models.Model):
+       id = models.IntegerField(primary_key=True)
+       performer = models.OneToOneField(Performer, on_delete=models.CASCADE)
+       birth = models.CharField(max_length=20)
+       elapse = models.CharField(max_length=20)
+
+4.2 一对多关系
+~~~~~~~~~~~~~~
+
+一对多存在于两个或两个以上的数据表中，第一个表的数据可以与第二个表的一道多行数据进行关联，但是第二个表的每一行数据只能与第一个表的某一行进行管理。
+
+::
+
+   #一对多关系
+   class Performer(models.Model):
+       id = models.IntegerField(primary_key=True)
+       name = models.CharField(max_length=20)
+       nationality = models.CharField(max_length=20)
+       masterpiece = models.CharField(max_length=50)
+
+   class Program(models.Model):
+       id = models.IntegerField(primary_key=True)
+       performer = models.ForeignKey(Performer,on_delete=models.CASCADE)
+       name = models.CharField(max_length=20)
+
+4.3 多对多关系
+~~~~~~~~~~~~~~
+
+　多对多存在于两个或两个以上的数据表中，第一个表的某一行数据可以与第二个表的一到多行数据进行关联，同时在第二个表中的某一行数据也可以与第一个表的一到多行数据进行关联。
+
+多对多关系会在两张表的基础之上，新增一个映射表。
+
+::
+
+   #多对多
+   class Performer(models.Model):
+       id = models.IntegerField(primary_key=True)
+       name = models.CharField(max_length=20)
+       nationality = models.CharField(max_length=20)
+       masterpiece = models.CharField(max_length=50)
+
+   class Manytomany(models.Model):
+       id = models.IntegerField(primary_key=True)
+       name = models.CharField(max_length=20)
+       performer = models.ManyToManyField(Performer)
+
+4.4 如何确定表关系？
+~~~~~~~~~~~~~~~~~~~~
+
+   参考文献
+
+   https://www.cnblogs.com/xiao987334176/p/9239786.html#autoid-3-0-0
+
+5.数据表的读写
+--------------
+
+在MyDjango项目中使用shell模式(启动命令行和执行脚本)进行讲述，该模式主要为方便开发人员开发和调式程序。在PyCharm的Terminal下开启shell模式，输入python
+manage.py shell指令即可开启。
+
+-  插入数据
+
+方法1
+
+::
+
+   (djangoProject) D:\djangoProject>python manage.py shell
+   >>> from index.models import *
+   >>> p = Product()
+   >>> p.name ="荣耀v2"
+   >>> p.weight=10
+   >>> p.size=10
+   >>> p.type="手机"
+   >>> p.save()
+
+方法2
+
+::
+
+   (djangoProject) D:\djangoProject>python manage.py shell
+   >>> from index.models import *
+   >>> p = Product(name="荣耀v2",weight=10,size=10,type="手机")
+   >>> p.save()
+
+-  update更新数据
+
+::
+
+   >>> p = Product.objects.get(id=2)
+   >>> p.name = "Huawei v1"
+   >>> p.save()
+
+　除此之外，还可以使用update方法实现单条和多条数据的更新，使用方法如下：
+
+::
+
+   #通过Django的ORM框架提供的API实现
+   #更新单条数据，查询条件filter使用于查询单条数据
+   Product.objects.filter(id=9).update(name='华为荣耀V10')
+   #更新多条数据，查询条件filter以列表格式返回，查询结果可能是一条或多条数据
+   Product.objects.filter(name='荣耀V9').update(name='华为荣耀V9')
+   #全表数据更新，不使用查询条件，默认对全表的数据进行更新
+   Product.objects.update(name='华为荣耀V9')
+
+如果要对数据进行删除处理，有三种方式：删除表中全部数据、删除一条数据和删除多条数据。实现三种删除方式的代码如下：
+
+::
+
+   #删除一条id为1的数据
+   Product.objects.get(id=1).delete()
+
+   #删除多条数据
+   Product.objects.filter(weight='119g').delete()
+
+   #删除表中全部数据
+   Product.objects.all().delete()
+
+　数据删除有ORM框架的delete方法实现。从数据的删除和更新可以看到这两种数据操作都使用查询条件get和filter，查询条件get和filter的区别如下：
+
+　　　　1、查询条件get：查询字段必须是主键或者唯一约束的字段，并且查询的数据必须存在，如果查询的字段有重复值或者查询的数据不存在，程序都会抛出异常信息。
+
+　　　　2、查询条件filter：查询字段没有限制，只要该字段是数据表的某一字段即可。查询结果以列表的形式返回，如果查询结果为空（查询的数据在数据库中找不到），就返回空列表。
+
+数据查询是数据库操作中最为复杂并且内容最多的部分，我们以代码的形式来讲述如何通过ORM框架提供的API实现数据查询，代码如下：
+
+::
+
+   In [39]: from index.models import *
+   #全表查询，等同于SQL语句Select * from index_product,数据以类不形式返回
+   In [40]: p = Product.objects.all()
+
+   In [41]: p[1].name
+   Out[41]: '华为荣耀V9'
+
+   #查询前5条数据，等同于SQL语句Select * from index_product LIMIT 5
+   #SQL语句里面的LIMIT方法，在Django中使用Python的列表截取分解即可实现
+   In [43]: p = Product.objects.all()[:5]
+
+   In [44]: p
+
+
+   #查询某个字段，等同于SQL语句Select  name from index_product
+   #values方法，以列表形式返回数据，列表元素以字典格式表示
+   In [45]: p = Product.objects.values('name')
+
+   In [46]: p[1]['name']
+   Out[46]: '华为荣耀V9'
+
+   #values_list方法，以列表表示返回数据，列表元素以元组格式表示
+   In [47]: p = Product.objects.values_list('name')[:3]
+
+   In [48]: p
+   Out[48]: <QuerySet [('华为荣耀V9',), ('华为荣耀V9',), ('华为荣耀V9',)]>
+
+   #使用get方法查询数据，等于同SQL语句Select * from index_product where id=2
+   In [49]: p = Product.objects.get(id = 2)
+
+   In [50]: p.name
+   Out[50]: '华为荣耀V9'
+
+   #使用filter方法查询数据，注意区分get和filter的差异
+   In [51]: p = Product.objects.filter(id = 2)
+
+   In [52]: p[0].name
+   Out[52]: '华为荣耀V9'
+
+
+   #SQL的 and查询主要在filter里面添加多个查询条件
+   In [53]: p = Product.objects.filter(name='华为荣耀V9',id=9)
+
+   In [54]: p
+   Out[54]: <QuerySet [<Product: Product object (9)>]>
+
+
+   #SQL的or查询，需要引入Q，编写格式Q(field=value)|Q(field=value)
+   #等同于SQL语句Select * from index_product where name='华为荣耀V9‘ or id=9
+   In [55]: from django.db.models import Q
+
+   In [57]: p = Product.objects.filter(Q(name='华为荣耀V')|Q(id=9))
+
+   In [58]: p
+   Out[58]: <QuerySet [<Product: Product object (9)>]>
+
+   #使用count方法统计查询数据的数据量
+   In [63]: p = Product.objects.filter(name='华为荣耀V9').count()
+
+   In [64]: p
+   Out[64]: 8
+
+   #去重查询，distinct方法无需设置参数，去重方式根据values设置的字段执行
+   #等同SQL语句Select DISTINCT name from index_product where name='华为荣耀V9’
+   In [65]: p = Product.objects.values('name').filter(name='华为荣耀V9').distinct()
+
+   In [66]: p
+   Out[66]: <QuerySet [{'name': '华为荣耀V9'}]>
+
+
+   #根据字段id降序排列，降序只要在order_by里面的字段前面加"-即可"
+   #order_by可设置多字段排序，如Product.objects.order_by('-id', 'name')
+   In [67]: p = Product.objects.order_by('-id')
+
+   In [68]: p
+   Out[68]: <QuerySet [<Product: Product object (11)>, <Product: Product object (9)>, <Product: Product object (8)>, <Product: Product object (7)>, <Product: Product object (5)>, <Product: Product object (4)>, <Product: Product object (3)>, <Product: Product object (2)>]>
+
+   #聚合查询，实现对数据值求和、求平均值等。Django提供annotate和aggregate方法实现
+   #annotate类似于SQL里面的GROUP BY方法，如果不设置values，就会默认对主键进行GROUP BY分组
+   #等同于SQL语句Select name,SUM(id) AS 'id_sum' from index_product GROUP BY NAME ORDER BY NULL
+   In [69]: from django.db.models import Sum, Count
+
+   In [70]: p = Product.objects.values('name').annotate(Sum('id'))
+   In [71]: print(p.query)
+   SELECT "index_product"."name", SUM("index_product"."id") AS "id__sum" FROM "index_product" GROUP BY "index_product"."name"
+
+   #aggregate是将某个字段的值进行计算并置返回技术结果
+   #等同于SQL语句Select COUNT(id) AS 'id_count' from index_product
+   In [72]: from django.db.models import Count
+
+   In [73]: p = Product.objects.aggregate(id_count=Count('id'))
+
+   In [74]: p
+   Out[74]: {'id_count': 8}
+
+5.1 多表查询
+~~~~~~~~~~~~
+
+　　一对多或一对一的表关系是通过外键实现关联的，而多表查询分为正向查询和反向查询。以模型Product和Type为例：
+
+　　　　1、如果查询对象的主体是模型Type，要查询模型Type的数据，那么该查询成为正向查询。
+
+　　　　2、如果查询对象的主体是模型Type，要通过模型Type查询模型Product的数据，那么该查询称为反向查询。
+
+　　无论是正向查询还是反向查询，两者的实现方法大致相同，代码如下：
+
+5.2 ORM操作
+~~~~~~~~~~~
+
+   参考文献：
+
+   https://www.cnblogs.com/nulige/p/6590990.html
+
+6. 文献参考
+-----------
+
+   参考文献
+
+   https://www.cnblogs.com/zhaop8078/p/11553275.html

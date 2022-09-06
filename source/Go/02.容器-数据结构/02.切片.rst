@@ -1,0 +1,526 @@
+.. contents::
+   :depth: 3
+..
+
+切片
+====
+
+Go语言切片的内部结构包含地址、大小和容量。切片一般用于快速地操作一块数据集合。
+如果将数据集合比作切糕的话，切片就是你要的“那一块”。切的过程包含从哪里开始（这个就是切片的地址）及切多大（这个就是切片的大小）。
+容量可以理解为装切片的口袋大小
+
+1.从数组切片生成新的切片
+------------------------
+
+切片默认指向一段连续内存区域，可以是数组，也可以是切片本身。
+
+::
+
+   slice [开始位置：结束位置]
+
+slice表示目标切片对象 - 开始位置对应目标切片对象的索引 -
+结束位置对于目标切片的结束索引
+
+从数组生成切片，代码如下：
+
+.. code:: go
+
+   fmt.Println(array_list,array_list[1:2])     // [hujianli1 hujianli2 hujianli3] [hujianli2]
+
+1.1 从指定范围中生成切片
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       var number2 [30]int
+       // 循环出1~30
+       for i := 0; i < 30; i++ {
+           number2[i] = i + 1
+       }
+       // 区间
+       fmt.Println(number2[10:15]) //[11 12 13 14 15]
+       // 中间到尾部的所有元素
+       fmt.Println(number2[20:])   //[21 22 23 24 25 26 27 28 29 30]
+
+
+
+   }
+
+1.2 表示原有切片
+~~~~~~~~~~~~~~~~
+
+复制一份切片
+生成切片的格式中，当开始和结束都范围都被忽略，则生成的切片将表示和原切片一致的切片，并且生成的切片与原切片在数据内容上是一致的，代码如下：
+
+.. code:: go
+
+   fmt.Println(number2[:])     //[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30]
+
+1.3 重置切片，清空所有元素
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+把切片的开始和结束位置都设为0时，生成的切片将变空，代码如下：
+
+.. code:: go
+
+   fmt.Println(number2[0:0])   //[]
+
+2.声明切片
+----------
+
+每一种类型都可以拥有其切片类型，表示多个类型元素的连续集合，因此切片类型也可以被声明。
+
+切片类型声明格式如下：
+
+::
+
+   var name []T
+
+-  name表示切片类型的变量名。
+-  T表示切片类型对应的元素类型。
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       var strList []string        // 声明字符串切片
+       var numList []int           // 声明整型切片
+       var numListEmpty = []int{}  // 声明一个空切片
+       fmt.Println(strList,numList,numListEmpty)   // 输出3个切片       [] [] []
+
+       fmt.Println(len(strList),len(numList),len(numListEmpty))    //输出3个切片大小  0 0 0
+       // 切片判定空的结果
+       fmt.Println(strList == nil)         // true
+       fmt.Println(numList == nil)         // true
+       fmt.Println(numListEmpty == nil)    // false
+
+   }
+
+3.使用make()函数构造切片
+------------------------
+
+如果需要动态地创建一个切片，可以使用make()内建函数，格式如下：
+
+::
+
+   make([]T, size, cap)
+
+   · T：切片的元素类型。
+   · size：就是为这个类型分配多少个元素
+   · cap： 预分配的元素数量，降低多次分配空间造成的性能问题
+
+.. code:: go
+
+   a := make([]int, 2)
+   b := make([]int, 2, 10)
+   fmt.Println(a,b)        //[0 0] [0 0]
+   fmt.Println(len(a),len(b))  //2 2
+
+a和b均是预分配2个元素的切片，只是b的内部存储空间已经分配了10个，但实际使用了2个元素。
+
+容量不会影响当前的元素个数，因此a和b取len都是2。
+
+**记住，如果在[]运算符里指定了一个值，那么创建的就是数组而不是切片。只有不指定值的时候，才会创建切片**
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "reflect"
+   )
+
+   func main() {
+       // // 创建有5个元素的字符串数组
+       array1 := [5]string{"hu1","hu2","hu3","hu4","hu5"}
+       fmt.Printf("array1的值是 %s,数据类型是%T\n",array1,array1)
+       fmt.Println(reflect.TypeOf(array1).String())
+
+       // 创建长度和容量都是3的字符串切片
+       string1 := []string{"s1","s2","s3"}
+       fmt.Printf("string1的值是 %s,数据类型是%T\n",string1,string1)
+       fmt.Println(reflect.TypeOf(string1).String())
+       string1 = append(string1, "s4","s5")
+       fmt.Printf("string1的值是 %s,数据类型是%T\n",string1,string1)
+       fmt.Println(string1[1:3])
+   }
+
+4.使用append()函数为切片添加元素
+--------------------------------
+
+Go语言的内建函数append()可以为切片动态添加元素。
+每个切片会指向一片内存空间，这片空间能容纳一定数量的元素。
+当空间不能容纳足够多的元素时，切片就会进行“扩容”。
+
+“扩容”操作往往发生在append()函数调用时。
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       var numbers []int  // 声明一个整型切片
+       for i := 0; i < 10; i++ {
+           numbers = append(numbers, i)        // 循环向切片添加10个数
+           // 查看切片的长度、容量、指针变化
+           fmt.Printf("len: %d cap: %d pointer: %p\n", len(numbers), cap(numbers), numbers)
+       }
+
+   }
+
+append()一次添加一个元素和一次性添加很多元素
+
+.. code:: go
+
+       // 定义3个切片
+       var (
+           car []string
+           car2 []string
+           car3 []string
+       )
+
+       //添加1个元素
+       car = append(car, "hujianli1")      //car2 []string
+
+       // 添加多个元素
+       car2 = append(car, "hujianli2", "hujianli3")    //[hujianli1 hujianli2 hujianli3]
+
+       // 添加一个切片
+       team := []string{"var1", "var2", "var3"}        //[hujianli1 var1 var2 var3]
+       car3 = append(car, team...)
+
+       fmt.Println(car)
+       fmt.Println(car2)
+       fmt.Println(car3)
+
+5.切片与数组的关系
+------------------
+
+5.1切片修改底层数组
+~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       slace := []int{1, 2, 3, 4, 5}
+       fmt.Println(slace)
+       fmt.Println("===========================")
+       // 在数组上进行切片
+       new_slace := slace[1:3]
+       fmt.Println(new_slace)
+       // 在切片后新增数据
+       new_slace = append(new_slace, 60)
+       fmt.Println(new_slace)
+       fmt.Println(slace)
+       new_slace[2] = 50
+       fmt.Println(new_slace)
+       fmt.Println(slace)
+   }
+
+5.2切片不修改底层数组
+~~~~~~~~~~~~~~~~~~~~~
+
+切片时强制生成底层新的数组，保证修改数据不影响原始数据
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       // 创建字符串切片
+       // 其长度和容量都是5个元素
+       source := []string{"Apple", "Orange", "Plum", "Banana", "Grape"}
+
+       // 对第三个元素做切片，并限制容量
+       // 其长度和容量都是1个元素
+       slice := source[2:3:3]
+       fmt.Println(slice)
+       fmt.Println(source)
+
+       /**
+       如果在创建切片时设置切片的容量和长度一样，就可以强制让新切片的第一个append 操作创建新的底层数组，与原有的底层数组分离。
+        */
+       // 向slice追加新字符串
+       // 注意此时新创建一个数组，此数组不会改变原始数组
+       slice = append(slice, "Kiwi")
+       fmt.Println(slice)
+
+       // 之前数组数据没有变化
+       fmt.Println(source)
+   }
+
+5.3组合两个切片到一个切片中
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       name1 := []int{1, 2, 3, 4} //切片1
+       name2 := []int{1, 2, 3, 4} //切片2
+       name3 := append(name1, name2...)        // 组合两个切片
+       fmt.Println(name3)
+   }
+
+5.4复制切片元素到另一个切片
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+使用Go语言内建的copy()函数,可以迅速地将一个切片的数据复制到另外一个切片空间中，copy()函数的使用格式如下：
+
+::
+
+   copy(destSlice, srcSlice []T) int
+
+   · srcSlice 数据来源切片
+   · destSlice 为复制的目标
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       // 设置元素数量为1000
+       const elementCount = 1000
+       // 预分配足够多的元素切片
+       srcData := make([]int, elementCount)
+       // 切片赋值
+       for i := 0; i < elementCount; i++ {
+           srcData[i] = i
+       }
+       // 引用切片数据
+       refData := srcData
+
+       copyData := make([]int, elementCount)
+       // 将数据复制到新的切片空间中
+       copy(copyData, srcData)
+       srcData[0] = 999 // 修改原始数据的第一个元素
+       // 打印引用切片的第一个元素
+       fmt.Println(refData[0])             // 999
+       // 打印复制切片的第一个和最后一个元素
+       fmt.Println(copyData[0], copyData[elementCount-1])  // 0 999
+       // 复制原始数据4~6.不包括6
+       copy(copyData, srcData[4:6])
+       for i := 0; i < 5; i++ {
+           fmt.Printf("%d ", copyData[i])   //4 5 2 3 4
+       }
+
+   }
+
+5.5迭代切片
+~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+
+       list := []int{1, 2, 3, 4, 5, 6}
+       for i, i2 := range list {
+           fmt.Printf("index %d is %d\n", i, i2)
+       }
+
+       fmt.Println("-----------------------------------------------")
+       for index := 0; index < len(list); index++ {
+           fmt.Printf("index %d is %d\n", index, list[index])
+       }
+
+       fmt.Println("-------------只获取值--------------------")
+       for _, value := range list {
+           fmt.Printf("value is %d\n",value)
+       }
+   }
+
+5.6从切片中删除元素
+~~~~~~~~~~~~~~~~~~~
+
+Go语言中切片删除元素的本质是：
+
+以被删除元素为分界点，将前后两个部分的内存重新连接起来。
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       seq := []string{"a", "b", "c", "d", "e"}
+       // 指定删除位置
+       index := 2
+       // 查看删除位置之前和之后的元素
+       fmt.Println(seq[:index], seq[index+1:]) //[a b] [d e]
+
+       // 将删除之前和之后的元素连接起来
+       new_seq := append(seq[:index], seq[index+1:]...)
+       fmt.Println(new_seq)        //[a b d e]
+   }
+
+5.7在函数间传递切片
+~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       // 分配包含100万个整型值的切片
+       slice := make([]int, 1e6)
+
+       /**
+       由于与切片关联的数据包含在底层数组里，不属于切片本身，
+       所以将切片复制到任意函数的时候，对底层数组大小都不会有影响。
+       复制时只会复制切片本身，不会涉及底层数组
+        */
+
+       /**
+       在函数间传递24字节的数据会非常快速、简单。这也是切片效率高的地方。
+       不需要传递指针和处理复杂的语法，只需要复制切片，按想要的方式修改数据，然后传递回一份新的切片副本。
+        */
+       // 将slice传递到函数foo
+       slice = foo(slice)
+       fmt.Println(slice)
+
+
+   }
+
+   // 定义一个接收切片的函数，传入值slice
+   func foo(slice []int) []int {
+       return slice
+   }
+
+6. slice就地修改
+----------------
+
+我们多看一些就地使用slice的例子，比如rotate和reveser这种可以就地修改slice的元素。
+
+下面的例子，nonempty函数从字符串列表中去除空字符串并返回一个新的slice
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func nonempty(strings []string) []string {
+       // 函数调用过程中底层数组发生了变化
+       i := 0
+       for _, s := range strings {
+           if s != "" {
+               strings[i] = s
+               i++
+           }
+       }
+       return strings[:i]
+   }
+
+   func nonempty2(strings []string) []string {
+       out := strings[:0]
+       for _, s := range strings {
+           if s != "" {
+               out = append(out, s)
+           }
+       }
+       return out
+   }
+   func main() {
+       data := []string{"one", "", "three"}
+       fmt.Printf("%q\n", nonempty(data)) //["one" "three"]
+       fmt.Printf("%q\n", data)           // ["one" "three" "three"]
+
+       data2 := []string{"one", "", "three"}
+       data2_nonepty := nonempty2(data2)
+       fmt.Printf("%q\n", data2_nonepty) // ["one" "three"]
+       fmt.Printf("%q\n", data2)         // ["one" "three" "three"]
+
+   }
+
+一个slice可以用来模拟一个stack。最初给定的空slice对应一个空的stack，然后可以使用append函数将新的值压入stack：
+
+::
+
+   stack = append(stack, v) // push v
+
+stack的顶部位置对应slice的最后一个元素：
+
+::
+
+   top := stack[len(stack)-1] // top of stack
+
+通过收缩stack可以弹出栈顶的元素
+
+::
+
+   stack = stack[:len(stack)-1] // pop
+
+要删除slice中间的某个元素并保存原有的元素顺序，可以通过内置的copy函数将后面的子slice向前依次移动一位完成：
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 从slice中移除一个元素,并保留原slice的顺序
+   func remove(slice []int, i int) []int {
+       copy(slice[i:], slice[i+1:])
+       return slice[:len(slice)-1]
+   }
+
+   func main() {
+       var strList []string
+       // 压栈
+       strList = append(strList, "hu1")
+       strList = append(strList, "hu2")
+       strList = append(strList, "hu3")
+       fmt.Println(strList)
+
+       // 栈顶
+       fmt.Println(strList[len(strList)-1])
+       // 弹出最后一个元素
+       stack := strList[:len(strList)-1] // pop
+       fmt.Println(stack)
+
+       s := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+       fmt.Println(remove(s, 2))
+   }
+
+如果删除元素后不用保持原来顺序的话，我们可以简单的用最后一个元素覆盖被删除的元素：
+
+.. code:: go
+
+   func remove(slice []int, i int) []int {
+       slice[i] = slice[len(slice)-1]
+       return slice[:len(slice)-1]
+   }
+
+   func main() {
+       s := []int{5, 6, 7, 8, 9}
+       fmt.Println(remove(s, 2)) // "[5 6 9 8]
+   }

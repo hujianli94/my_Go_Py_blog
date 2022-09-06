@@ -1,0 +1,1029 @@
+.. contents::
+   :depth: 3
+..
+
+Vue的异步请求
+=============
+
+1.前后端的交互模式
+------------------
+
+1.1 接口调用方式
+~~~~~~~~~~~~~~~~
+
+1. 原生ajax
+2. 基于jQuery的ajax
+3. fetch
+4. axios
+
+1.2 传统形式的URL
+~~~~~~~~~~~~~~~~~
+
+::
+
+   /*
+           格式: schema://host:port/path?query#fragment
+           
+                   1. schema: 协议. 例如http,https,ftp等
+                   2. host:  域名或者IP地址
+                   3. port:  端口,http默认端口80,可以省略
+                   4. path:  路径,例如/abc/a/b/c
+                   5. query:  查询参数uname=list&age=12
+                   6. fragment: 锚点(哈希Hash),用于定位页面某个位置
+   */
+
+1.3 Restful形式的URL
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   /*
+               HTTP请求方式
+                       1. GET       查询
+                       2. POST      添加
+                       3. PUT       修改
+                       4. DELETE     删除
+   */
+
+1.3 传统js异步调用
+~~~~~~~~~~~~~~~~~~
+
+异步调用分析
+
+::
+
+   /*
+           1. 定时任务
+           2. Ajax
+           3. 事件函数
+   */
+
+多次异步调用的依赖分析
+
+::
+
+   /*
+           多次异步调用的结果顺序不确定
+           异步调用结果如果存在依赖需要嵌套
+   */
+
+2.axios的安装与使用
+-------------------
+
+axios是一个基于promise的HTTP库，主要用来向服务器端发起请求，可以在请求中做更多的可控操作，例如拦截请求等。
+
+axios可以在浏览器和Node.js中使用，Vue、React等前端框架的广泛普及，促使了axios这种轻量级库的出现。
+
+axios的特性：
+
+（1）可以在浏览器中发送XMLHttpRequests。
+
+（2）可以在Node.js中发送HTTP请求。
+
+（3）支持Promise API。
+
+（4）拦截请求和响应。
+
+（5）转换请求数据和响应数据。
+
+（6）能够取消请求。
+
+（7）自动转换JSON数据。
+
+（8）客户端支持保护安全，免受XSRF攻击。
+
+2.1 安装axios
+~~~~~~~~~~~~~
+
+正常情况下使用脚手架vue-cli创建的项目都集成了axios插件，无需安装，
+
+如果需要安装请使用：
+
+.. code:: shell
+
+   $ npm install axios --save 
+
+打开使用Vue脚手架创建的项目，在main.js文件中引入axios模块，代码如下：
+
+::
+
+   import axios from 'axios'
+
+   createApp(App).prototype.$axios = axios
+
+在组件中使用axios发送异步请求，代码如下：
+
+::
+
+   <script>
+       export default {
+           mounted() {
+               this.axios.get('/user?id=123').then(ret=>{
+                       console.log(ret.data)
+               })
+           }
+       }
+   </script>
+
+2.2 axios基本用法
+~~~~~~~~~~~~~~~~~
+
+axios主要的作用是向服务器端发起HTTP请求，根据HTTP标准，HTTP请求可以使用多种请求方法。
+
+为了在开发中能够更方便地使用axios，axios为所有支持的请求方法提供了别名。
+
+``params`` 是将与请求一起发送的 URL 参数，对应后台中的\ ``query``
+
+``data`` 是作为请求主体被发送的数据，对应后台中的\ ``body``
+
+::
+
+   axios.request(config)
+   axios.get(url[, config])  // 只支持 params 传参
+   axios.delete(url[, config])  // 只支持 params传参
+   axios.head(url[, config]) // 只支持 params传参
+   axios.post(url[, data[, config]]) // 同时支持  data 和 params
+   axios.put(url[, data[, config]]) // 同时支持  data 和 params
+   axios.patch(url[, data[, config]]) // 同时支持  data 和 params
+
+注意　在使用别名方法时，url、method、data这些属性都不必在配置中指定。
+
+**axios常见5种请求方法**
+
+::
+
+   1.get请求
+   用于获取数据。
+
+   2.post请求
+   用于提交数据（新建）、包括表单提交及文件上传。
+
+   3.put请求
+   用于更新数据（修改），将所有数据都推送到后端。
+
+   4.patch请求
+   用于更新数据（修改），只将修改的数据推送到后端。
+
+   5.delete请求
+   用于删除数据。
+
+1.get请求
+^^^^^^^^^
+
+GET请求用于获取数据，从指定的资源请求数据，并返回实体主体，代码如下：
+
+::
+
+   <script>
+       import axios from 'axios'
+       export default {
+           name: 'get请求'，
+           components: {},
+           created() {
+               //写法一
+               axios.get('接口地址', {
+                   params: {
+                       id: 12,//请求参数
+                   },
+               }).then(
+                   (res) => {
+                       //执行成功后代码处理
+                   }
+               )
+               //写法二
+               axios({
+                   method: 'get',//请求方法
+                   params: {
+                       id: 12,//请求参数
+                   },
+                   url: '后台接口地址',
+               }).then(res => {
+                   //执行成功后代码处理
+               })
+           }
+       }
+   </script>
+
+2.post请求
+^^^^^^^^^^
+
+POST请求是向指定资源提交数据并处理请求（例如提交表单或者上传文件）。
+
+数据被包含在请求体中。POST请求一般分为两种类型：
+
+-  form-data表单提交（图片上传，文件上传）
+
+-  applicition/json
+
+**1）applicition/json请求方式代码如下：**
+
+::
+
+   <script>
+       import axios from 'axios'
+       export default {
+           name: 'post请求'，
+           components: {},
+           created() {
+               //写法一
+               let data={
+                   id:12
+               }
+               axios.post('接口地址', data}).then(
+                   (res) => {
+                       //执行成功后代码处理
+                   }
+               )
+               //写法二
+               axios({
+                   method: 'post',//请求方法
+                   data: data,
+                   url: '后台接口地址',
+               }).then(res => {
+                   //执行成功后代码处理
+               })
+           }
+       }
+   </script>
+
+**2）formData请求方式代码如下：**
+
+::
+
+   <script>
+       import axios from 'axios'
+       export default {
+           name: 'post请求'，
+           components: {},
+           created() {
+               //写法一
+               let data = {
+                   id:12
+               }
+               let formData = new formData()
+               for(let key in data){
+                   fromData.append(key,data[key])
+               }
+               axios.post('接口地址', fromData}).then(
+                   (res) => {
+                       //执行成功后代码处理
+                   }
+               )
+               //写法二
+               axios({
+                   method: 'post',//请求方法
+                   data: fromData,
+                   url: '后台接口地址',
+               }).then(res => {
+                   //执行成功后代码处理
+               })
+           }
+       }
+   </script>
+
+3.put请求
+^^^^^^^^^
+
+PUT请求用于更新数据，从客户端向服务器传送的数据取代指定的文档内容，代码如下：
+
+::
+
+   <script>
+       import axios from 'axios'
+       export default {
+           name: 'put请求'，
+           components: {},
+           created() {
+               //写法一
+               let data = {
+                   id:12
+               }
+               axios.put('接口地址', data}).then(
+                   (res) => {
+                       //执行成功后代码处理
+                   }
+               )
+               //写法二
+               axios({
+                   method: 'put',//请求方法
+                   data: data,
+                   url: '后台接口地址',
+               }).then(res => {
+                   //执行成功后代码处理
+               })
+           }
+       }
+   </script>
+
+4.patch请求
+^^^^^^^^^^^
+
+PATCH请求也被用于更新数据，是对put方法的补充，用来对已知资源进行局部更新，代码如下：
+
+::
+
+   <script>
+       import axios from 'axios'
+       export default {
+           name: 'patch请求'，
+           components: {},
+           created() {
+               //写法一
+               let data = {
+                   id:12
+               }
+               axios.patch('接口地址', data}).then(
+                   (res) => {
+                       //执行成功后代码处理
+                   }
+               )
+               //写法二
+               axios({
+                   method: 'patch',//请求方法
+                   data: data,
+                   url: '后台接口地址',
+               }).then(res => {
+                   //执行成功后代码处理
+               })
+           }
+       }
+   </script>
+
+5.delete请求
+^^^^^^^^^^^^
+
+DELETE请求服务器删除指定的页面。使用axios发送DELETE请求，参数可以使用明文的方式或者封装对象的方式进行提交，代码如下：
+
+::
+
+   <script>
+       import axios from 'axios'
+       export default {
+           name: 'delete请求'，
+           components: {},
+           created() {
+               // 写法一
+               let data = {
+                   id:12
+               }
+               //url传递参数
+               axios.delete('接口地址', {
+                   parmas:{
+                       id:12
+                   }
+               }).then(
+                   (res) => {
+                       //执行成功后代码处理
+                   }
+               )
+           
+               // 写法二
+               //post方式传递参数
+               axios.delete('接口地址', {
+                   data:{
+                       id:12
+                   }
+               }).then(
+                   (res) => {
+                       //执行成功后代码处理
+                   }
+               )
+           }
+       }
+   </script>
+
+2.3 axios实例
+~~~~~~~~~~~~~
+
+当axios要请求多个不同的后端接口地址，并且一些axios配置项都相同时，可以先创建axios实例，然后使用axios实例发起请求。
+
+1. 项目中只有一个域名的情况
+
+可以使用自定义配置新建一个axios实例，代码如下：
+
+1、先在项目目录的\ ``src``\ 文件夹下创建一个\ ``utils``\ 的文件夹，并新建一个\ ``request.js``\ 的文件
+
+::
+
+   const instance = axios.create({
+       baseURL:'http://localhost:8080',
+       timeout:1000, 
+   })
+
+   //axios实例的用法
+   instance.get('/data.json').then(res=>{
+       console.log(res)
+   })
+
+axios实例常用配置：
+
+::
+
+   //常用的基本配置
+   axios.create({
+       baseURL:'http://localhost:8080', //请求的域名，基本地址
+       timeout:5000,  //请求的超时时长，单位毫秒
+       url:'/data.json',  //请求的路径
+       method:'get，post，put，patch，delete' , //请求方法
+       headers:{
+       token:''  //比如token登录鉴权，请求的时候携带token，让后端识别登录人的信息
+   },   //请求头
+   params:{},  //请求参数拼接在URL上
+   data:{},    //请求参数放在请求体里
+
+   })
+
+baseURL设置：
+
+::
+
+   let baseURL;
+   if(process.env.NODE_ENV === 'development') {
+       baseURL = 'xxx本地环境xxx';
+   } else if(process.env.NODE_ENV === 'production') {
+       baseURL = 'xxx生产环境xxx';
+   }
+    
+   // 实例
+   let instance = axios.create({
+       baseURL: baseURL,
+       ...
+   })
+
+1.axios全局配置
+^^^^^^^^^^^^^^^
+
+::
+
+   // axios.defaults.后边跟的就是axios的那些配置
+   // 一般修改的全局配置，也就下边这两个
+   axios.defaults.timeout = 1000 
+   axios.defaults.baseURL = 'http://localhost:8080'
+
+2.axios实例配置
+^^^^^^^^^^^^^^^
+
+::
+
+   //如果create()里不添加参数的话，在创建这个axios实例的时候，使用的就是全局的配置
+   // 这个时候instance的timeout是1000
+   const instance = axios.create(); 
+
+   //如果设置了全局的配置，但是又想在创建的实例里修改配置怎么办
+   instance.default.timeout = 3000
+   axios请求配置
+       let instance = axios.create();
+       instance.get('/data.json',{
+           timeout:5000
+       })
+
+修改实例配置的三种方式
+
+::
+
+   // 第一种：局限性比较大
+   axios.defaults.timeout = 1000;
+   axios.defaults.baseURL = 'xxxxx';
+    
+   // 第二种：实例配置
+   let instance = axios.create({
+       baseURL: 'xxxxx',
+       timeout: 1000,  // 超时，401
+   })
+   // 创建完后修改
+   instance.defaults.timeout = 3000
+    
+   // 第三种：发起请求时修改配置、
+   instance.get('/xxx',{
+       timeout: 5000
+   })
+
+这3种配置方法的优先级是 axios请求配置 > axios实例配置 > axios全局配置
+
+2.4 axios并发请求
+~~~~~~~~~~~~~~~~~
+
+axios提供了并发请求的方法，可以同时进行多个请求，并统一处理返回值，代码如下：
+
+::
+
+   <script>
+       import axios from 'axios'
+       export default {
+           created() {
+               axios.all([
+                   axios.get('https://cnodejs.org/api/v1/topics'),
+                   axios.get('https://cnodejs.org/api/v1/topics')
+               ]).then(
+                   axios.spread((res1, res2) => {
+                       console.log(res1.data);
+                       console.log(res2.data);
+                   })
+               )
+           }
+       }
+   </script>
+
+或如下代码
+
+::
+
+   function getUserAccount() {
+     return axios.get('/user/12345');
+   }
+    
+   function getUserPermissions() {
+     return axios.get('/user/12345/permissions');
+   }
+   axios.all([getUserAccount(), getUserPermissions()])
+     .then(axios.spread(function (acct, perms) {
+       // 两个请求现在都执行完成
+     }));
+
+2.5 axios拦截器
+~~~~~~~~~~~~~~~
+
+axios提供了拦截器功能，使用拦截器可以提高请求的可控性，并且完成更多复杂的操作。axios的拦截器分为请求拦截器和响应拦截器，两种拦截器在不同的时机对axios发起的请求进行处理。
+
+::
+
+   // 请求拦截器
+   instance.interceptors.request.use(req=>{}, err=>{});
+   // 响应拦截器
+   instance.interceptors.reponse.use(req=>{}, err=>{});
+
+1.请求拦截器
+^^^^^^^^^^^^
+
+在请求被then或catch处理前拦截它们，代码如下：
+
+::
+
+   // use(两个参数)
+   axios.interceptors.request.use(req => {
+       // 在发送请求前要做的事儿
+       ...
+       return req
+   }, err => {
+       // 在请求错误时要做的事儿
+       ...
+       // 该返回的数据则是axios.catch(err)中接收的数据
+       return Promise.reject(err)
+   })
+
+2.响应拦截器
+^^^^^^^^^^^^
+
+在响应被then或catch处理前拦截它们，代码如下：
+
+::
+
+   // use(两个参数)
+   axios.interceptors.reponse.use(res => {
+       // 请求成功对响应数据做处理
+       ...
+       // 该返回的数据则是axios.then(res)中接收的数据
+       return res
+   }, err => {
+       // 在请求错误时要做的事儿
+       ...
+       // 该返回的数据则是axios.catch(err)中接收的数据
+       return Promise.reject(err)
+   })
+
+3.常见错误码处理(error)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+axios请求错误时，可在catch里进行错误处理。
+
+::
+
+   axios.get().then().catch(err => {
+       // 错误处理
+   })
+
+但实际开发过程中，一般在请求/响应拦截器中统一做错误处理，有特殊接口的话做单独的catch错误处理
+
+4.axios取消请求处理
+^^^^^^^^^^^^^^^^^^^
+
+axios取消请求主要用于取消正在进行的HTTP请求，代码如下：
+
+::
+
+   let source = axios.CancelToken.source();
+       axios
+         .get("/data.json", {
+           cancelToken: source.token
+         })
+         .then(res => {
+           console.log(res);
+         }).catch(err=>{
+             console.log(err)
+         })
+       //   取消请求(参数msg)
+         source.cancel('自定的的字符串可选')
+
+3.axios请求拦截器的案例
+~~~~~~~~~~~~~~~~~~~~~~~
+
+案例1
+
+::
+
+   <script>
+       import axios from 'axios'
+       export default {
+           created() {
+               //请求拦截
+               axios.interceptors.request.use(config => {
+                   // 发生请求前的处理
+                   console.log(config)
+                   return config;
+               }, err => {
+                   // 请求错误处理
+                   return Promise.reject(err);
+               });
+
+               //响应拦截
+               axios.interceptors.response.use(res => {
+                   //请求成功对响应数据做处理
+                   //该返回对象会传到请求方法的响应对象中
+                   console.log(res)
+                   return res
+               }, err => {
+                   // 响应错误处理
+                   return Promise.reject(err);
+               });
+
+               //发送请求
+               axios.get('https://cnodejs.org/api/v1/topics').then(res => {
+                   console.log(res.data);
+               }, err => {
+                   console.log(err);
+               })
+           }
+       }
+   </script>
+
+案例2
+
+``src/utils/request.js``\ 的文件进行封装如下：
+
+示例
+
+::
+
+   import axios from 'axios'
+   import { Message } from 'element-ui'
+   import store from '@/store'
+   import { getToken } from '@/utils/auth'
+   import router from '@/router'
+
+   // create an axios instance
+   const service = axios.create({
+     baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+     // withCredentials: true, // send cookies when cross-domain requests
+     timeout: 60000 // request timeout
+   })
+
+   // request interceptor
+   service.interceptors.request.use(
+     config => {
+       // do something before request is sent
+
+       if (store.getters.token) {
+         // let each request carry token
+         // ['X-Token'] is a custom headers key
+         // please modify it according to the actual situation
+         config.headers['Authorization'] = 'Bearer ' + getToken()
+       }
+       return config
+     },
+     error => {
+       // do something with request error
+       // console.log(error) // for debug
+       return Promise.reject(error)
+     }
+   )
+
+   // response interceptor
+   service.interceptors.response.use(
+     /**
+      * If you want to get http information such as headers or status
+      * Please return  response => response
+     */
+
+     /**
+      * Determine the request status by custom code
+      * Here is just an example
+      * You can also judge the status by HTTP Status Code
+      */
+     response => {
+       const res = response.data
+
+       // if the response status is not 200, it is judged as an error.
+       if (res.errmsg) {
+         Message({
+           message: res.errmsg,
+           type: 'error',
+           duration: 1500
+         })
+         return Promise.reject(res.errmsg)
+       } else {
+         return res
+       }
+     },
+     error => {
+       if (!error.response) {
+         Message({
+           message: '系统错误！',
+           type: 'error',
+           duration: 1500
+         })
+         return Promise.reject(error)
+       }
+       if (error.response.status === 401) {
+         Message({
+           message: '登录失败，请重新登录！',
+           type: 'error',
+           duration: 1500
+         })
+         store.dispatch('user/resetToken').then(() => {
+           router.push({ path: '/login' })
+         })
+       } else if (error.response.status === 403) {
+         Message({
+           message: '您没有权限执行此操作！',
+           type: 'error',
+           duration: 1500
+         })
+       } else if (error.response.status === 400) {
+         Message({
+           message: '参数错误！',
+           type: 'error',
+           duration: 1500
+         })
+       } else if (error.response.status === 406) {
+         Message({
+           message: '当前状态只允许对应用户修改！',
+           type: 'error',
+           duration: 1500
+         })
+       } else if (error.response.status === 423) {
+         Message({
+           message: '对象被锁定，无法执行此操作！',
+           type: 'error',
+           duration: 1500
+         })
+       } else if (error.response.status > 499) {
+         Message({
+           message: '服务器内部错误',
+           type: 'error',
+           duration: 1500
+         })
+       } else {
+         Message({
+           type: 'error',
+           message: error.response.data.detail
+         })
+       }
+       return Promise.reject(error.response.data.detail)
+     }
+   )
+
+   export default service
+
+4. 封装axios
+------------
+
+参考文献
+
+https://www.kancloud.cn/wangjiachong/vue_notes/1964090
+
+5. 基于接口的案例
+-----------------
+
+::
+
+   /*
+       图书相关的操作基于后台接口数据进行操作
+       需要调用接口的功能点
+               1. 图书列表数据加载                 GET  http://localhost:3000/books
+               2. 添加图书                        POST  http;//localhost:3000/books
+               3. 验证图书名称是否存在              GET http://localhost:3000/books/book/:name
+               4. 编辑图书-根据ID查询图书信息        GET http://localhost:3000/books/:id
+               5. 编辑图书-提交图书信息             PUT  http://localhost:3000/books/:id
+               6. 删除图书                        DELETE http://localhost:3000/books/:id
+   */
+
+::
+
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+     <meta charset="UTF-8">
+     <title>Document</title>
+     <link rel="stylesheet" type="text/css" href="css/index.css">
+   </head>
+   <body>
+     <div id="app">
+       <div class="grid">
+         <div>
+           <h1>图书管理</h1>
+           <div class="book">
+             <div>
+               <label for="id">
+                 编号：
+               </label>
+               <input type="text" id="id" v-model='id' disabled="false" v-focus>
+               <label for="name">
+                 名称：
+               </label>
+               <input type="text" id="name" v-model='name'>
+               <button @click='handle' :disabled="submitFlag">提交</button>
+             </div>
+           </div>
+         </div>
+         <div class="total">
+           <span>图书总数：</span>
+           <span>{{total}}</span>
+         </div>
+         <table>
+           <thead>
+             <tr>
+               <th>编号</th>
+               <th>名称</th>
+               <th>时间</th>
+               <th>操作</th>
+             </tr>
+           </thead>
+           <tbody>
+             <tr :key='item.id' v-for='item in books'>
+               <td>{{item.id}}</td>
+               <td>{{item.name}}</td>
+               <td>{{item.date | format('yyyy-MM-dd hh:mm:ss')}}</td>
+               <td>
+                 <a href="" @click.prevent='toEdit(item.id)'>修改</a>
+                 <span>|</span>
+                 <a href="" @click.prevent='deleteBook(item.id)'>删除</a>
+               </td>
+             </tr>
+           </tbody>
+         </table>
+       </div>
+     </div>
+     <script type="text/javascript" src="js/vue.js"></script>
+     <script type="text/javascript" src="js/axios.js"></script>
+     <script type="text/javascript">
+       /*
+         图书管理-添加图书
+       */
+       axios.defaults.baseURL = 'http://localhost:3000/';
+       axios.interceptors.response.use(function(res){
+         return res.data;
+       }, function(error){
+         console.log(error)
+       });
+       Vue.directive('focus', {
+         inserted: function (el) {
+           el.focus();
+         }
+       });
+       Vue.filter('format', function(value, arg) {
+         function dateFormat(date, format) {
+           if (typeof date === "string") {
+             var mts = date.match(/(\/Date\((\d+)\)\/)/);
+             if (mts && mts.length >= 3) {
+               date = parseInt(mts[2]);
+             }
+           }
+           date = new Date(date);
+           if (!date || date.toUTCString() == "Invalid Date") {
+             return "";
+           }
+           var map = {
+             "M": date.getMonth() + 1, //月份 
+             "d": date.getDate(), //日 
+             "h": date.getHours(), //小时 
+             "m": date.getMinutes(), //分 
+             "s": date.getSeconds(), //秒 
+             "q": Math.floor((date.getMonth() + 3) / 3), //季度 
+             "S": date.getMilliseconds() //毫秒 
+           };
+           format = format.replace(/([yMdhmsqS])+/g, function(all, t) {
+             var v = map[t];
+             if (v !== undefined) {
+               if (all.length > 1) {
+                 v = '0' + v;
+                 v = v.substr(v.length - 2);
+               }
+               return v;
+             } else if (t === 'y') {
+               return (date.getFullYear() + '').substr(4 - all.length);
+             }
+             return all;
+           });
+           return format;
+         }
+         return dateFormat(value, arg);
+       })
+       var vm = new Vue({
+         el: '#app',
+         data: {
+           flag: false,
+           submitFlag: false,
+           id: '',
+           name: '',
+           books: []
+         },
+         methods: {
+           handle: async function(){
+             if(this.flag) {
+               // 编辑图书
+               var ret = await axios.put('books/' + this.id, {
+                 name: this.name
+               });
+               if(ret.status == 200){
+                 // 重新加载列表数据
+                 this.queryData();
+               }
+               this.flag = false;
+             }else{
+               // 添加图书
+               var ret = await axios.post('books', {
+                 name: this.name
+               })
+               if(ret.status == 200) {
+                 // 重新加载列表数据
+                 this.queryData();
+               }
+             }
+             // 清空表单
+             this.id = '';
+             this.name = '';
+           },
+           toEdit: async function(id){
+             // flag状态位用于区分编辑和添加操作
+             this.flag = true;
+             // 根据id查询出对应的图书信息
+             var ret = await axios.get('books/' + id);
+             this.id = ret.id;
+             this.name = ret.name;
+           },
+           deleteBook: async function(id){
+             // 删除图书
+             var ret = await axios.delete('books/' + id);
+             if(ret.status == 200) {
+               // 重新加载列表数据
+               this.queryData();
+             }
+           },
+           queryData: async function(){
+             // 调用后台接口获取图书列表数据
+             // var ret = await axios.get('books');
+             // this.books = ret.data;
+
+             this.books = await axios.get('books');
+           }
+         },
+         computed: {
+           total: function(){
+             // 计算图书的总数
+             return this.books.length;
+           }
+         },
+         watch: {
+           name: async function(val) {
+             // 验证图书名称是否已经存在
+             // var flag = this.books.some(function(item){
+             //   return item.name == val;
+             // });
+             var ret = await axios.get('/books/book/' + this.name);
+             if(ret.status == 1) {
+               // 图书名称存在
+               this.submitFlag = true;
+             }else{
+               // 图书名称不存在
+               this.submitFlag = false;
+             }
+           }
+         },
+         mounted: function(){
+           // var that = this;
+           // axios.get('books').then(function(data){
+           //   console.log(data.data)
+           //   that.books = data.data;
+           // })
+
+           // axios.get('books').then((data)=>{
+           //   console.log(data.data)
+           //   this.books = data.data;
+           // })
+
+           this.queryData();
+         }
+       });
+     </script>
+   </body>
+   </html>

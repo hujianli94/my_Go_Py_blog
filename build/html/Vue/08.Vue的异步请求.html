@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Vue的异步请求 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="9. 服务器端渲染" href="09.%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%B8%B2%E6%9F%93.html" />
+    <link rel="prev" title="7. Vuex状态管理" href="07.Vuex%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js企业开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.Vue%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8.html">1. Vue基础入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Vue%E5%86%85%E7%BD%AE%E6%8C%87%E4%BB%A4.html">2. Vue内置指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.Vue%E5%AE%9E%E4%BE%8B%E6%A0%B8%E5%BF%83%E9%80%89%E9%A1%B9.html">3. Vue实例核心选项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.Vue%E5%B7%A5%E7%A8%8B%E5%8C%96%E9%A1%B9%E7%9B%AE.html">4. Vue工程化项目</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Vue%E7%BB%84%E4%BB%B6.html">5. 深入了解Vue组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue-Router%E8%B7%AF%E7%94%B1.html">6. Vue-Router路由</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vuex%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86.html">7. Vuex状态管理</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8. Vue的异步请求</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">8.1. 1.前后端的交互模式</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">8.1.1. 1.1 接口调用方式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#url">8.1.2. 1.2 传统形式的URL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#restfulurl">8.1.3. 1.3 Restful形式的URL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#js">8.1.4. 1.3 传统js异步调用</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#axios">8.2. 2.axios的安装与使用</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">8.2.1. 2.1 安装axios</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">8.2.2. 2.2 axios基本用法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">8.2.3. 2.3 axios实例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">8.2.4. 2.4 axios并发请求</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">8.2.5. 2.5 axios拦截器</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">8.2.6. 3.axios请求拦截器的案例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">8.3. 4. 封装axios</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">8.4. 5. 基于接口的案例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="09.%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%B8%B2%E6%9F%93.html">9. 服务器端渲染</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue3%E6%96%B0%E7%89%B9%E6%80%A7%E8%AF%A6%E8%AE%B2.html">10. Vue3新特性详讲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.TypeScript%E5%85%A5%E9%97%A8.html">11. TypeScript入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.Vite.html">12. Vite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.Vue3%E5%AE%9E%E8%B7%B5.html">13. Vue3 实践</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js企业开发实战</a> &raquo;</li>
+      <li><span class="section-number">8. </span>Vue的异步请求</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue/08.Vue的异步请求.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vue" id="id16">Vue的异步请求</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id17">1.前后端的交互模式</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id18">1.1 接口调用方式</a></p></li>
+<li><p><a class="reference internal" href="#url" id="id19">1.2 传统形式的URL</a></p></li>
+<li><p><a class="reference internal" href="#restfulurl" id="id20">1.3 Restful形式的URL</a></p></li>
+<li><p><a class="reference internal" href="#js" id="id21">1.3 传统js异步调用</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#axios" id="id22">2.axios的安装与使用</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id23">2.1 安装axios</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id24">2.2 axios基本用法</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id25">2.3 axios实例</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id26">2.4 axios并发请求</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id27">2.5 axios拦截器</a></p></li>
+<li><p><a class="reference internal" href="#id13" id="id28">3.axios请求拦截器的案例</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id14" id="id29">4. 封装axios</a></p></li>
+<li><p><a class="reference internal" href="#id15" id="id30">5. 基于接口的案例</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="vue">
+<h1><a class="toc-backref" href="#id16"><span class="section-number">8. </span>Vue的异步请求</a><a class="headerlink" href="#vue" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id17"><span class="section-number">8.1. </span>1.前后端的交互模式</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<section id="id2">
+<h3><a class="toc-backref" href="#id18"><span class="section-number">8.1.1. </span>1.1 接口调用方式</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li><p>原生ajax</p></li>
+<li><p>基于jQuery的ajax</p></li>
+<li><p>fetch</p></li>
+<li><p>axios</p></li>
+</ol>
+</section>
+<section id="url">
+<h3><a class="toc-backref" href="#id19"><span class="section-number">8.1.2. </span>1.2 传统形式的URL</a><a class="headerlink" href="#url" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/*
+        格式: schema://host:port/path?query#fragment
+
+                1. schema: 协议. 例如http,https,ftp等
+                2. host:  域名或者IP地址
+                3. port:  端口,http默认端口80,可以省略
+                4. path:  路径,例如/abc/a/b/c
+                5. query:  查询参数uname=list&amp;age=12
+                6. fragment: 锚点(哈希Hash),用于定位页面某个位置
+*/
+</pre></div>
+</div>
+</section>
+<section id="restfulurl">
+<h3><a class="toc-backref" href="#id20"><span class="section-number">8.1.3. </span>1.3 Restful形式的URL</a><a class="headerlink" href="#restfulurl" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span>
+            <span class="n">HTTP请求方式</span>
+                    <span class="mf">1.</span> <span class="n">GET</span>       <span class="n">查询</span>
+                    <span class="mf">2.</span> <span class="n">POST</span>      <span class="n">添加</span>
+                    <span class="mf">3.</span> <span class="n">PUT</span>       <span class="n">修改</span>
+                    <span class="mf">4.</span> <span class="n">DELETE</span>     <span class="n">删除</span>
+<span class="o">*/</span>
+</pre></div>
+</div>
+</section>
+<section id="js">
+<h3><a class="toc-backref" href="#id21"><span class="section-number">8.1.4. </span>1.3 传统js异步调用</a><a class="headerlink" href="#js" title="Permalink to this headline">¶</a></h3>
+<p>异步调用分析</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span>
+        <span class="mf">1.</span> <span class="n">定时任务</span>
+        <span class="mf">2.</span> <span class="n">Ajax</span>
+        <span class="mf">3.</span> <span class="n">事件函数</span>
+<span class="o">*/</span>
+</pre></div>
+</div>
+<p>多次异步调用的依赖分析</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span>
+        <span class="n">多次异步调用的结果顺序不确定</span>
+        <span class="n">异步调用结果如果存在依赖需要嵌套</span>
+<span class="o">*/</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="axios">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">8.2. </span>2.axios的安装与使用</a><a class="headerlink" href="#axios" title="Permalink to this headline">¶</a></h2>
+<p>axios是一个基于promise的HTTP库，主要用来向服务器端发起请求，可以在请求中做更多的可控操作，例如拦截请求等。</p>
+<p>axios可以在浏览器和Node.js中使用，Vue、React等前端框架的广泛普及，促使了axios这种轻量级库的出现。</p>
+<p>axios的特性：</p>
+<p>（1）可以在浏览器中发送XMLHttpRequests。</p>
+<p>（2）可以在Node.js中发送HTTP请求。</p>
+<p>（3）支持Promise API。</p>
+<p>（4）拦截请求和响应。</p>
+<p>（5）转换请求数据和响应数据。</p>
+<p>（6）能够取消请求。</p>
+<p>（7）自动转换JSON数据。</p>
+<p>（8）客户端支持保护安全，免受XSRF攻击。</p>
+<section id="id3">
+<h3><a class="toc-backref" href="#id23"><span class="section-number">8.2.1. </span>2.1 安装axios</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>正常情况下使用脚手架vue-cli创建的项目都集成了axios插件，无需安装，</p>
+<p>如果需要安装请使用：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ npm install axios --save
+</pre></div>
+</div>
+<p>打开使用Vue脚手架创建的项目，在main.js文件中引入axios模块，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import axios from &#39;axios&#39;
+
+createApp(App).prototype.$axios = axios
+</pre></div>
+</div>
+<p>在组件中使用axios发送异步请求，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+    <span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+        <span class="n">mounted</span><span class="p">()</span> <span class="p">{</span>
+            <span class="n">this</span><span class="o">.</span><span class="n">axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/user?id=123&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">ret</span><span class="o">=&gt;</span><span class="p">{</span>
+                    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="p">})</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id24"><span class="section-number">8.2.2. </span>2.2 axios基本用法</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>axios主要的作用是向服务器端发起HTTP请求，根据HTTP标准，HTTP请求可以使用多种请求方法。</p>
+<p>为了在开发中能够更方便地使用axios，axios为所有支持的请求方法提供了别名。</p>
+<p><code class="docutils literal notranslate"><span class="pre">params</span></code> 是将与请求一起发送的 URL 参数，对应后台中的<code class="docutils literal notranslate"><span class="pre">query</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">data</span></code> 是作为请求主体被发送的数据，对应后台中的<code class="docutils literal notranslate"><span class="pre">body</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">axios</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">[,</span> <span class="n">config</span><span class="p">])</span>  <span class="o">//</span> <span class="n">只支持</span> <span class="n">params</span> <span class="n">传参</span>
+<span class="n">axios</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">url</span><span class="p">[,</span> <span class="n">config</span><span class="p">])</span>  <span class="o">//</span> <span class="n">只支持</span> <span class="n">params传参</span>
+<span class="n">axios</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">[,</span> <span class="n">config</span><span class="p">])</span> <span class="o">//</span> <span class="n">只支持</span> <span class="n">params传参</span>
+<span class="n">axios</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">[,</span> <span class="n">data</span><span class="p">[,</span> <span class="n">config</span><span class="p">]])</span> <span class="o">//</span> <span class="n">同时支持</span>  <span class="n">data</span> <span class="n">和</span> <span class="n">params</span>
+<span class="n">axios</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">[,</span> <span class="n">data</span><span class="p">[,</span> <span class="n">config</span><span class="p">]])</span> <span class="o">//</span> <span class="n">同时支持</span>  <span class="n">data</span> <span class="n">和</span> <span class="n">params</span>
+<span class="n">axios</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="n">url</span><span class="p">[,</span> <span class="n">data</span><span class="p">[,</span> <span class="n">config</span><span class="p">]])</span> <span class="o">//</span> <span class="n">同时支持</span>  <span class="n">data</span> <span class="n">和</span> <span class="n">params</span>
+</pre></div>
+</div>
+<p>注意　在使用别名方法时，url、method、data这些属性都不必在配置中指定。</p>
+<p><strong>axios常见5种请求方法</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1.get请求
+用于获取数据。
+
+2.post请求
+用于提交数据（新建）、包括表单提交及文件上传。
+
+3.put请求
+用于更新数据（修改），将所有数据都推送到后端。
+
+4.patch请求
+用于更新数据（修改），只将修改的数据推送到后端。
+
+5.delete请求
+用于删除数据。
+</pre></div>
+</div>
+<section id="get">
+<h4>1.get请求<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h4>
+<p>GET请求用于获取数据，从指定的资源请求数据，并返回实体主体，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;script&gt;
+    import axios from &#39;axios&#39;
+    export default {
+        name: &#39;get请求&#39;，
+        components: {},
+        created() {
+            //写法一
+            axios.get(&#39;接口地址&#39;, {
+                params: {
+                    id: 12,//请求参数
+                },
+            }).then(
+                (res) =&gt; {
+                    //执行成功后代码处理
+                }
+            )
+            //写法二
+            axios({
+                method: &#39;get&#39;,//请求方法
+                params: {
+                    id: 12,//请求参数
+                },
+                url: &#39;后台接口地址&#39;,
+            }).then(res =&gt; {
+                //执行成功后代码处理
+            })
+        }
+    }
+&lt;/script&gt;
+</pre></div>
+</div>
+</section>
+<section id="post">
+<h4>2.post请求<a class="headerlink" href="#post" title="Permalink to this headline">¶</a></h4>
+<p>POST请求是向指定资源提交数据并处理请求（例如提交表单或者上传文件）。</p>
+<p>数据被包含在请求体中。POST请求一般分为两种类型：</p>
+<ul class="simple">
+<li><p>form-data表单提交（图片上传，文件上传）</p></li>
+<li><p>applicition/json</p></li>
+</ul>
+<p><strong>1）applicition/json请求方式代码如下：</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;script&gt;
+    import axios from &#39;axios&#39;
+    export default {
+        name: &#39;post请求&#39;，
+        components: {},
+        created() {
+            //写法一
+            let data={
+                id:12
+            }
+            axios.post(&#39;接口地址&#39;, data}).then(
+                (res) =&gt; {
+                    //执行成功后代码处理
+                }
+            )
+            //写法二
+            axios({
+                method: &#39;post&#39;,//请求方法
+                data: data,
+                url: &#39;后台接口地址&#39;,
+            }).then(res =&gt; {
+                //执行成功后代码处理
+            })
+        }
+    }
+&lt;/script&gt;
+</pre></div>
+</div>
+<p><strong>2）formData请求方式代码如下：</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;script&gt;
+    import axios from &#39;axios&#39;
+    export default {
+        name: &#39;post请求&#39;，
+        components: {},
+        created() {
+            //写法一
+            let data = {
+                id:12
+            }
+            let formData = new formData()
+            for(let key in data){
+                fromData.append(key,data[key])
+            }
+            axios.post(&#39;接口地址&#39;, fromData}).then(
+                (res) =&gt; {
+                    //执行成功后代码处理
+                }
+            )
+            //写法二
+            axios({
+                method: &#39;post&#39;,//请求方法
+                data: fromData,
+                url: &#39;后台接口地址&#39;,
+            }).then(res =&gt; {
+                //执行成功后代码处理
+            })
+        }
+    }
+&lt;/script&gt;
+</pre></div>
+</div>
+</section>
+<section id="put">
+<h4>3.put请求<a class="headerlink" href="#put" title="Permalink to this headline">¶</a></h4>
+<p>PUT请求用于更新数据，从客户端向服务器传送的数据取代指定的文档内容，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;script&gt;
+    import axios from &#39;axios&#39;
+    export default {
+        name: &#39;put请求&#39;，
+        components: {},
+        created() {
+            //写法一
+            let data = {
+                id:12
+            }
+            axios.put(&#39;接口地址&#39;, data}).then(
+                (res) =&gt; {
+                    //执行成功后代码处理
+                }
+            )
+            //写法二
+            axios({
+                method: &#39;put&#39;,//请求方法
+                data: data,
+                url: &#39;后台接口地址&#39;,
+            }).then(res =&gt; {
+                //执行成功后代码处理
+            })
+        }
+    }
+&lt;/script&gt;
+</pre></div>
+</div>
+</section>
+<section id="patch">
+<h4>4.patch请求<a class="headerlink" href="#patch" title="Permalink to this headline">¶</a></h4>
+<p>PATCH请求也被用于更新数据，是对put方法的补充，用来对已知资源进行局部更新，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;script&gt;
+    import axios from &#39;axios&#39;
+    export default {
+        name: &#39;patch请求&#39;，
+        components: {},
+        created() {
+            //写法一
+            let data = {
+                id:12
+            }
+            axios.patch(&#39;接口地址&#39;, data}).then(
+                (res) =&gt; {
+                    //执行成功后代码处理
+                }
+            )
+            //写法二
+            axios({
+                method: &#39;patch&#39;,//请求方法
+                data: data,
+                url: &#39;后台接口地址&#39;,
+            }).then(res =&gt; {
+                //执行成功后代码处理
+            })
+        }
+    }
+&lt;/script&gt;
+</pre></div>
+</div>
+</section>
+<section id="delete">
+<h4>5.delete请求<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h4>
+<p>DELETE请求服务器删除指定的页面。使用axios发送DELETE请求，参数可以使用明文的方式或者封装对象的方式进行提交，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;script&gt;
+    import axios from &#39;axios&#39;
+    export default {
+        name: &#39;delete请求&#39;，
+        components: {},
+        created() {
+            // 写法一
+            let data = {
+                id:12
+            }
+            //url传递参数
+            axios.delete(&#39;接口地址&#39;, {
+                parmas:{
+                    id:12
+                }
+            }).then(
+                (res) =&gt; {
+                    //执行成功后代码处理
+                }
+            )
+
+            // 写法二
+            //post方式传递参数
+            axios.delete(&#39;接口地址&#39;, {
+                data:{
+                    id:12
+                }
+            }).then(
+                (res) =&gt; {
+                    //执行成功后代码处理
+                }
+            )
+        }
+    }
+&lt;/script&gt;
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id25"><span class="section-number">8.2.3. </span>2.3 axios实例</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>当axios要请求多个不同的后端接口地址，并且一些axios配置项都相同时，可以先创建axios实例，然后使用axios实例发起请求。</p>
+<ol class="arabic simple">
+<li><p>项目中只有一个域名的情况</p></li>
+</ol>
+<p>可以使用自定义配置新建一个axios实例，代码如下：</p>
+<p>1、先在项目目录的<code class="docutils literal notranslate"><span class="pre">src</span></code>文件夹下创建一个<code class="docutils literal notranslate"><span class="pre">utils</span></code>的文件夹，并新建一个<code class="docutils literal notranslate"><span class="pre">request.js</span></code>的文件</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">instance</span> <span class="o">=</span> <span class="n">axios</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
+    <span class="n">baseURL</span><span class="p">:</span><span class="s1">&#39;http://localhost:8080&#39;</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span><span class="mi">1000</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="o">//</span><span class="n">axios实例的用法</span>
+<span class="n">instance</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/data.json&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">res</span><span class="o">=&gt;</span><span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>axios实例常用配置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>//常用的基本配置
+axios.create({
+    baseURL:&#39;http://localhost:8080&#39;, //请求的域名，基本地址
+    timeout:5000,  //请求的超时时长，单位毫秒
+    url:&#39;/data.json&#39;,  //请求的路径
+    method:&#39;get，post，put，patch，delete&#39; , //请求方法
+    headers:{
+    token:&#39;&#39;  //比如token登录鉴权，请求的时候携带token，让后端识别登录人的信息
+},   //请求头
+params:{},  //请求参数拼接在URL上
+data:{},    //请求参数放在请求体里
+
+})
+</pre></div>
+</div>
+<p>baseURL设置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">let</span> <span class="n">baseURL</span><span class="p">;</span>
+<span class="k">if</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">NODE_ENV</span> <span class="o">===</span> <span class="s1">&#39;development&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">baseURL</span> <span class="o">=</span> <span class="s1">&#39;xxx本地环境xxx&#39;</span><span class="p">;</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">NODE_ENV</span> <span class="o">===</span> <span class="s1">&#39;production&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">baseURL</span> <span class="o">=</span> <span class="s1">&#39;xxx生产环境xxx&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">//</span> <span class="n">实例</span>
+<span class="n">let</span> <span class="n">instance</span> <span class="o">=</span> <span class="n">axios</span><span class="o">.</span><span class="n">create</span><span class="p">({</span>
+    <span class="n">baseURL</span><span class="p">:</span> <span class="n">baseURL</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<section id="id6">
+<h4>1.axios全局配置<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>// axios.defaults.后边跟的就是axios的那些配置
+// 一般修改的全局配置，也就下边这两个
+axios.defaults.timeout = 1000
+axios.defaults.baseURL = &#39;http://localhost:8080&#39;
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h4>2.axios实例配置<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>//如果create()里不添加参数的话，在创建这个axios实例的时候，使用的就是全局的配置
+// 这个时候instance的timeout是1000
+const instance = axios.create();
+
+//如果设置了全局的配置，但是又想在创建的实例里修改配置怎么办
+instance.default.timeout = 3000
+axios请求配置
+    let instance = axios.create();
+    instance.get(&#39;/data.json&#39;,{
+        timeout:5000
+    })
+</pre></div>
+</div>
+<p>修改实例配置的三种方式</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>// 第一种：局限性比较大
+axios.defaults.timeout = 1000;
+axios.defaults.baseURL = &#39;xxxxx&#39;;
+
+// 第二种：实例配置
+let instance = axios.create({
+    baseURL: &#39;xxxxx&#39;,
+    timeout: 1000,  // 超时，401
+})
+// 创建完后修改
+instance.defaults.timeout = 3000
+
+// 第三种：发起请求时修改配置、
+instance.get(&#39;/xxx&#39;,{
+    timeout: 5000
+})
+</pre></div>
+</div>
+<p>这3种配置方法的优先级是 axios请求配置 &gt; axios实例配置 &gt; axios全局配置</p>
+</section>
+</section>
+<section id="id8">
+<h3><a class="toc-backref" href="#id26"><span class="section-number">8.2.4. </span>2.4 axios并发请求</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>axios提供了并发请求的方法，可以同时进行多个请求，并统一处理返回值，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+    <span class="kn">import</span> <span class="nn">axios</span> <span class="kn">from</span> <span class="s1">&#39;axios&#39;</span>
+    <span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+        <span class="n">created</span><span class="p">()</span> <span class="p">{</span>
+            <span class="n">axios</span><span class="o">.</span><span class="n">all</span><span class="p">([</span>
+                <span class="n">axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://cnodejs.org/api/v1/topics&#39;</span><span class="p">),</span>
+                <span class="n">axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://cnodejs.org/api/v1/topics&#39;</span><span class="p">)</span>
+            <span class="p">])</span><span class="o">.</span><span class="n">then</span><span class="p">(</span>
+                <span class="n">axios</span><span class="o">.</span><span class="n">spread</span><span class="p">((</span><span class="n">res1</span><span class="p">,</span> <span class="n">res2</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">res1</span><span class="o">.</span><span class="n">data</span><span class="p">);</span>
+                    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">res2</span><span class="o">.</span><span class="n">data</span><span class="p">);</span>
+                <span class="p">})</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>或如下代码</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="n">getUserAccount</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/user/12345&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">function</span> <span class="n">getUserPermissions</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/user/12345/permissions&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">axios</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="n">getUserAccount</span><span class="p">(),</span> <span class="n">getUserPermissions</span><span class="p">()])</span>
+  <span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">axios</span><span class="o">.</span><span class="n">spread</span><span class="p">(</span><span class="n">function</span> <span class="p">(</span><span class="n">acct</span><span class="p">,</span> <span class="n">perms</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">两个请求现在都执行完成</span>
+  <span class="p">}));</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3><a class="toc-backref" href="#id27"><span class="section-number">8.2.5. </span>2.5 axios拦截器</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>axios提供了拦截器功能，使用拦截器可以提高请求的可控性，并且完成更多复杂的操作。axios的拦截器分为请求拦截器和响应拦截器，两种拦截器在不同的时机对axios发起的请求进行处理。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">请求拦截器</span>
+<span class="n">instance</span><span class="o">.</span><span class="n">interceptors</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">req</span><span class="o">=&gt;</span><span class="p">{},</span> <span class="n">err</span><span class="o">=&gt;</span><span class="p">{});</span>
+<span class="o">//</span> <span class="n">响应拦截器</span>
+<span class="n">instance</span><span class="o">.</span><span class="n">interceptors</span><span class="o">.</span><span class="n">reponse</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">req</span><span class="o">=&gt;</span><span class="p">{},</span> <span class="n">err</span><span class="o">=&gt;</span><span class="p">{});</span>
+</pre></div>
+</div>
+<section id="id10">
+<h4>1.请求拦截器<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<p>在请求被then或catch处理前拦截它们，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">use</span><span class="p">(</span><span class="n">两个参数</span><span class="p">)</span>
+<span class="n">axios</span><span class="o">.</span><span class="n">interceptors</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">req</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">在发送请求前要做的事儿</span>
+    <span class="o">...</span>
+    <span class="k">return</span> <span class="n">req</span>
+<span class="p">},</span> <span class="n">err</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">在请求错误时要做的事儿</span>
+    <span class="o">...</span>
+    <span class="o">//</span> <span class="n">该返回的数据则是axios</span><span class="o">.</span><span class="n">catch</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="n">中接收的数据</span>
+    <span class="k">return</span> <span class="n">Promise</span><span class="o">.</span><span class="n">reject</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h4>2.响应拦截器<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p>在响应被then或catch处理前拦截它们，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">use</span><span class="p">(</span><span class="n">两个参数</span><span class="p">)</span>
+<span class="n">axios</span><span class="o">.</span><span class="n">interceptors</span><span class="o">.</span><span class="n">reponse</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">res</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">请求成功对响应数据做处理</span>
+    <span class="o">...</span>
+    <span class="o">//</span> <span class="n">该返回的数据则是axios</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">res</span><span class="p">)</span><span class="n">中接收的数据</span>
+    <span class="k">return</span> <span class="n">res</span>
+<span class="p">},</span> <span class="n">err</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">在请求错误时要做的事儿</span>
+    <span class="o">...</span>
+    <span class="o">//</span> <span class="n">该返回的数据则是axios</span><span class="o">.</span><span class="n">catch</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="n">中接收的数据</span>
+    <span class="k">return</span> <span class="n">Promise</span><span class="o">.</span><span class="n">reject</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</section>
+<section id="error">
+<h4>3.常见错误码处理(error)<a class="headerlink" href="#error" title="Permalink to this headline">¶</a></h4>
+<p>axios请求错误时，可在catch里进行错误处理。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">axios</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">then</span><span class="p">()</span><span class="o">.</span><span class="n">catch</span><span class="p">(</span><span class="n">err</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">错误处理</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>但实际开发过程中，一般在请求/响应拦截器中统一做错误处理，有特殊接口的话做单独的catch错误处理</p>
+</section>
+<section id="id12">
+<h4>4.axios取消请求处理<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<p>axios取消请求主要用于取消正在进行的HTTP请求，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">let</span> <span class="n">source</span> <span class="o">=</span> <span class="n">axios</span><span class="o">.</span><span class="n">CancelToken</span><span class="o">.</span><span class="n">source</span><span class="p">();</span>
+    <span class="n">axios</span>
+      <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/data.json&quot;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="n">cancelToken</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">token</span>
+      <span class="p">})</span>
+      <span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">res</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>
+      <span class="p">})</span><span class="o">.</span><span class="n">catch</span><span class="p">(</span><span class="n">err</span><span class="o">=&gt;</span><span class="p">{</span>
+          <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+      <span class="p">})</span>
+    <span class="o">//</span>   <span class="n">取消请求</span><span class="p">(</span><span class="n">参数msg</span><span class="p">)</span>
+      <span class="n">source</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="s1">&#39;自定的的字符串可选&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id13">
+<h3><a class="toc-backref" href="#id28"><span class="section-number">8.2.6. </span>3.axios请求拦截器的案例</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p>案例1</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+    <span class="kn">import</span> <span class="nn">axios</span> <span class="kn">from</span> <span class="s1">&#39;axios&#39;</span>
+    <span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+        <span class="n">created</span><span class="p">()</span> <span class="p">{</span>
+            <span class="o">//</span><span class="n">请求拦截</span>
+            <span class="n">axios</span><span class="o">.</span><span class="n">interceptors</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">config</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="o">//</span> <span class="n">发生请求前的处理</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">config</span><span class="p">;</span>
+            <span class="p">},</span> <span class="n">err</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="o">//</span> <span class="n">请求错误处理</span>
+                <span class="k">return</span> <span class="n">Promise</span><span class="o">.</span><span class="n">reject</span><span class="p">(</span><span class="n">err</span><span class="p">);</span>
+            <span class="p">});</span>
+
+            <span class="o">//</span><span class="n">响应拦截</span>
+            <span class="n">axios</span><span class="o">.</span><span class="n">interceptors</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">res</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="o">//</span><span class="n">请求成功对响应数据做处理</span>
+                <span class="o">//</span><span class="n">该返回对象会传到请求方法的响应对象中</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">res</span>
+            <span class="p">},</span> <span class="n">err</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="o">//</span> <span class="n">响应错误处理</span>
+                <span class="k">return</span> <span class="n">Promise</span><span class="o">.</span><span class="n">reject</span><span class="p">(</span><span class="n">err</span><span class="p">);</span>
+            <span class="p">});</span>
+
+            <span class="o">//</span><span class="n">发送请求</span>
+            <span class="n">axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://cnodejs.org/api/v1/topics&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">res</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">data</span><span class="p">);</span>
+            <span class="p">},</span> <span class="n">err</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">err</span><span class="p">);</span>
+            <span class="p">})</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>案例2</p>
+<p><code class="docutils literal notranslate"><span class="pre">src/utils/request.js</span></code>的文件进行封装如下：</p>
+<p>示例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import axios from &#39;axios&#39;
+import { Message } from &#39;element-ui&#39;
+import store from &#39;@/store&#39;
+import { getToken } from &#39;@/utils/auth&#39;
+import router from &#39;@/router&#39;
+
+// create an axios instance
+const service = axios.create({
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // withCredentials: true, // send cookies when cross-domain requests
+  timeout: 60000 // request timeout
+})
+
+// request interceptor
+service.interceptors.request.use(
+  config =&gt; {
+    // do something before request is sent
+
+    if (store.getters.token) {
+      // let each request carry token
+      // [&#39;X-Token&#39;] is a custom headers key
+      // please modify it according to the actual situation
+      config.headers[&#39;Authorization&#39;] = &#39;Bearer &#39; + getToken()
+    }
+    return config
+  },
+  error =&gt; {
+    // do something with request error
+    // console.log(error) // for debug
+    return Promise.reject(error)
+  }
+)
+
+// response interceptor
+service.interceptors.response.use(
+  /**
+   * If you want to get http information such as headers or status
+   * Please return  response =&gt; response
+  */
+
+  /**
+   * Determine the request status by custom code
+   * Here is just an example
+   * You can also judge the status by HTTP Status Code
+   */
+  response =&gt; {
+    const res = response.data
+
+    // if the response status is not 200, it is judged as an error.
+    if (res.errmsg) {
+      Message({
+        message: res.errmsg,
+        type: &#39;error&#39;,
+        duration: 1500
+      })
+      return Promise.reject(res.errmsg)
+    } else {
+      return res
+    }
+  },
+  error =&gt; {
+    if (!error.response) {
+      Message({
+        message: &#39;系统错误！&#39;,
+        type: &#39;error&#39;,
+        duration: 1500
+      })
+      return Promise.reject(error)
+    }
+    if (error.response.status === 401) {
+      Message({
+        message: &#39;登录失败，请重新登录！&#39;,
+        type: &#39;error&#39;,
+        duration: 1500
+      })
+      store.dispatch(&#39;user/resetToken&#39;).then(() =&gt; {
+        router.push({ path: &#39;/login&#39; })
+      })
+    } else if (error.response.status === 403) {
+      Message({
+        message: &#39;您没有权限执行此操作！&#39;,
+        type: &#39;error&#39;,
+        duration: 1500
+      })
+    } else if (error.response.status === 400) {
+      Message({
+        message: &#39;参数错误！&#39;,
+        type: &#39;error&#39;,
+        duration: 1500
+      })
+    } else if (error.response.status === 406) {
+      Message({
+        message: &#39;当前状态只允许对应用户修改！&#39;,
+        type: &#39;error&#39;,
+        duration: 1500
+      })
+    } else if (error.response.status === 423) {
+      Message({
+        message: &#39;对象被锁定，无法执行此操作！&#39;,
+        type: &#39;error&#39;,
+        duration: 1500
+      })
+    } else if (error.response.status &gt; 499) {
+      Message({
+        message: &#39;服务器内部错误&#39;,
+        type: &#39;error&#39;,
+        duration: 1500
+      })
+    } else {
+      Message({
+        type: &#39;error&#39;,
+        message: error.response.data.detail
+      })
+    }
+    return Promise.reject(error.response.data.detail)
+  }
+)
+
+export default service
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id14">
+<h2><a class="toc-backref" href="#id29"><span class="section-number">8.3. </span>4. 封装axios</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<p>参考文献</p>
+<p><a class="reference external" href="https://www.kancloud.cn/wangjiachong/vue_notes/1964090">https://www.kancloud.cn/wangjiachong/vue_notes/1964090</a></p>
+</section>
+<section id="id15">
+<h2><a class="toc-backref" href="#id30"><span class="section-number">8.4. </span>5. 基于接口的案例</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span>
+    <span class="n">图书相关的操作基于后台接口数据进行操作</span>
+    <span class="n">需要调用接口的功能点</span>
+            <span class="mf">1.</span> <span class="n">图书列表数据加载</span>                 <span class="n">GET</span>  <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3000</span><span class="o">/</span><span class="n">books</span>
+            <span class="mf">2.</span> <span class="n">添加图书</span>                        <span class="n">POST</span>  <span class="n">http</span><span class="p">;</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3000</span><span class="o">/</span><span class="n">books</span>
+            <span class="mf">3.</span> <span class="n">验证图书名称是否存在</span>              <span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3000</span><span class="o">/</span><span class="n">books</span><span class="o">/</span><span class="n">book</span><span class="o">/</span><span class="p">:</span><span class="n">name</span>
+            <span class="mf">4.</span> <span class="n">编辑图书</span><span class="o">-</span><span class="n">根据ID查询图书信息</span>        <span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3000</span><span class="o">/</span><span class="n">books</span><span class="o">/</span><span class="p">:</span><span class="nb">id</span>
+            <span class="mf">5.</span> <span class="n">编辑图书</span><span class="o">-</span><span class="n">提交图书信息</span>             <span class="n">PUT</span>  <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3000</span><span class="o">/</span><span class="n">books</span><span class="o">/</span><span class="p">:</span><span class="nb">id</span>
+            <span class="mf">6.</span> <span class="n">删除图书</span>                        <span class="n">DELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3000</span><span class="o">/</span><span class="n">books</span><span class="o">/</span><span class="p">:</span><span class="nb">id</span>
+<span class="o">*/</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Document&lt;/title&gt;
+  &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css/index.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;div class=&quot;grid&quot;&gt;
+      &lt;div&gt;
+        &lt;h1&gt;图书管理&lt;/h1&gt;
+        &lt;div class=&quot;book&quot;&gt;
+          &lt;div&gt;
+            &lt;label for=&quot;id&quot;&gt;
+              编号：
+            &lt;/label&gt;
+            &lt;input type=&quot;text&quot; id=&quot;id&quot; v-model=&#39;id&#39; disabled=&quot;false&quot; v-focus&gt;
+            &lt;label for=&quot;name&quot;&gt;
+              名称：
+            &lt;/label&gt;
+            &lt;input type=&quot;text&quot; id=&quot;name&quot; v-model=&#39;name&#39;&gt;
+            &lt;button @click=&#39;handle&#39; :disabled=&quot;submitFlag&quot;&gt;提交&lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;total&quot;&gt;
+        &lt;span&gt;图书总数：&lt;/span&gt;
+        &lt;span&gt;{{total}}&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;table&gt;
+        &lt;thead&gt;
+          &lt;tr&gt;
+            &lt;th&gt;编号&lt;/th&gt;
+            &lt;th&gt;名称&lt;/th&gt;
+            &lt;th&gt;时间&lt;/th&gt;
+            &lt;th&gt;操作&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+          &lt;tr :key=&#39;item.id&#39; v-for=&#39;item in books&#39;&gt;
+            &lt;td&gt;{{item.id}}&lt;/td&gt;
+            &lt;td&gt;{{item.name}}&lt;/td&gt;
+            &lt;td&gt;{{item.date | format(&#39;yyyy-MM-dd hh:mm:ss&#39;)}}&lt;/td&gt;
+            &lt;td&gt;
+              &lt;a href=&quot;&quot; @click.prevent=&#39;toEdit(item.id)&#39;&gt;修改&lt;/a&gt;
+              &lt;span&gt;|&lt;/span&gt;
+              &lt;a href=&quot;&quot; @click.prevent=&#39;deleteBook(item.id)&#39;&gt;删除&lt;/a&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;script type=&quot;text/javascript&quot; src=&quot;js/vue.js&quot;&gt;&lt;/script&gt;
+  &lt;script type=&quot;text/javascript&quot; src=&quot;js/axios.js&quot;&gt;&lt;/script&gt;
+  &lt;script type=&quot;text/javascript&quot;&gt;
+    /*
+      图书管理-添加图书
+    */
+    axios.defaults.baseURL = &#39;http://localhost:3000/&#39;;
+    axios.interceptors.response.use(function(res){
+      return res.data;
+    }, function(error){
+      console.log(error)
+    });
+    Vue.directive(&#39;focus&#39;, {
+      inserted: function (el) {
+        el.focus();
+      }
+    });
+    Vue.filter(&#39;format&#39;, function(value, arg) {
+      function dateFormat(date, format) {
+        if (typeof date === &quot;string&quot;) {
+          var mts = date.match(/(\/Date\((\d+)\)\/)/);
+          if (mts &amp;&amp; mts.length &gt;= 3) {
+            date = parseInt(mts[2]);
+          }
+        }
+        date = new Date(date);
+        if (!date || date.toUTCString() == &quot;Invalid Date&quot;) {
+          return &quot;&quot;;
+        }
+        var map = {
+          &quot;M&quot;: date.getMonth() + 1, //月份
+          &quot;d&quot;: date.getDate(), //日
+          &quot;h&quot;: date.getHours(), //小时
+          &quot;m&quot;: date.getMinutes(), //分
+          &quot;s&quot;: date.getSeconds(), //秒
+          &quot;q&quot;: Math.floor((date.getMonth() + 3) / 3), //季度
+          &quot;S&quot;: date.getMilliseconds() //毫秒
+        };
+        format = format.replace(/([yMdhmsqS])+/g, function(all, t) {
+          var v = map[t];
+          if (v !== undefined) {
+            if (all.length &gt; 1) {
+              v = &#39;0&#39; + v;
+              v = v.substr(v.length - 2);
+            }
+            return v;
+          } else if (t === &#39;y&#39;) {
+            return (date.getFullYear() + &#39;&#39;).substr(4 - all.length);
+          }
+          return all;
+        });
+        return format;
+      }
+      return dateFormat(value, arg);
+    })
+    var vm = new Vue({
+      el: &#39;#app&#39;,
+      data: {
+        flag: false,
+        submitFlag: false,
+        id: &#39;&#39;,
+        name: &#39;&#39;,
+        books: []
+      },
+      methods: {
+        handle: async function(){
+          if(this.flag) {
+            // 编辑图书
+            var ret = await axios.put(&#39;books/&#39; + this.id, {
+              name: this.name
+            });
+            if(ret.status == 200){
+              // 重新加载列表数据
+              this.queryData();
+            }
+            this.flag = false;
+          }else{
+            // 添加图书
+            var ret = await axios.post(&#39;books&#39;, {
+              name: this.name
+            })
+            if(ret.status == 200) {
+              // 重新加载列表数据
+              this.queryData();
+            }
+          }
+          // 清空表单
+          this.id = &#39;&#39;;
+          this.name = &#39;&#39;;
+        },
+        toEdit: async function(id){
+          // flag状态位用于区分编辑和添加操作
+          this.flag = true;
+          // 根据id查询出对应的图书信息
+          var ret = await axios.get(&#39;books/&#39; + id);
+          this.id = ret.id;
+          this.name = ret.name;
+        },
+        deleteBook: async function(id){
+          // 删除图书
+          var ret = await axios.delete(&#39;books/&#39; + id);
+          if(ret.status == 200) {
+            // 重新加载列表数据
+            this.queryData();
+          }
+        },
+        queryData: async function(){
+          // 调用后台接口获取图书列表数据
+          // var ret = await axios.get(&#39;books&#39;);
+          // this.books = ret.data;
+
+          this.books = await axios.get(&#39;books&#39;);
+        }
+      },
+      computed: {
+        total: function(){
+          // 计算图书的总数
+          return this.books.length;
+        }
+      },
+      watch: {
+        name: async function(val) {
+          // 验证图书名称是否已经存在
+          // var flag = this.books.some(function(item){
+          //   return item.name == val;
+          // });
+          var ret = await axios.get(&#39;/books/book/&#39; + this.name);
+          if(ret.status == 1) {
+            // 图书名称存在
+            this.submitFlag = true;
+          }else{
+            // 图书名称不存在
+            this.submitFlag = false;
+          }
+        }
+      },
+      mounted: function(){
+        // var that = this;
+        // axios.get(&#39;books&#39;).then(function(data){
+        //   console.log(data.data)
+        //   that.books = data.data;
+        // })
+
+        // axios.get(&#39;books&#39;).then((data)=&gt;{
+        //   console.log(data.data)
+        //   this.books = data.data;
+        // })
+
+        this.queryData();
+      }
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="07.Vuex%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86.html" class="btn btn-neutral float-left" title="7. Vuex状态管理" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="09.%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%B8%B2%E6%9F%93.html" class="btn btn-neutral float-right" title="9. 服务器端渲染" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

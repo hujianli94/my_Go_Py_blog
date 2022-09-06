@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10. Vue.js的状态管理库Vuex和Pinia &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="11. Vue-UI库" href="11.Vue-UI%E5%BA%93.html" />
+    <link rel="prev" title="9. Vue.js的vue-router库" href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js+Node.js开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%87%86%E5%A4%87.html">1. 开发一个网站的准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Nodejs_vue%E5%9F%BA%E7%A1%80.html">2. Nodejs+vue基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html">3. 项目开发准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.%E9%A1%B9%E7%9B%AE%E5%90%8E%E5%8F%B0%E6%8A%80%E6%9C%AFExpress.html">4. 项目后台技术Express</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html">5. Vue.js开发基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue.js%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.html">6. Vue的生命周期</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html">7. Vue.js的模板语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue.js%E7%9A%84%E7%BB%84%E4%BB%B6%E5%8C%96.html">8. Vue.js的组件化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html">9. Vue.js的vue-router库</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">10. Vue.js的状态管理库Vuex和Pinia</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vuex">10.1. 1. Vuex</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#store">10.1.1. 1.1 状态管理与store模式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">10.1.2. 1.2 使用Vuex的情形</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vue-jsgetter">10.1.3. 1.3 在Vue.js组件中Getter对象</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vuexstore">10.1.4. 1.4 更新Vuex中的store</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">10.1.5. 1.5 Vuex模块的划分</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pinia">10.2. 2. Pinia</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">10.2.1. 1.安装</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">10.2.2. 2.创建store</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">10.2.3. 3.添加store</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#storegettersaction">10.2.4. 4.使用store、Getters、Action 属性</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#vuex-vs-pinia">10.3. 3.Vuex VS Pinia</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="11.Vue-UI%E5%BA%93.html">11. Vue-UI库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.%E9%A1%B9%E7%9B%AE%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E.html">12. 项目需求分析和功能说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.%E9%A1%B9%E7%9B%AE%E7%AD%96%E5%88%92%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AE%BE%E8%AE%A1.html">13. 项目策划和功能设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14.%E9%A1%B9%E7%9B%AE%E5%90%8E%E7%AB%AFAPI%E5%BC%80%E5%8F%91.html">14. 项目后端API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15.%E9%80%9A%E7%94%A8API%E5%BC%80%E5%8F%91.html">15. 通用API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">16. 用户权限相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17.%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">17. 后台管理相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18.%E5%B0%8F%E7%BB%93.html">18. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19.%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%BC%80%E5%8F%91.html">19. 前端页面开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="20.%E4%B8%BB%E8%A6%81%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%BC%80%E5%8F%91.html">20. 主要页面的开发</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js+Node.js开发实战</a> &raquo;</li>
+      <li><span class="section-number">10. </span>Vue.js的状态管理库Vuex和Pinia</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue_Node.js/10.Vue.js的状态管理库Vuex和Pinia.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vue-jsvuexpinia" id="id6">Vue.js的状态管理库Vuex和Pinia</a></p>
+<ul>
+<li><p><a class="reference internal" href="#vuex" id="id7">1. Vuex</a></p>
+<ul>
+<li><p><a class="reference internal" href="#store" id="id8">1.1 状态管理与store模式</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id9">1.2 使用Vuex的情形</a></p></li>
+<li><p><a class="reference internal" href="#vue-jsgetter" id="id10">1.3 在Vue.js组件中Getter对象</a></p></li>
+<li><p><a class="reference internal" href="#vuexstore" id="id11">1.4 更新Vuex中的store</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id12">1.5 Vuex模块的划分</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pinia" id="id13">2. Pinia</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id14">1.安装</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id15">2.创建store</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id16">3.添加store</a></p></li>
+<li><p><a class="reference internal" href="#storegettersaction" id="id17">4.使用store、Getters、Action 属性</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vuex-vs-pinia" id="id18">3.Vuex VS Pinia</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="vue-jsvuexpinia">
+<h1><a class="toc-backref" href="#id6"><span class="section-number">10. </span>Vue.js的状态管理库Vuex和Pinia</a><a class="headerlink" href="#vue-jsvuexpinia" title="Permalink to this headline">¶</a></h1>
+<p>当下的前端技术（尤其是单页面开发）会经常提到状态管理这个概念，Vue.js和React.js都提供了很好的状态管理解决方案，分别是Vuex和Pinia。</p>
+<section id="vuex">
+<h2><a class="toc-backref" href="#id7"><span class="section-number">10.1. </span>1. Vuex</a><a class="headerlink" href="#vuex" title="Permalink to this headline">¶</a></h2>
+<section id="store">
+<h3><a class="toc-backref" href="#id8"><span class="section-number">10.1.1. </span>1.1 状态管理与store模式</a><a class="headerlink" href="#store" title="Permalink to this headline">¶</a></h3>
+<p>对于一个基本的Vue.js组件，其所有的数据都存放在data对象中，而该对象拥有自己的作用域，想要在其他的组件或路由中访问这些数据并不是一件容易的事情。</p>
+<p>如果这些数据内容需要被多个实例共享，使用缓存或路径参数的方式传输数据过于烦琐且容易出错，所以单页面应用提供了状态管理这个概念。</p>
+<p>Vue.js中的状态管理提供了两种方案：</p>
+<ul class="simple">
+<li><p>store模式</p></li>
+<li><p>Vuex。</p></li>
+</ul>
+<p>本节只介绍store模式，后面会详细介绍Vuex。</p>
+<p>store模式无须安装模块，理解起来非常简单，相当于将数据挂载在根节点中（类似全局变量），然后在每个实例中声明data。</p>
+<p>这样在一处更新数据时，所有的内容都会更新，因为其本身指向的是同一个对象。这样做的缺点是：数据的改变不会留下变更记录，并且调试困难。</p>
+</section>
+<section id="id1">
+<h3><a class="toc-backref" href="#id9"><span class="section-number">10.1.2. </span>1.2 使用Vuex的情形</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>并不是所有的情况都适合使用Vuex，或者说大量的业务需求并不需要对数据进行状态管理。</p>
+<p>数据在单组件环境中可以完成大部分的业务需求，并非要必须使用状态管理，读者不需要为了使用状态管理而使用Vuex。</p>
+<p>一些小项目如果引入Vuex进行状态管理，不仅会使原本逻辑清晰的代码和结构变得复杂，甚至会增加开发难度，造成代码冗余。</p>
+<p>所以官方认为，如果不是大中型单页应用，不需要引入Vuex，即使需要同步数据，自带的store模式也足够使用。</p>
+<p>如果需要构建大中型单页引用，那么Vuex是必然的选择。</p>
+<p>采用一个新的Vue.js工程实现Vuex。</p>
+<p>（1）使用如下命令创建并成功启动一个Vue.js项目。在配置工程时，添加Vuex和vue-
+router的支持</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vue</span> <span class="n">create</span> <span class="n">vuex</span><span class="o">-</span><span class="n">test</span>
+</pre></div>
+</div>
+<p>（2）等待项目初始化成功，所有的依赖包会自动安装好，其中package.json的代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;vuex-test&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;private&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s2">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;serve&quot;</span><span class="p">:</span> <span class="s2">&quot;vue-cli-service serve&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build&quot;</span><span class="p">:</span> <span class="s2">&quot;vue-cli-service build&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;lint&quot;</span><span class="p">:</span> <span class="s2">&quot;vue-cli-service lint&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;core-js&quot;</span><span class="p">:</span> <span class="s2">&quot;^3.8.3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;vue&quot;</span><span class="p">:</span> <span class="s2">&quot;^3.2.13&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;vue-router&quot;</span><span class="p">:</span> <span class="s2">&quot;^4.0.3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;vuex&quot;</span><span class="p">:</span> <span class="s2">&quot;^4.0.0&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;devDependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;@babel/core&quot;</span><span class="p">:</span> <span class="s2">&quot;^7.12.16&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;@babel/eslint-parser&quot;</span><span class="p">:</span> <span class="s2">&quot;^7.12.16&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;@vue/cli-plugin-babel&quot;</span><span class="p">:</span> <span class="s2">&quot;~5.0.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;@vue/cli-plugin-eslint&quot;</span><span class="p">:</span> <span class="s2">&quot;~5.0.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;@vue/cli-plugin-router&quot;</span><span class="p">:</span> <span class="s2">&quot;~5.0.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;@vue/cli-plugin-vuex&quot;</span><span class="p">:</span> <span class="s2">&quot;~5.0.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;@vue/cli-service&quot;</span><span class="p">:</span> <span class="s2">&quot;~5.0.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;@vue/eslint-config-standard&quot;</span><span class="p">:</span> <span class="s2">&quot;^6.1.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;eslint&quot;</span><span class="p">:</span> <span class="s2">&quot;^7.32.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;eslint-plugin-import&quot;</span><span class="p">:</span> <span class="s2">&quot;^2.25.3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;eslint-plugin-node&quot;</span><span class="p">:</span> <span class="s2">&quot;^11.1.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;eslint-plugin-promise&quot;</span><span class="p">:</span> <span class="s2">&quot;^5.1.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;eslint-plugin-vue&quot;</span><span class="p">:</span> <span class="s2">&quot;^8.0.3&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这样就初始化了一个自带Vuex的状态管理项目。通过代码可以对所有页面中的状态进行控制。</p>
+<p>（3）使用Vuex管理，需要先进行配置。基本的配置方式和vue-router类似，需要实例化一个Vuex.Store，并使用Vue.use在全局注册该组件，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createStore</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vuex&#39;</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="n">createStore</span><span class="p">({</span>
+  <span class="n">state</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">getters</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">mutations</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">actions</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">modules</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>（4）最终获得的store对象和自定义的存储数据的对象一样，需要在main.js中引入，并在实例化Vue对象时作为参数传入，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">createApp</span><span class="p">(</span><span class="n">App</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">store</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">router</span><span class="p">)</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="vue-jsgetter">
+<h3><a class="toc-backref" href="#id10"><span class="section-number">10.1.3. </span>1.3 在Vue.js组件中Getter对象</a><a class="headerlink" href="#vue-jsgetter" title="Permalink to this headline">¶</a></h3>
+<p>Vuex被注册成一个store之后，可以在全局的组件中使用，如果只需要其中的值，调用$store这个全局对象就可以。</p>
+<p>【示例】编写一个基本的全局消息显示程序。</p>
+<p>（1）定义一个基本的store，通过页面上方的一个共同组件显示信息，并且在子组件中更改该内容时此处的内容会自动更新。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createStore</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vuex&#39;</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="n">createStore</span><span class="p">({</span>
+  <span class="n">state</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">message</span><span class="p">:</span> <span class="s1">&#39;这是测试&#39;</span>
+  <span class="p">},</span>
+  <span class="n">getters</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">mutations</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">actions</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">modules</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>（2）store需要在main.js中引入和注册，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createApp</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vue&#39;</span>
+<span class="kn">import</span> <span class="nn">App</span> <span class="kn">from</span> <span class="s1">&#39;./App.vue&#39;</span>
+<span class="kn">import</span> <span class="nn">router</span> <span class="kn">from</span> <span class="s1">&#39;./router&#39;</span>
+<span class="kn">import</span> <span class="nn">store</span> <span class="kn">from</span> <span class="s1">&#39;./store&#39;</span>
+
+<span class="n">createApp</span><span class="p">(</span><span class="n">App</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">store</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">router</span><span class="p">)</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（3）编辑App.vue的模板部分和样式部分，增加一个新的路由路径和显示信息的&lt;div&gt;元素，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;div class=&quot;show-message&quot;&gt;
+      {{ $store.state.message }}
+    &lt;/div&gt;
+    &lt;div id=&quot;nav&quot;&gt;
+      &lt;router-link to=&quot;/&quot;&gt;Home&lt;/router-link&gt;
+      |
+      &lt;router-link to=&quot;/about&quot;&gt;About&lt;/router-link&gt;
+    &lt;/div&gt;
+    &lt;router-view/&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+</pre></div>
+</div>
+<p>store中的Getter对象用于获取实例中的state属性，然后对数据进行操作（并非改变数据本身）。这些操作也可以在组件获取store的值后再执行，但使用Getter对象可以增加代码的复用性，提高页面的响应性能。</p>
+<p>在store中编写一个Getter对象用于获取states中的数据，并对该数据进行操作，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createStore</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vuex&#39;</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="n">createStore</span><span class="p">({</span>
+  <span class="n">state</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">message</span><span class="p">:</span> <span class="s1">&#39;这是测试&#39;</span>
+  <span class="p">},</span>
+  <span class="n">getters</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">set_prefix</span><span class="p">:</span> <span class="n">state</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="s1">&#39;最新消息&#39;</span> <span class="o">+</span> <span class="n">state</span><span class="o">.</span><span class="n">message</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="n">mutations</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">actions</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">modules</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>在Getter对象中定义了一个方法，为原本的数据增加一个字符串前缀。在App.vue中通过该Getter对象获取数据，修改后的模板代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;div class=&quot;show-message&quot;&gt;
+      {{ $store.getters.set_prefix }}
+    &lt;/div&gt;
+    &lt;div id=&quot;nav&quot;&gt;
+      &lt;router-link to=&quot;/&quot;&gt;Home&lt;/router-link&gt;
+      |
+      &lt;router-link to=&quot;/about&quot;&gt;About&lt;/router-link&gt;
+    &lt;/div&gt;
+    &lt;router-view/&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+</pre></div>
+</div>
+<p>显示效果如图</p>
+<p>通过Getter对象获取数据</p>
+<img alt="../_images/image-20220301145850466.png" src="../_images/image-20220301145850466.png" />
+</section>
+<section id="vuexstore">
+<h3><a class="toc-backref" href="#id11"><span class="section-number">10.1.4. </span>1.4 更新Vuex中的store</a><a class="headerlink" href="#vuexstore" title="Permalink to this headline">¶</a></h3>
+<p>因为Vue.js中所有的数据绑定都采用单向传输方式，直接对数据进行改写根本不会通知组件，所以组件自然无法获取变化后的数据，此时页面不发生任何变化。这也是Vuex出现的原因。Vuex提供了一个Mutation对象，所有对数据的修改都必须通过该对象进行操作。</p>
+<p>修改store中message对象的值。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import { createStore } from &#39;vuex&#39;
+
+export default createStore({
+  state: {
+    message: &#39;这是测试&#39;
+  },
+  mutations: {
+    // set()方法，但是不能直接调用，类似于事件注册
+    setMessage (state, msg) {
+      state.message = msg
+    }
+  },
+  getters: {
+    set_prefix: state =&gt; {
+      return &#39;最新消息:&#39; + state.message
+    }
+  },
+  actions: {},
+  modules: {}
+})
+</pre></div>
+</div>
+<p>上述代码中定义了一个setMessage()方法，该方法接收两个参数：第一个参数是state本身，</p>
+<p>第二个参数用来确定显示的内容。通过调用set_prefix()方法可以修改state中的message对象的值。</p>
+<blockquote>
+<div><p>注意：如果直接修改state中的数据，则无法通知所有使用该数据的位置实现更新，所以需要使用定义的setMessage()方法修改数据，</p>
+<p>即必须使用this.$store.commit()进行“提交”式地调用。</p>
+</div></blockquote>
+<p>编辑<code class="docutils literal notranslate"><span class="pre">router/index.js</span></code>文件,编写路由</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createRouter</span><span class="p">,</span> <span class="n">createWebHistory</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vue-router&#39;</span>
+<span class="kn">import</span> <span class="nn">HomeView</span> <span class="kn">from</span> <span class="s1">&#39;../views/HomeView.vue&#39;</span>
+<span class="kn">import</span> <span class="nn">VuexTest</span> <span class="kn">from</span> <span class="s1">&#39;@/views/VuexTest&#39;</span>
+
+<span class="n">const</span> <span class="n">routes</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;home&#39;</span><span class="p">,</span>
+    <span class="n">component</span><span class="p">:</span> <span class="n">HomeView</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/about&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;about&#39;</span><span class="p">,</span>
+    <span class="o">//</span> <span class="n">route</span> <span class="n">level</span> <span class="n">code</span><span class="o">-</span><span class="n">splitting</span>
+    <span class="o">//</span> <span class="n">this</span> <span class="n">generates</span> <span class="n">a</span> <span class="n">separate</span> <span class="n">chunk</span> <span class="p">(</span><span class="n">about</span><span class="o">.</span><span class="p">[</span><span class="nb">hash</span><span class="p">]</span><span class="o">.</span><span class="n">js</span><span class="p">)</span> <span class="k">for</span> <span class="n">this</span> <span class="n">route</span>
+    <span class="o">//</span> <span class="n">which</span> <span class="ow">is</span> <span class="n">lazy</span><span class="o">-</span><span class="n">loaded</span> <span class="n">when</span> <span class="n">the</span> <span class="n">route</span> <span class="ow">is</span> <span class="n">visited</span><span class="o">.</span>
+    <span class="n">component</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="n">import</span><span class="p">(</span><span class="o">/*</span> <span class="n">webpackChunkName</span><span class="p">:</span> <span class="s2">&quot;about&quot;</span> <span class="o">*/</span> <span class="s1">&#39;../views/AboutView.vue&#39;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/vuex-test&#39;</span><span class="p">,</span>
+    <span class="n">component</span><span class="p">:</span> <span class="n">VuexTest</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">const</span> <span class="n">router</span> <span class="o">=</span> <span class="n">createRouter</span><span class="p">({</span>
+  <span class="n">history</span><span class="p">:</span> <span class="n">createWebHistory</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">BASE_URL</span><span class="p">),</span>
+  <span class="n">routes</span>
+<span class="p">})</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="n">router</span>
+</pre></div>
+</div>
+<p>上述代码在路由代码中引入了<code class="docutils literal notranslate"><span class="pre">view/VuexTest.vue</span></code>文件，该文件用于提供一个按钮和监听事件来更改store对象，</p>
+<p>代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div&gt;
+    &lt;input v-model=&quot;text&quot;/&gt;
+    &lt;br&gt; &lt;br&gt;
+    &lt;button v-on:click=&quot;changeMsg&quot;&gt;单击更改消息&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &#39;VuexTest&#39;,
+  data () {
+    return {
+      text: &#39;&#39;
+    }
+  },
+  methods: {
+    // 定义修改方法
+    changeMsg: function () {
+      // 该方法必须同步执行
+      this.$store.commit(&#39;setMessage&#39;, this.text)
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>上述代码定义一个文本框并且绑定相应的值，同时绑定按钮的单击事件。单击该按钮，调用store中的mutation对象指定方法名为setMessage()，同时传入一个输入数据的变量。</p>
+<p>为了方便使用，可以在App.vue中添加一条跳转标签，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;div class=&quot;show-message&quot;&gt;
+      {{ $store.getters.set_prefix }}
+    &lt;/div&gt;
+    &lt;div id=&quot;nav&quot;&gt;
+      &lt;router-link to=&quot;/&quot;&gt;Home&lt;/router-link&gt;
+      |
+      &lt;router-link to=&quot;/about&quot;&gt;About&lt;/router-link&gt;
+      |
+      &lt;router-link to=&quot;/vuex-test&quot;&gt;Vuex&lt;/router-link&gt;
+    &lt;/div&gt;
+    &lt;router-view/&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+</pre></div>
+</div>
+<p>最终显示效果如图</p>
+<img alt="../_images/image-20220301151544384.png" src="../_images/image-20220301151544384.png" />
+<p>使用store.commit()进行修改当然没有任何问题，如果在组件中直接对其调用，<strong>则需要注意mutation对象必须同步执行。</strong></p>
+<p>也就是说，该代码下方的所有代码都会在commit()方法执行完成后才会执行。</p>
+<p>如果需要异步处理所有的修改，则需要使用Action对象。该对象本质上是在Action中使用mutation，也就是在actions对象中编写commit()方法，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import { createStore } from &#39;vuex&#39;
+
+export default createStore({
+  state: {
+    message: &#39;这是测试&#39;
+  },
+  mutations: {
+    // set()方法，但是不能直接调用，类似于事件注册
+    setMessage (state, msg) {
+      state.message = msg
+    }
+  },
+  getters: {
+    set_prefix: state =&gt; {
+      return &#39;最新消息:&#39; + state.message
+    }
+  },
+  // Action的特性是可以异步执行代码。
+  actions: {
+    setMessage (context, msg) {
+      context.commit(&#39;setMessage&#39;, msg)
+    }
+  },
+  modules: {}
+})
+</pre></div>
+</div>
+<p>Action对象中的方法接收一个和store实例相同的对象（但并不是store实例本身），通过store.dispath()方法指定方法名称和参数，触发对象。修改VuexTest.vue中的代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div&gt;
+    &lt;input v-model=&quot;text&quot;/&gt;
+    &lt;br&gt; &lt;br&gt;
+    &lt;button v-on:click=&quot;changeMsg&quot;&gt;单击更改消息&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &#39;VuexTest&#39;,
+  data () {
+    return {
+      text: &#39;&#39;
+    }
+  },
+  methods: {
+    // 定义修改方法
+    changeMsg: function () {
+      // 异步处理
+      this.$store.dispatch(&#39;setMessage&#39;, this.text)
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>Action的特性是可以异步执行代码。</p>
+<img alt="../_images/image-20220301152317675.png" src="../_images/image-20220301152317675.png" />
+</section>
+<section id="id2">
+<h3><a class="toc-backref" href="#id12"><span class="section-number">10.1.5. </span>1.5 Vuex模块的划分</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>大型项目中会产生大量的数据需要通过store管理，每条数据本身至少拥有一个Mutation及更多的Getter对象，这让整个State变得异常庞大。Module对象就是为了解决对象过大的问题而生。</p>
+<p>Vuex允许将store分割为模块，每个模块可以拥有自身的state、Mutation和Action，甚至是更小的细分模块。</p>
+<p>只需要在Modules对象中添加需要使用的模块，并将所有的子模块注册在全局中，这样就可以将所有的数据对象进行模块化地分类，使整个逻辑代码更加简洁。例如：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import { createStore } from &#39;vuex&#39;
+
+export default createStore({
+  state: {
+    message: &#39;这是测试&#39;
+  },
+  mutations: {
+    // set()方法，但是不能直接调用，类似于事件注册
+    setMessage (state, msg) {
+      state.message = msg
+    }
+  },
+  getters: {
+    set_prefix: state =&gt; {
+      return &#39;最新消息:&#39; + state.message
+    }
+  },
+  actions: {
+    setMessage (context, msg) {
+      context.commit(&#39;setMessage&#39;, msg)
+    }
+  },
+  modules: {
+    a: moduleA,
+    b: moduleB
+  }
+})
+</pre></div>
+</div>
+<p>参考文献：</p>
+<p><a class="reference external" href="https://www.e-learn.cn/topic/1805138">https://www.e-learn.cn/topic/1805138</a></p>
+<blockquote>
+<div><p>注意：默认情况下，模块内部的Action、Mutation和Getter是注册在全局命名空间内的，可以直接使用，也可以通过添加namespaced:true的方式使模块内部的action、mutation和getter成为带命名空间的模块，通过命名空间的不同进行区分和调用。</p>
+</div></blockquote>
+</section>
+</section>
+<section id="pinia">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">10.2. </span>2. Pinia</a><a class="headerlink" href="#pinia" title="Permalink to this headline">¶</a></h2>
+<section id="id3">
+<h3><a class="toc-backref" href="#id14"><span class="section-number">10.2.1. </span>1.安装</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>使用你喜欢的包管理工具安装pinia</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yarn</span> <span class="n">add</span> <span class="n">pinia</span>
+<span class="c1"># 或者使用 npm</span>
+<span class="n">npm</span> <span class="n">install</span> <span class="n">pinia</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>引入到mian.js中</p>
+<p>vue3</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">createPinia</span> <span class="n">是一个函数</span>
+<span class="kn">import</span> <span class="p">{</span> <span class="n">createPinia</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;pinia&#39;</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">createPinia</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id15"><span class="section-number">10.2.2. </span>2.创建store</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">store</span></code>简单来说就是一个公共数据仓库，
+我们把数据放在<code class="docutils literal notranslate"><span class="pre">store</span></code>中， 其他所有组件都可以访问和修改。</p>
+<p>创建一个用户store</p>
+<blockquote>
+<div><p>/src/store/user.ts</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">defineStore</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;pinia&#39;</span>
+
+<span class="o">//</span> <span class="n">第一个参数是应用程序中</span> <span class="n">store</span> <span class="n">的唯一</span> <span class="nb">id</span>
+<span class="o">//</span> <span class="n">第二参数是options</span> <span class="p">(</span><span class="n">配置项</span><span class="p">)</span>
+<span class="o">//</span> <span class="n">命名规范</span> <span class="n">use</span> <span class="o">+</span> <span class="n">相关名词</span> <span class="o">+</span> <span class="n">Store</span>
+<span class="n">export</span> <span class="n">const</span> <span class="n">useUserStore</span> <span class="o">=</span> <span class="n">defineStore</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">other</span> <span class="n">options</span><span class="o">...</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>创建<code class="docutils literal notranslate"><span class="pre">defineStore</span></code>很简单， 接收命名为 <code class="docutils literal notranslate"><span class="pre">use</span> <span class="pre">+</span> <span class="pre">相关名词</span> <span class="pre">+</span> <span class="pre">Store</span></code>,
+第一参数为唯一id， 第二个参数为配置项。</p>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id16"><span class="section-number">10.2.3. </span>3.添加store</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>/src/store/user.ts</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import { defineStore } from &#39;pinia&#39;
+
+export const useUserStore = defineStore(&#39;main&#39;, {
+  //state是一个函数， 返回的是对应数据
+  state: () =&gt; ({
+    name: &#39;shenxiu&#39;,
+    age: 20,
+    sex: &#39;male&#39;,
+    qSkill: &#39;斩钢闪&#39;
+  }),
+  getters: {
+    // 箭头函数 推荐
+    getAddAge: (state) =&gt; {
+      return state.age * 2 + 10
+    },
+    getIsAge: (state) =&gt; {
+      return (num, number) =&gt; {
+        return state.age = num
+      }
+    },
+    // 箭头函数写法--不接收参数
+    getYasuoInfoNoParams: state =&gt; `${state.name}，q技能叫做${state.qSkill}`,
+
+    // 箭头函数写法--接收参数
+    getYasuoInfoHaveParams: state =&gt; {
+      // console.log(this)  //使用箭头函数的话，这个地方的this是无效的 可以通过state.其他getters的名称 来访问别的getters
+      return (params) =&gt; `${state.name}，q技能叫做${state.qSkill}，${params}`
+    },
+
+    // 普通函数写法--不接收参数
+    getYasuoInfoNoParams1(state) {
+      // console.log(this)  //在此处this 和 state的值是一样的  可以通过this/state.其他getters的名称 来访问别的getters
+      // console.log(state)
+      return `${this.name}，q技能叫做${this.qSkill}`
+    },
+    // 普通函数写法--接收参数
+    getYasuoInfoHaveParams1(state) {
+      return function (params) {
+        return `${state.name}，q技能叫做${state.qSkill}，${params}`
+      }
+    },
+  },
+  actions: {
+    // 比如发送token 请求token的应用场景
+    changeName(name,string) {
+      this.name = name
+    }
+  }
+})
+</pre></div>
+</div>
+</section>
+<section id="storegettersaction">
+<h3><a class="toc-backref" href="#id17"><span class="section-number">10.2.4. </span>4.使用store、Getters、Action 属性</a><a class="headerlink" href="#storegettersaction" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>/src/App.vue</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+&lt;p&gt;这是pinia-vue3教程界面!&lt;/p&gt;
+
+  &lt;div class=&quot;content&quot;&gt;
+    &lt;p&gt;store简单来说就是一个公共数据仓库， 我们把数据放在store中， 其他所有组件都可以访问和修改。&lt;/p&gt;
+    &lt;p&gt;{{ name }}&lt;/p&gt;
+    &lt;p&gt;{{ age }}&lt;/p&gt;
+    &lt;p&gt;{{ sex }}&lt;/p&gt;
+    &lt;el-button size=&quot;small&quot; @click=&quot;changeName&quot;&gt;修改姓名&lt;/el-button&gt;
+    &lt;el-button size=&quot;small&quot; @click=&quot;patchStore&quot;&gt;批量修改&lt;/el-button&gt;
+    &lt;el-button size=&quot;small&quot; @click=&quot;resetStore&quot;&gt;重置状态&lt;/el-button&gt;
+
+    &lt;!--    使用getters--&gt;
+    &lt;p&gt;Getter 完全等同于 Store 状态的 计算值。 它们可以用 defineStore() 中的 getters 属性定义。&lt;/p&gt;
+    &lt;p&gt;---------------------使用getters------------------&lt;/p&gt;
+    &lt;p&gt;{{ store.getAddAge }}&lt;/p&gt;
+    &lt;p&gt;---------------------getter传参--------------------&lt;/p&gt;
+    &lt;p&gt;{{ modifyage }}&lt;/p&gt;
+    &lt;div&gt;
+      {{ yasuoInfoNoParams }}
+    &lt;/div&gt;
+    &lt;div&gt;
+      {{ yasuoInfoHaveParams }}
+    &lt;/div&gt;
+    &lt;div&gt;
+      {{ yasuoInfoNoParams1 }}
+    &lt;/div&gt;
+    &lt;div&gt;
+      {{ yasuoInfoHaveParams1 }}
+    &lt;/div&gt;
+    &lt;p&gt;Actions 相当于组件中的 methods。 它们可以使用 defineStore() 中的 actions 属性定义，并且它们非常适合定义业务逻辑。&lt;/p&gt;
+    &lt;p&gt;比如发送token 请求token的应用场景&lt;/p&gt;
+    &lt;p&gt;使用 actions&lt;/p&gt;
+    &lt;el-button @click=&quot;setToken&quot;&gt;发送token修改name的值&lt;/el-button&gt;
+  &lt;/div&gt;
+
+&lt;/template&gt;
+
+&lt;script&gt;
+import { storeToRefs } from &quot;pinia&quot;;
+import { useUserStore } from &quot;@/store/pinia&quot;;
+import {computed} from &quot;vue&quot;;
+export default {
+  setup() {
+    const store = useUserStore();
+    const yasuoInfoNoParams = computed(() =&gt; store.getYasuoInfoNoParams)
+    const yasuoInfoHaveParams = computed(() =&gt; store.getYasuoInfoHaveParams(&#39;r技能叫做狂风绝息斩&#39;))
+    const yasuoInfoNoParams1 = computed(() =&gt; store.getYasuoInfoNoParams1)
+    const yasuoInfoHaveParams1 = computed(() =&gt; store.getYasuoInfoHaveParams1(&#39;r技能叫做狂风绝息斩&#39;))
+    const modifyage = computed(() =&gt; store.getIsAge(2))
+
+    //storeToRefs 将store里面的值转化为响应式
+    const { name, age, sex } = storeToRefs(store);
+
+    const setToken = () =&gt; {
+      store.changeName(&quot;zhangsan&quot;);
+    }
+
+    //直接修改
+    const changeName = () =&gt; {
+      store.name = &quot;zhangsan&quot;;
+    }
+    //批量修改
+    const patchStore = () =&gt; {
+      store.$patch({
+        name: &quot;lihua&quot;,
+        age: 18,
+        sex: &quot;female&quot;,
+      });
+    }
+    // 重置到原始状态
+    const resetStore = () =&gt; {
+      const store = useUserStore()
+      store.$reset()
+    }
+    return {
+      name,
+      age,
+      sex,
+      store,
+      changeName,
+      patchStore,
+      resetStore,
+      modifyage,
+      yasuoInfoNoParams,
+      yasuoInfoHaveParams,
+      yasuoInfoNoParams1,
+      yasuoInfoHaveParams1,
+      setToken
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>在Vue3项目中使用pinia代替Vuex进行数据存储</p>
+<p><a class="reference external" href="https://www.cnblogs.com/wuhuacong/archive/2022/04/08/16117968.html">https://www.cnblogs.com/wuhuacong/archive/2022/04/08/16117968.html</a></p>
+<p>pinia-vue3教程</p>
+<p><a class="reference external" href="https://zhushenxiu.site/2022/08/10/vue/pinia/">https://zhushenxiu.site/2022/08/10/vue/pinia/</a></p>
+<p><a class="reference external" href="https://www.cnblogs.com/zhaord/p/16187429.html">https://www.cnblogs.com/zhaord/p/16187429.html</a></p>
+<p>Pinia 中文文档</p>
+<p><a class="reference external" href="https://pinia.web3doc.top/">https://pinia.web3doc.top/</a></p>
+</section>
+</section>
+<section id="vuex-vs-pinia">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">10.3. </span>3.Vuex VS Pinia</a><a class="headerlink" href="#vuex-vs-pinia" title="Permalink to this headline">¶</a></h2>
+<p>开发大中型项目的时候，需要用到状态管理器。Vuex 专门为 Vue.js
+打造，易学易用。</p>
+<p>那么 Pinia🍍 对比 Vuex 有什么优势呢？</p>
+<ol class="arabic simple">
+<li><p>更好的 TS 支持</p></li>
+<li><p>更加轻量，压缩后只有 1KB</p></li>
+<li><p>去除了 mutation。使用 async + await 处理同步问题</p></li>
+<li><p>无需手动添加 store，创建的 store 会在使用时自动添加</p></li>
+</ol>
+<p>缺点就是<strong>还很新</strong>，处于起步阶段，社区还有待加强。</p>
+<p>🍍的开发者是 vuex 的核心成员，所以 vue官方也推荐用 🍍
+作为未来状态管理器的首选。</p>
+<p>🏷️<strong>结论</strong>：选用 Pinia 作为状态管理器。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html" class="btn btn-neutral float-left" title="9. Vue.js的vue-router库" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="11.Vue-UI%E5%BA%93.html" class="btn btn-neutral float-right" title="11. Vue-UI库" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

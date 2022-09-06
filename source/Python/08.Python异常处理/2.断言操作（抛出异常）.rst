@@ -1,0 +1,102 @@
+.. contents::
+   :depth: 3
+..
+
+断言操作（抛出异常）
+====================
+
+断言语句和if分支有点类似，它用于对一个bool表达式进行断言，
+如果该bool表达式为True，该程序可以继续向下执行；否则程序会引发\ ``AssertionError``\ 错误。
+
+1.assert断言简介
+----------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+
+   """
+   禁用断言
+
+   在运行 Python 时传入-O 选项，可以禁用断言。
+   如果你已完成了程序的编写和测试，不希望执行心智正常检测，从而减慢程序的速度，这样就很好（尽管大多数
+   断言语句所花的时间，不会让你觉察到速度的差异）。
+
+   断言是针对开发的，不是针对最终产品。当你将程序交给其他人运行时，它应该没有缺陷，不需要进行心智正常检查。
+   """
+
+   podBayDoorStatus = 'open'
+   assert podBayDoorStatus == 'open', 'The pod bay doors need to be "open".'
+
+   podBayDoorStatus = "I\'m sorry, Dave. I\'m afraid I can't do that.'"
+   assert podBayDoorStatus == 'open', 'The pod bay doors need to be "open".'
+
+1.1 举例1
+~~~~~~~~~
+
+.. code:: python
+
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   '''
+   assert expression [,reason]
+   断言操作
+   '''
+
+   def division():
+       '''
+       功能:分苹果
+       :return:
+       '''
+       print("\n ==========================分苹果了=================")
+       apple = int(input('请输入苹果的个数：'))
+       children = int(input("请输入小朋友的人数："))
+       assert apple > children, '苹果不够分'
+       result = apple//children
+       remain = apple-result*children
+       if remain>0:
+           print("{}个苹果，平均分给{}个小朋友，每个人分{}个，剩下{}个".format(apple,children,result,remain))
+       else:
+           print("{}个苹果，平均分给{}个小朋友，每人分{}个".format(apple,children,result))
+
+   if __name__ == '__main__':
+       try:
+           division()      #调用分苹果函数
+       except Exception as e:
+           print("输入有误: ",e)
+
+1.2 举例2
+~~~~~~~~~
+
+.. code:: python
+
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   '''
+   assert <条件测试>.<异常附件数据>
+   '''
+
+   #assert语句时简化的raise语句，它引发异常的前提是其后面的条件测试为假
+   def testAssert():
+       for i in range(3):
+           try:
+               assert i<2, "大于2了！！！"
+           except AssertionError as e:
+               print("Raise a AssertionError!",e)
+           print(i)
+       print('end......')
+
+   try:
+       raise Exception('错误')
+   except Exception as e:
+       print(e)
+
+   if __name__ == '__main__':
+       testAssert()
+
+..
+
+   注意：请不要拿assert来做参数校验，用raise语句来替代它吧：

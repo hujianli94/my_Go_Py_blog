@@ -1,0 +1,1111 @@
+.. contents::
+   :depth: 3
+..
+
+熙熙运维平台开发
+================
+
+1.技术栈清单
+------------
+
++--------------+--------------------------+--------------------------+
+| **技术栈**   | **描述**                 | **官网**                 |
++==============+==========================+==========================+
+| Vue3         | 渐进式 JavaScript 框架   | https://v3.cn.vuejs.org/ |
++--------------+--------------------------+--------------------------+
+| TypeScript   | 微软新推出的一种语言，是 | https://www.tslang.cn/   |
+|              | JavaScript 的超集        |                          |
++--------------+--------------------------+--------------------------+
+| Vite2        | 前端开发与构建工具       | https://cn.vitejs.dev/   |
++--------------+--------------------------+--------------------------+
+| Element Plus | 基于 Vue                 | https://elem             |
+|              | 3，面                    | ent-plus.gitee.io/zh-CN/ |
+|              | 向设计师和开发者的组件库 |                          |
++--------------+--------------------------+--------------------------+
+| Pinia        | 新一代状态管理工具       | https://pinia.vuejs.org/ |
++--------------+--------------------------+--------------------------+
+| Vue Router   | Vue.js 的官方路由        | http                     |
+|              |                          | s://router.vuejs.org/zh/ |
++--------------+--------------------------+--------------------------+
+| wangEditor   | Typescript 开发的 Web    | htt                      |
+|              | 富文本编辑器             | ps://www.wangeditor.com/ |
++--------------+--------------------------+--------------------------+
+| Echarts      | 一个基于 JavaScript      | https:                   |
+|              | 的开源可视化图表库       | //echarts.apache.org/zh/ |
++--------------+--------------------------+--------------------------+
+
+2.vite项目初始搭建
+------------------
+
+创建vite项目
+
+::
+
+   # npm 7+, 需要额外的双横线：
+   npm init vite@latest vue3-xixi-admin -- --template vue
+
+   # yarn
+   yarn create vite vue3-xixi-admin --template vue
+
+   # pnpm
+   pnpm create vite vue3-xixi-admin -- --template vue
+
+vite生成ts项目另种方式 选择vue-ts模板
+
+::
+
+   # npm 7+, 需要额外的双横线：
+   npm init vite@latest vue3-xixi-admin -- --template vue-ts
+
+   # yarn
+   yarn create vite vue3-xixi-admin --template vue-ts
+
+   # pnpm
+   pnpm create vite vue3-xixi-admin -- --template vue-ts
+
+我们这里执行
+
+::
+
+   pnpm create vite vue3-xixi-admin -- --template vue-ts
+   cd vue3-xixi-admin
+   pnpm install
+   pnpm run dev
+
+2.1 vite.config.js配置文件
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**配置 ip 访问项目**
+
+-  vite 启动后出现 “ Network: use –host to expose ”
+
+::
+
+   import { defineConfig } from 'vite'
+   import vue from '@vitejs/plugin-vue'
+
+   // https://vitejs.dev/config/
+   export default defineConfig({
+     plugins: [vue()],
+     // 在文件中添加以下内容
+     server: {
+       host: '0.0.0.0'
+     }
+   })
+
+-  重新启动后显示
+
+::
+
+     VITE v3.0.9  ready in 905 ms
+
+     ➜  Local:   http://localhost:4000/
+     ➜  Network: http://192.168.252.1:4000/
+     ➜  Network: http://192.168.91.1:4000/
+     ➜  Network: http://172.16.3.134:4000/
+
+2.2 vueRouter
+~~~~~~~~~~~~~
+
+安装vue-router@next，最新版路由
+
+::
+
+   cnpm install vue-router@next --save
+
+   or
+
+   pnpm install vue-router@next --save
+
+在src目录下创建router路由目录，添加index.ts(记得在src目录下创建views文件夹)
+
+``src/router/index.ts``
+
+.. code:: typescript
+
+   import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+   import Layout from '@/layout/index.vue'
+
+   const routes: Array<RouteRecordRaw> = [
+     {
+       path: '/',
+       component: Layout,
+       redirect: '/dashboard',
+       children: [
+         {
+           path: 'dashboard',
+           name: 'Dashboard',
+           component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/index.vue'),
+           meta: {
+             title: 'Dashboard'
+           }
+         }
+       ]
+     }
+   ]
+
+   const router = createRouter({
+     history: createWebHashHistory(),
+     routes
+   })
+
+   export default router
+
+在\ ``main.ts``\ 中引入router
+
+.. code:: typescript
+
+   import { createApp } from 'vue'
+   import './style.css'
+   import App from './App.vue'
+   import router from './router/index'
+
+   const app = createApp(App)
+
+   app.use(router)
+       .mount('#app')
+
+2.3 Pinia状态管理
+~~~~~~~~~~~~~~~~~
+
+   Pinia 是 Vue.js 的轻量级状态管理库，Vuex 的替代方案。
+
+尤雨溪于2021.11.24 在 Twitter 上宣布：Pinia 正式成为 vuejs
+官方的状态库，意味着 Pinia 就是 Vuex 5 。
+
+**1. 安装Pinia**
+
+::
+
+   cnpm install pinia --save
+
+   or
+
+   pnpm install pinia --save
+
+**2. Pinia全局注册**
+
+在\ ``main.ts``\ 中引入pinia
+
+.. code:: typescript
+
+   import { createApp } from 'vue'
+   import './style.css'
+   import App from './App.vue'
+
+   import router from './router/index'
+   import { createPinia } from "pinia"
+   const app = createApp(App)
+
+
+   app.use(router)
+      .use(createPinia())
+      .mount('#app')
+
+**3. Pinia模块封装** (先做了解)
+
+::
+
+   // src/store/modules/user.ts
+   // 用户状态模块
+   import { defineStore } from "pinia";
+   import { UserState } from "@/types"; // 用户state的TypeScript类型声明，文件路径 src/types/store/user.d.ts
+
+   const useUserStore = defineStore({
+       id: "user",
+       state: (): UserState => ({
+           token:'',
+           nickname: ''
+       }),
+       actions: {
+         getUserInfo() {
+           return new Promise(((resolve, reject) => {
+             ...
+             resolve(data)
+             ...
+           }))
+         }
+       }
+   })
+
+   export default useUserStore;
+
+
+
+   // src/store/index.ts
+   import useUserStore from './modules/user'
+   const useStore = () => ({
+       user: useUserStore()
+   })
+   export default useStore
+
+**4. 使用Pinia**\ (先做了解)
+
+.. code:: typescript
+
+   import useStore from "@/store";
+
+   const { user } = useStore()
+   // state
+   const token = user.token
+   // action
+   user.getUserInfo().then(({data})=>{
+       console.log(data)
+   })
+
+2.4 axios
+~~~~~~~~~
+
+安装\ ``axios``\ 和 ``qs``
+
+::
+
+   cnpm install axios -S
+   or
+   pnpm install axios --save
+
+   cnpm install qs  -S
+   or
+   pnpm install qs --save
+
+2.5 eslint-plugin-vue 文件检查
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   cnpm install -D eslint eslint-plugin-vue
+   or
+   pnpm install eslint eslint-plugin-vue --save-dev
+
+根目录下创建 .eslintrc.js
+
+::
+
+   module.exports = {
+     extends: [
+       'eslint:recommended',
+       'plugin:vue/vue3-essential',
+       'plugin:@typescript-eslint/recommended'
+     ],
+     plugins: ['vue', '@typescript-eslint'],
+     rules: {
+       'vue/multi-word-component-names': 'off',
+       '@typescript-eslint/no-empty-function': 'off', // 关闭空方法检查
+       '@typescript-eslint/no-explicit-any': 'off', // 关闭any类型的警告
+       'vue/no-v-model-argument': 'off'
+     }
+   }
+
+2.6 element-plus安装配置
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   cnpm install element-plus --save
+   npm install @element-plus/icons-vue
+   or
+   pnpm install element-plus  --save
+   pnpm install @element-plus/icons-vue
+
+1. 按需导入-自动导入
+^^^^^^^^^^^^^^^^^^^^
+
+首先你需要安装\ ``unplugin-vue-components`` 和
+``unplugin-auto-import``\ 这两款插件
+
+::
+
+   pnpm install -D unplugin-vue-components unplugin-auto-import
+
+然后把下列代码插入到你的 ``Vite`` 的配置文件中
+
+::
+
+   import { defineConfig } from 'vite'
+   import vue from '@vitejs/plugin-vue'
+   import AutoImport from 'unplugin-auto-import/vite'
+   import Components from 'unplugin-vue-components/vite'
+   import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+
+   // https://vitejs.dev/config/
+   export default defineConfig({
+     plugins: [
+       vue(),
+       AutoImport({
+         resolvers: [ElementPlusResolver()],
+       }),
+       Components({
+         resolvers: [ElementPlusResolver()],
+       }),
+     ],
+     // 在文件中添加以下内容
+     server: {
+       host: '0.0.0.0'
+     }
+   })
+
+2.7 路径别名配置
+~~~~~~~~~~~~~~~~
+
+   使用 @ 代替 src
+
+**1. Vite配置**
+
+.. code:: typescript
+
+   // vite.config.ts
+   import { defineConfig } from 'vite'
+   import vue from '@vitejs/plugin-vue'
+   import path from 'path'
+
+   // 1. defineConfig: 不用 jsdoc 注解也可以获取类型提示
+   // 2. 找不到模块"path"或其相应的类型声明 或者 找不到名称"__dirname 安装 @types/node
+
+   const resolve = (dir: string) => path.join(__dirname, dir)
+
+   // https://vitejs.dev/config/
+   export default defineConfig({
+     plugins: [vue()],
+         // 在文件中添加以下内容
+         server: {
+           host: '0.0.0.0'
+         },
+     resolve: {
+       alias: {
+         '@': resolve('src'),
+         'comps': resolve('src/components'),
+         'apis': resolve('src/apis'),
+         'views': resolve('src/views'),
+         'utils': resolve('src/utils'),
+         'routes': resolve('src/routes'),
+         'styles': resolve('src/styles')
+       }
+     },
+   })
+
+**2. 安装@types/node**
+
+``import path from 'path'``\ 编译器报错：TS2307: Cannot find module
+‘path’ or its corresponding type declarations.
+
+本地安装 Node 的 TypeScript 类型描述文件即可解决编译器报错
+
+.. code:: bash
+
+   pnpm install @types/node --save-dev
+
+2.8 TypeScript 编译配置
+~~~~~~~~~~~~~~~~~~~~~~~
+
+同样还是\ ``import path from 'path'`` 编译报错: TS1259: Module ‘“path”’
+can only be default-imported using the ‘allowSyntheticDefaultImports’
+flag
+
+因为 typescript 特殊的 import 方式 ,
+需要配置允许默认导入的方式，还有路径别名的配置
+
+``tsconfig.json``
+
+::
+
+   {
+     "compilerOptions": {
+       "target": "ESNext",
+       "useDefineForClassFields": true,
+       "module": "ESNext",
+       "moduleResolution": "Node",
+       "strict": true,
+       "jsx": "preserve",
+       "sourceMap": true,
+       "resolveJsonModule": true,
+       "isolatedModules": true,
+       "esModuleInterop": true,
+       "lib": ["ESNext", "DOM"],
+       "skipLibCheck": true,
+       "types": [ "node" ],
+       // 解析非相对模块的基地址，默认是当前目录
+       "baseUrl": "./",
+       //路径映射，相对于baseUrl
+       "paths": {
+         "@/*": ["src/*"]
+       },
+       // 允许默认导入
+       "allowSyntheticDefaultImports": true
+     },
+     "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+     "references": [{ "path": "./tsconfig.node.json" }]
+   }
+
+**4.别名使用**
+
+.. code:: html
+
+   // App.vue
+   import HelloWorld from '/src/components/HelloWorld.vue'
+                                                   ↓
+   import HelloWorld from '@/components/HelloWorld.vue'
+
+2.9 Sass 全局样式
+~~~~~~~~~~~~~~~~~
+
+1. 安装依赖 使用\ ``dart-sass``,
+   安装速度比较快，大概率不会出现安装不成功
+
+::
+
+   pnpm i -D sass
+
+https://vitejs.cn/guide/features.html#css-pre-processors
+
+2. 使用 每个页面自己对应的样式都写在自己的 .vue 文件之中 ``scoped``
+   它顾名思义给 css 加了一个域的概念。
+
+::
+
+   <style lang="scss">
+     /* global styles */
+   </style>
+
+   <style lang="scss" scoped>
+     /* local styles */
+   </style>
+
+在src下创建 styles目录存放全局样式文件，目前没多少样式可以直接拷贝
+
+``src\styles\index.scss``
+
+入口css
+
+::
+
+   @import './variables.scss';
+   @import './sidebar.scss';
+
+
+   html {
+     height: 100%;
+     box-sizing: border-box;
+   }
+
+   body {
+     height: 100%;
+     -moz-osx-font-smoothing: grayscale;
+     -webkit-font-smoothing: antialiased;
+     text-rendering: optimizeLegibility;
+     font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+   }
+
+   #app {
+     height: 100%;
+   }
+
+``src\styles\sidebar.scss``
+
+主要针对sidebar的样式
+
+::
+
+   #app {
+
+     .sidebar-container {
+       width: $sideBarWidth !important;
+       height: 100%;
+       background-color: pink;
+     }
+   }
+
+``src\styles\variables.scss``
+
+导出一些scss变量 可在js中使用scss变量
+
+::
+
+   // base color
+   $blue:#324157;
+   $light-blue:#3A71A8;
+   $red:#C03639;
+   $pink: #E65D6E;
+   $green: #30B08F;
+   $tiffany: #4AB7BD;
+   $yellow:#FEC171;
+   $panGreen: #30B08F;
+
+   // sidebar
+   $menuText:#bfcbd9;
+   $menuActiveText:#409EFF;
+   $subMenuActiveText:#f4f4f5; // https://github.com/ElemeFE/element/issues/12951
+
+   $menuBg:#304156;
+   $menuHover:#263445;
+
+   $subMenuBg:#1f2d3d;
+   $subMenuHover:#001528;
+
+   $sideBarWidth: 210px;
+
+   // The :export directive is the magic sauce for webpack
+   // https://mattferderer.com/use-sass-variables-in-typescript-and-javascript
+   :export {
+     menuText: $menuText;
+     menuActiveText: $menuActiveText;
+     subMenuActiveText: $subMenuActiveText;
+     menuBg: $menuBg;
+     menuHover: $menuHover;
+     subMenuBg: $subMenuBg;
+     subMenuHover: $subMenuHover;
+     sideBarWidth: $sideBarWidth;
+   }
+
+scss类型声明文件
+
+ts中使用sass变量 需要类型声明
+
+参考文档
+https://mattferderer.com/use-sass-variables-in-typescript-and-javascript
+
+新建\ ``src\styles\variables.scss.d.ts``
+
+::
+
+   export interface ScssVariables {
+     menuText: string;
+     menuActiveText: string;
+     subMenuActiveText: string;
+     menuBg: string;
+     menuHover: string;
+     subMenuBg: string;
+     subMenuHover: string;
+     sideBarWidth: string;
+   }
+
+   export const variables: ScssVariables
+
+   export default variables
+
+最后，在src/main.ts中引入全局css
+
+先安装normalize.css
+
+::
+
+   npm i normalize.css --save
+   或
+   pnpm install normalize.css  --save
+
+.. code:: typescript
+
+   import { createApp } from 'vue'
+   import './style.css'
+   import App from './App.vue'
+
+   import router from './router/index'
+   import { createPinia } from "pinia"
+   import ElementPlus from 'element-plus'
+   import 'element-plus/theme-chalk/index.css'
+
+   // 初始化css 重置css默认样式
+   import 'normalize.css/normalize.css'
+   // 全局 css
+   import '@/styles/index.scss'
+
+   const app = createApp(App)
+
+
+   app.use(router)
+      .use(createPinia())
+      .use(ElementPlus)
+      .mount('#app')
+
+本节参考源码
+
+https://gitee.com/brolly/vue3-element-admin/commit/a24aac74b26a044efbbbea51ae687f7eb490eeab
+
+3.SvgIcon组件开发
+-----------------
+
+3.1 什么是Svg Sprite
+~~~~~~~~~~~~~~~~~~~~
+
+将多个 svg 打包成svg-sprite。svg雪碧图。类似于CSS中的Sprite技术。
+
+图标图形整合在一起，实际呈现的时候准确显示特定图标。
+
+阅读资料
+
+-  `张鑫旭大佬文章 <https://www.zhangxinxu.com/wordpress/2014/07/introduce-svg-sprite-technology/>`__
+-  `SvgIcon工作原理-推荐阅读 <https://segmentfault.com/a/1190000015367490>`__
+-  `SVG
+   Sprite技术介绍 <https://blog.csdn.net/happyqyt/article/details/88369891>`__
+
+感兴趣的这些文章可以阅读下。
+
+3.2 准备svg文件
+~~~~~~~~~~~~~~~
+
+根目录下创建src/icons目录
+将svg图标文件放到@/icons/svg文件下面，\ `svg文件压缩包 <https://static.zhufengpeixun.com/svg_1646126485370.zip>`__
+
+创建文件src/icons/index.ts 全局注册svg icon组件入口 现在还没开发 稍后
+
+::
+
+   import { App } from 'vue'
+   import SvgIcon from '@/components/SvgIcon/index.vue'
+
+   // // 使用require.context 加载./svg目录下所有svg文件
+   // const files = import.meta.globEager<any>("./svg/*.svg")
+
+   //如果上面这句不行就把上面这句注释掉，使用下面这句
+   import'virtual:svg-icons-register'
+
+   export default (app: App) => {
+     // 全局注册svg-icon组件
+     app.component('svg-icon', SvgIcon)
+   }
+
+src/icons/svgo.yml 配置文件
+
+`svgo <https://github.com/svg/svgo>`__ svg
+压缩处理优化配置文件。详情看4-7 svg优化
+
+::
+
+   plugins:
+   - removeAttrs:
+       attrs:
+         - 'fill'
+         - 'fill-rule'
+
+3.3 配置vite-plugin-svg-icons
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+用来根据导入的 svg 文件自动生成 symbol 标签并插入 html
+
+::
+
+   pnpm install vite-plugin-svg-icons -D
+
+修改 vite.config.js 配置文件
+
+.. code:: typescript
+
+   // vite.config.ts
+   import { defineConfig } from 'vite'
+   import vue from '@vitejs/plugin-vue'
+   import path from 'path'
+   import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+
+   // 1. defineConfig: 不用 jsdoc 注解也可以获取类型提示
+   // 2. 找不到模块"path"或其相应的类型声明 或者 找不到名称"__dirname 安装 @types/node
+
+   const resolve = (dir: string) => path.join(__dirname, dir)
+
+   // https://vitejs.dev/config/
+   export default defineConfig({
+     plugins: [
+       vue(),
+       createSvgIconsPlugin({
+         iconDirs: [path.resolve(process.cwd(), 'src/icons/svg')],
+         symbolId: 'icon-[dir]-[name]',
+         inject: 'body-last',
+         customDomId: '__svg__icons__dom__'
+       })
+     ],
+         // 在文件中添加以下内容
+         server: {
+           host: '0.0.0.0'
+         },
+     resolve: {
+       alias: {
+         '@': resolve('src'),
+         'comps': resolve('src/components'),
+         'apis': resolve('src/apis'),
+         'views': resolve('src/views'),
+         'utils': resolve('src/utils'),
+         'routes': resolve('src/routes'),
+         'styles': resolve('src/styles')
+       }
+     },
+   })
+
+3.4 开发svg icon组件
+~~~~~~~~~~~~~~~~~~~~
+
+src/components下创建 SvgIcon/index.vue
+
+::
+
+   <template>
+     <!-- 如果iconClass是带协议的图标链接 则通过style属性方式渲染-->
+     <div
+       class="svg-icon svg-external-icon"
+       v-if="isExt"
+       :style="styleExternalIcon"
+       v-bind="$attrs"
+     ></div>
+     <!-- SVG icon 通过名称使用 -->
+     <svg v-else :class="svgClass" aria-hidden="true" v-bind="$attrs">
+       <!-- 
+          SVG中的use元素可以调用其他SVG文件的元素，<use xlink:href="#symbolId"></use>
+       -->
+       <use :xlink:href="iconName" />
+     </svg>
+   </template>
+
+   <script setup lang="ts">
+   import { isExternal } from '@/utils/validate'
+
+   import { computed } from 'vue'
+   const props = defineProps<{ iconClass: string,className?:string }>()
+
+   // 是否是带协议的图片链接
+   const isExt = computed(() => isExternal(props.iconClass || ''))
+
+   // 拼接成symbolId 在loader配置中指定了symbolId格式 icon-图标名称
+   const iconName = computed(() => `#icon-${props.iconClass}`)
+
+   // 添加类名 props.className外部传入自定义类名
+   const svgClass = computed(() =>
+     props.className ? `svg-icon ${props.className}` : 'svg-icon'
+   )
+
+   // 如果iconClass是带协议的图标链接 则通过style css属性方式渲染
+   const styleExternalIcon = computed(() => ({
+     mask: `url(${props.iconClass}) no-repeat 50% 50%`,
+     '-webkit-mask': `url(${props.iconClass}) no-repeat 50% 50%`
+   }))
+   </script>
+
+   <style scoped>
+   .svg-icon {
+     width: 1em;
+     height: 1em;
+     vertical-align: -0.15em;
+     fill: currentColor;
+     overflow: hidden;
+   }
+   .svg-external-icon {
+     background-color: currentColor;
+     mask-size: cover !important;
+     display: inline-block;
+   }
+   </style>
+
+@/utils/validate.ts 工具方法
+
+创建\ ``src/utils/validate.ts``
+
+::
+
+   // 判断路径是不是带协议的外链
+   export const isExternal = (path: string): boolean => {
+       return /^(https?:|mailto:|tel:)/.test(path)
+     }
+
+3.5 main.ts注册icon组件
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: typescript
+
+   import { createApp } from 'vue'
+   import './style.css'
+   import App from './App.vue'
+
+   import router from './router/index'
+   import { createPinia } from "pinia"
+   import ElementPlus from 'element-plus'
+   import 'element-plus/theme-chalk/index.css'
+
+   // 初始化css 重置css默认样式
+   import 'normalize.css/normalize.css'
+   // 全局 css
+   import '@/styles/index.scss'
+
+
+   import 'virtual:svg-icons-register'
+   import initSvgIcon from '@/icons/index'
+
+   const app = createApp(App)
+
+
+   app.use(router)
+      .use(createPinia())
+      .use(ElementPlus)
+      .use(initSvgIcon)
+      .mount('#app')
+
+简单引用下
+
+在views/dashboard/index.vue试用下
+
+::
+
+   <template>
+     <div>
+       <h1>Dashboard page</h1>
+       <svg-icon icon-class="bug"></svg-icon>
+       <!-- icon-class svg图标名称 class-name 额外的自定义类名 @click绑定事件 -->
+       <svg-icon icon-class="404" class-name="custom-class" @click="sayHi"></svg-icon>
+     </div>
+   </template>
+
+   <script setup  lang="ts">
+   const sayHi = () => {
+      alert('hi svg')
+   }
+   </script>
+   <style lang="scss">
+     .custom-class { // 自定义样式404
+       font-size: 200px;
+       color: green;
+     }
+   </style>
+
+3.6 Svg优化
+~~~~~~~~~~~
+
+`svgo <https://github.com/svg/svgo>`__\ 是svg
+压缩处理优化工具。我们很多网上下载或者Sketch导出的 svg
+会有很多冗余无用的信息，大大的增加了 svg
+的尺寸，我们可以使用svgo对它进行优化。
+
+我们在创建src/icons/svgo.yml配置文件
+
+安装svgo，注意需要指定版本号
+
+::
+
+   pnpm i -D svgo@1.3.2
+
+package.json添加npm scripts
+
+::
+
+
+     "scripts": {
+       "dev": "vite",
+       "build": "vue-tsc --noEmit && vite build",
+       "preview": "vite preview",
+       "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml"
+     }
+
+运行\ ``npm run svgo``\ 压缩优化
+
+svgo地址 https://github.com/svg/svgo
+
+3.7 tsconfig.json配置
+~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   {
+     "compilerOptions": {
+       "target": "ESNext",
+       "useDefineForClassFields": true,
+       "module": "ESNext",
+       "moduleResolution": "Node",
+       "strict": true,
+       "jsx": "preserve",
+       "sourceMap": true,
+       "resolveJsonModule": true,
+       "isolatedModules": true,
+       "esModuleInterop": true,
+       "lib": ["ESNext", "DOM"],
+       "skipLibCheck": true,
+       "types": [ "node" ],
+       // 解析非相对模块的基地址，默认是当前目录
+       "baseUrl": "./",
+       //路径映射，相对于baseUrl
+       "paths": {
+         "@/*": ["src/*"]
+       },
+       // 允许默认导入
+       "allowSyntheticDefaultImports": true
+     },
+     "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+     "references": [{ "path": "./tsconfig.node.json" }]
+   }
+
+4.vue3.0全局属性挂载(element api)
+---------------------------------
+
+4.1 element-plus组件api挂载到app
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+添加文件\ ``src/plugins/element.ts``
+
+src/plugins/element.ts 代码内容：
+
+.. code:: typescript
+
+   import { App } from 'vue'
+   import {
+     ElButton,
+     ElMessage,
+     ElNotification,
+     ElMessageBox
+   } from 'element-plus'
+   import ElementPlus from 'element-plus'
+   import 'element-plus/dist/index.css'
+
+   // Element Plus 组件内部默认使用英语
+   // https://element-plus.gitee.io/zh-CN/guide/i18n.html
+   import zhCn from 'element-plus/es/locale/lang/zh-cn'
+
+
+   // Element Plus 直接使用了 Day.js 项目的时间日期国际化设置, 并且会自动全局设置已经导入的 Day.js 国际化配置。
+   import 'dayjs/locale/zh-cn'
+
+   // $ELEMENT size属性类型
+   export type Size = 'default' | 'medium' | 'small' | 'mini'
+
+   export default (app: App): void => {
+     app.use(ElementPlus, {
+       locale: zhCn
+     })
+     // 按需导入组件列表
+     const components = [
+       ElButton,
+       ElMessage,
+       ElNotification,
+       ElMessageBox
+     ]
+
+     components.forEach(component => {
+       app.use(component)
+     })
+
+     // Vue.prototype 替换为 config.globalProperties
+     // 文档说明 https://v3.cn.vuejs.org/guide/migration/global-api.html#vue-prototype-%E6%9B%BF%E6%8D%A2%E4%B8%BA-config-globalproperties
+     app.config.globalProperties.$message = ElMessage
+     app.config.globalProperties.$notify = ElNotification
+     app.config.globalProperties.$confirm = ElMessageBox.confirm
+     app.config.globalProperties.$alert = ElMessageBox.alert
+     app.config.globalProperties.$prompt = ElMessageBox.prompt
+
+     // element-plus全局配置
+     // 说明文档：https://element-plus.gitee.io/#/zh-CN/component/quickstart#quan-ju-pei-zhi
+     // 该对象目前支持 size 与 zIndex 字段。size 用于改变组件的默认尺寸 small，zIndex 设置弹框的初始 z-index（默认值：2000）。
+     app.config.globalProperties.$ELEMENT = {
+       size: 'medium',
+       // zIndex: 2000 弹框zIndex默认值：2000
+     }
+   }
+
+安装dayjs
+
+.. code:: bash
+
+   $ pnpm install dayjs
+
+4.2 类型声明问题
+~~~~~~~~~~~~~~~~
+
+``src/main.ts``
+
+.. code:: typescript
+
+   import { createApp } from 'vue'
+   import App from './App.vue'
+   import router from './router/index'
+   import { createPinia } from "pinia"
+
+
+   // 初始化css 重置css默认样式
+   import 'normalize.css/normalize.css'
+   // 全局 css
+   import '@/styles/index.scss'
+
+
+   // element-plus
+   import installElementPlus from './plugins/element'
+
+   import 'virtual:svg-icons-register'
+   import initSvgIcon from '@/icons/index'
+
+   const app = createApp(App)
+
+
+   app.use(router)
+      .use(createPinia())
+      .use(installElementPlus)
+      .use(initSvgIcon)
+      .mount('#app')
+
+创建自定义声明文件 如：src/runtime.d.ts 。
+这里注意是src目录下创建，根据tsconfig.json
+include选项里包含ts文件指定的都是src目录下，你也可以根据自己情况，在include选项里单独配置这个声明文件的路径。
+
+.. code:: typescript
+
+   import '@vue/runtime-core'
+
+   // 挂载到vue实例上
+   import { ElMessageBox, ElMessage, ElNotification } from 'element-plus'
+   import { Size } from './plugins/element'
+
+   // vue实例上挂载属性类型声明
+   declare module '@vue/runtime-core' {
+     interface ComponentCustomProperties {
+       $message: typeof ElMessage;
+       $notify: typeof ElNotification;
+       $confirm: typeof ElMessageBox.confirm;
+       $alert: typeof ElMessageBox.alert;
+       $prompt: typeof ElMessageBox.prompt;
+       $ELEMENT: {
+         size:Size
+       }
+     }
+   }
+
+4.3 组件中使用
+~~~~~~~~~~~~~~
+
+``src/views/dashborad/index.vue``
+
+::
+
+   <template>
+     <div>
+       <h1>Dashboard page</h1>
+       <svg-icon icon-class="bug"></svg-icon>
+       <!-- icon-class svg图标名称 class-name 额外的自定义类名 @click绑定事件 -->
+       <svg-icon icon-class="404" class-name="custom-class" @click="sayHi"></svg-icon>
+     </div>
+   </template>
+
+   <script setup  lang="ts">
+   import { getCurrentInstance } from 'vue'
+   const { proxy } = getCurrentInstance()!
+
+   const sayHi = () => {
+       proxy?.$message.success('恭喜你，这是一条成功消息')
+   }
+   </script>
+   <style lang="scss">
+     .custom-class { // 自定义样式404
+       font-size: 200px;
+       color: green;
+     }
+   </style>
+
+参考文献
+
+   https://www.yuque.com/brolly/hgg6ly/er92zn
+
+源码参考
+
+   https://gitee.com/zhufengpeixun/vue3-admin2
+
+参考文献
+--------
+
+vue3+ts+vite+element plus+axios+pinia框架搭建
+
+https://blog.csdn.net/qq_41296917/article/details/125050239
+
+https://www.cnblogs.com/haoxianrui/p/16090029.html
+
+vue3+vite2+TypeScript+Element plus+pinia搭建开发脚手架
+
+https://juejin.cn/post/7080017880602902558

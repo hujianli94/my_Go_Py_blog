@@ -1,0 +1,443 @@
+.. contents::
+   :depth: 3
+..
+
+延迟执行语句-defer
+==================
+
+Go语言的defer语句会将其后面跟随的语句进行延迟处理。
+在defer归属的函数即将返回时，将延迟处理的语句按defer的逆序进行执行，也就是说，先被defer的语句
+最后被执行，最后被defer的语句，最先被执行。
+
+defer后面必须是函数或方法的调用，不能是语句。
+
+defer语句必须先注册后才能执行，如果defer位于return之后，则defer因为没有注册，不会执行。
+
+.. code:: go
+
+   package main
+
+   func main() {
+       defer func() {
+           println("defer ")
+       }()
+
+       println("func body")
+       a := 0
+       println(a)
+       return
+
+       defer func() {
+           println("second")
+       }()
+   }
+
+主动调用\ ``os.Exit(int)``\ 之后defer将不再被执行（即使defer已经提前被注册）
+
+.. code:: go
+
+   package main
+
+   import "os"
+
+   func main() {
+       defer func() {
+           println("defer ")
+       }()
+
+       println("func body")
+       os.Exit(1)
+
+   }
+
+1.多个延迟执行语句的处理顺序
+----------------------------
+
+延迟执行语句示例1
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   func main() {
+       fmt.Println("defer begin")
+       // 将defer放入延迟调用栈
+       defer fmt.Println(1)
+       defer fmt.Println(2)
+       // 最后一个放入，位于栈顶，最先调用
+       defer fmt.Println(3)
+       fmt.Println("defer end")
+   }
+
+   /*defer begin
+   defer end
+   3
+   2
+   1*/
+
+代码的执行顺序与最终的执行顺序是反向的。
+延迟调用是在defer所在函数结束时进行，函数结束可以是正常返回时，也可以是发生宕机时。
+
+延迟执行语句示例2
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   //定义结构体
+   type Test struct {
+       name string
+   }
+
+   // 定义结构体方法
+   func (t *Test) Close() {
+       fmt.Println(t.name, "closed")
+   }
+
+   func main() {
+       //声明一个数组
+       ts := []Test{{"a"}, {"b"}, {"c"}}
+       for _, t := range ts {
+           t2 := t
+           //t2.Close()
+           defer t2.Close()
+       }
+
+   }
+
+多个 defer 注册，按 FILO 次序执行 ( 先进后出
+)。哪怕函数或某个延迟调用发生错误，这些调用依旧会被执行。
+
+.. code:: go
+
+   package main
+
+   func test(x int) {
+       defer println("a")
+       defer println("b")
+
+       defer func() {
+           println(100/x)
+       }()
+       defer println("c")
+
+   }
+
+   func main() {
+       test(0)
+   }
+
+   /*c
+   b
+   a
+   panic: runtime error: integer divide by zero*/
+
+``*``\ 滥用 defer 可能会导致性能问题，尤其是在一个 “大循环” 里。
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "sync"
+       "time"
+   )
+
+   var lock sync.Mutex
+
+   func test(x int) {
+       lock.Lock()
+       fmt.Printf("%d ",x)
+       lock.Unlock()
+   }
+   func testdefer(x int) {
+       lock.Lock()
+       fmt.Printf("%d ",x)
+       defer lock.Unlock()
+   }
+   func main() {
+       func() {
+           t1 := time.Now()
+           for i := 0; i < 100; i++ {
+               test(i)
+           }
+           elapsed := time.Since(t1)
+           fmt.Println("test elapsed: ", elapsed)
+       }()
+       func() {
+           t1 := time.Now()
+           for i := 0; i < 100; i++ {
+               testdefer(i)
+           }
+           elapsed := time.Since(t1)
+           fmt.Println("testdefer elapsed: ", elapsed)
+       }()
+   }
+
+2.使用延迟执行语句，在函数结束时自动释放资源
+--------------------------------------------
+
+比如打开和关闭文件，接收请求和回复请求，加锁和解锁等，在这些操作中最容易忽略的是在每个函数退出时处正确
+的释放和关闭资源。
+defer正好是函数退出时执行的语句，所以defer能非常好的处理资源释放问题。
+
+2.1 使用延迟并发解锁
+~~~~~~~~~~~~~~~~~~~~
+
+解锁一个互斥所。
+
+.. code:: go
+
+   var mu sync.Mutex
+   var m = make(map[string] int)
+
+   func lookup(key string) int {
+       mu.Lock()
+       defer mu.Unlock()
+       return m[key]
+   }
+
+下面的例子会在函数中并发使用map，为防止竞态问题，使用sync.Mutex进行加锁。
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "sync"
+   )
+
+   var (
+       // 一个演示用的映射,实例化一个map，键是string，值是int
+       valueByKey = make(map[string] int)
+
+       // 保证使用映射时的并发安全的互斥锁
+       valueByKeyGuard sync.Mutex
+   )
+
+   // 根据键读取值
+   func readValue(key string) int {
+       // 对共享资源加锁,使用互斥量加锁
+       valueByKeyGuard.Lock()
+       
+       //取值
+       v :=valueByKey[key]
+       
+       // 对共享资源解锁，使用互斥量解锁
+       valueByKeyGuard.Unlock()
+       
+       // 返回值，返回获取map的值
+       return v
+   }
+   func main() {
+       fmt.Println(readValue("hujianli"))
+   }
+
+使用defer语句对上面的代码进行简化
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "sync"
+   )
+
+   var (
+       // 一个演示用的映射,实例化一个map，键是string，值是int
+       valueByKey1 = make(map[string]int)
+
+       // 保证使用映射时的并发安全的互斥锁
+       valueByKeyGuard1 sync.Mutex
+   )
+
+   // 根据键读取值
+   func readValue1(key string) int {
+       // 对共享资源加锁,使用互斥量加锁
+       valueByKeyGuard1.Lock()
+       
+       // defer后面的语句不会马上调用，而是延迟到函数结束时调用
+       defer valueByKeyGuard1.Unlock()
+       // 返回值，返回获取map的值
+       return valueByKey1[key]
+   }
+   func main() {
+       fmt.Println(readValue1("hujianli"))
+   }
+
+上面代码中使用defer添加解锁，该语句不会马上执行，而是等待readValue1返回时才会被执行。
+
+2.2 使用延迟释放文件句柄
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+关闭一个打开的文件
+
+.. code:: go
+
+   func ReadFile(name string) ([]byte, error) {
+       f, err := Open(name)
+       if err != nil {
+           return nil, err
+       }
+       defer f.Close()
+       reutrn ReadAll(f)
+   }
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "os"
+   )
+
+   // 根据文件名查询其大小,返回文件名和文件大小
+   func fileSize(filename string) (string, int64) {
+       // 根据文件名打开文件，返回文件句柄和错误
+       f, err := os.Open(filename)
+       // 如果打开发生错误，返回文件大小为0
+       if err != nil {
+           return filename, 0
+       }
+       // 获取文件状态信息
+       info, err := f.Stat()
+       // 如果获取信息时发生错误，关闭文件并返回文件大小为0
+       if err != nil {
+           f.Close()
+           return filename, 0
+       }
+       // 取文件名称和大小
+       name := info.Name()
+       size := info.Size()
+       // 返回文件名称和大小
+       return name, size
+   }
+   func main() {
+       f_name, f_size := fileSize("deferTest03.go")
+       fmt.Printf("name: %s  size: %dK", f_name, f_size)   //name: deferTest03.go  size: 606K
+   }
+
+使用defer对代码进行优化
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "os"
+   )
+
+   // 根据文件名查询其大小,返回文件名和文件大小
+   func fileSize(filename string) (string, int64) {
+       // 根据文件名打开文件，返回文件句柄和错误
+       f, error1 := os.Open(filename)
+       // 如果打开发生错误，返回文件大小为0
+       if error1 != nil {
+           return filename, 0
+       }
+       // 延迟调用Close，此时Close不会调用
+       defer f.Close()
+       // 获取文件状态信息
+       info, error2 := f.Stat()
+       // 如果获取信息时发生错误，关闭文件并返回文件大小为0
+       if error2 != nil {
+           return filename, 0
+       }
+       // 取文件名称和大小
+       name := info.Name()
+       size := info.Size()
+       // 返回文件名称和大小
+       return name, size
+   }
+   func main() {
+       f_name, f_size := fileSize("deferTest03.go")
+       fmt.Printf("name: %s  size: %dK", f_name, f_size)   //name: deferTest03.go  size: 606K
+   }
+
+文件句柄操作示例
+
+.. code:: go
+
+   package main
+
+   import (
+       "bufio"
+       "fmt"
+       "io"
+       "os"
+   )
+
+   func do() (err error) {
+       file, error := os.Open("D:\\go_studay/go_path/src/github.com/function001/defer06/test.log")
+       if error != nil {
+           fmt.Println(error)
+           return
+       }
+       //  看这里，这里是重点，如果打开正常，有数据，就正常关闭句柄
+       if file != nil{
+           defer func() {
+               if f:=file.Close();f !=nil{
+                   err = f
+               }
+           }()
+       }
+       reader := bufio.NewReader(file)
+       var line []byte
+       for {
+           data, prefix, err := reader.ReadLine()
+           if err == io.EOF {
+               break
+           }
+
+           line = append(line, data...)
+           if !prefix {
+               fmt.Printf("data:%s\n", string(line))
+               line = line[:]
+           }
+
+       }
+       return nil
+
+   }
+
+   func main() {
+       do()
+   }
+
+2.3 使用延迟释放网络连接句柄
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "net/http"
+   )
+
+   func do() error {
+       res,err :=http.Get("http://www.baidu.com")
+       // 当且仅当 http.Get 成功执行时才使用 defer
+       if res != nil {
+           defer res.Body.Close()
+       }
+       if err != nil {
+           return err
+       }
+       fmt.Println(res)
+       return nil
+   }
+
+   func main() {
+       do()
+   }

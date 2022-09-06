@@ -1,0 +1,197 @@
+.. contents::
+   :depth: 3
+..
+
+实现一个简单的购物车代码
+========================
+
+1. 需求分析
+-----------
+
+::
+
+   功能要求：
+   要求用户输入总资产，例如：2000
+   显示商品列表，让用户根据序号选择商品，加入购物车
+   购买，如果商品总额大于总资产，提示账户余额不足，否则，购买成功。
+   附加：可充值、某商品移除购物车
+
+2. 代码示例
+-----------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # _*_ coding:utf-8 _*_
+
+   # 拥有的商品及价格
+   goods = [
+       {"name": "电脑", "price": 1999},
+       {"name": "鼠标", "price": 10},
+       {"name": "游艇", "price": 20},
+       {"name": "美女", "price": 998},
+   ]
+
+   # 控制while循环开关
+   switch = "on"
+
+   # 购物车存放的商品及单价
+   gouwuche = {
+       # 商品列表
+       "wuping":[],
+       # 单价列表
+       "jiage":[]
+   }
+
+   # 用户输入会员卡内余额
+   while True:
+       try:
+           # 让用户输入会员卡内拥有的余额
+           money = int(input("请输入你会员卡内的余额："))
+       # 异常判断，如果类型不是整型则执行except内的代码
+       except ValueError:
+           # 提示用户输入的格式错误，让其重新输入
+           print("error,余额格式输入错误，请重新输入！\n例如：5000")
+           # 终端当前循环让循环重新执行
+           continue
+       break
+
+   # 进入购买商品的流程
+   while switch == "on":
+
+       # 打印出所有的商品
+       print("\n","序列","商品","单价")
+       # 以序列的方式输出现拥有的商品及商品单价
+       for num,val in enumerate(goods,1):
+           for n in range(len(goods)):
+               if num-1 == n:
+                   print("  ",num,goods[n]["name"],goods[n]["price"])
+
+       # 判断用户输入的序列是否规范
+       while True:
+           try:
+               # 输入产品序列，类型转换为整型
+               x = int(input("请选择商品序列："))
+
+           # 如果用户输入的非整型，提示用户重新输入
+           except ValueError:
+               print("error,请选择商品的序列")
+               continue
+
+           # 如果用户输入的序列不再产品序列当中让用户重新输入
+           if x > num:
+               print("error,请选择商品的序列")
+               continue
+           break
+
+       # 输出购买物品的信息
+       print("你已经把商品",goods[x-1]["name"],"加入购物车","物品单价是：",goods[x-1]["price"],"\n")
+       # 把物品名称放入gouwuche的wuping列表中
+       gouwuche["wuping"].append(goods[x-1]["name"])
+       # 把物品单价放入gouwuche的jiage列表中
+       gouwuche["jiage"].append(goods[x-1]["price"])
+
+       # 用户输入选项
+       while switch == "on":
+           # 输出现有选项
+           print("查看购物车：p 结算：w 删除商品：d 继续购买：n 充值：i 显示余额：m 退出：q")
+           # 把用户输入的选项转换为字符串
+           xx = str(input("请输入你的选择："))
+
+           # 如果用户输入的是p则列出当前购物车内的商品名称
+           if xx == "p":
+               # 以序列的方式输出字典gouwuche内的wuping列表
+               for wp_num,val in enumerate(gouwuche["wuping"], 1):
+                   print(wp_num, val)
+
+           # 如果用户输入的是w则结算
+           elif xx == "w":
+               # 定义一个默认的变量为用户商品的总金额
+               zje = 0
+               # 把gouwuche中的jiage列表内的整数进行相加并复制给zje
+               for n in range(len(gouwuche["jiage"])):
+                   zje = zje + gouwuche["jiage"][n]
+               # 如果商品的总金额大于用户会员卡内的余额，则提示用户钱不够
+               if zje > money:
+                   print("sorry, 钱不够哦~~\n")
+               # 否则就退出程序，并且输出用户本次消费的情况
+               else:
+                   switch = "off"
+                   print("购物愉快，您本次消费",zje,"RMB","还剩余",money-zje,"RMB")
+
+           # 如果用户输入的是d则进入删除购物车内的商品界面
+           elif xx == "d":
+               # 首先输出用户购物车内的商品列表
+               for wp_num, val in enumerate(gouwuche["wuping"], 1):
+                   print(wp_num, val)
+               # 选择所删除商品的序列
+               while True:
+                   try:
+                       deltet = int(input("请选择要删除的商品序列："))
+                   except ValueError:
+                       print("error,请输出正确的序列！")
+                       continue
+                   if deltet > wp_num:
+                       print("error,请选择商品的序列")
+                       continue
+                   # 提示用户购物车内被删除的商品信息
+                   print("你已经删除产品", gouwuche["wuping"][deltet - 1], "单价为；", gouwuche["jiage"][deltet - 1])
+                   # 删除商品
+                   gouwuche["wuping"].pop(deltet - 1)
+                   # 删除金额
+                   gouwuche["jiage"].pop(deltet - 1)
+                   break
+
+           # 如果用户输入的是i则进入用户会员卡充值页面
+           elif xx == "i":
+               # 判断用户输入的银行卡号格式是否正确
+               while True:
+                   try:
+                       user = int(input("请输入你的银行卡账号："))
+                   except ValueError:
+                       print("error,卡号格式输入错误，请重新输入..")
+                       continue
+                   break
+
+               # 判断用户输入的银行卡密码格式是否正确
+               while True:
+                   try:
+                       pwd = int(input("请输入银行卡的密码："))
+                   except ValueError:
+                       print("error,密码格式输入错误，请重新输入..")
+                       continue
+                   break
+               # 判断用户输入的账号和密码是否正确，默认的账号和密码都是123
+               if user == 123 and pwd == 123:
+                   # 如果正确就让用户输入要充值的金额
+                   while True:
+                       try:
+                           newmoney = int(input("请输入充值的金额："))
+                       except ValueError:
+                           print("error,金额格式输入错误，请重新输入..")
+                           continue
+                       break
+                   # 余额加上充值的金额
+                   money = money + newmoney
+                   # 输出本次充值的信息
+                   print("你已成功充值",newmoney,"RMB，现在账户余额为：",money,"RMB\n")
+               # 如果用户银行卡账号或密码错误，就提示用户输入错误，让后让用户重新选择
+               else:
+                   print("银行卡账号或密码错误.\n")
+
+           # 如果用户输入的是m则显示用户会员卡内的余额
+           elif xx == "m":
+               print("账户余额：",money,"\n")
+
+           # 如果用户输入的是q则退出程序
+           elif xx == "q":
+               # 把变量switch的值改为off
+               switch = "off"
+
+           # 如果用户输入的是n则继续购买商品
+           elif xx == "n":
+               break
+
+           # 如果用户没有输入以上的任意一个选项则让用户重新输入
+           else:
+               print("请输出正确的选项！")

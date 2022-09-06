@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10.23. cobra &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10.24. viper" href="24.viper.html" />
+    <link rel="prev" title="10.22. go标准库和三方库" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">10. 标准库和三方库</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.strings.html">10.1. strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.bytes.html">10.2. bytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.fmt.html">10.3. fmt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Json.html">10.4. Json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.strconv.html">10.5. strconv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.ioutil-bufio.html">10.6. ioutil/bufio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.time.html">10.7. time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.os-path-filepath.html">10.8. os/path/filepath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.regexp.html">10.9. regexp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.log.html">10.10. log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.reflect-unsafe.html">10.11. reflect/unsafe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.unicode.html">10.12. unicode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.flag%E5%92%8Cgo-flags.html">10.13. flag和go-flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.net-url.html">10.14. net/url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.sort.html">10.15. sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.net-http.html">10.16. net/http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.error.html">10.17. error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.template%E6%A8%A1%E6%9D%BF.html">10.18. template模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.%E6%93%8D%E4%BD%9Cmysql.html">10.19. 操作mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html">10.20. Go语言常用资料及工具详细汇总</a></li>
+<li class="toctree-l3"><a class="reference internal" href="21.Socket%E7%BD%91%E7%BB%9C.html">10.21. Socket网络</a></li>
+<li class="toctree-l3"><a class="reference internal" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html">10.22. go标准库和三方库</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">10.23. cobra</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">10.23.1. 1.概念</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">10.23.2. 2.示例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#init">10.23.3. 3.init</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initconfig">10.23.4. 4.initConfig</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">10.23.5. 5.添加数据</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cobradocker">10.23.6. 6.用Cobra开发类似docker的命令行</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">10.23.7. 7.应用举例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">10.23.8. 8.参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="24.viper.html">10.24. viper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.math-rand.html">10.25. math-rand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="26.zap-%E6%97%A5%E5%BF%97%E6%A8%A1%E5%9D%97.html">10.26. zap-日志模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">10. </span>标准库和三方库</a> &raquo;</li>
+      <li><span class="section-number">10.23. </span>cobra</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/10.标准库和三方库/23.cobra.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#cobra" id="id7">cobra</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id8">1.概念</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id9">2.示例</a></p></li>
+<li><p><a class="reference internal" href="#init" id="id10">3.init</a></p></li>
+<li><p><a class="reference internal" href="#initconfig" id="id11">4.initConfig</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id12">5.添加数据</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id13">5.1 添加偶数</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#cobradocker" id="id14">6.用Cobra开发类似docker的命令行</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id15">7.应用举例</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id16">8.参考文献</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="cobra">
+<h1><a class="toc-backref" href="#id7"><span class="section-number">10.23. </span>cobra</a><a class="headerlink" href="#cobra" title="Permalink to this headline">¶</a></h1>
+<p>虽然现在我们使用的大多数软件都是可视化的，很容易上手，但是这并不代表
+CLI（命令行）应用就没有用武之地了，特别是对于开发人员来说，还是会经常和
+CLI 应用打交道。而 Golang 就非常适合用来构建 CLI
+应用，下面我们就将来介绍如何在 Golang 中构建一个 CLI 应用。</p>
+<p>对于开发人员来说平时可能就需要使用到很多 CLI 工具，比如
+npm、node、go、python、docker、kubectl
+等等，因为这些工具非常小巧、没有依赖性、非常适合系统管理或者一些自动化任务等等。</p>
+<p>我们这里选择使用 Golang 里面非常有名的
+<a class="reference external" href="https://github.com/spf13/cobra">Cobra</a> 库来进行 CLI
+工具的开发。Cobra 是一个功能强大的现代化 CLI 应用程序库，有很多知名的 Go
+项目使用 Cobra 进行构建，比如：Kubernetes、Docker、Hugo 等等</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">10.23.1. </span>1.概念</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Cobra 是构建在命令、参数和标识符之上的：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Commands</span></code> 表示执行动作</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Args</span></code> 就是执行参数</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Flags</span></code> 是这些动作的标识符</p></li>
+</ul>
+<p>基本的执行命令如下所示：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ APPNAME Command Args --Flags
+# 或者
+$ APPNAME Command --Flags Args
+</pre></div>
+</div>
+<p>比如我们平时使用的一些命令行工具：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">URL</span> <span class="o">-</span><span class="n">bare</span>
+<span class="o">-</span> <span class="n">go</span> <span class="n">get</span> <span class="o">-</span><span class="n">u</span> <span class="n">URL</span>
+<span class="o">-</span> <span class="n">npm</span> <span class="n">install</span> <span class="n">package</span> <span class="o">-</span><span class="n">save</span>
+<span class="o">-</span> <span class="n">kubectl</span> <span class="n">get</span> <span class="n">pods</span> <span class="o">-</span><span class="n">n</span> <span class="n">kube</span><span class="o">-</span><span class="n">system</span> <span class="o">-</span><span class="n">l</span> <span class="n">app</span><span class="o">=</span><span class="n">cobra</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">10.23.2. </span>2.示例</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>下面我们来看下 Cobra 的使用，这里我们使用的 go1.13.3 版本，使用 Go
+Modules 来进行包管理。</p>
+<p>新建一个名为 <code class="docutils literal notranslate"><span class="pre">my-calc</span></code> 的目录作为项目目录，然后初始化 modules：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ mkdir my-calc <span class="o">&amp;&amp;</span> <span class="nb">cd</span> my-calc
+<span class="c1"># 如果 go modules 默认没有开启，需要执行 export GO111MODULE=on 开启</span>
+$ go mod init my-calc
+go: creating new go.mod: module my-calc
+</pre></div>
+</div>
+<p>初始化完成后可以看到项目根目录下面多了一个 <code class="docutils literal notranslate"><span class="pre">go.mod</span></code>
+的文件，现在我们还没有安装 <code class="docutils literal notranslate"><span class="pre">cobra</span></code> 库，执行下面的命令进行安装：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 强烈推荐配置该环境变量</span>
+$ <span class="nb">export</span> <span class="nv">GOPROXY</span><span class="o">=</span>https://goproxy.cn
+$ go get -u github.com/spf13/cobra@latest
+
+<span class="c1"># 建议安装命令行工具 `cobra-cli` ，以方便快速创建cobra项目，增加command等。</span>
+
+<span class="c1"># windows</span>
+$ go install github.com/spf13/cobra-cli@latest
+
+<span class="c1"># linux</span>
+$ go install github.com/spf13/cobra-cli
+</pre></div>
+</div>
+<p>安装成功后，现在我们可以使用 <code class="docutils literal notranslate"><span class="pre">cobra-cli</span> <span class="pre">init</span></code> 命令来初始化 CLI
+应用的脚手架：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span>
+  <span class="n">cobra</span><span class="o">-</span><span class="n">cli</span> <span class="n">init</span> <span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="p">[</span><span class="n">flags</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cobra-cli init . my-calc
+</pre></div>
+</div>
+<p>上面的 init 命令就会创建出一个最基本的 CLI 应用项目：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ tree .
+.
+├── LICENSE
+├── cmd
+│   └── root.go
+├── go.mod
+├── go.sum
+└── main.go
+<span class="m">1</span> directory, <span class="m">5</span> files
+</pre></div>
+</div>
+<p>其中 <code class="docutils literal notranslate"><span class="pre">main.go</span></code> 是 CLI 应用的入口，在 <code class="docutils literal notranslate"><span class="pre">main.go</span></code> 里面调用好了
+<code class="docutils literal notranslate"><span class="pre">cmd/root.go</span></code> 下面的 <code class="docutils literal notranslate"><span class="pre">Execute</span></code> 函数：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/*</span>
+<span class="cm">Copyright © 2022 NAME HERE &lt;EMAIL ADDRESS&gt;</span>
+
+<span class="cm">*/</span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;my-calc/cmd&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">cmd</span><span class="p">.</span><span class="nx">Execute</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后我们再来看下 <code class="docutils literal notranslate"><span class="pre">cmd/root.go</span></code> 文件。</p>
+<p>root（根）命令是 CLI 工具的最基本的命令，比如对于我们前面使用的
+<code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">get</span> <span class="pre">URL</span></code>，其中 <code class="docutils literal notranslate"><span class="pre">go</span></code> 就是 root 命令，而 <code class="docutils literal notranslate"><span class="pre">get</span></code> 就是 <code class="docutils literal notranslate"><span class="pre">go</span></code>
+这个根命令的子命令，而在 <code class="docutils literal notranslate"><span class="pre">root.go</span></code> 中就直接使用了 cobra 命令来初始化
+<code class="docutils literal notranslate"><span class="pre">rootCmd</span></code> 结构，CLI 中的其他所有命令都将是 <code class="docutils literal notranslate"><span class="pre">rootCmd</span></code>
+这个根命令的子命令了。</p>
+<p>这里我们将 <code class="docutils literal notranslate"><span class="pre">cmd/root.go</span></code> 里面的 <code class="docutils literal notranslate"><span class="pre">rootCmd</span></code> 变量内部的注释去掉，并在
+<code class="docutils literal notranslate"><span class="pre">Run</span></code> 函数里面加上一句 <code class="docutils literal notranslate"><span class="pre">fmt.Println(&quot;Hello</span> <span class="pre">Cobra</span> <span class="pre">CLI&quot;)</span></code>：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">rootCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">{</span>
+    <span class="nx">Use</span><span class="p">:</span>   <span class="s">&quot;my-calc&quot;</span><span class="p">,</span>
+    <span class="nx">Short</span><span class="p">:</span> <span class="s">&quot;A brief description of your application&quot;</span><span class="p">,</span>
+    <span class="nx">Long</span><span class="p">:</span> <span class="s">`A longer description that spans multiple lines and likely contains</span>
+<span class="s">examples and usage of using your application. For example:</span>
+
+<span class="s">Cobra is a CLI library for Go that empowers applications.</span>
+<span class="s">This application is a tool to generate the needed files</span>
+<span class="s">to quickly create a Cobra application.`</span><span class="p">,</span>
+    <span class="c1">// Uncomment the following line if your bare application</span>
+    <span class="c1">// has an action associated with it:</span>
+    <span class="c1">// Run: func(cmd *cobra.Command, args []string) { },</span>
+    <span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Hello Cobra CLI&quot;</span><span class="p">)</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这个时候我们在项目根目录下面执行如下命令进行构建：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ go build -o my-calc
+</pre></div>
+</div>
+<p>该命令会在项目根目录下生成一个名为 <code class="docutils literal notranslate"><span class="pre">my-calc</span></code>
+的二进制文件，直接执行这个二进制文件可以看到如下所示的输出信息：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ./my-calc
+Hello Cobra CLI
+</pre></div>
+</div>
+</section>
+<section id="init">
+<h2><a class="toc-backref" href="#id10"><span class="section-number">10.23.3. </span>3.init</a><a class="headerlink" href="#init" title="Permalink to this headline">¶</a></h2>
+<p>我们知道 <code class="docutils literal notranslate"><span class="pre">init</span></code> 函数是 Golang 中初始化包的时候第一个调用的函数。在
+<code class="docutils literal notranslate"><span class="pre">cmd/root.go</span></code> 中我们可以看到 <code class="docutils literal notranslate"><span class="pre">init</span></code> 函数中调用了
+<code class="docutils literal notranslate"><span class="pre">cobra.OnInitialize(initConfig)</span></code>，也就是每当执行或者调用命令的时候，它都会先执行
+<code class="docutils literal notranslate"><span class="pre">init</span></code> 函数中的所有函数，然后再执行 <code class="docutils literal notranslate"><span class="pre">execute</span></code>
+方法。该初始化可用于加载配置文件或用于构造函数等等，这完全依赖于我们应用的实际情况。</p>
+<p>在初始化函数里面 <code class="docutils literal notranslate"><span class="pre">cobra.OnInitialize(initConfig)</span></code> 调用了
+<code class="docutils literal notranslate"><span class="pre">initConfig</span></code> 这个函数，所有，当 <code class="docutils literal notranslate"><span class="pre">rootCmd</span></code> 的执行方法 <code class="docutils literal notranslate"><span class="pre">RUN:</span> <span class="pre">func</span></code>
+运行的时候，<code class="docutils literal notranslate"><span class="pre">rootCmd</span></code> 根命令就会首先运行 <code class="docutils literal notranslate"><span class="pre">initConfig</span></code>
+函数，当所有的初始化函数执行完成后，才会执行 <code class="docutils literal notranslate"><span class="pre">rootCmd</span></code> 的
+<code class="docutils literal notranslate"><span class="pre">RUN:</span> <span class="pre">func</span></code> 执行函数。</p>
+<p>我们可以在 <code class="docutils literal notranslate"><span class="pre">initConfig</span></code> 函数里面添加一些 Debug 信息：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span> <span class="n">initConfig</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&quot;I&#39;m inside initConfig function in cmd/root.go&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后同样重新构建一次再执行：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ go build -o my-calc
+$ ./my-calc
+I&#39;m inside initConfig function in cmd/root.go
+Hello Cobra CLI
+</pre></div>
+</div>
+<p>可以看到是首先运行的是 initConfig
+函数里面的信息，然后才是真正的执行函数里面的内容。</p>
+<p>为了搞清楚整个 CLI 执行的流程，我们在 main.go 里面也添加一些 Debug
+信息：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">cmd</span><span class="o">/</span><span class="n">root</span><span class="o">.</span><span class="n">go</span>
+<span class="n">func</span> <span class="n">init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&quot;I&#39;m inside init function in cmd/root.go&quot;</span><span class="p">)</span>
+    <span class="n">cobra</span><span class="o">.</span><span class="n">OnInitialize</span><span class="p">(</span><span class="n">initConfig</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">func</span> <span class="n">initConfig</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&quot;I&#39;m inside initConfig function in cmd/root.go&quot;</span><span class="p">)</span>
+
+<span class="p">}</span>
+<span class="o">//</span> <span class="n">main</span><span class="o">.</span><span class="n">go</span>
+<span class="n">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+     <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s2">&quot;I&#39;m inside main function in main.go&quot;</span><span class="p">)</span>
+     <span class="n">cmd</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后同样重新构建一次再执行：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ go build -o my-calc
+$ ./my-calc
+I&#39;m inside init function in cmd/root.go
+I&#39;m inside main function in main.go
+I&#39;m inside initConfig function in cmd/root.go
+Hello Cobra CLI
+</pre></div>
+</div>
+<p>根据上面的日志信息我们就可以了解到 CLI 命令的流程了。</p>
+<p><code class="docutils literal notranslate"><span class="pre">init</span></code> 函数最后处理的就是 <code class="docutils literal notranslate"><span class="pre">flags</span></code> 了，<code class="docutils literal notranslate"><span class="pre">Flags</span></code>
+就类似于命令的标识符，我们可以把他们看成是某种条件操作，在 Cobra
+中提供了两种类型的标识符：<code class="docutils literal notranslate"><span class="pre">Persistent</span> <span class="pre">Flags</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Local</span> <span class="pre">Flags</span></code>。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Persistent</span> <span class="pre">Flags</span></code>:
+该标志可用于为其分配的命令以及该命令的所有子命令。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Local</span> <span class="pre">Flags</span></code>: 该标志只能用于分配给它的命令。</p></li>
+</ul>
+</section>
+<section id="initconfig">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">10.23.4. </span>4.initConfig</a><a class="headerlink" href="#initconfig" title="Permalink to this headline">¶</a></h2>
+<p>该函数主要用于在 home 目录下面设置一个名为 <code class="docutils literal notranslate"><span class="pre">.my-calc</span></code>
+的配置文件，如果该文件存在则会使用这个配置文件。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// cmd/root.go</span>
+<span class="c1">// initConfig 读取配置文件和环境变量</span>
+<span class="kd">func</span> <span class="nx">initConfig</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">cfgFile</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> <span class="p">{</span>
+        <span class="c1">// 使用 flag 标志中传递的配置文件</span>
+        <span class="nx">viper</span><span class="p">.</span><span class="nx">SetConfigFile</span><span class="p">(</span><span class="nx">cfgFile</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// 获取 Home 目录</span>
+        <span class="nx">home</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">homedir</span><span class="p">.</span><span class="nx">Dir</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+            <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="c1">// 在 Home 目录下面查找名为 &quot;.my-calc&quot; 的配置文件</span>
+        <span class="nx">viper</span><span class="p">.</span><span class="nx">AddConfigPath</span><span class="p">(</span><span class="nx">home</span><span class="p">)</span>
+        <span class="nx">viper</span><span class="p">.</span><span class="nx">SetConfigName</span><span class="p">(</span><span class="s">&quot;.my-calc&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">// 读取匹配的环境变量</span>
+    <span class="nx">viper</span><span class="p">.</span><span class="nx">AutomaticEnv</span><span class="p">()</span>
+    <span class="c1">// 如果有配置文件，则读取它</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">viper</span><span class="p">.</span><span class="nx">ReadInConfig</span><span class="p">();</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Using config file:&quot;</span><span class="p">,</span> <span class="nx">viper</span><span class="p">.</span><span class="nx">ConfigFileUsed</span><span class="p">())</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">viper</span></code> 是一个非常优秀的用于解决配置文件的 Golang 库，它可以从
+JSON、TOML、YAML、HCL、envfile 以及 Java properties
+配置文件中读取信息，功能非常强大，而且不仅仅是读取配置这么简单，了解更多相关信息可以查看
+Git 仓库相关介绍：<a class="reference external" href="https://github.com/spf13/viper">https://github.com/spf13/viper</a>。</p>
+<p>现在我们可以去掉前面我们添加的一些打印语句，我们已经创建了一个
+<code class="docutils literal notranslate"><span class="pre">my-calc</span></code> 命令作为 <code class="docutils literal notranslate"><span class="pre">rootCmd</span></code> 命令，执行该根命令会打印
+<code class="docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">Cobra</span> <span class="pre">CLI</span></code> 信息，接下来为我们的 CLI 应用添加一些其他的命令。</p>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">10.23.5. </span>5.添加数据</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>在项目根目录下面创建一个名为 <code class="docutils literal notranslate"><span class="pre">add</span></code> 的命令，<code class="docutils literal notranslate"><span class="pre">Cobra</span></code>
+添加一个新的命令的方式为：<code class="docutils literal notranslate"><span class="pre">cobra-cli</span> <span class="pre">add</span> <span class="pre">&lt;commandName&gt;</span></code>，所以我们这里直接这样执行：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cobra-cli add <span class="o">[</span>command<span class="o">]</span>
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cobra-cli add add
+add created at D:<span class="se">\g</span>o_studay<span class="se">\g</span>o-programming-tour-book<span class="se">\m</span>y-calc
+
+$ tree .
+.
+├── LICENSE
+├── cmd
+│   ├── add.go
+│   └── root.go
+├── go.mod
+├── go.sum
+├── main.go
+└── my-calc
+<span class="m">1</span> directory, <span class="m">7</span> files
+</pre></div>
+</div>
+<p>现在我们可以看到 <code class="docutils literal notranslate"><span class="pre">cmd/root.go</span></code> 文件中新增了一个 <code class="docutils literal notranslate"><span class="pre">add.go</span></code>
+的文件，我们仔细观察可以发现该文件和 <code class="docutils literal notranslate"><span class="pre">cmd/root.go</span></code>
+比较类似。首先是声明了一个名为 <code class="docutils literal notranslate"><span class="pre">addCmd</span></code> 的结构体变量，类型为
+<code class="docutils literal notranslate"><span class="pre">*cobra.Command</span></code> 指针类型，<code class="docutils literal notranslate"><span class="pre">*cobra.Command</span></code> 有一个 <code class="docutils literal notranslate"><span class="pre">RUN</span></code>
+函数，带有 <code class="docutils literal notranslate"><span class="pre">*cobra.Command</span></code> 指针和一个字符串切片参数。</p>
+<p>然后在 <code class="docutils literal notranslate"><span class="pre">init</span></code> 函数中进行初始化，初始化后，将其添加到 <code class="docutils literal notranslate"><span class="pre">rootCmd</span></code>
+根命令中 <code class="docutils literal notranslate"><span class="pre">rootCmd.AddCommand(addCmd)</span></code>，所以我们可以把 <code class="docutils literal notranslate"><span class="pre">addCmd</span></code>
+看成是 <code class="docutils literal notranslate"><span class="pre">rootCmd</span></code> 的子命令。</p>
+<p>同样现在重新构建应用再执行:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ go build -o my-calc
+$ ./my-calc
+Hello Cobra CLI
+$ ./my-calc add
+add called
+</pre></div>
+</div>
+<p>可以看到 <code class="docutils literal notranslate"><span class="pre">add</span></code>
+命令可以正常运行了，接下来我们来让改命令支持添加一些数字，我们知道在
+<code class="docutils literal notranslate"><span class="pre">RUN</span></code> 函数中是用户字符串 slice
+来作为参数的，所以要支持添加数字，我们首先需要将字符串转换为 int
+类型，返回返回计算结果。在 <code class="docutils literal notranslate"><span class="pre">cmd/add.go</span></code> 文件中添加一个名为 <code class="docutils literal notranslate"><span class="pre">intAdd</span></code>
+的函数，定义如下所示：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// cmd/add.go</span>
+<span class="kd">func</span> <span class="nx">intAdd</span><span class="p">(</span><span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">sum</span> <span class="kt">int</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ival</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">args</span> <span class="p">{</span>
+        <span class="c1">// 将 string 转换成 int 类型</span>
+        <span class="nx">temp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">Atoi</span><span class="p">(</span><span class="nx">ival</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">sum</span> <span class="p">=</span> <span class="nx">sum</span> <span class="o">+</span> <span class="nx">temp</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Addition of numbers %s is %d\n&quot;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">sum</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后在 <code class="docutils literal notranslate"><span class="pre">addCmd</span></code> 变量中，更新 <code class="docutils literal notranslate"><span class="pre">RUN</span></code>
+函数，移除默认的打印信息，调用上面声明的 <code class="docutils literal notranslate"><span class="pre">addInt</span></code> 函数：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">addCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">{</span>
+    <span class="nx">Use</span><span class="p">:</span>   <span class="s">&quot;add&quot;</span><span class="p">,</span>
+    <span class="nx">Short</span><span class="p">:</span> <span class="s">&quot;A brief description of your command&quot;</span><span class="p">,</span>
+    <span class="nx">Long</span><span class="p">:</span> <span class="s">`A longer description that spans multiple lines and likely contains examples</span>
+<span class="s">and usage of using your command. For example:</span>
+
+<span class="s">Cobra is a CLI library for Go that empowers applications.</span>
+<span class="s">This application is a tool to generate the needed files</span>
+<span class="s">to quickly create a Cobra application.`</span><span class="p">,</span>
+    <span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">intAdd</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后重新构建应用执行如下所示的命令：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ go build -o my-calc
+$ ./my-calc
+Hello Cobra CLI
+<span class="c1"># 注意参数之间的空格</span>
+$ ./my-calc add <span class="m">1</span> <span class="m">2</span> <span class="m">3</span>
+Addition of numbers <span class="o">[</span><span class="m">1</span> <span class="m">2</span> <span class="m">3</span><span class="o">]</span> is <span class="m">6</span>
+</pre></div>
+</div>
+<p>由于 <code class="docutils literal notranslate"><span class="pre">RUN</span></code> 函数中的 <code class="docutils literal notranslate"><span class="pre">args</span></code>
+参数是一个字符串切片，所以我们可以传递任意数量的参数，但是确有一个缺陷，就是只能进行整数计算，不能计算小数，比如我们执行如下的计算就会直接
+panic 了:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ./my-calc add <span class="m">1</span> <span class="m">2</span> <span class="m">3</span>.5
+panic: strconv.Atoi: parsing <span class="s2">&quot;3.5&quot;</span>: invalid syntax
+goroutine <span class="m">1</span> <span class="o">[</span>running<span class="o">]</span>:
+my-calc/cmd.intAdd<span class="o">(</span>0xc0000a5890, 0x3, 0x3<span class="o">)</span>
+......
+</pre></div>
+</div>
+<p>因为在 <code class="docutils literal notranslate"><span class="pre">intAdd</span></code> 函数里面，我们只是将字符串转换成了 int，而不是
+float32/64 类型，所以我们可以为 <code class="docutils literal notranslate"><span class="pre">addCmd</span></code> 命令添加一个 <code class="docutils literal notranslate"><span class="pre">flag</span></code>
+标识符，通过该标识符来帮助 CLI 确定它是 int 计算还是 float 计算。</p>
+<p>在 <code class="docutils literal notranslate"><span class="pre">cmd/add.go</span></code> 文件的 <code class="docutils literal notranslate"><span class="pre">init</span></code> 函数内部，我们创建一个 Bool
+类型的本地标识符，命名成 <code class="docutils literal notranslate"><span class="pre">float</span></code>，简写成 <code class="docutils literal notranslate"><span class="pre">f</span></code>，默认值为
+false。这个默认值是非常重要的，意思就是即使没有在命令行中调用 flag
+标识符，该标识符的值就将为 false。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// cmd/add.go</span>
+<span class="kd">func</span> <span class="nx">init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">rootCmd</span><span class="p">.</span><span class="nx">AddCommand</span><span class="p">(</span><span class="nx">addCmd</span><span class="p">)</span>
+    <span class="nx">addCmd</span><span class="p">.</span><span class="nx">Flags</span><span class="p">().</span><span class="nx">BoolP</span><span class="p">(</span><span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="s">&quot;i&quot;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s">&quot;Add int Numbers&quot;</span><span class="p">)</span>
+    <span class="nx">addCmd</span><span class="p">.</span><span class="nx">Flags</span><span class="p">().</span><span class="nx">BoolP</span><span class="p">(</span><span class="s">&quot;float&quot;</span><span class="p">,</span> <span class="s">&quot;f&quot;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s">&quot;Add Floating Numbers&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后创建一个 <code class="docutils literal notranslate"><span class="pre">floatAdd</span></code> 的函数：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">floatAdd</span><span class="p">(</span><span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;error: &quot;</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}()</span>
+    <span class="kd">var</span> <span class="nx">sum</span> <span class="kt">float64</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">fval</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">args</span> <span class="p">{</span>
+        <span class="c1">// 将字符串转换成 float64 类型</span>
+        <span class="nx">temp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseFloat</span><span class="p">(</span><span class="nx">fval</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">sum</span> <span class="p">=</span> <span class="nx">sum</span> <span class="o">+</span> <span class="nx">temp</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Sum of floating numbers %s is %f\n&quot;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">sum</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>该函数和上面的 <code class="docutils literal notranslate"><span class="pre">intAdd</span></code> 函数几乎是相同的，除了是将字符串转换成 float64
+类型。然后在 <code class="docutils literal notranslate"><span class="pre">addCmd</span></code> 的 <code class="docutils literal notranslate"><span class="pre">RUN</span></code>
+函数中，我们根据传入的标识符来判断到底应该是调用 <code class="docutils literal notranslate"><span class="pre">intAdd</span></code> 还是
+<code class="docutils literal notranslate"><span class="pre">floatAdd</span></code>，如果传递了 <code class="docutils literal notranslate"><span class="pre">--float</span></code> 或者 <code class="docutils literal notranslate"><span class="pre">-f</span></code> 标志，就将会调用
+<code class="docutils literal notranslate"><span class="pre">floatAdd</span></code> 函数。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// addCmd represents the add command</span>
+<span class="kd">var</span> <span class="nx">addCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">{</span>
+    <span class="nx">Use</span><span class="p">:</span>   <span class="s">&quot;add&quot;</span><span class="p">,</span>
+    <span class="nx">Short</span><span class="p">:</span> <span class="s">&quot;add number&quot;</span><span class="p">,</span>
+    <span class="nx">Long</span><span class="p">:</span> <span class="s">`add number add int or float.`</span><span class="p">,</span>
+    <span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 如果 create 命令后没有参数，则提示帮助信息</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+            <span class="nx">cmd</span><span class="p">.</span><span class="nx">Help</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+        <span class="nx">fstatus</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">Flags</span><span class="p">().</span><span class="nx">GetBool</span><span class="p">(</span><span class="s">&quot;float&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">fstatus</span> <span class="p">{</span>
+            <span class="nx">floatAdd</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+        <span class="nx">istatus</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">Flags</span><span class="p">().</span><span class="nx">GetBool</span><span class="p">(</span><span class="s">&quot;int&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">istatus</span> <span class="p">{</span>
+            <span class="nx">intAdd</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>现在重新编译构建 CLI 应用，按照如下方式执行：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ go build -o my-calc
+$ ./my-calc add <span class="m">1</span> <span class="m">2</span> <span class="m">3</span>
+Addition of numbers <span class="o">[</span><span class="m">1</span> <span class="m">2</span> <span class="m">3</span><span class="o">]</span> is <span class="m">6</span>
+
+$ ./my-calc add <span class="m">1</span> <span class="m">2</span> <span class="m">3</span>.5 -f
+Sum of floating numbers <span class="o">[</span><span class="m">1</span> <span class="m">2</span> <span class="m">3</span>.5<span class="o">]</span> is <span class="m">6</span>.500000
+
+$./my-calc add <span class="m">1</span> <span class="m">2</span> <span class="m">3</span>.5 --float
+Sum of floating numbers <span class="o">[</span><span class="m">1</span> <span class="m">2</span> <span class="m">3</span>.5<span class="o">]</span> is <span class="m">6</span>.500000
+</pre></div>
+</div>
+<p>然后接下来我们在给 <code class="docutils literal notranslate"><span class="pre">addCmd</span></code> 添加一些子命令来扩展它。</p>
+<section id="id4">
+<h3><a class="toc-backref" href="#id13">5.1 添加偶数</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>同样在项目根目录下执行如下命令添加一个名为 <code class="docutils literal notranslate"><span class="pre">even</span></code> 的命令：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cobra-cli add even
+</pre></div>
+</div>
+<p>和上面一样会在 <code class="docutils literal notranslate"><span class="pre">root</span></code> 目录下面新增一个名为 <code class="docutils literal notranslate"><span class="pre">even.go</span></code>
+的文件，修改该文件中的 <code class="docutils literal notranslate"><span class="pre">init</span></code> 函数，将 <code class="docutils literal notranslate"><span class="pre">rootCmd</span></code> 修改为
+<code class="docutils literal notranslate"><span class="pre">addCmd</span></code>，因为我们是为 <code class="docutils literal notranslate"><span class="pre">addCmd</span></code> 添加子命令:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// cmd/even.go</span>
+<span class="kd">func</span> <span class="nx">init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">addCmd</span><span class="p">.</span><span class="nx">AddCommand</span><span class="p">(</span><span class="nx">evenCmd</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>然后更新 <code class="docutils literal notranslate"><span class="pre">evenCmd</span></code> 结构体参数的 <code class="docutils literal notranslate"><span class="pre">RUN</span></code> 函数:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// evenCmd represents the even command,只有偶数才会累加</span>
+<span class="kd">var</span> <span class="nx">evenCmd</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">{</span>
+    <span class="nx">Use</span><span class="p">:</span>   <span class="s">&quot;even&quot;</span><span class="p">,</span>
+    <span class="nx">Short</span><span class="p">:</span> <span class="s">&quot;even number&quot;</span><span class="p">,</span>
+    <span class="nx">Long</span><span class="p">:</span> <span class="s">`even number.`</span><span class="p">,</span>
+    <span class="nx">Run</span><span class="p">:</span> <span class="kd">func</span><span class="p">(</span><span class="nx">cmd</span> <span class="o">*</span><span class="nx">cobra</span><span class="p">.</span><span class="nx">Command</span><span class="p">,</span> <span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">evenSum</span> <span class="kt">int</span>
+        <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ival</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">args</span> <span class="p">{</span>
+            <span class="nx">temp</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">Atoi</span><span class="p">(</span><span class="nx">ival</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nx">temp</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+                <span class="nx">evenSum</span> <span class="p">=</span> <span class="nx">evenSum</span> <span class="o">+</span> <span class="nx">temp</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;The even addition of %s is %d\n&quot;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">evenSum</span><span class="p">)</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>首先将字符串转换成整数，然后判断如果是偶数才进行累加。然后重新编译构建应用:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ go build -o my-calc
+$ ./my-calc add even <span class="m">1</span> <span class="m">2</span> <span class="m">3</span> <span class="m">4</span> <span class="m">5</span> <span class="m">6</span>
+The even addition of <span class="o">[</span><span class="m">1</span> <span class="m">2</span> <span class="m">3</span> <span class="m">4</span> <span class="m">5</span> <span class="m">6</span><span class="o">]</span> is <span class="m">12</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">my-calc</span></code> 是我们的根命令，<code class="docutils literal notranslate"><span class="pre">add</span></code> 是 <code class="docutils literal notranslate"><span class="pre">rootCmd</span></code>
+的子命令，<code class="docutils literal notranslate"><span class="pre">even</span></code> 优势 <code class="docutils literal notranslate"><span class="pre">addCmd</span></code>
+的子命令，所以按照上面的方式调用。可以用同样的方式再去添加一个奇数相加的子命令。</p>
+<p>到这里我们就在 Golang 里面使用 <code class="docutils literal notranslate"><span class="pre">Cobra</span></code> 创建了一个简单的 CLI
+应用。本文的内容虽然比较简单，但是是我们了解学习 <code class="docutils literal notranslate"><span class="pre">Cobra</span></code>
+基础的一个很好的入门方式，后续我们也可以尝试添加一些更加复杂的使用案例。</p>
+</section>
+</section>
+<section id="cobradocker">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">10.23.6. </span>6.用Cobra开发类似docker的命令行</a><a class="headerlink" href="#cobradocker" title="Permalink to this headline">¶</a></h2>
+<p>参考文献</p>
+<p><a class="reference external" href="https://www.cnblogs.com/chenqionghe/p/12661871.html">https://www.cnblogs.com/chenqionghe/p/12661871.html</a></p>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id15"><span class="section-number">10.23.7. </span>7.应用举例</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>参考文献</p>
+<p><a class="reference external" href="https://juejin.cn/post/6943900221344579614">https://juejin.cn/post/6943900221344579614</a></p>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">10.23.8. </span>8.参考文献</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.cnblogs.com/shalk/p/13382785.html">golang常见库cobra</a></p>
+<p><a class="reference external" href="https://www.topgoer.cn/docs/goday/goday-1crg2gl84t0vp">https://www.topgoer.cn/docs/goday/goday-1crg2gl84t0vp</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html" class="btn btn-neutral float-left" title="10.22. go标准库和三方库" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="24.viper.html" class="btn btn-neutral float-right" title="10.24. viper" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

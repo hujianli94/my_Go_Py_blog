@@ -1,0 +1,557 @@
+.. contents::
+   :depth: 3
+..
+
+系统批量运维管理器paramiko
+==========================
+
+使用 Python 远程登陆服务器的最佳实践
+------------------------------------
+
+https://juejin.im/post/6844904078057668615
+
+pip安装
+
+::
+
+   pip install paramiko
+   easy_install paramiko
+
+源码安装
+
+::
+
+   # yum -y install python-devel
+   # wget http://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/pycrypto-2.6.tar.gz
+   # tar -zxvf pycrypto-2.6.tar.gz
+   # cd pycrypto-2.6
+   # python setup.py install
+   # cd ..
+   # wget https：//pypi.python.org/packages/source/e/ecdsa/ecdsa-0.10.tar.gz --no-check-certificate
+   # tar -zxvf ecdsa-0.10.tar.gz
+   # cd ecdsa-0.10
+   # python setup.py install
+   # cd ..
+   # wget https：//github.com/paramiko/paramiko/archive/v1.12.2.tar.gz
+   # tar -zxvf v1.12.2.tar.gz
+   # cd paramiko-1.12.2/
+   # python setup.py install
+
+``paramiko使用密码登录ssh方式``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/8/17 18:18
+   # filename: 01.使用密码登录ssh方式1.py
+
+   import paramiko
+
+   hostname='192.168.0.103'
+   username='root'
+   password='admin#123'
+   paramiko.util.log_to_file('syslogin.log')
+
+   ssh=paramiko.SSHClient()
+   ssh.load_system_host_keys()
+   ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   ssh.connect(hostname=hostname,port=22,username=username,password=password,compress=True)
+   stdin,stdout,stderr=ssh.exec_command('free -m')
+   print stdout.read()
+   stdin,stdout,stderr=ssh.exec_command('ifconfig| grep inet|head -1|awk -F\' \' \'{print $2}\'')
+   print stdout.read()
+   ssh.close()
+
+``paramiko实现文件上传、下载、创建、删除``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/8/17 18:32
+   # filename: 02.实现文件上传、下载、创建、删除.py
+   import paramiko
+
+   username = 'root'
+   password = 'admin#123'
+   hostname = '192.168.0.103'
+   port = 22
+
+   try:
+       t = paramiko.Transport((hostname, port))
+       t.connect(username=username, password=password)
+       sftp = paramiko.SFTPClient.from_transport(t)
+       # 上传文件
+       sftp.put('/home/python-scripts/02.高级篇/02.系统批量运维管理器paramiko/syslogin.log',
+                '/home/syslogin.log')
+       # 下载文件
+       sftp.get('/home/vagrant_2.2.4_x86_64.rpm',
+                '/home/python-scripts/02.高级篇/02.系统批量运维管理器paramiko/vagrant_2.2.4_x86_64.rpm')
+
+       # 创建目录
+       sftp.mkdir("/home/python-scrpts", 0775)  # 创建目录
+       # 删除目录
+       sftp.rmdir('/home/test1')
+
+       # 文件重命名
+       sftp.rename('/home/aaaa', '/home/aaaa_bak')
+
+       # 打印文件信息
+       print(sftp.stat('/home/apache-tomcat-8.5.37.tar.gz'))
+       # 打印目录列表
+       print(sftp.listdir('/home'))
+       t.close()
+   except Exception as e:
+       print(str(e))
+
+应用示例
+
+``实现自动密钥登录方式``
+
+::
+
+   #!/usr/bin/env python
+   import paramiko
+   import os
+
+   hostname='192.168.1.21'
+   username='root'
+   paramiko.util.log_to_file('syslogin.log')
+
+   ssh=paramiko.SSHClient()
+   ssh.load_system_host_keys()
+   privatekey = os.path.expanduser('/home/key/id_rsa')
+   key = paramiko.RSAKey.from_private_key_file(privatekey)
+
+   ssh.connect(hostname=hostname,username=username,pkey = key)
+   stdin,stdout,stderr=ssh.exec_command('free -m')
+   print stdout.read()
+   ssh.close()
+
+堡垒机示例
+
+::
+
+   #!/usr/bin/env python
+   import paramiko
+   import os,sys,time
+
+   hostname="192.168.1.21"
+   username="root"
+   password="SKJh935yft#"
+
+   blip="192.168.1.23"
+   bluser="root"
+   blpasswd="SKJh935yft#"
+
+   port=22
+   passinfo='\'s password: '
+   paramiko.util.log_to_file('syslogin.log')
+
+   ssh=paramiko.SSHClient()
+   ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   ssh.connect(hostname=blip,username=bluser,password=blpasswd)
+
+   #new session
+   channel=ssh.invoke_shell()
+   channel.settimeout(10)
+
+   buff = ''
+   resp = ''
+   channel.send('ssh '+username+'@'+hostname+'\n')
+
+   while not buff.endswith(passinfo):
+       try:
+           resp = channel.recv(9999)
+       except Exception,e:
+           print 'Error info:%s connection time.' % (str(e))
+           channel.close()
+           ssh.close()
+           sys.exit()
+       buff += resp
+       if not buff.find('yes/no')==-1:
+           channel.send('yes\n')
+       buff=''
+
+   channel.send(password+'\n')
+
+   buff=''
+   while not buff.endswith('# '):
+       resp = channel.recv(9999)
+       if not resp.find(passinfo)==-1:
+           print 'Error info: Authentication failed.'
+           channel.close()
+           ssh.close()
+           sys.exit() 
+       buff += resp
+
+   channel.send('ifconfig\n')
+   buff=''
+   try: 
+       while buff.find('# ')==-1:
+           resp = channel.recv(9999)
+           buff += resp
+   except Exception, e:
+       print "error info:"+str(e)
+
+   print buff
+   channel.close()
+   ssh.close()
+
+``堡垒机模式下的远程文件上传``
+
+::
+
+   #!/usr/bin/env python
+   import paramiko
+   import os,sys,time
+
+   hostname="192.168.1.21"
+   username="root"
+   password="SKJh935yft#"
+
+   blip="192.168.1.23"
+   bluser="root"
+   blpasswd="SKJh935yft#"
+
+   tmpdir="/tmp"
+   remotedir="/data"
+   localpath="/home/nginx_access.tar.gz"
+   tmppath=tmpdir+"/nginx_access.tar.gz"
+   remotepath=remotedir+"/nginx_access_hd.tar.gz"
+
+   port=22
+   passinfo='\'s password: '
+   paramiko.util.log_to_file('syslogin.log')
+
+   t = paramiko.Transport((blip, port))
+   t.connect(username=bluser, password=blpasswd)
+   sftp =paramiko.SFTPClient.from_transport(t)
+   sftp.put(localpath, tmppath)
+   sftp.close()
+
+   ssh=paramiko.SSHClient()
+   ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   ssh.connect(hostname=blip,username=bluser,password=blpasswd)
+
+   #new session
+   channel=ssh.invoke_shell()
+   channel.settimeout(10)
+
+   buff = ''
+   resp = ''
+   channel.send('scp '+tmppath+' '+username+'@'+hostname+':'+remotepath+'\n')
+
+   while not buff.endswith(passinfo):
+       try:
+           resp = channel.recv(9999)
+       except Exception,e:
+           print 'Error info:%s connection time.' % (str(e))
+           channel.close()
+           ssh.close()
+           sys.exit()
+       buff += resp
+       if not buff.find('yes/no')==-1:
+           channel.send('yes\n')
+       buff=''
+
+   channel.send(password+'\n')
+
+   buff=''
+   while not buff.endswith('# '):
+       resp = channel.recv(9999)
+       if not resp.find(passinfo)==-1:
+           print 'Error info: Authentication failed.'
+           channel.close()
+           ssh.close()
+           sys.exit() 
+       buff += resp
+
+   print buff
+   channel.close()
+   ssh.close()
+
+代码示例
+
+::
+
+   import sys
+   import paramiko
+   import time
+   ip_address = "192.168.2.106"
+   username = "student"
+   password = "training"
+   ssh_client = paramiko.SSHClient()
+   ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   ssh_client.load_system_host_keys()
+   ssh_client.connect(hostname=ip_address,\
+               username=username, password=password)
+   print ("Successful connection", ip_address)
+   ssh_client.invoke_shell()
+   remote_connection = ssh_client.exec_command('cd Desktop; mkdir work\n')
+   remote_connection = ssh_client.exec_command('mkdir test_folder\n')
+   #print( remote_connection.read() )
+   ssh_client.close
+
+ssh的代码示例
+
+``logger.py``
+
+::
+
+   #!/usr/bin/env python
+   """
+   logger.py: provides logging methods
+   """
+
+   # from python lib
+   import logging
+   import sys
+   import os
+
+
+   class Log:
+       """
+       Singleton class to create log object
+       """
+
+       def __new__(cls):
+           if not hasattr(cls, 'instance'):
+               cls.instance = super().__new__(cls)
+           return cls.instance
+
+       def initialise(self, logfile, level='DEBUG'):
+           logger = logging.getLogger('qcs')
+           logger.propagate = True
+           logger.setLevel(level)
+
+           # create stream handler
+           fh = logging.StreamHandler(open(logfile, "w"))
+           sh = logging.StreamHandler(sys.stdout)
+
+           # create formatter
+           formatter = logging.Formatter(
+               '%(asctime)s %(levelname)s %(message)s')
+
+           # add formatter to sh
+           fh.setFormatter(formatter)
+           sh.setFormatter(formatter)
+
+           # add sh to logger
+           logger.addHandler(sh)
+           logger.addHandler(fh)
+           self.logger = logger
+           return self.logger
+
+       def __repr__(self):
+           return "{}()".format(self.__class__.__name__)
+
+       def debug(self, *args, **kwargs):
+           self.logger.debug(*args, **kwargs)
+
+       def info(self, *args, **kwargs):
+           self.logger.info(*args, **kwargs)
+
+       def warn(self, *args, **kwargs):
+           self.logger.warn(*args, **kwargs)
+
+       def error(self, *args, **kwargs):
+           self.logger.error(*args, **kwargs)
+
+       def critical(self, *args, **kwargs):
+           self.logger.critical(*args, **kwargs)
+
+
+   if __name__ == '__main__':
+       print("Module loaded successfully")
+       if os.environ.get('USE_ROBOT_LOGGER', None) == "True":
+           from libs.log.logger import Log
+
+           log = Log()
+       else:
+           log = Log()
+
+       # some sample tests
+       logfile = "test_log.log"
+       log.initialise(logfile)
+       print("I'm not using any logger")
+       log.info("This is info line")
+       log.debug("This is debug line")
+       log.error("This is error line")
+
+``ssh_lib.py``
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther: 18793
+   # Date：2021/11/26 10:13
+   # filename: ssh_lib.py
+   # from python lib
+   import os
+   import sys
+
+   import paramiko
+   import pexpect
+   import time
+
+   # from external lib
+   from scp import SCPClient
+
+   # from qcs-automation libs
+   from libs.log import Log
+
+   # create log object
+   log = Log()
+
+
+   # username = sys.argv[1]
+
+
+   class SshConn(object):
+       """ 一个ssh的类 """
+
+       def __init__(self, ip, user, password):
+           self.ip_address = ip
+           self.user = user
+           self.password = password
+           self.conn = None
+
+       def _init_connection(self):
+           """
+           Initiate ssh connection
+           :return: None
+           """
+           try:
+               self.conn = paramiko.SSHClient()
+               self.conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+               self.conn.connect(self.ip_address, username=self.user,
+                                 password=self.password)
+               child = pexpect.spawn('ssh {}@{}'.format(self.user,
+                                                        self.ip_address))
+               res = child.expect([pexpect.TIMEOUT, ' (yes/no)?'])
+               child.sendline('yes')
+               # This sleep will help for pexpect to work
+               time.sleep(5)
+           except Exception as e:
+               log.error("Unable to connect remote server")
+
+       def execute_command(self, cmd):
+           """
+           Execute command
+           :param cmd: Command to be executed
+           :return: return tuple of (stdout, stderr)
+           """
+           try:
+               if not isinstance(cmd, str):
+                   cmd = ' '.join(arg for arg in cmd)
+               if not self.conn:
+                   self._init_connection()
+               log.info("Executing command: {} on {}".format(cmd,
+                                                             self.ip_address))
+               stdin, stdout, stderr = self.conn.exec_command(cmd)
+               try:
+                   stdoutbuffer = stdout.read()
+               except Exception as e:
+                   stdout = str(e)
+
+               try:
+                   stderrbuffer = stderr.read()
+               except Exception as e:
+                   stderr = str(e)
+
+               try:
+                   if not isinstance(stdout, str):
+                       status = stdout.channel.recv_exit_status()
+                   else:
+                       status = None
+               except Exception as e:
+                   status = str(e)
+
+               if not isinstance(stdout, str):
+                   stdout = stdoutbuffer.decode('utf8')
+               if not isinstance(stderr, str):
+                   stderr = stderrbuffer.decode('utf8')
+               log.info("Command status: {}".format(status))
+               log.debug(stdout.splitlines())
+               return (status, stdout.splitlines(), stderr.splitlines())
+           except Exception as e:
+               log.error("Unable to connect remote server {}" \
+                         .format(self.ip_address))
+               log.error(e)
+               if 'SSH session not active' in str(e):
+                   log.info("Restablising connection on {}" \
+                            .format(self.ip_address))
+                   # re-establish connection and execute the command
+                   self._init_connection()
+                   self.execute_command(cmd)
+               return None, None, None
+
+       def scp_get(self, remotepath, localpath, recursive=False):
+           """
+           Scp files/dir from SSH server
+           """
+           self._init_connection()
+           scp = SCPClient(self.conn.get_transport(), buff_size=16384, socket_timeout=15.0)
+           try:
+               scp.get(remotepath, localpath, recursive, preserve_times=True)
+           except Exception as e:
+               log.info("Hit exception while scp_get from {} to {} on {}".format(
+                   remotepath, localpath, self.ip_address))
+               log.info(e)
+               raise
+           return True
+
+       def scp_put(self, localpath, remotepath, recursive=False):
+           """
+           Scp files/dir to SSH server
+           """
+           self._init_connection()
+           scp = SCPClient(self.conn.get_transport())
+           try:
+               scp.put(localpath, remotepath, recursive)
+           except Exception as e:
+               log.info("Hit exception while scp_put from {} to {} on {}".format(
+                   localpath, remotepath, self.ip_address))
+               log.info(e)
+               raise
+           return True
+
+       def copy_command(self, localpath, remotepath):
+           """
+           copy file to remote server
+           :param localpath: local path of the file
+           :param remotepath: path where file should get copied
+           """
+           try:
+               if not self.conn:
+                   self._init_connection()
+               sftp = self.conn.open_sftp()
+               try:
+                   log.info(sftp.stat(remotepath))
+                   log.info("File exists {}".format(remotepath))
+               except IOError:
+                   log.info("Copying file {} to {}".format(localpath, remotepath))
+                   sftp.put(localpath, os.path.abspath(remotepath))
+               sftp.close()
+           except paramiko.SSHException as e:
+               log.error("Connection Error: {}".format(e))
+
+               
+   if __name__ == '__main__':
+       print("Module loaded successfully.")
+       logfile = "test_log.log"
+       log.initialise(logfile)
+       hu = SshConn("172.16.60.236", "root", "admin#123")
+       # 复制文件到本地
+       hu.copy_command("./test_log.log", "/home/tst_log.log")
+       # 在远程环境执行命令
+       print(hu.execute_command("hostname"))
+       # 从远程拷贝文件到本地
+       hu.scp_get("/home/go_muke", ".", recursive=True)
+       # 从本地上传文件到远程
+       hu.scp_put("/home/aaa", "/home/", recursive=True)

@@ -1,0 +1,580 @@
+.. contents::
+   :depth: 3
+..
+
+玩转Django2.0-视图和路由
+========================
+
+一、视图说明
+
+　　视图(View)是Django的MTV架构模式的V部分，主要负责处理用户请求和生成相应的相应部分，然后在页面或其它类型文档中显示。也可以理解为视图是MVC架构里面的C部分（控制器）,主要处理功能和业务上的逻辑。
+
+Django的视图层的主要工作时衔接HTTP请求、Python程序、HTML模板等。
+
+1. URL映射
+----------
+
+1.1 普通URL映射
+~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   from django.conf.urls import url
+
+   from . import views
+
+   urlpatterns = [
+     url(r'^year/2015/$', views.moments_2015),
+     url(r'^year/([0-9]{4})/$', views.year_moments),
+     url(r'^month/([0-9]{4})/([0-9]{2})/$', views.month_moments),
+     url(r'^single/([0-9]{4})/([0-9]{2})/([0-9]+)/$', views.single),
+   ]
+
+该文件通过维护urlpatterns列表的元素完成URL映射，每个元素都是一个django.conf.urls.url的实例，函数url（）的第1个参数是HTTP路径，第2个参数是该路径被映射到的Python函数名。
+
+1.2 正则表达式
+~~~~~~~~~~~~~~
+
+正则表达式速查表
+
+https://www.jb51.net/tools/regexsc.htm
+
+1.3 命名URL参数映射
+~~~~~~~~~~~~~~~~~~~
+
+在普通URL映射中，Django将URL中的变量参数按照路径中的出现顺序传递给被调用函数。而命名URL参数映射使得开发者可以定义这些被传递参数的参数名称，命名URL参数的定义方式是“?
+Ppattern”
+
+.. code:: python
+
+   from django.conf.urls import url
+
+   from . import views
+
+   urlpatterns = [
+     url(r'^year/2015/$', views.moments_2015),
+     url(r'^year/? P<year>([0-9]{4})/$', views.year_moments),
+     url(r'^month/? P<year>([0-9]{4})/? P<month>([0-9]{2})/$', views.month_moments),
+   ]
+
+它们调用views.py中的Python函数，调用方式分别为：
+
+year_moments（request, year = xxxx）
+
+和month_moments（request, year = xxxx, month=xx）
+
+1.4 分布式URL映射
+~~~~~~~~~~~~~~~~~
+
+大型Django项目中，一个项目可能包含多个Django应用，而每个应用都有自己的URL映射规则。
+
+在项目根映射文件djangosite/djangosite/urls.py中引用其他URL映射文件的示例代码如下：
+
+::
+
+   from django.conf.urls import include, url
+
+   urlpatterns = [
+     url(r'^moments/', include('djangosite.app.urls')),
+     url(r'^admin/', include('djangosite.admin.urls')),
+   ]
+
+本例中用两组url()函数进行了映射定义。
+
+●
+以moments/开头的URL被转接到djangosite.app.urls包中，即djangosite/app/urls.py文件。
+
+●
+以admins/开头的URL被转接到djangosite.admin.urls包中，即djangosite/admin/urls.py文件。
+
+子映射文件djangosite/app/urls.py的示例如下
+
+.. code:: python
+
+   from django.conf.urls import include, url
+
+   urlpatterns = [
+     url(r'^year/? P<year>([0-9]{4})/$', views.year_moments),
+     url(r'^admin/', include('djangosite.admin.urls')),
+   ]
+
+子映射文件的urlpatterns中可以包含普通的URL映射元素，也可以用include（）引用其他urls.py文件。对这两个文件的映射结果说明如下。
+
+●
+由于子文件中的第1行url（）配置，对http://xx.xx.xx.xx/moments/year/2013的访问会定位到djangosite/app/views.py中的year_moments（）函数。
+
+●
+由于子文件中的第2行url（）配置，对http://xx.xx.xx.xx/moments/admin的访问会转到djangosite/admin/urls.py文件进行解析。
+
+●
+由于父文件中的第2行url（）配置，对http://xx.xx.xx.xx/admin的访问会转到djangosite/admin/urls.py文件进行解析。
+
+●
+因为在父urls.py中没有配置过，所以对http://xx.xx.xx.xx/year/2013的访问将找不到任何映射。
+
+2. 常见的视图函数
+-----------------
+
+视图函数是Django开发者处理HTTP请求的Python函数。在通常情况下，视图函数的功能是通过模型层对象处理数据，然后用如下中的一种方式返回HTTP
+Response。
+
+● 直接构造HTTP Body。
+
+● 用数据渲染HTML模板文件。
+
+● 如果有逻辑错误，则返回HTTP错误或其他状态。
+
+**1．直接构造HTML页面**
+
+-  通过HttpResponse()函数封装后返回
+
+::
+
+   from django.http import HttpResponse
+   import datetime
+
+   def current_datetime(request):
+     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+     return HttpResponse(now)
+
+**2．用数据渲染HTML模板文件**
+
+模板渲染通过render()函数实现
+
+::
+
+   from django.shortcuts import render
+   from app.models import Moment
+
+   def detail(request, moment_id):
+     m = Moment.objects.get(id=moment_id)
+     return render(request, 'templates/moment.html', {'headline': m.headline, 'user':
+   m.user_name})
+
+**3．返回HTTP错误**
+
+HTTP错误通过HTTP头中的Status表达，通过给HttpResponse构造函数传递status参数，可以返回HTTP错误或状态。比如：
+
+::
+
+   from django.http import HttpResponse
+
+   def my_view(request):
+     return HttpResponse(status=404)
+
+通过上述代码可返回HTTP 404错误，即“Page Not Found”。
+
+**4.返回json数据**
+
+::
+
+   class Registered_user(APIView):
+       """
+       register_openvpn_user
+       """
+
+       def get(self, request):
+           name = request.GET.get('registeruser')
+           department = request.GET.get('department')
+           area = request.GET.get('area')
+           if name and department:
+               if OpenVpnUser.objects.filter(name=name):
+                   msg = '用户已经存在!'
+                   result = {"status": "404", "data": {'msg': msg, "code": 404}}
+                   return HttpResponse(json.dumps(result, ensure_ascii=False),
+                                       content_type="application/json,charset=utf-8")
+               else:
+                   user = OpenVpnUser()
+                   user.name = name
+                   user.department = department
+                   user.area = area
+                   user.save()
+                   # 创建vpn用户
+                   create_vpn_client(name)
+                   msg = '注册成功！'
+                   result = {"status": "200", "data": {'msg': msg, "code": 200}}
+                   return HttpResponse(json.dumps(result, ensure_ascii=False),
+                                       content_type="application/json,charset=utf-8")
+           else:
+               msg = '输入不能为空！'
+               result = {"status": "404", "data": {'msg': msg, "code": 404}}
+               return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json,charset=utf-8")
+
+一些常用的特定状态HttpResponse子类如下:
+
+● HttpResponseRedirect：返回Status
+302，用于URL重定向，需要将重定向的目标地址作为参数传给该类。
+
+**技巧：**
+HttpResponseRedirect的参数经常使用URL反向映射函数reverse()获得，这样可以避免在更改网站urls.py内容的时候维护视图函数中的代码。
+
+● HttpResponseNotModified：返回Status
+304，用于指示浏览器用其上次请求时的缓存结果作为页面内容显示。
+
+● HttpResponsePermanentRedirect：返回Status
+301，与HttpResponseRedirect类似，但是告诉浏览器这是一个永久重定向。
+
+● HttpResponseBadRequest：返回Status 400，请求内容错误。
+
+● HttpResponseForbidden：返回Status 403，禁止访问错误。
+
+● HttpResponseNotAllowed：返回Status
+405，用不允许的方法（Get、Post、Head等）访问本页面。
+
+● HttpResponseServerError：返回Status
+500，服务器内部错误，比如无法处理的异常等。
+
+视图函数：
+
+::
+
+       request对象
+            request.path  请求路径
+            request.GET   GET请求数据  QueryDict  {}
+            request.POST  POST请求数据 QueryDict  {}
+            request.method 请求方式    "GET"   "POST"
+            request.is_ajax()       是否是Ajax请求
+            request.get_full_path()    包含请求数据的路径
+            
+       return HttpResponse("响应体字符串")
+       
+       render  ：渲染
+           render(request,"index.html")
+           render(request,"index.html",{"name":name})
+       
+       redirect: 重定向
+           两次请求
+
+3. 视图使用示例
+---------------
+
+3.1 Django配置信息
+~~~~~~~~~~~~~~~~~~
+
+::
+
+   # 创建项目
+   django-admin startproject mydajngo
+
+   # 创建app
+   (mydjango) D:\mydjango>python manage.py startapp web
+   (mydjango) D:\mydjango>python manage.py startapp user
+
+3.2 基本配置
+~~~~~~~~~~~~
+
+``mydajngo/settings.py``
+
+::
+
+   INSTALLED_APPS = [
+       'django.contrib.admin',
+       'django.contrib.auth',
+       'django.contrib.contenttypes',
+       'django.contrib.sessions',
+       'django.contrib.messages',
+       'django.contrib.staticfiles',
+       'index',
+       'user',
+   ]
+
+3.3 静态资源
+~~~~~~~~~~~~
+
+APP下的静态资源
+
+创建\ ``index/static``\ 文件夹
+
+::
+
+   STATIC_URL = '/static/'
+
+设置根目录下的静态资源
+
+创建\ ``mydjango/public_static``\ 文件夹
+
+::
+
+   STATICFILES_DIRS = [os.path.join(BASE_DIR, 'public_static'),
+                       os.path.join(BASE_DIR, 'index/index_static'), ]
+
+在public_static下和index/index_static放置2张jpg图片，进行访问：
+
+::
+
+   http://127.0.0.1:8000/static/index_pic.jpg
+   http://127.0.0.1:8000/static/linmc.jpg
+
+还可以设置服务器和项目之间的映射，STATIC_ROOT,该文件与服务器之间构建映射关系
+
+::
+
+   STATIC_ROOT = os.path.join(BASE_DIR, 'all_static')
+
+STATIC_ROOT用于项目生产部署，在项目开发过程中作用不大。
+
+3.4 模板路径
+~~~~~~~~~~~~
+
+::
+
+   TEMPLATES = [
+       {
+           'BACKEND': 'django.template.backends.django.DjangoTemplates',
+           'DIRS': [os.path.join(BASE_DIR, 'templates'),
+                    os.path.join(BASE_DIR, 'index/templates')],
+
+           'APP_DIRS': True,
+           'OPTIONS': {
+               'context_processors': [
+                   'django.template.context_processors.debug',
+                   'django.template.context_processors.request',
+                   'django.contrib.auth.context_processors.auth',
+                   'django.contrib.messages.context_processors.messages',
+               ],
+           },
+       },
+   ]
+
+3.5 数据库配置
+~~~~~~~~~~~~~~
+
+::
+
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.mysql',
+           'NAME': 'myproject',
+           'HOST': '127.0.0.1',
+           'USER': 'root',
+           'PASSWORD': 'admin#123',
+           'PORT': '3306',
+       }
+   }
+
+值得注意的是，MySQL5.7在连接数据库时，会提示django.db.utils
+OperationalError的错误信息，因为mysql8.0在加密方式上发生了改变，mysql8.0版本的用户密码采用的是cha2加密方式。
+
+为了解决这个问题。将8.0加密方式改为原来的加密方式。可以解决Django连接Mysql数据库的错误问题，在Mysql的可视化工具中运行以下SQL语句。
+
+::
+
+   ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'admin#123';
+   FLUSH PRIVILEGES;
+
+3.6 中间件
+~~~~~~~~~~
+
+在项目的MIDDLEWARE中添加LocaleMideeleware中间件，使得Django内置的功能支持中文显示。代码如下：
+
+::
+
+   MIDDLEWARE = [
+       'django.middleware.security.SecurityMiddleware',
+       'django.contrib.sessions.middleware.SessionMiddleware',
+       # 使用中文
+       'django.middleware.locale.LocaleMiddleware',
+       'django.middleware.common.CommonMiddleware',
+       'django.middleware.csrf.CsrfViewMiddleware',
+       'django.contrib.auth.middleware.AuthenticationMiddleware',
+       'django.contrib.messages.middleware.MessageMiddleware',
+       'django.middleware.clickjacking.XFrameOptionsMiddleware',
+   ]
+
+3.7 编写URL规则
+~~~~~~~~~~~~~~~
+
+在App里添加urls.py是将属于App的URL都写入该文件。
+
+在从App的urls.py找到具体的URL信息，在根
+
+::
+
+   urlpatterns = [
+       path('admin/', admin.site.urls),
+       path('', include('index.urls')),
+   ]
+
+由于首页的地址分发给index的urls.py处理，因此下一步需要对index的urls.py编写URL信息，代码信息如下：
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+
+   from django.urls import path
+   from . import views
+
+   urlpatterns = [
+       path('', views.index)
+   ]
+
+在views.py中编写index函数的处理，代码如下：
+
+::
+
+   from django.shortcuts import render
+   from django.http import HttpResponse
+
+
+   # Create your views here.
+
+   def index(request):
+       return HttpResponse('Hello world')
+
+3.8.获取请求信息
+~~~~~~~~~~~~~~~~
+
+``urls.py``
+
+::
+
+       path('login.html', views.login)
+
+``views.py``
+
+::
+
+   def login(request):
+       if request.method == "POST":
+           name = request.POST.get('name')
+           #相对地址，代表首页地址
+           return redirect('/')
+       else:
+           if request.GET.get('name'):
+               name = request.GET.get('name')
+           else:
+               name = 'Everyone'
+           return HttpResponse('username is: ' + name)
+
+在浏览器上分别输入以下URL地址：
+
+::
+
+   http://127.0.0.1:8000/index/login.html
+   http://127.0.0.1:8000/index/login.html?name=Tom
+
+3.9 通用视图
+~~~~~~~~~~~~
+
+　通用视图是通过定义和声明类的形式实现的，根据用途划分为三大类：TemplateView、ListView和DetailView。三者说明如下：
+
+   　　　　　　*1、TemplateView直接返回HTML模板，但无法将数据库的数据展示出来。*
+
+   　　　　　　*2、ListView能将数据库的数据传递给HTML模板，通常获取某个表的所有数据。*
+
+   　　　　　　*3、DetailView能将数据库的数据传递给HTML模板，通常获取数据表的单条数据。*
+
+``urls.py``
+
+::
+
+       # 通用视图ListView
+       # path('index/', views.ProductList.as_view()),
+
+       path('index/<id>.html', views.ProductList.as_view(), {'name': 'phone'}),
+
+       path('index01.html', views.index01, name='index01'),
+
+``views.py``
+
+::
+
+   class ProductList(ListView):
+       # context_object_name设置Html模版的变量名称
+       context_object_name = 'type_list'
+       # 设定HTML模版
+       template_name = 'index.html'
+       # 查询数据
+       queryset = Product.objects.values('type').distinct()
+
+       # # # 重写 get_queryset 方法，对模型product进行数据筛选。
+       # def get_queryset(self):
+       #     type_list = Product.objects.values('type').distinct()
+       #     return type_list
+
+       # 添加其他变量
+       def get_context_data(self, **kwargs):
+           context = super().get_context_data(**kwargs)
+           context['name_list'] = Product.objects.values('name', 'type')
+           # print(context)
+           return context
+
+       def get_queryset(self):
+           # 获取URL的变量id
+           print(self.kwargs['id'])
+
+           if self.request.GET.get('name'):
+               self.kwargs['name'] = self.request.GET.get('name')
+           # 获取URL的参数name
+           print(self.kwargs['name'])
+
+           # 获取请求方式
+           print(self.request.method)
+           type_list = Product.objects.values('type').distinct()
+           return type_list
+
+因为渲染html使用不多，都采用Vue+Django方式，暂时不进行扩展。
+
+3.10 Django cookie and session
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**cookie和session**
+
+::
+
+
+   1、cookie不属于http协议范围，由于http协议无法保持状态，但实际情况，我们却又需要“保持状态”，因此cookie就是在这样一个场景下诞生。
+
+   cookie的工作原理是：由服务器产生内容，浏览器收到请求后保存在本地；当浏览器再次访问时，浏览器会自动带上cookie，这样服务器就能通过cookie的内容来判断这个是“谁”了。
+
+   2、cookie虽然在一定程度上解决了“保持状态”的需求，但是由于cookie本身最大支持4096字节，以及cookie本身保存在客户端，可能被拦截或窃取，因此就需要有一种新的东西，它能支持更多的字节，并且他保存在服务器，有较高的安全性。这就是session。
+
+   问题来了，基于http协议的无状态特征，服务器根本就不知道访问者是“谁”。那么上述的cookie就起到桥接的作用。
+
+   我们可以给每个客户端的cookie分配一个唯一的id，这样用户在访问时，通过cookie，服务器就知道来的人是“谁”。然后我们再根据不同的cookie的id，在服务器上保存一段时间的私密资料，如“账号密码”等等。
+
+   3、总结而言：cookie弥补了http无状态的不足，让服务器知道来的人是“谁”；但是cookie以文本的形式保存在本地，自身安全性较差；所以我们就通过cookie识别不同的用户，对应的在session里保存私密的信息以及超过4096字节的文本。
+
+   4、另外，上述所说的cookie和session其实是共通性的东西，不限于语言和框架
+
+.. image:: ../../../_static/django_cookie001.png
+
+下面我们再来最后的总结一下cookie和session的\ `知识 <http://www.wredian.com/zhishi/>`__\ 点
+
+一、操作Cookie
+
+　　获取cookie：request.COOKIES[key]
+
+　　设置cookie：response.set_cookie(key,value)
+
+由于cookie保存在客户端的电脑上，所以，jquery也可以操作cookie。
+
+::
+
+   <script src='http://830909.blog.51cto.com/static/js/jquery.cookie.js'></script>
+   $.cookie("list_pager_num", 30,{ path: '/' });
+
+二、操作Session(session默认在服务器端保存15天)
+
+　　获取session：request.session[key]
+
+　　设置session：reqeust.session[key] = value
+
+　　删除session：del request.session[key]
+
+（这个删除其实就是把数据库的session_data更新为一个其他的值了，并没有立即删除）
+
+::
+
+   request.session.set_expiry(value)
+   * 如果value是个整数，session会在些秒数后失效。
+   * 如果value是个datatime或timedelta，session就会在这个时间后失效。
+   * 如果value是0,用户关闭浏览器session就会失效。
+   * 如果value是None,session会依赖全局session失效策略。
+
+**代码示例**
+
+参考：
+
+https://www.cnblogs.com/nulige/p/6497311.html

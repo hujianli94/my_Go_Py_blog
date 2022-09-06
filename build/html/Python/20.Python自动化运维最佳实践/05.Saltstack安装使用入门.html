@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>19.7. Saltstack安装使用入门（自己总结） &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="19.8. 业务服务监控详解" href="06.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html" />
+    <link rel="prev" title="19.6. Ansible入门与playbook实战" href="04.Ansible%E5%85%A5%E9%97%A8%E4%B8%8Eplaybook%E5%AE%9E%E6%88%98.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">19. Python自动化运维最佳实践</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E4%BF%A1%E6%81%AF%E6%A8%A1%E5%9D%97%E8%AF%A6%E8%A7%A3.html">19.1. 系统基础信息模块详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01.%E7%B3%BB%E7%BB%9F%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8pexpect.html">19.2. 系统批量运维管理器pexpect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html">19.3. 业务服务监控详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%B3%BB%E7%BB%9F%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8paramiko.html">19.4. 系统批量运维管理器paramiko</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E6%89%B9%E9%87%8F%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86%E5%99%A8Fabric.html">19.5. 批量运维管理器Fabric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Ansible%E5%85%A5%E9%97%A8%E4%B8%8Eplaybook%E5%AE%9E%E6%88%98.html">19.6. Ansible入门与playbook实战</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">19.7. Saltstack安装使用入门（自己总结）</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">19.7.1. 安装部署篇：</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#saltstacksaltstack">19.7.2. 快速入门SaltStack快速入门SaltStack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#centos67-yum">19.7.3. 默认以CentOS6、7为例，采用yum安装</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#epel">19.7.4. 安装EPEL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">19.7.5. 修改主机名和域名解析</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">19.7.6. 服务器端安装</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#centos-6-7">19.7.7. centos 6/7 启动/重启/停止命令</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">19.7.8. Saltstack防火墙配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#minion">19.7.9. 客户端minion程序安装</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">19.7.10. 查看自动认证状况</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">19.7.11. 使用基础</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#salt-master">19.7.12. salt-master上常用的命令：</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">19.7.13. 所有主机查看系统</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">19.7.14. 查看所有节点名称</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#salt">19.7.15. 查询所有主机salt的版本号是多少？</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">19.7.16. 远程执行模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">19.7.17. 用户管理模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cron">19.7.18. cron模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cp">19.7.19. cp模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dnsutil">19.7.20. dnsutil模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file">19.7.21. file模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#iptables">19.7.22. iptables模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#netwrok">19.7.23. netwrok模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pkg">19.7.24. pkg包管理模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#service">19.7.25. Service服务模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#grains">19.7.26. 被控端主机定制grains数据</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">19.7.27. 通过配置文件安装程序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#httpd">19.7.28. 批量安装httpd服务</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id19">19.7.29. 批量安装常用命令</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dns">19.7.30. 批量设置所有主机的DNS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sysctl-conf">19.7.31. 批量设置所有主机的sysctl.conf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id20">19.7.32. 编写自己的模块代码</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html">19.8. 业务服务监控详解</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.Supervisor%E5%9C%A8Devops%E5%B7%A5%E4%BD%9C%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8.html">19.9. Supervisor在Devops工作中的应用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E7%BD%91%E9%A1%B5%E8%87%AA%E5%8A%A8%E5%8C%96%E5%BC%80%E5%8F%91.html">19.10. 网页自动化开发</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.Conda%E5%88%9B%E5%BB%BApython%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83.html">19.11. Conda创建python虚拟环境</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">19. </span>Python自动化运维最佳实践</a> &raquo;</li>
+      <li><span class="section-number">19.7. </span>Saltstack安装使用入门（自己总结）</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/20.Python自动化运维最佳实践/05.Saltstack安装使用入门.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#saltstack" id="id21">Saltstack安装使用入门（自己总结）</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id22">安装部署篇：</a></p></li>
+<li><p><a class="reference internal" href="#saltstacksaltstack" id="id23">快速入门SaltStack快速入门SaltStack</a></p></li>
+<li><p><a class="reference internal" href="#centos67-yum" id="id24">默认以CentOS6、7为例，采用yum安装</a></p></li>
+<li><p><a class="reference internal" href="#epel" id="id25">安装EPEL</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id26">修改主机名和域名解析</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id27">服务器端安装</a></p></li>
+<li><p><a class="reference internal" href="#centos-6-7" id="id28">centos 6/7 启动/重启/停止命令</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id29">Saltstack防火墙配置</a></p></li>
+<li><p><a class="reference internal" href="#minion" id="id30">客户端minion程序安装</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id31">查看自动认证状况</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id32">使用基础</a></p></li>
+<li><p><a class="reference internal" href="#salt-master" id="id33">salt-master上常用的命令：</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id34">所有主机查看系统</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id35">查看所有节点名称</a></p></li>
+<li><p><a class="reference internal" href="#salt" id="id36">查询所有主机salt的版本号是多少？</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id37">远程执行模块</a></p>
+<ul>
+<li><p><a class="reference internal" href="#cmd" id="id38">命令执行模块cmd</a></p></li>
+<li><p><a class="reference internal" href="#pkg-install" id="id39">使用pkg.install来安装程序包</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id40">查看已安装软件的版本信息</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id41">删除已安装的软件包</a></p></li>
+<li><p><a class="reference internal" href="#id12" id="id42">查看服务状态</a></p></li>
+<li><p><a class="reference internal" href="#id13" id="id43">停止远程服务</a></p></li>
+<li><p><a class="reference internal" href="#id14" id="id44">使用命令查看远程服务启动状态</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id15" id="id45">用户管理模块</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id16" id="id46">添加用户</a></p></li>
+<li><p><a class="reference internal" href="#id17" id="id47">查看用户信息</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#cron" id="id48">cron模块</a></p></li>
+<li><p><a class="reference internal" href="#cp" id="id49">cp模块</a></p></li>
+<li><p><a class="reference internal" href="#dnsutil" id="id50">dnsutil模块</a></p></li>
+<li><p><a class="reference internal" href="#file" id="id51">file模块</a></p></li>
+<li><p><a class="reference internal" href="#iptables" id="id52">iptables模块</a></p></li>
+<li><p><a class="reference internal" href="#netwrok" id="id53">netwrok模块</a></p></li>
+<li><p><a class="reference internal" href="#pkg" id="id54">pkg包管理模块</a></p></li>
+<li><p><a class="reference internal" href="#service" id="id55">Service服务模块</a></p></li>
+<li><p><a class="reference internal" href="#grains" id="id56">被控端主机定制grains数据</a></p></li>
+<li><p><a class="reference internal" href="#id18" id="id57">通过配置文件安装程序</a></p></li>
+<li><p><a class="reference internal" href="#httpd" id="id58">批量安装httpd服务</a></p></li>
+<li><p><a class="reference internal" href="#id19" id="id59">批量安装常用命令</a></p></li>
+<li><p><a class="reference internal" href="#dns" id="id60">批量设置所有主机的DNS</a></p></li>
+<li><p><a class="reference internal" href="#sysctl-conf" id="id61">批量设置所有主机的sysctl.conf</a></p></li>
+<li><p><a class="reference internal" href="#id20" id="id62">编写自己的模块代码</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="saltstack">
+<h1><a class="toc-backref" href="#id21"><span class="section-number">19.7. </span>Saltstack安装使用入门（自己总结）</a><a class="headerlink" href="#saltstack" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">19.7.1. </span>安装部署篇：</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>salt-master启动时会自动监听两个端口4505和4506
+4506的作用：Salt Master Ret接口：支持认证、文件服务、结果收集等功能
+4505的作用：Salt Master pub接口，提供远程执行命令发送功能
+Salt minion启动时会从配置文件中获取master的地址，如果是域名会进行解析，解析完成之后，会连接master的4506（Ret接口）
+进行key认证，认证通过会获取到master的publish_port（4505） 然后连接publist_port订阅来自master pub接口的任务，
+当master下发操作指令时，所有的 minion都能接收到， 然后 minion会检查本机是否匹配。如果匹配，则执行。
+执行完毕后把结果发生到master的4506（Ret接口），由 master进行处理。命令发送通信完全是异步的。命令包很小。命令都
+通过maqpack进行数据压缩，所以Salt的网络负载非常低。
+</pre></div>
+</div>
+</section>
+<section id="saltstacksaltstack">
+<h2><a class="toc-backref" href="#id23"><span class="section-number">19.7.2. </span>快速入门SaltStack快速入门SaltStack</a><a class="headerlink" href="#saltstacksaltstack" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1.Master：控制中心,salt命令运行和资源状态管理
+2.Minion : 需要管理的客户端机器,会主动去连接Mater端,并从Master端得到资源状态
+信息,同步资源管理信息
+3.States：配置管理的指令集
+4.Modules：在命令行中和配置文件中使用的指令模块,可以在命令行中运行
+5.Grains：minion端的变量,静态的
+6.Pillar：minion端的变量,动态的比较私密的变量,可以通过配置文件实现同步minions定义
+7.highstate：为minion端下发永久添加状态,从sls配置文件读取.即同步状态配置
+8.salt_schedule：会自动保持客户端配置
+</pre></div>
+</div>
+</section>
+<section id="centos67-yum">
+<h2><a class="toc-backref" href="#id24"><span class="section-number">19.7.3. </span>默认以CentOS6、7为例，采用yum安装</a><a class="headerlink" href="#centos67-yum" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>还有其它安装方式，如pip、源码、salt-bootstrap</p></li>
+</ul>
+</section>
+<section id="epel">
+<h2><a class="toc-backref" href="#id25"><span class="section-number">19.7.4. </span>安装EPEL</a><a class="headerlink" href="#epel" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>由于目前RHEL官网yum源还没有Saltstack的安装包支持，因此先
+安装EPEL作为部署Saltstack的默认yum源。
+·RHEL（CentOS）5版本：rpm-Uvh下载地址：
+http://mirror.pnl.gov/epel/5/i386/epel-release-5-4.noarch.rpm
+
+·RHEL（CentOS）6版本：rpm-Uvh下载地址：
+http://ftp.linux.ncsu.edu/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+
+mkdir /home/saltstack
+wget http://mirrors.ustc.edu.cn/fedora/epel//epel-release-latest-7.noarch.rpm
+rpm -ivh epel-release-latest-7.noarch.rpm
+或者
+rpm -ivh http://mirrors.ustc.edu.cn/fedora/epel//epel-release-latest-7.noarch.rpm
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id26"><span class="section-number">19.7.5. </span>修改主机名和域名解析</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>#修改主机名</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>vim /etc/hostname
+master
+
+vim /etc/hostname
+minion-one
+
+#修改主机名和IP解析
+vim /etc/hosts两台主机hosts文件后面分别加上：
+192.168.200.128 master
+192.168.200.129 minion-one
+
+#使用命令添加
+cat &gt; /etc/hosts &lt;&lt;EOF
+192.168.200.128 master
+192.168.200.129 minion-one
+EOF
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id27"><span class="section-number">19.7.6. </span>服务器端安装</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>salt-master安装:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yum</span> <span class="n">install</span> <span class="n">salt</span><span class="o">-</span><span class="n">master</span>
+<span class="n">chkconfig</span> <span class="n">salt</span><span class="o">-</span><span class="n">master</span> <span class="n">on</span>
+
+<span class="n">master端的配置文件是在</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">master</span>     <span class="c1">#配置文件的：后面一定要加上空格！！！！！！！</span>
+<span class="n">对于此配置文件的详细配置可以查看</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">docs</span><span class="o">.</span><span class="n">saltstack</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">latest</span><span class="o">/</span><span class="n">ref</span><span class="o">/</span><span class="n">configuration</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">html</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># cat /etc/salt/master| grep -v &quot;^$&quot; | grep -v &quot;#&quot;</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@hujianli</span><span class="o">-</span><span class="n">linux</span> <span class="n">hujianli</span><span class="p">]</span><span class="c1"># sed -e &#39;/^$/d;/^#/d&#39; /etc/salt/master</span>
+
+<span class="n">interface</span><span class="p">:</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span>  <span class="c1">#绑定Master通信IP；</span>
+<span class="n">auto_accept</span><span class="p">:</span> <span class="kc">True</span>   <span class="c1">#自动认证，避免手动运行salt-key来确认证书信任；不需要手动执行 salt-key -A -y</span>
+<span class="n">file_roots</span><span class="p">:</span>         <span class="c1">#指定Saltstack文件根目录位置</span>
+   <span class="n">base</span><span class="p">:</span>
+     <span class="o">-</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">init</span>
+   <span class="n">test</span><span class="p">:</span>
+     <span class="o">-</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">test</span>
+   <span class="n">prod</span><span class="p">:</span>
+     <span class="o">-</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">prod</span>
+   <span class="n">dev</span><span class="p">:</span>
+     <span class="o">-</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">dev</span>
+<span class="n">log_file</span><span class="p">:</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">master</span>
+<span class="n">key_logfile</span><span class="p">:</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">key</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>salt-master配置</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>更改配置
+注意格式！ 冒号后一定要空格！别问我怎么知道的
+vim /etc/salt/master
+
+interface: 127.0.0.1
+//冒号后一定要空格!!
+//master节点的外部ip
+user: root
+//运行Salt进程用户
+conf_file: /etc/salt/master
+//主配置文件路径
+pki_dir: /etc/salt/pki/master
+//存储pki身份验证密钥的目录 默认即可
+cachedir: /data/cache/salt/master
+//缓存路径指定空间较大目录下 默认即可
+keep_jobs: 4
+//设置保留旧作业信息的小时数。请注意，设置此选项可0禁用缓存清理程序，如果mimion节点超过1000建议此配置设置小
+gather_job_timeout: 10
+//客户端请求有关正在运行的作业的信息时等待的秒数
+job_cache: True
+//缓存文件到本地
+worker_threads: 25
+//开启的线程数，根据主机资源而定
+auto_accept: Flase
+//此设置是否自动接受来自minion的所有传入公钥
+hash_type: sha256
+//hash_type是在主服务器上发现文件的哈希时使用的哈希。默认值为sha256，但也支持md5，sha1，sha224，sha384和sha512
+log_file: /data/log/salt/master
+key_logfile: /data/log/salt/key
+syndic_master: 127.0.0.1
+//super master 服务器ip地址
+//可以调度master节点的master
+syndic_master_port: 4506
+//master 端口号
+syndic_log_file: /data/log/salt/syndic
+syndic_wait: 15
+
+配置开机启动：
+/etc/init.d/salt-maser master
+chkconfig salt-master on
+</pre></div>
+</div>
+</section>
+<section id="centos-6-7">
+<h2><a class="toc-backref" href="#id28"><span class="section-number">19.7.7. </span>centos 6/7 启动/重启/停止命令</a><a class="headerlink" href="#centos-6-7" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    #启动/重启/停止salt-master命令
+    systemctl start salt-master
+    systemctl restart salt-master
+    systemctl stop salt-master
+
+* centos 6
+    service salt-master start
+    注：需要iptables开启master端4505、4506端口
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id29"><span class="section-number">19.7.8. </span>Saltstack防火墙配置</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>在主控端添加TCP 4505、TCP 4506的规则，而在被控端无须配置
+防火墙，原理是被控端直接与主控端的zeromq建立长链接，接收广播到
+的任务信息并执行，具体操作是添加两条iptables规则：
+iptables -I INPUT -m state --state new -m tcp -p tcp --dport 4505 -j ACCEPT
+iptables -I INPUT -m state --state new -m tcp -p tcp --dport 4506 -j ACCEPT
+</pre></div>
+</div>
+</section>
+<section id="minion">
+<h2><a class="toc-backref" href="#id30"><span class="section-number">19.7.9. </span>客户端minion程序安装</a><a class="headerlink" href="#minion" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>salt-minion安装:
+yum install salt-minion
+chkconfig salt-minion on
+#重启：
+salt-minion -d
+#停止/启动/重启salt-minion
+systemctl stop/start/restart salt-minion
+
+
+#minion端的配置文件是在 /etc/salt/minion
+对于此配置文件的详细配置可以查看 http://docs.saltstack.org/en/latest/ref/configuration/minion.html
+#指定master主机IP地址
+master： 192.168.1.20
+#修改被控端主机识别id，建议使用操作系统主机名来配置
+id： SN2013-08-021
+#查看客户端agent监听情况，看日志输出
+tail -f /var/log/salt/minion
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id31"><span class="section-number">19.7.10. </span>查看自动认证状况</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    ·salt-key–L，显示已经或未认证的被控端id，Accepted Keys为已认
+    证清单，Unaccepted Keys为未认证清单；
+    ·salt-key–D，删除所有认证主机id证书；
+    ·salt-key-d id，删除单个id证书；
+    ·salt-key–A，接受所有id证书请求；
+    ·salt-key-a id，接受单个id证书请求。
+
+salt-key -L    #查看当前证书签证情况
+Accepted Keys:
+Unaccepted Keys:
+10.252.137.141
+Rejected Keys:
+
+salt-key -A -y   ########同意签证所有没有接受的签证情况
+The following keys are going to be accepted:
+Unaccepted Keys:
+10.252.137.141
+Key for minion 10.252.137.141 accepted.
+
+
+salt-key -L         #查看证书签证的接收情况
+Accepted Keys:
+10.252.137.141
+Unaccepted Keys:
+Rejected Keys:
+
+[root@hujianli-linux salt]# salt-key -f minion-one          #master上查看秘钥指纹
+Accepted Keys:
+minion-one:  a3:be:e8:7c:ac:64:44:2b:ab:70:f1:b0:77:9b:de:ce
+
+[root@web01 ~]# salt-call --local key.finger                #主控端查看秘钥指纹
+local:
+    a3:be:e8:7c:ac:64:44:2b:ab:70:f1:b0:77:9b:de:ce
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id32"><span class="section-number">19.7.11. </span>使用基础</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>salt后主机名称支持正则，支持列表
+
+* : #表示任意字符串，也可以是空字符串
+? : #表示一个字符，不可以为空
+[...]: #字符集合，[a~z]表示任何一个小写字母，[0~9]代表数字
+一般字符： #匹配自身
+.: #匹配任意换行字符&#39;\n&#39;外的字符
+\:  #转义字符
+\d: #数字[0~9]
+\D: #非数字[^\d]
+\s: #空白字符[&lt;空格&gt;\t\n\r\f\v]
+\S: #非空白字符[^\s]
+\w: #单词字符：[A-Za-Z0-9_]
+\W: #非单词字符:[^\w]
++：  #匹配字符1次或者无限次
+{m}:    #匹配前一个字母m次
+-E，--pcre， #通过正则表达式进行匹配。示例：控测SN2013字符开头的主机id名是否连通，命令：salt -E&#39;^SN2013.*&#39;test.ping
+
+-L，--list， #以主机id名列表的形式进行过滤，格式与Python的列表相似，即不同主机id名称使用逗号分隔。示例：获取主机id名为
+SN2013-08-021、SN2013-08-022；
+
+    #获取完整操作系统发行版名称，命令：salt -L &#39;SN2013-08-021，SN2013-08-022&#39; grains.item osfullname
+    [root@hujianli-linux salt]# salt -L &#39;minion-one&#39; test.ping
+    minion-one:
+        True
+    [root@hujianli-linux salt]# salt -L &#39;minion-one,minion-two,minion-three&#39; test.ping
+    minion-one:
+        True
+
+-N，--nodegroup， #根据主控端master配置文件中的分组名称进行过滤。使用配置文件里面的分组方式进行匹配
+
+-C，--compound， #根据条件运算符not、and、or去匹配不同规则的主机信息
+
+-S，--ipcidr， #根据被控主机的IP地址或IP子网进行匹配，示例
+如下：
+salt -S 192.168.0.0/16 test.ping
+
+[root@hujianli-linux salt]# salt -E &#39;^minion-.*&#39; test.ping
+minion-one:
+    True
+
+[root@hujianli-linux salt]# salt -E &#39;minion-(one)?&#39; test.ping
+minion-one:
+    True
+
+[root@hujianli-linux salt]# salt -E &#39;.*-one$&#39; test.ping
+minion-one:
+    True
+</pre></div>
+</div>
+</section>
+<section id="salt-master">
+<h2><a class="toc-backref" href="#id33"><span class="section-number">19.7.12. </span>salt-master上常用的命令：</a><a class="headerlink" href="#salt-master" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#所有主机ping包测试</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; test.ping</span>
+<span class="n">ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mf">191.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">internal</span><span class="p">:</span>
+    <span class="kc">True</span>
+
+<span class="c1">#查看test模块包含的其他函数</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@hujianli</span><span class="o">-</span><span class="n">linux</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;minion-one&#39; sys.list_functions test</span>
+<span class="n">minion</span><span class="o">-</span><span class="n">one</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">arg</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">arg_repr</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">arg_type</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">assertion</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">attr_call</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">collatz</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">conf_test</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">cross_test</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">echo</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">exception</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">fib</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">get_opts</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">kwarg</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">module_report</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">not_loaded</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">opts_pkg</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">outputter</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">ping</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">provider</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">providers</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">rand_sleep</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">rand_str</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">retcode</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">sleep</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">stack</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">try_</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">tty</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">version</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">versions_information</span>
+    <span class="o">-</span> <span class="n">test</span><span class="o">.</span><span class="n">versions_report</span>
+
+
+<span class="c1">#获取所有的状态模块，</span>
+<span class="n">salt</span> <span class="s2">&quot;*&quot;</span> <span class="n">sys</span><span class="o">.</span><span class="n">list_modules</span>
+<span class="n">salt</span> <span class="s2">&quot;*&quot;</span> <span class="n">sys</span><span class="o">.</span><span class="n">list_modules</span><span class="o">|</span> <span class="n">grep</span> <span class="n">acl</span>
+
+<span class="c1">#列举状态模块中的所有函数</span>
+<span class="n">salt</span> <span class="s2">&quot;*&quot;</span> <span class="n">sys</span><span class="o">.</span><span class="n">list_state_functions</span> <span class="n">pkg</span>
+<span class="n">ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mf">191.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">internal</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">pkg</span><span class="o">.</span><span class="n">installed</span>
+    <span class="o">-</span> <span class="n">pkg</span><span class="o">.</span><span class="n">latest</span>
+    <span class="o">-</span> <span class="n">pkg</span><span class="o">.</span><span class="n">mod_aggregate</span>
+    <span class="o">-</span> <span class="n">pkg</span><span class="o">.</span><span class="n">mod_init</span>
+    <span class="o">-</span> <span class="n">pkg</span><span class="o">.</span><span class="n">purged</span>
+    <span class="o">-</span> <span class="n">pkg</span><span class="o">.</span><span class="n">removed</span>
+    <span class="o">-</span> <span class="n">pkg</span><span class="o">.</span><span class="n">uptodate</span>
+
+<span class="c1">#查看所有主机的内存状态</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &quot;*&quot; cmd.run &quot;free -m&quot;</span>
+<span class="n">ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mf">191.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">internal</span><span class="p">:</span>
+                  <span class="n">total</span>        <span class="n">used</span>        <span class="n">free</span>      <span class="n">shared</span>  <span class="n">buff</span><span class="o">/</span><span class="n">cache</span>   <span class="n">available</span>
+    <span class="n">Mem</span><span class="p">:</span>            <span class="mi">990</span>         <span class="mi">131</span>         <span class="mi">208</span>          <span class="mi">12</span>         <span class="mi">650</span>         <span class="mi">658</span>
+    <span class="n">Swap</span><span class="p">:</span>             <span class="mi">0</span>           <span class="mi">0</span>           <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id34"><span class="section-number">19.7.13. </span>所有主机查看系统</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">grains</span><span class="o">.</span><span class="n">get</span> <span class="n">os</span>
+<span class="n">或者</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@hujianli</span><span class="o">-</span><span class="n">linux</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; grains.item osfullname</span>
+<span class="n">minion</span><span class="o">-</span><span class="n">one</span><span class="p">:</span>
+    <span class="o">----------</span>
+    <span class="n">osfullname</span><span class="p">:</span>
+        <span class="n">CentOS</span> <span class="n">Linux</span>
+
+
+<span class="n">grains查看minion本身固有属性的静态数据</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@hujianli</span><span class="o">-</span><span class="n">linux</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;minion-one&#39; grains.item os</span>
+<span class="n">minion</span><span class="o">-</span><span class="n">one</span><span class="p">:</span>
+    <span class="o">----------</span>
+    <span class="n">os</span><span class="p">:</span>
+        <span class="n">CentOS</span>
+
+
+
+<span class="n">开启命令的详细描述</span> <span class="o">-</span><span class="n">v</span> <span class="n">或者</span> <span class="o">-</span><span class="n">verbose</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@hujianli</span><span class="o">-</span><span class="n">linux</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt --verbose &quot;*&quot; cmd.run_all &quot;echo my salt&quot;</span>
+<span class="n">Executing</span> <span class="n">job</span> <span class="k">with</span> <span class="n">jid</span> <span class="mi">20181018213058967893</span>
+<span class="o">-------------------------------------------</span>
+
+<span class="n">minion</span><span class="o">-</span><span class="n">one</span><span class="p">:</span>
+    <span class="o">----------</span>
+    <span class="n">pid</span><span class="p">:</span>
+        <span class="mi">1929</span>
+    <span class="n">retcode</span><span class="p">:</span>
+        <span class="mi">0</span>
+    <span class="n">stderr</span><span class="p">:</span>
+    <span class="n">stdout</span><span class="p">:</span>
+        <span class="n">my</span> <span class="n">salt</span>
+
+
+<span class="o">--</span><span class="n">summary</span> <span class="n">显示一条命令的概要</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@hujianli</span><span class="o">-</span><span class="n">linux</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt --summary &#39;*&#39; cmd.run_all &quot;echo my salt&quot;</span>
+<span class="n">minion</span><span class="o">-</span><span class="n">one</span><span class="p">:</span>
+    <span class="o">----------</span>
+    <span class="n">pid</span><span class="p">:</span>
+        <span class="mi">1936</span>
+    <span class="n">retcode</span><span class="p">:</span>
+        <span class="mi">0</span>
+    <span class="n">stderr</span><span class="p">:</span>
+    <span class="n">stdout</span><span class="p">:</span>
+        <span class="n">my</span> <span class="n">salt</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p>Summary -—————————————— # of Minions Targeted: 1 # of Minions Returned:
+1 # of Minions Did Not Return: 0 -——————————————</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>--out=json  控制命令的输出，以json格式输出  --out=yaml #以yaml格式输出
+[root@hujianli-linux salt]# salt --out=json &quot;*&quot; cmd.run_all &quot;echo my salt&quot;
+{
+    &quot;minion-one&quot;: {
+        &quot;pid&quot;: 1942,
+        &quot;retcode&quot;: 0,
+        &quot;stderr&quot;: &quot;&quot;,
+        &quot;stdout&quot;: &quot;my salt&quot;
+    }
+}
+
+[root@hujianli-linux salt]# salt --out=yaml &quot;*&quot; cmd.run_all &quot;echo my salt&quot;
+minion-one:
+  pid: 1948
+  retcode: 0
+  stderr: &#39;&#39;
+  stdout: my salt
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id35"><span class="section-number">19.7.14. </span>查看所有节点名称</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">grains</span><span class="o">.</span><span class="n">get</span> <span class="n">nodename</span>
+</pre></div>
+</div>
+</section>
+<section id="salt">
+<h2><a class="toc-backref" href="#id36"><span class="section-number">19.7.15. </span>查询所有主机salt的版本号是多少？</a><a class="headerlink" href="#salt" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">grains</span><span class="o">.</span><span class="n">get</span> <span class="n">saltversion</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">grains</span><span class="o">.</span><span class="n">item</span> <span class="n">saltversion</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id37"><span class="section-number">19.7.16. </span>远程执行模块</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<section id="cmd">
+<h3><a class="toc-backref" href="#id38">命令执行模块cmd</a><a class="headerlink" href="#cmd" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">cmd</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;ps aux | wc -l&quot;</span>
+<span class="c1">#查看详细信息的函数</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">cmd</span><span class="o">.</span><span class="n">run_all</span> <span class="s2">&quot;ps aux | wc -l&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="pkg-install">
+<h3><a class="toc-backref" href="#id39">使用pkg.install来安装程序包</a><a class="headerlink" href="#pkg-install" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">pkg</span><span class="o">.</span><span class="n">install</span> <span class="s2">&quot;lrzsz&quot;</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">pkg</span><span class="o">.</span><span class="n">install</span> <span class="s2">&quot;httpd&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id40">查看已安装软件的版本信息</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">pkg</span><span class="o">.</span><span class="n">version</span> <span class="s1">&#39;httpd&#39;</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">pkg</span><span class="o">.</span><span class="n">install</span> <span class="s2">&quot;lsof&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3><a class="toc-backref" href="#id41">删除已安装的软件包</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@hujianli</span><span class="o">-</span><span class="n">linux</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;minion-one&#39; pkg.remove &#39;httpd&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h3><a class="toc-backref" href="#id42">查看服务状态</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">base</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; service.status httpd</span>
+<span class="n">ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mf">191.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">internal</span><span class="p">:</span>
+    <span class="kc">True</span>
+<span class="c1">#如果是True表示服务启动正常，如果是False表示服务启动失败</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">base</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; service.status mysql</span>
+<span class="n">ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mf">191.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">internal</span><span class="p">:</span>
+    <span class="kc">False</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h3><a class="toc-backref" href="#id43">停止远程服务</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">base</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; service.stop httpd</span>
+<span class="n">ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mf">191.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">internal</span><span class="p">:</span>
+    <span class="kc">True</span>
+<span class="c1">#启动远程服务</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">base</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; service.start httpd</span>
+<span class="n">ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mf">191.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">internal</span><span class="p">:</span>
+    <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h3><a class="toc-backref" href="#id44">使用命令查看远程服务启动状态</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[root@hujianli-linux salt]# salt &quot;*&quot; cmd.run &quot;ps aux| grep httpd| grep -v grep&quot;
+minion-one:
+    root       2190  0.1  0.5 224020  5024 ?        Ss   06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+    apache     2191  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+    apache     2192  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+    apache     2195  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+    apache     2196  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+    apache     2197  0.0  0.2 224020  2956 ?        S    06:02   0:00 /usr/sbin/httpd -DFOREGROUND
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id15">
+<h2><a class="toc-backref" href="#id45"><span class="section-number">19.7.17. </span>用户管理模块</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<section id="id16">
+<h3><a class="toc-backref" href="#id46">添加用户</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; user.add &#39;xiaojian&#39;</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@hujianli</span><span class="o">-</span><span class="n">linux</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;minion-one&#39; user.add &#39;hujianli2&#39;</span>
+<span class="c1">#删除用户</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; user.delete &#39;xiaojian&#39;</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@hujianli</span><span class="o">-</span><span class="n">linux</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;minion-one&#39; user.delete &#39;hujianli2&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id17">
+<h3><a class="toc-backref" href="#id47">查看用户信息</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; user.info root</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cron">
+<h2><a class="toc-backref" href="#id48"><span class="section-number">19.7.18. </span>cron模块</a><a class="headerlink" href="#cron" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>功能：实现被控主机的crontab操作。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#查看所有主机的cron
+[root@ip-172-31-21-197 salt]# salt &#39;*&#39; cron.raw_cron root
+ip-172-31-17-191.us-east-2.compute.internal:
+    20 15  *  *  * `cd /home/rzrk//server/pyScripts; /usr/bin/python calcManageFee.py`
+
+#为所有主机添加计划任务
+[root@ip-172-31-21-197 salt]# salt &#39;*&#39; cron.set_job root &#39;*&#39; &#39;*&#39; &#39;*&#39; &#39;*&#39; 1 /usr/local/weekly
+ip-172-31-17-191.us-east-2.compute.internal:
+    new
+
+#删除所有主机上的计划任务
+[root@ip-172-31-21-197 salt]# salt &#39;*&#39; cron.rm_job root /usr/local/weekly
+ip-172-31-17-191.us-east-2.compute.internal:
+    removed
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="cp">
+<h2><a class="toc-backref" href="#id49"><span class="section-number">19.7.19. </span>cp模块</a><a class="headerlink" href="#cp" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#功能：实现远程文件、目录的复制，以及下载URL文件等操作。
+        #将指定被控主机的/etc/hosts文件复制到被控主机本地的salt  cache目录
+        （/var/cache/salt/minion/localfiles/）；
+        salt &#39;*&#39; cp.cache_local_file /etc/hosts
+        #将主服务器file_roots指定位置下的目录复制到被控主机
+        salt &#39;*&#39; cp.get_dir salt：//path/to/dir/ /minion/dest
+        #将主服务器file_roots指定位置下的文件复制到被控主机
+        salt &#39;*&#39; cp.get_file salt：//path/to/file /minion/dest
+        #下载URL内容到被控主机指定位置
+        salt &#39;*&#39; cp.get_url http：//www.slashdot.org /tmp/index.html
+</pre></div>
+</div>
+</section>
+<section id="dnsutil">
+<h2><a class="toc-backref" href="#id50"><span class="section-number">19.7.20. </span>dnsutil模块</a><a class="headerlink" href="#dnsutil" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#功能：实现被控主机通用DNS相关操作。
+        #添加指定被控主机hosts的主机配置项
+        salt  &#39;*&#39;  dnsutil.hosts_append  /etc/hosts  127.0.0.1  ad1.yuk.com，
+        ad2.yuk.com
+        #删除指定被控主机hosts的主机配置项
+        salt &#39;*&#39; dnsutil.hosts_remove /etc/hosts ad1.yuk.com
+</pre></div>
+</div>
+</section>
+<section id="file">
+<h2><a class="toc-backref" href="#id51"><span class="section-number">19.7.21. </span>file模块</a><a class="headerlink" href="#file" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#查看文件状态</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; file.stats /etc/yum.conf</span>
+
+<span class="c1">#文件属组修改</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">salt</span><span class="p">]</span><span class="c1"># salt &#39;*&#39; file.chown /etc/passwd root root</span>
+<span class="n">ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">17</span><span class="o">-</span><span class="mf">191.</span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mf">2.</span><span class="n">compute</span><span class="o">.</span><span class="n">internal</span><span class="p">:</span>
+<span class="kc">None</span>
+<span class="c1">#功能：被控主机文件常见操作，包括文件读写、权限、查找、校验等。</span>
+<span class="c1">#校验所有被控主机/etc/fstab文件的md5是否为6254e84e2f6ffa54e0c8d9cb230f5505，一致</span>
+<span class="n">则返回True</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">check_hash</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">fstab</span> <span class="n">md5</span><span class="o">=</span><span class="mf">6254e84</span><span class="n">e2f6ffa54e0c8d9cb230f5505</span>
+<span class="c1">#校验所有被控主机文件的加密信息、支持md5、sha1、sha224、sha256、sha384、sha512加密算</span>
+<span class="n">法</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">get_sum</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span> <span class="n">md5</span>
+<span class="c1">#修改所有被控主机/etc/passwd文件的属组、用户权限，等价于chown  root：root</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">chown</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span> <span class="n">root</span> <span class="n">root</span>
+<span class="c1">#复制所有被控主机本地/path/to/src文件到本地的/path/to/dst文件</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">copy</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">src</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">dst</span>
+<span class="c1">#检查所有被控主机/etc目录是否存在，存在则返回True，检查文件是否存在使用</span>
+<span class="n">file</span><span class="o">.</span><span class="n">file_exists方法</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">directory_exists</span> <span class="o">/</span><span class="n">etc</span>
+<span class="c1">#获取所有被控主机/etc/passwd的stats信息</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">stats</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span>
+<span class="c1">#获取所有被控主机/etc/passwd的权限mode，如755、644</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">get_mode</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span>
+<span class="c1">#修改所有被控主机/etc/passwd的权限mode为0644</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">set_mode</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">passwd</span> <span class="mi">0644</span>
+<span class="c1">#在所有被控主机创建/opt/test目录</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">mkdir</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">test</span>
+<span class="c1">#将所有被控主机/etc/httpd/httpd.conf文件的LogLevel参数的warn值修改成info</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">sed</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">httpd</span><span class="o">/</span><span class="n">httpd</span><span class="o">.</span><span class="n">conf</span> <span class="s1">&#39;LogLevel warn&#39;</span> <span class="s1">&#39;LogLevel info&#39;</span>
+<span class="c1">#给所有被控主机的/tmp/test/test.conf文件追加内容&quot;maxclient 100&quot;</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">append</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="n">test</span><span class="o">.</span><span class="n">conf</span> <span class="s2">&quot;maxclient 100&quot;</span>
+<span class="c1">#删除所有被控主机的/tmp/foo文件</span>
+<span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">file</span><span class="o">.</span><span class="n">remove</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">foo</span>
+</pre></div>
+</div>
+</section>
+<section id="iptables">
+<h2><a class="toc-backref" href="#id52"><span class="section-number">19.7.22. </span>iptables模块</a><a class="headerlink" href="#iptables" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#功能：被控主机iptables支持。
+        #在所有被控端主机追加（append）、插入（insert）iptables规则，其中INPUT为输入链
+        salt &#39;*&#39; iptables.append filter INPUT rule=&#39;-m state --state RELATED，
+        ESTABLISHED -j ACCEPT&#39;
+        salt &#39;*&#39; iptables.insert filter INPUT position=3 rule=&#39;-m state --state
+        RELATED，ESTABLISHED -j ACCEPT&#39;
+        #在所有被控端主机删除指定链编号为3（position=3）或指定存在的规则
+        salt &#39;*&#39; iptables.delete filter INPUT position=3
+        salt &#39;*&#39; iptables.delete filter INPUT rule=&#39;-m state --state RELATED，
+        ESTABLISHED -j ACCEPT&#39;
+        #保存所有被控端主机规则到本地硬盘（/etc/sysconfig/iptables）
+        salt &#39;*&#39; iptables.save /etc/sysconfig/iptables
+</pre></div>
+</div>
+</section>
+<section id="netwrok">
+<h2><a class="toc-backref" href="#id53"><span class="section-number">19.7.23. </span>netwrok模块</a><a class="headerlink" href="#netwrok" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#返回被控主机网络信息。</span>
+        <span class="c1">#在指定被控主机&#39;SN2013-08-022&#39;获取dig、ping、traceroute目录域名信息</span>
+        <span class="n">salt</span> <span class="s1">&#39;SN2013-08-022&#39;</span> <span class="n">network</span><span class="o">.</span><span class="n">dig</span> <span class="n">www</span><span class="o">.</span><span class="n">qq</span><span class="o">.</span><span class="n">com</span>
+        <span class="n">salt</span> <span class="s1">&#39;SN2013-08-022&#39;</span> <span class="n">network</span><span class="o">.</span><span class="n">ping</span> <span class="n">www</span><span class="o">.</span><span class="n">qq</span><span class="o">.</span><span class="n">com</span>
+        <span class="n">salt</span> <span class="s1">&#39;SN2013-08-022&#39;</span> <span class="n">network</span><span class="o">.</span><span class="n">traceroute</span> <span class="n">www</span><span class="o">.</span><span class="n">qq</span><span class="o">.</span><span class="n">com</span>
+        <span class="c1">#获取指定被控主机&#39;SN2013-08-022&#39;的MAC地址</span>
+        <span class="n">salt</span> <span class="s1">&#39;SN2013-08-022&#39;</span> <span class="n">network</span><span class="o">.</span><span class="n">hwaddr</span> <span class="n">eth0</span>
+        <span class="c1">#检测指定被控主机&#39;SN2013-08-022&#39;是否属于10.0.0.0/16子网范围，属于则返回True</span>
+        <span class="n">salt</span> <span class="s1">&#39;SN2013-08-022&#39;</span> <span class="n">network</span><span class="o">.</span><span class="n">in_subnet</span> <span class="mf">10.0</span><span class="o">.</span><span class="mf">0.0</span><span class="o">/</span><span class="mi">16</span>
+        <span class="c1">#获取指定被控主机&#39;SN2013-08-022&#39;的网卡配置信息</span>
+        <span class="n">salt</span> <span class="s1">&#39;SN2013-08-022&#39;</span> <span class="n">network</span><span class="o">.</span><span class="n">interfaces</span>
+        <span class="c1">#获取指定被控主机&#39;SN2013-08-022&#39;的IP地址配置信息</span>
+        <span class="n">salt</span> <span class="s1">&#39;SN2013-08-022&#39;</span> <span class="n">network</span><span class="o">.</span><span class="n">ip_addrs</span>
+        <span class="c1">#获取指定被控主机&#39;SN2013-08-022&#39;的子网信息</span>
+        <span class="n">salt</span> <span class="s1">&#39;SN2013-08-022&#39;</span> <span class="n">network</span><span class="o">.</span><span class="n">subnets</span>
+</pre></div>
+</div>
+</section>
+<section id="pkg">
+<h2><a class="toc-backref" href="#id54"><span class="section-number">19.7.24. </span>pkg包管理模块</a><a class="headerlink" href="#pkg" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#功能：被控主机程序包管理，如yum、apt-get等</span>
+        <span class="c1">#为所有被控主机安装PHP环境，根据不同系统发行版调用不同安装工具进行部署，如redhat平台的yum，等价于yum -y install php</span>
+        <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">pkg</span><span class="o">.</span><span class="n">install</span> <span class="n">php</span>
+        <span class="c1">#卸载所有被控主机的PHP环境</span>
+        <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">pkg</span><span class="o">.</span><span class="n">remove</span> <span class="n">php</span>
+        <span class="c1">#升级所有被控主机的软件包</span>
+        <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">pkg</span><span class="o">.</span><span class="n">upgrade</span>
+</pre></div>
+</div>
+</section>
+<section id="service">
+<h2><a class="toc-backref" href="#id55"><span class="section-number">19.7.25. </span>Service服务模块</a><a class="headerlink" href="#service" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#功能：被控主机程序包服务管理。</span>
+    <span class="c1">#开启（enable）、禁用（disable）nginx开机自启动服务</span>
+    <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">service</span><span class="o">.</span><span class="n">enable</span> <span class="n">nginx</span>
+    <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">service</span><span class="o">.</span><span class="n">disable</span> <span class="n">nginx</span>
+    <span class="c1">#针对nginx服务的reload、restart、start、stop、status操作</span>
+    <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">service</span><span class="o">.</span><span class="n">reload</span> <span class="n">nginx</span>
+    <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">service</span><span class="o">.</span><span class="n">restart</span> <span class="n">nginx</span>
+    <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">service</span><span class="o">.</span><span class="n">start</span> <span class="n">nginx</span>
+    <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">service</span><span class="o">.</span><span class="n">stop</span> <span class="n">nginx</span>
+    <span class="n">salt</span> <span class="s1">&#39;*&#39;</span> <span class="n">service</span><span class="o">.</span><span class="n">status</span> <span class="n">nginx</span>
+</pre></div>
+</div>
+</section>
+<section id="grains">
+<h2><a class="toc-backref" href="#id56"><span class="section-number">19.7.26. </span>被控端主机定制grains数据</a><a class="headerlink" href="#grains" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>修改 etc/salt/minion.d/hostinfo.conf
+cat hostinfo.conf
+grains:
+  roles:
+    - webserver
+    - memcache
+  deployment: datacenter4
+  cabinet: 13
+然后重启salt-minion
+在到服务器上执行：salt &#39;*&#39; grains.items 查看键值对变化
+</pre></div>
+</div>
+</section>
+<section id="id18">
+<h2><a class="toc-backref" href="#id57"><span class="section-number">19.7.27. </span>通过配置文件安装程序</a><a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">init</span><span class="p">]</span><span class="c1"># cat /etc/salt/master| grep -v &quot;^$&quot; | grep -v &quot;#&quot;</span>
+<span class="n">interface</span><span class="p">:</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span>
+<span class="n">auto_accept</span><span class="p">:</span> <span class="kc">True</span>
+<span class="n">file_roots</span><span class="p">:</span>
+   <span class="n">base</span><span class="p">:</span>
+     <span class="o">-</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">init</span>
+   <span class="n">test</span><span class="p">:</span>
+     <span class="o">-</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">test</span>
+   <span class="n">prod</span><span class="p">:</span>
+     <span class="o">-</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">prod</span>
+   <span class="n">dev</span><span class="p">:</span>
+     <span class="o">-</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">dev</span>
+<span class="n">log_file</span><span class="p">:</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">master</span>
+<span class="n">key_logfile</span><span class="p">:</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">salt</span><span class="o">/</span><span class="n">key</span>
+
+
+<span class="c1">#刷新state配置命令</span>
+<span class="n">salt</span> <span class="s2">&quot;*&quot;</span> <span class="n">state</span><span class="o">.</span><span class="n">highstate</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>配置YAML格式文件，YAML固定缩进为2个空格，2个空格一个缩进</p></li>
+<li><p>冒号后面的每一行用一个空格隔开</p></li>
+<li><p>一个短斜杠 - 加一个空格表示一个列表项
+，多个项使用同一的缩进作为同一列表的一部分</p></li>
+</ul>
+</section>
+<section id="httpd">
+<h2><a class="toc-backref" href="#id58"><span class="section-number">19.7.28. </span>批量安装httpd服务</a><a class="headerlink" href="#httpd" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">base</span><span class="p">]</span><span class="c1"># cat apache.sls</span>
+<span class="n">install_httpd</span><span class="p">:</span>
+  <span class="n">pkg</span><span class="o">.</span><span class="n">installed</span><span class="p">:</span>
+   <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">httpd</span>
+
+<span class="n">salt</span> <span class="s2">&quot;*&quot;</span> <span class="n">state</span><span class="o">.</span><span class="n">sls</span> <span class="n">apache</span>  <span class="c1">#进行对远程机器的安装</span>
+</pre></div>
+</div>
+</section>
+<section id="id19">
+<h2><a class="toc-backref" href="#id59"><span class="section-number">19.7.29. </span>批量安装常用命令</a><a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">init</span><span class="p">]</span><span class="c1"># cat yum.sls</span>
+<span class="n">yum</span><span class="o">-</span><span class="nb">list</span><span class="o">-</span><span class="n">init</span><span class="p">:</span>
+  <span class="n">pkg</span><span class="o">.</span><span class="n">installed</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">names</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">gcc</span>
+      <span class="o">-</span> <span class="n">gcc</span><span class="o">-</span><span class="n">c</span><span class="o">++</span>
+      <span class="o">-</span> <span class="n">sysstat</span>
+      <span class="o">-</span> <span class="n">hdparm</span>
+      <span class="o">-</span> <span class="n">man</span>
+      <span class="o">-</span> <span class="n">vim</span><span class="o">-</span><span class="n">enhanced</span>
+      <span class="o">-</span> <span class="n">wget</span>
+      <span class="o">-</span> <span class="n">telnet</span>
+      <span class="o">-</span> <span class="n">lsof</span>
+      <span class="o">-</span> <span class="n">sysstat</span>
+      <span class="o">-</span> <span class="n">lrzsz</span>
+      <span class="o">-</span> <span class="n">tree</span>
+      <span class="o">-</span> <span class="n">hdparm</span>
+<span class="n">salt</span> <span class="s2">&quot;*&quot;</span> <span class="n">state</span><span class="o">.</span><span class="n">sls</span> <span class="n">yum</span>
+</pre></div>
+</div>
+</section>
+<section id="dns">
+<h2><a class="toc-backref" href="#id60"><span class="section-number">19.7.30. </span>批量设置所有主机的DNS</a><a class="headerlink" href="#dns" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">root</span><span class="nd">@ip</span><span class="o">-</span><span class="mi">172</span><span class="o">-</span><span class="mi">31</span><span class="o">-</span><span class="mi">21</span><span class="o">-</span><span class="mi">197</span> <span class="n">init</span><span class="p">]</span><span class="c1"># cat dns.sls</span>
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">resolv</span><span class="o">.</span><span class="n">conf</span><span class="p">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="n">managed</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="p">:</span> <span class="n">salt</span><span class="p">:</span><span class="o">//</span><span class="n">config</span><span class="o">/</span><span class="n">resolv</span><span class="o">.</span><span class="n">conf</span>
+    <span class="o">-</span> <span class="n">user</span><span class="p">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">group</span><span class="p">:</span> <span class="n">root</span>
+    <span class="o">-</span> <span class="n">mode</span><span class="p">:</span> <span class="mi">644</span>
+    <span class="o">-</span> <span class="n">backup</span><span class="p">:</span> <span class="s1">&#39;*&#39;</span>
+
+<span class="n">salt</span> <span class="s2">&quot;*&quot;</span> <span class="n">state</span><span class="o">.</span><span class="n">sls</span> <span class="n">dns</span>
+</pre></div>
+</div>
+</section>
+<section id="sysctl-conf">
+<h2><a class="toc-backref" href="#id61"><span class="section-number">19.7.31. </span>批量设置所有主机的sysctl.conf</a><a class="headerlink" href="#sysctl-conf" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[root@ip-172-31-21-197 init]# tree
+.
+├── apache.sls
+├── config
+│   ├── resolv.conf
+│   └── sysctl.conf
+├── dns.sls
+├── sysctl.sls
+└── yum.sls
+
+[root@ip-172-31-21-197 init]# cat sysctl.sls
+/etc/sysctl.conf:
+  file.managed:
+    - source: salt://config/sysctl.conf
+    - user: root
+    - group: root
+    - mode: 644
+</pre></div>
+</div>
+</section>
+<section id="id20">
+<h2><a class="toc-backref" href="#id62"><span class="section-number">19.7.32. </span>编写自己的模块代码</a><a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h2>
+<p>参考文献</p>
+<p>自动化配置管理工具 SaltStack-03</p>
+<p><a class="reference external" href="http://blog.linuxli.com/2019/07/Saltstack-03/">http://blog.linuxli.com/2019/07/Saltstack-03/</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="04.Ansible%E5%85%A5%E9%97%A8%E4%B8%8Eplaybook%E5%AE%9E%E6%88%98.html" class="btn btn-neutral float-left" title="19.6. Ansible入门与playbook实战" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="06.%E4%B8%9A%E5%8A%A1%E6%9C%8D%E5%8A%A1%E7%9B%91%E6%8E%A7%E8%AF%A6%E8%A7%A3.html" class="btn btn-neutral float-right" title="19.8. 业务服务监控详解" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

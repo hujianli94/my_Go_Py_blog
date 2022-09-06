@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.6. 字典 Dict &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="1.7. 集合 Set()" href="07.%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html" />
+    <link rel="prev" title="1.5. 元祖 Tuple" href="05.%E5%85%83%E7%A5%96%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">1. Python数据类型</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E5%AD%A6%E4%B9%A0.html">1.1. 字符编码学习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E4%BB%A3%E7%A0%81%E6%B3%A8%E9%87%8A.html">1.2. 代码注释</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html">1.3. 字符串数据类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E5%88%97%E8%A1%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html">1.4. 列表 List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%85%83%E7%A5%96%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html">1.5. 元祖 Tuple</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">1.6. 字典 Dict</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">1.6.1. 1.查询表</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">1.6.2. 2. 用字典分支构建程序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">1.6.3. 3.字典键值判断</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getsetdefault">1.6.4. 4. 字典get和setdefault方法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ordereddict">1.6.5. 5. OrderedDict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#defaultdict">1.6.6. 6. defaultdict对象</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html">1.7. 集合 Set()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2.html">1.8. Python数据类型转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E5%85%B3%E4%BA%8E%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D.html">1.9. 深浅拷贝</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.%E5%88%97%E8%A1%A8%E5%AE%9E%E7%8E%B0%E5%A0%86%E5%92%8C%E9%98%9F%E5%88%97.html">1.10. 列表实现堆和队列</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.%E5%86%85%E7%BD%AE%E5%B8%B8%E9%87%8F%E4%B8%8E%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6%E3%80%81%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6.html">1.11. 内置常量与逻辑运算符、比较运算符</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.%E5%86%85%E7%BD%AE%E5%B8%B8%E9%87%8F%E4%B8%8E%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6%E3%80%81%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6.html#in-not-in">1.12. in 和not in</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.%E5%BB%BA%E7%AB%8B%E5%A4%A7%E5%9E%8B%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html">1.13. 建立大型数据结构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.Python%E5%B8%B8%E7%94%A8IDE%E9%9B%86%E6%88%90%E7%8E%AF%E5%A2%83.html">1.14. Python常用IDE集成环境</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">1. </span>Python数据类型</a> &raquo;</li>
+      <li><span class="section-number">1.6. </span>字典 Dict</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/01.Python数据类型/06.字典数据结构.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#dict" id="id9">字典 Dict</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id10">1.查询表</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id11">1.1 字典的内置方法</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id12">1.2 添加/修改/删除字典元素</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id13">1.3 字典推导式</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id14">1.4 字典的重访嵌套</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id15">1.5 字典格式化字符串</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id7" id="id16">2. 用字典分支构建程序</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id17">3.字典键值判断</a></p></li>
+<li><p><a class="reference internal" href="#getsetdefault" id="id18">4. 字典get和setdefault方法</a></p></li>
+<li><p><a class="reference internal" href="#ordereddict" id="id19">5. OrderedDict</a></p></li>
+<li><p><a class="reference internal" href="#defaultdict" id="id20">6. defaultdict对象</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="dict">
+<h1><a class="toc-backref" href="#id9"><span class="section-number">1.6. </span>字典 Dict</a><a class="headerlink" href="#dict" title="Permalink to this headline">¶</a></h1>
+<p>dict()函数创建一个空字典，字典是无序的。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id10"><span class="section-number">1.6.1. </span>1.查询表</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<img alt="../../_images/dict1.PNG" src="../../_images/dict1.PNG" />
+<section id="id2">
+<h3><a class="toc-backref" href="#id11">1.1 字典的内置方法</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">dict</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>                            <span class="c1"># 删除字典中所有元素</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>                             <span class="c1"># 返回字典(浅复制)的一个副本</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span><span class="n">val</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>         <span class="c1"># 创建并返回一个新字典,以seq中的元素做该字典的键,val做该字典中所有键对的初始值</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>              <span class="c1"># 对字典dict中的键key,返回它对应的值value,如果字典中不存在此键,则返回default值</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>                       <span class="c1"># 如果键在字典中存在,则返回True, python3中用in和not in代替了</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>                            <span class="c1"># 返回一个包含字典中键、值对元组的列表</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>                             <span class="c1"># 返回一个包含字典中键的列表</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">iter</span><span class="p">()</span>                             <span class="c1"># 方法iteritems()、iterkeys()、itervalues()与它们对应的非迭代方法一样,不同的是它们返回一个迭代子,而不是一个列表</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">[,</span><span class="n">default</span><span class="p">])</span>                 <span class="c1"># 和方法get()相似.如果字典中key键存在,删除并返回dict[key]</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>       <span class="c1"># 和set()相似,但如果字典中不存在key键,由dict[key]=default为它赋值</span>
+<span class="n">dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>                      <span class="c1">#替代了setdefault方法，直接键对应值进行添加字典</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dict2</span><span class="p">)</span>                      <span class="c1"># 将字典dict2的键值对添加到字典dict</span>
+<span class="nb">dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>                           <span class="c1"># 返回一个包含字典中所有值得列表</span>
+<span class="nb">dict</span><span class="p">([</span><span class="n">container</span><span class="p">])</span>     <span class="c1"># 创建字典的工厂函数。提供容器类(container),就用其中的条目填充字典</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>          <span class="c1"># 返回映射的长度(键-值对的个数)</span>
+<span class="nb">hash</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>             <span class="c1"># 返回obj哈希值,判断某个对象是否可做一个字典的键</span>
+<span class="k">del</span> <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span>       <span class="c1"># 删除具有指定键的元素</span>
+</pre></div>
+</div>
+<p>代码示例1</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="n">ab</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;Swaroop&#39;</span><span class="p">:</span> <span class="s1">&#39;swaroopch@byteofpython.info&#39;</span><span class="p">,</span><span class="s1">&#39;Larry&#39;</span> <span class="p">:</span> <span class="s1">&#39;larry@wall.org&#39;</span><span class="p">}</span>
+<span class="n">ab</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">80</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ab</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">ab</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ab</span><span class="p">)</span>
+
+<span class="n">li</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="s2">&quot;c&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">li</span><span class="p">)))</span>
+
+<span class="c1">#定义字典</span>
+<span class="n">word</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;che&quot;</span><span class="p">:</span><span class="s2">&quot;车&quot;</span><span class="p">,</span><span class="s2">&quot;chen&quot;</span><span class="p">:</span><span class="s2">&quot;陈&quot;</span><span class="p">,</span><span class="s2">&quot;cheng&quot;</span><span class="p">:</span><span class="s2">&quot;称&quot;</span><span class="p">,</span><span class="s2">&quot;chi&quot;</span><span class="p">:</span><span class="s2">&quot;吃&quot;</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+
+<span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;che&quot;</span><span class="p">,</span><span class="s2">&quot;chen&quot;</span><span class="p">,</span><span class="s2">&quot;cheng&quot;</span><span class="p">,</span><span class="s2">&quot;chi&quot;</span><span class="p">]</span>  <span class="c1">#定义索引列表</span>
+<span class="n">vlaue</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;车&quot;</span><span class="p">,</span> <span class="s2">&quot;陈&quot;</span><span class="p">,</span><span class="s2">&quot;称&quot;</span><span class="p">,</span><span class="s2">&quot;吃&quot;</span><span class="p">]</span>      <span class="c1">#定义汉字列表</span>
+<span class="n">zip1</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">vlaue</span><span class="p">))</span>         <span class="c1">#将对象转换为字典</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">zip1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">zip1</span><span class="p">[</span><span class="s2">&quot;che&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">zip1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chen&quot;</span><span class="p">))</span>             <span class="c1">#键存在，返回值</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">zip1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chenj&quot;</span><span class="p">))</span>            <span class="c1">#键不存在，返回None</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">zip1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chene&quot;</span><span class="p">,</span><span class="s2">&quot;查无此人&quot;</span><span class="p">))</span>       <span class="c1">#键不存在，返回默认值</span>
+
+
+<span class="n">dict1</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="c1">#dict1.fromkeys()</span>
+<span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;jianli&quot;</span><span class="p">,</span><span class="s2">&quot;xiaojian&quot;</span><span class="p">,</span><span class="s2">&quot;jianlihu&quot;</span><span class="p">]</span>
+<span class="n">dictionary</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>        <span class="c1">#创建一个只有键的字典</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dictionary</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">((</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;xiaojian&quot;</span><span class="p">),</span><span class="s2">&quot;goodboy&quot;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">s</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="p">{</span><span class="s1">&#39;hujianli&#39;</span><span class="p">:</span> <span class="s1">&#39;goodboy&#39;</span><span class="p">,</span> <span class="s1">&#39;xiaojian&#39;</span><span class="p">:</span> <span class="s1">&#39;goodboy&#39;</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">s1</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span><span class="mi">23</span><span class="p">))</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">s1</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="p">{</span><span class="mi">12</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">23</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">s2</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">((</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="s2">&quot;b&quot;</span><span class="p">))</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">s2</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+
+<span class="c1">#del dictionary             #删除字典</span>
+
+<span class="n">dictionary</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1">#清除字典当中的所有元素，变成一个空字典</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dictionary</span><span class="p">)</span>
+
+
+<span class="c1">#遍历字典的键和值</span>
+<span class="n">dic2</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;依梦&quot;</span><span class="p">:</span><span class="s2">&quot;水瓶座&quot;</span><span class="p">,</span><span class="s2">&quot;胡建力&quot;</span><span class="p">:</span><span class="s2">&quot;巨蟹座&quot;</span><span class="p">,</span><span class="s2">&quot;小健&quot;</span><span class="p">:</span><span class="s2">&quot;狮子座&quot;</span><span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">dic2.items()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#遍历键和值</span>
+<span class="k">for</span> <span class="n">key1</span><span class="p">,</span> <span class="n">vlaue1</span> <span class="ow">in</span> <span class="n">dic2</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">key1</span><span class="p">,</span><span class="s1">&#39;=====&gt;&#39;</span><span class="p">,</span><span class="n">vlaue1</span><span class="p">)</span>
+
+<span class="c1">#遍历键</span>
+<span class="k">for</span> <span class="n">key1</span> <span class="ow">in</span> <span class="n">dic2</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;key is </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key1</span><span class="p">))</span>
+
+<span class="c1">#遍历值</span>
+<span class="k">for</span> <span class="n">vlaue</span> <span class="ow">in</span> <span class="n">dic2</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;value is </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vlaue</span><span class="p">))</span>
+
+
+<span class="n">hu1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hu1</span><span class="p">)</span>
+
+<span class="n">hu2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hu2</span><span class="p">)</span>
+
+
+
+<span class="n">stu1</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;学号&#39;</span><span class="p">:</span><span class="s1">&#39;10001&#39;</span><span class="p">,</span><span class="s1">&#39;姓名&#39;</span><span class="p">:</span><span class="s1">&#39;张晓光&#39;</span><span class="p">,</span><span class="s1">&#39;性别&#39;</span><span class="p">:</span><span class="s1">&#39;男&#39;</span><span class="p">,</span><span class="s1">&#39;年龄&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">}</span>
+<span class="n">stu1</span><span class="p">[</span><span class="s1">&#39;年龄&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">30</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stu1</span><span class="p">[</span><span class="s1">&#39;性别&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stu1</span><span class="p">)</span>
+
+
+<span class="c1"># stu1={&#39;学号&#39;:&#39;10001&#39;,&#39;姓名&#39;:&#39;张晓光&#39;,&#39;姓名&#39;:&#39;李三&#39;,&#39;年龄&#39;:20}</span>
+<span class="c1"># print(stu1[1])</span>
+
+
+<span class="n">day</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;星期一&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s1">&#39;星期二&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="mi">30</span><span class="p">,</span><span class="s1">&#39;四&#39;</span><span class="p">:</span><span class="s1">&#39;星期四&#39;</span><span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">day</span><span class="p">[</span><span class="s1">&#39;四&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">day</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+
+<span class="n">dict1</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;姓名&#39;</span><span class="p">:</span><span class="s1">&#39;张晓光&#39;</span><span class="p">,</span><span class="s1">&#39;年龄&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1.所有键：&#39;</span><span class="p">,</span><span class="n">dict1</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;2.所有值：&#39;</span><span class="p">,</span><span class="n">dict1</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;3.所有键-值：&#39;</span><span class="p">,</span><span class="n">dict1</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+<span class="n">dict2</span><span class="o">=</span><span class="n">dict1</span>
+<span class="n">dict3</span><span class="o">=</span><span class="n">dict1</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;4.浅拷贝和深拷贝：&#39;</span><span class="p">,</span><span class="nb">id</span><span class="p">(</span><span class="n">dict1</span><span class="p">),</span><span class="nb">id</span><span class="p">(</span><span class="n">dict2</span><span class="p">),</span><span class="nb">id</span><span class="p">(</span><span class="n">dict3</span><span class="p">))</span>
+
+<span class="n">score1</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">dict4</span><span class="o">=</span><span class="n">dict1</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">score1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;5.通过元组创建字典：&#39;</span><span class="p">,</span><span class="n">dict4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;6.get年龄：&#39;</span><span class="p">,</span><span class="n">dict1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;年龄&#39;</span><span class="p">))</span>
+
+<span class="n">dict1</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;年纪&#39;</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;7.setdefault年纪：&#39;</span><span class="p">,</span><span class="n">dict1</span><span class="p">)</span>
+
+<span class="n">dict5</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;成绩&#39;</span><span class="p">:</span><span class="s1">&#39;优良&#39;</span><span class="p">}</span>
+<span class="n">dict1</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dict5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;8.update成绩：&#39;</span><span class="p">,</span><span class="n">dict1</span><span class="p">)</span>
+
+
+<span class="c1"># 删除字典</span>
+
+<span class="n">dict1</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;姓名&#39;</span><span class="p">:</span><span class="s1">&#39;张晓光&#39;</span><span class="p">,</span><span class="s1">&#39;年龄&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">}</span>
+<span class="n">str1</span><span class="o">=</span><span class="n">dict1</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;姓名&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">str1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span>
+
+<span class="n">dict1</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;姓名&#39;</span><span class="p">:</span><span class="s1">&#39;张晓光&#39;</span><span class="p">,</span><span class="s1">&#39;年龄&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">}</span>
+<span class="k">if</span> <span class="s1">&#39;姓名&#39;</span> <span class="ow">in</span> <span class="n">dict1</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dict1</span><span class="p">[</span><span class="s1">&#39;姓名&#39;</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="s1">&#39;性别&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict1</span><span class="p">:</span>
+    <span class="n">dict1</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;性别&#39;</span><span class="p">,</span><span class="s1">&#39;男&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id12">1.2 添加/修改/删除字典元素</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>代码示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+
+<span class="c1">#向字典里面添加元素</span>
+<span class="n">dict1</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">:</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;2&quot;</span><span class="p">:</span><span class="s2">&quot;xiaojian&quot;</span><span class="p">,</span><span class="s2">&quot;3&quot;</span><span class="p">:</span><span class="s2">&quot;xiaojian3&quot;</span><span class="p">}</span>
+<span class="n">dict1</span><span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;xiaojian4&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span>
+
+<span class="c1">#修改字典的元素</span>
+<span class="n">dict1</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;hujianli1&quot;</span>
+<span class="n">dict1</span><span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;hujianli2&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span>
+
+<span class="c1">#删除元素</span>
+<span class="k">del</span> <span class="n">dict1</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">]</span>
+<span class="k">del</span> <span class="n">dict1</span><span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">]</span>
+
+<span class="c1">#进行判断，判断键是否在字典当中</span>
+<span class="k">if</span> <span class="s2">&quot;1&quot;</span> <span class="ow">in</span> <span class="n">dict1</span><span class="p">:</span>
+    <span class="k">del</span> <span class="n">dict1</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span>
+
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id13">1.3 字典推导式</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+
+<span class="c1">#推导式可以快速生成字典</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">{键表达式：值表达式 for 循环}</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="c1">#生成随机数字典，键为1~4，值为10~100的随机数</span>
+<span class="n">randomdict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">)}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">randomdict</span><span class="p">)</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;依梦&quot;</span><span class="p">,</span><span class="s2">&quot;冷依依&quot;</span><span class="p">,</span><span class="s2">&quot;香菱&quot;</span><span class="p">,</span><span class="s2">&quot;戴兰&quot;</span><span class="p">]</span>
+<span class="n">sign</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;水瓶&quot;</span><span class="p">,</span><span class="s2">&quot;射手&quot;</span><span class="p">,</span><span class="s2">&quot;双鱼&quot;</span><span class="p">,</span><span class="s2">&quot;双子&quot;</span><span class="p">]</span>
+<span class="n">dict1</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span><span class="n">j</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">sign</span><span class="p">)}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id14">1.4 字典的重访嵌套</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">17</span><span class="p">]:</span> <span class="n">rec</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:{</span><span class="s2">&quot;first&quot;</span><span class="p">:</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span><span class="s2">&quot;hujianli&quot;</span><span class="p">:</span><span class="s2">&quot;smith&quot;</span><span class="p">,</span><span class="s2">&quot;job&quot;</span><span class="p">:[</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span><span class="s2">&quot;mgr&quot;</span><span class="p">],</span><span class="s2">&quot;age&quot;</span><span class="p">:</span><span class="s2">&quot;22&quot;</span><span class="p">}}</span>
+
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">19</span><span class="p">]:</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">19</span><span class="p">]:</span> <span class="p">{</span><span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="s1">&#39;22&#39;</span><span class="p">,</span> <span class="s1">&#39;first&#39;</span><span class="p">:</span> <span class="s1">&#39;Bob&#39;</span><span class="p">,</span> <span class="s1">&#39;hujianli&#39;</span><span class="p">:</span> <span class="s1">&#39;smith&#39;</span><span class="p">,</span> <span class="s1">&#39;job&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">,</span> <span class="s1">&#39;mgr&#39;</span><span class="p">]}</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="s2">&quot;job&quot;</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">,</span> <span class="s1">&#39;mgr&#39;</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="s2">&quot;job&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">21</span><span class="p">]:</span> <span class="s1">&#39;mgr&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="s2">&quot;job&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="s1">&#39;mgr&#39;</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="s2">&quot;job&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;IT&quot;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">25</span><span class="p">]:</span> <span class="n">rec</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">25</span><span class="p">]:</span>
+<span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="s1">&#39;22&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;first&#39;</span><span class="p">:</span> <span class="s1">&#39;Bob&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;hujianli&#39;</span><span class="p">:</span> <span class="s1">&#39;smith&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;job&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;dev&#39;</span><span class="p">,</span> <span class="s1">&#39;mgr&#39;</span><span class="p">,</span> <span class="s1">&#39;IT&#39;</span><span class="p">]}}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id15">1.5 字典格式化字符串</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">temp</span> <span class="o">=</span> <span class="s2">&quot;书名是：</span><span class="si">%(name)s</span><span class="s2">,价格是:</span><span class="si">%(price)010.2f</span><span class="s2">,出版社是:</span><span class="si">%(publish)s</span><span class="s2">&quot;</span>
+<span class="n">book1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s2">&quot;疯狂python讲义&quot;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span><span class="p">:</span> <span class="mf">88.9</span><span class="p">,</span> <span class="s1">&#39;publish&#39;</span><span class="p">:</span> <span class="s1">&#39;电子社1&#39;</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">temp</span> <span class="o">%</span> <span class="n">book1</span><span class="p">)</span>
+<span class="n">book2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s2">&quot;疯狂java讲义&quot;</span><span class="p">,</span> <span class="s1">&#39;price&#39;</span><span class="p">:</span> <span class="mf">78.9</span><span class="p">,</span> <span class="s1">&#39;publish&#39;</span><span class="p">:</span> <span class="s1">&#39;电子社2&#39;</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">temp</span> <span class="o">%</span> <span class="n">book2</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">1.6.2. </span>2. 用字典分支构建程序</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1">#定义3个分支函数</span>
+<span class="k">def</span> <span class="nf">print_a</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;路径分支A&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">print_b</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;路径分支B&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">print_c</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;路径分支C&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">path_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">path_dict</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">print_a</span>
+    <span class="n">path_dict</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">print_b</span>
+    <span class="n">path_dict</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">print_c</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="s1">&#39;abc&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;选择了路径:&quot;</span><span class="p">,</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">path_dict</span><span class="p">[</span><span class="n">path</span><span class="p">]()</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">选择了路径</span><span class="p">:</span> <span class="n">a</span>
+<span class="n">路径分支A</span>
+<span class="n">选择了路径</span><span class="p">:</span> <span class="n">b</span>
+<span class="n">路径分支B</span>
+<span class="n">选择了路径</span><span class="p">:</span> <span class="n">b</span>
+<span class="n">路径分支B</span>
+<span class="n">选择了路径</span><span class="p">:</span> <span class="n">c</span>
+<span class="n">路径分支C</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id17"><span class="section-number">1.6.3. </span>3.字典键值判断</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">##不推荐</span>
+<span class="k">if</span> <span class="n">my_dict</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+  <span class="c1"># ...do something with d[key]</span>
+
+<span class="c1">##推荐</span>
+<span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">my_dict</span><span class="p">:</span>
+  <span class="c1"># ...do something with d[key]</span>
+</pre></div>
+</div>
+</section>
+<section id="getsetdefault">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">1.6.4. </span>4. 字典get和setdefault方法</a><a class="headerlink" href="#getsetdefault" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">##不推荐</span>
+<span class="n">navs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">portfolio</span><span class="p">,</span> <span class="n">equity</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+  <span class="k">if</span> <span class="n">portfolio</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">navs</span><span class="p">:</span>
+      <span class="n">navs</span><span class="p">[</span><span class="n">portfolio</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">navs</span><span class="p">[</span><span class="n">portfolio</span><span class="p">]</span> <span class="o">+=</span> <span class="n">position</span> <span class="o">*</span> <span class="n">prices</span><span class="p">[</span><span class="n">equity</span><span class="p">]</span>
+
+<span class="c1">##推荐</span>
+<span class="n">navs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">portfolio</span><span class="p">,</span> <span class="n">equity</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+  <span class="c1"># 使用 get 方法</span>
+  <span class="n">navs</span><span class="p">[</span><span class="n">portfolio</span><span class="p">]</span> <span class="o">=</span> <span class="n">navs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">portfolio</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">position</span> <span class="o">*</span> <span class="n">prices</span><span class="p">[</span><span class="n">equity</span><span class="p">]</span>
+  <span class="c1"># 或者使用 setdefault 方法</span>
+  <span class="n">navs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">portfolio</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="n">navs</span><span class="p">[</span><span class="n">portfolio</span><span class="p">]</span> <span class="o">+=</span> <span class="n">position</span> <span class="o">*</span> <span class="n">prices</span><span class="p">[</span><span class="n">equity</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="ordereddict">
+<h2><a class="toc-backref" href="#id19"><span class="section-number">1.6.5. </span>5. OrderedDict</a><a class="headerlink" href="#ordereddict" title="Permalink to this headline">¶</a></h2>
+<p>Python 3.7或更高版本，字典类型新增了有序特性。</p>
+<p>但如果你使用的Python版本没有那么新，也可以从collections模块里方便地拿到另一个有序字典对象OrderedDict，它可以在Python
+3.7以前的版本里保证字典有序。</p>
+<p>OrderedDict
+也是dict的子类，其最大特征是：它可以“维护”添加key-value对的顺序。
+就是先添加的key-value对排在前面，后添加的key-value对排在后面。</p>
+<p>由于OrderedDict能维护key-value对的添加顺序，因此即使两个OrderedDict中的key-value对完全相同，
+但只要它们的顺序不同，程序在判断它们是否相等时也依然会返回false。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="c1"># 创建OrderedDict 对象</span>
+<span class="n">dx</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span>       <span class="c1">#OrderedDict([(&#39;b&#39;, 5), (&#39;c&#39;, 2), (&#39;a&#39;, 7)])</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="c1"># 向OrderedDict中添加key-value</span>
+<span class="n">d</span><span class="p">[</span><span class="s1">&#39;python&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">89</span>
+<span class="n">d</span><span class="p">[</span><span class="s1">&#39;swift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">92</span>
+<span class="n">d</span><span class="p">[</span><span class="s1">&#39;kotlin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">97</span>
+<span class="n">d</span><span class="p">[</span><span class="s1">&#39;Go&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">87</span>
+
+<span class="c1"># 变量OrderedDict的key-value</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">python 89</span>
+<span class="sd">swift 92</span>
+<span class="sd">kotlin 97</span>
+<span class="sd">Go 87</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 创建普通的dict对象</span>
+<span class="n">my_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Python&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;Swift&#39;</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;Kotlin&#39;</span><span class="p">:</span> <span class="mi">43</span><span class="p">,</span> <span class="s1">&#39;Go&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">}</span>
+<span class="c1"># 创建基于key排序的OrderedDict</span>
+<span class="n">d1</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">my_data</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="c1"># 创建基于value排序的OrderedDict</span>
+<span class="n">d2</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">my_data</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span> <span class="c1"># OrderedDict([(&#39;Go&#39;, 25), (&#39;Kotlin&#39;, 43), (&#39;Python&#39;, 20), (&#39;Swift&#39;, 32)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span> <span class="c1"># OrderedDict([(&#39;Python&#39;, 20), (&#39;Go&#39;, 25), (&#39;Swift&#39;, 32), (&#39;Kotlin&#39;, 43)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d1</span> <span class="o">==</span> <span class="n">d2</span><span class="p">)</span> <span class="c1"># False</span>
+</pre></div>
+</div>
+</section>
+<section id="defaultdict">
+<h2><a class="toc-backref" href="#id20"><span class="section-number">1.6.6. </span>6. defaultdict对象</a><a class="headerlink" href="#defaultdict" title="Permalink to this headline">¶</a></h2>
+<p>defaultdict示例</p>
+<p>使用<code class="docutils literal notranslate"><span class="pre">list</span></code>作为<code class="docutils literal notranslate"><span class="pre">default_factory</span></code>，可以很容易地将一系列键值对分组为一个值为列表字典：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;blue&#39;, [2, 4]), (&#39;red&#39;, [1]), (&#39;yellow&#39;, [1, 3])]</span>
+</pre></div>
+</div>
+<p>将<code class="docutils literal notranslate"><span class="pre">default_factory</span></code>设置为<code class="docutils literal notranslate"><span class="pre">int</span></code>可使<code class="docutils literal notranslate"><span class="pre">defaultdict</span></code>用于计数（如其他语言的bag或multiset）：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;mississippi&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;i&#39;, 4), (&#39;m&#39;, 1), (&#39;p&#39;, 2), (&#39;s&#39;, 4)]</span>
+</pre></div>
+</div>
+<p>当一个字母第一次遇到时，映射中缺少该字母，因此<code class="docutils literal notranslate"><span class="pre">default_factory</span></code>函数调用<code class="docutils literal notranslate"><span class="pre">`int()</span></code> &lt;python/functions.html#int&gt;`__以提供默认计数零。后面，这个增量操作将建立每个字母的计数。</p>
+<p>将<code class="docutils literal notranslate"><span class="pre">default_factory</span></code>设置为<code class="docutils literal notranslate"><span class="pre">set</span></code>可使<code class="docutils literal notranslate"><span class="pre">defaultdict</span></code>有助于构建集合字典：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="go">[(&#39;blue&#39;, {2, 4}), (&#39;red&#39;, {1, 3})]</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.%E5%85%83%E7%A5%96%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html" class="btn btn-neutral float-left" title="1.5. 元祖 Tuple" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html" class="btn btn-neutral float-right" title="1.7. 集合 Set()" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

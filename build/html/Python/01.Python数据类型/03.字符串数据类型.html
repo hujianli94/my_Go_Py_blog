@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.3. 字符串数据类型 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="1.4. 列表 List" href="04.%E5%88%97%E8%A1%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html" />
+    <link rel="prev" title="1.2. 代码注释" href="02.%E4%BB%A3%E7%A0%81%E6%B3%A8%E9%87%8A.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">1. Python数据类型</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E5%AD%A6%E4%B9%A0.html">1.1. 字符编码学习</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E4%BB%A3%E7%A0%81%E6%B3%A8%E9%87%8A.html">1.2. 代码注释</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">1.3. 字符串数据类型</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stringbytes">1.3.1. 1.string与bytes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">1.3.2. 2.标准的字符转义码</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">1.3.3. 3.字符串内建方法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">1.3.4. 4. 字符串的拼接</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">1.3.5. 5. 其他类型数据转为字符串</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">1.3.6. 6. 字符串格式化</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">1.3.7. 7.打印浮点数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">1.3.8. 8.字符串的反转</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">1.3.9. 9.字符串操作技巧</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">1.3.10. 10.字符串切片</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id18">1.3.11. 11.字符串拼接</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id19">1.3.12. 12.文本输入的变量插入.</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jinja2">1.3.13. 13.使用Jinja2模板处理字符串</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E5%88%97%E8%A1%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html">1.4. 列表 List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%85%83%E7%A5%96%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html">1.5. 元祖 Tuple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E5%AD%97%E5%85%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html">1.6. 字典 Dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html">1.7. 集合 Set()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2.html">1.8. Python数据类型转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E5%85%B3%E4%BA%8E%E6%B7%B1%E6%B5%85%E6%8B%B7%E8%B4%9D.html">1.9. 深浅拷贝</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.%E5%88%97%E8%A1%A8%E5%AE%9E%E7%8E%B0%E5%A0%86%E5%92%8C%E9%98%9F%E5%88%97.html">1.10. 列表实现堆和队列</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.%E5%86%85%E7%BD%AE%E5%B8%B8%E9%87%8F%E4%B8%8E%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6%E3%80%81%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6.html">1.11. 内置常量与逻辑运算符、比较运算符</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.%E5%86%85%E7%BD%AE%E5%B8%B8%E9%87%8F%E4%B8%8E%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6%E3%80%81%E6%AF%94%E8%BE%83%E8%BF%90%E7%AE%97%E7%AC%A6.html#in-not-in">1.12. in 和not in</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.%E5%BB%BA%E7%AB%8B%E5%A4%A7%E5%9E%8B%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.html">1.13. 建立大型数据结构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.Python%E5%B8%B8%E7%94%A8IDE%E9%9B%86%E6%88%90%E7%8E%AF%E5%A2%83.html">1.14. Python常用IDE集成环境</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">1. </span>Python数据类型</a> &raquo;</li>
+      <li><span class="section-number">1.3. </span>字符串数据类型</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/01.Python数据类型/03.字符串数据类型.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id20">字符串数据类型</a></p>
+<ul>
+<li><p><a class="reference internal" href="#stringbytes" id="id21">1.string与bytes</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id22">2.标准的字符转义码</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id23">3.字符串内建方法</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id24">操作字符串示例</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id25">代码示例</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id6" id="id26">4. 字符串的拼接</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id27">5. 其他类型数据转为字符串</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id28">6. 字符串格式化</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id29">7.打印浮点数</a></p>
+<ul>
+<li><p><a class="reference internal" href="#format" id="id30">format格式化字符串</a></p></li>
+<li><p><a class="reference internal" href="#python3fromat" id="id31">Python3的fromat用法</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id15" id="id32">8.字符串的反转</a></p></li>
+<li><p><a class="reference internal" href="#id16" id="id33">9.字符串操作技巧</a></p></li>
+<li><p><a class="reference internal" href="#id17" id="id34">10.字符串切片</a></p></li>
+<li><p><a class="reference internal" href="#id18" id="id35">11.字符串拼接</a></p></li>
+<li><p><a class="reference internal" href="#id19" id="id36">12.文本输入的变量插入.</a></p></li>
+<li><p><a class="reference internal" href="#jinja2" id="id37">13.使用Jinja2模板处理字符串</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id20"><span class="section-number">1.3. </span>字符串数据类型</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<section id="stringbytes">
+<h2><a class="toc-backref" href="#id21"><span class="section-number">1.3.1. </span>1.string与bytes</a><a class="headerlink" href="#stringbytes" title="Permalink to this headline">¶</a></h2>
+<p>string与bytes类型对象可以通过encode()与decode()函数互相转换</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hu_b</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;Hello world&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hu_b</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">hu_b</span><span class="p">))</span>  <span class="c1"># b&#39;Hello world&#39; &lt;class &#39;bytes&#39;&gt;</span>
+<span class="n">hu_str</span> <span class="o">=</span> <span class="n">hu_b</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hu_str</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">hu_str</span><span class="p">))</span>  <span class="c1"># Hello world &lt;class &#39;str&#39;&gt;</span>
+
+<span class="n">py_str</span> <span class="o">=</span> <span class="s2">&quot;python3 is great!&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">py_str</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">py_str</span><span class="p">))</span>  <span class="c1"># python3 is great! &lt;class &#39;str&#39;&gt;</span>
+<span class="n">py_b</span> <span class="o">=</span> <span class="n">py_str</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">py_b</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">py_b</span><span class="p">))</span>  <span class="c1"># b&#39;python3 is great!&#39; &lt;class &#39;bytes&#39;&gt;</span>
+</pre></div>
+</div>
+<p>python3 仍然支持字符串前缀u,但其目的仅仅是为了兼容旧的python2代码。</p>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">1.3.2. </span>2.标准的字符转义码</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<img alt="../../_images/python_zhuanyi001.png" src="../../_images/python_zhuanyi001.png" />
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id23"><span class="section-number">1.3.3. </span>3.字符串内建方法</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;人生苦短&#39;</span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">()))</span>  <span class="c1">#utf8每个中文占3个字节12print(len(str.encode(&quot;gbk&quot;)))   #gbk每个中文占2个字节8</span>
+<span class="n">string</span><span class="o">.</span><span class="n">expandtabs</span><span class="p">(</span><span class="n">tabsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>                  <span class="c1"># tab符号转为空格 #默认8个空格</span>
+<span class="n">string</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">beg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">staring</span><span class="p">))</span>   <span class="c1"># 检测字符串是否已obj结束,如果是返回True #如果beg或end指定检测范围是否已obj结束</span>
+<span class="n">string</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">beg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>       <span class="c1"># 检测str在string里出现次数  f.count(&#39;\n&#39;,0,len(f)) 判断文件行数</span>
+<span class="n">string</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">beg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>        <span class="c1"># 检测str是否包含在string中</span>
+<span class="n">string</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">beg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>       <span class="c1"># 检测str不在string中,会报异常</span>
+<span class="n">string</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span>                              <span class="c1"># 如果string至少有一个字符并且所有字符都是字母或数字则返回True</span>
+<span class="n">string</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span>                              <span class="c1"># 如果string至少有一个字符并且所有字符都是字母则返回True</span>
+<span class="n">string</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()</span>                            <span class="c1"># 如果string只包含数字字符,则返回True</span>
+<span class="n">string</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span>                              <span class="c1"># 如果string包含空格则返回True string.capitalize()                           #首字母小写转化为大写</span>
+<span class="n">string</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span>                              <span class="c1"># 字符串都是大写返回True</span>
+<span class="n">string</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span>                              <span class="c1"># 字符串都是小写返回True</span>
+<span class="n">string</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>                                <span class="c1"># 转换字符串中所有大写为小写</span>
+<span class="n">string</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>                                <span class="c1"># 转换字符串中所有小写为大写</span>
+<span class="n">string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>                                       <span class="c1">#用于移除字符串头尾指定的字符（默认为空格）</span>
+<span class="n">string</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>                               <span class="c1"># 去掉string左边的空格</span>
+<span class="n">string</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>                               <span class="c1"># 去掉string字符末尾的空格</span>
+<span class="n">string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">str1</span><span class="p">,</span><span class="n">str2</span><span class="p">,</span><span class="n">num</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">str1</span><span class="p">))</span>  <span class="c1"># 把string中的str1替换成str2,如果num指定,则替换不超过num次</span>
+<span class="n">string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">beg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>  <span class="c1"># 检测字符串是否以obj开头</span>
+<span class="n">string</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>                           <span class="c1"># 返回字符长度为width的字符,原字符串右对齐,前面填充0</span>
+<span class="n">string</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>                              <span class="c1"># 只包含数字返回True</span>
+<span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;分隔符&quot;</span><span class="p">)</span>                        <span class="c1"># 把string切片成一个列表</span>
+<span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>                      <span class="c1"># 以:作为分隔符,将所有元素合并为一个新的字符</span>
+<span class="n">string</span><span class="o">.</span><span class="n">swapcase</span><span class="p">()</span>                                  <span class="c1">#方法用于对字符串的大小写字母进行转换，将字符串中大写转换为小写、小写转换为大写。</span>
+</pre></div>
+</div>
+<section id="id4">
+<h3><a class="toc-backref" href="#id24">操作字符串示例</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/13 10:51</span>
+<span class="c1"># filename: string01.py</span>
+
+<span class="n">mystr</span> <span class="o">=</span> <span class="s1">&#39;Beautiful is better than ugly.&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;source string is:&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;swapcase demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">swapcase</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;upper demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;lower demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;title demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">title</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;istitle demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">istitle</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;islower demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">islower</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;capitalize demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;find demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;u&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;count demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;split demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mystr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;join demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;abcde&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;len demo</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mystr</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id25">代码示例</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="s2">&quot;abc&quot;</span>
+<span class="s2">&quot;123abc&quot;</span>
+<span class="s2">&quot;abc12*&quot;</span>
+<span class="s2">&quot;大家&quot;</span>
+
+<span class="n">str2</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">This is function</span>
+<span class="s1">Return a tuple</span>
+<span class="s1">&#39;&#39;&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">str2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;aaa</span><span class="se">\n</span><span class="s2">bbb&quot;</span><span class="p">)</span>  <span class="c1">#换行符</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;制表符</span><span class="se">\t</span><span class="s2">制表符*2&quot;</span><span class="p">)</span> <span class="c1">#制表符</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;print </span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">显示</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;单引号</span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;双引号</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串运算&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="s2">&quot;#&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;aaa&quot;</span> <span class="o">+</span> <span class="s2">&quot;bbbb&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;aaa&quot;</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串处理函数&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;#&#39;</span><span class="p">))</span>
+<span class="n">str3</span> <span class="o">=</span> <span class="s2">&quot;beautiful is batter ugly&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;source string is &quot;</span><span class="p">,</span><span class="n">str3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串大小写互换</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">swapcase</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串转大写</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串转小写</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串首字母大写</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">title</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串首字母是否大写</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">istitle</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串首字母是否小写</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">islower</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串的第一个字母大写</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;获得字符串字母u的下标</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;获得字符串中某一个字母的数量</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;将字符串转换为列表，以空格分割</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="n">str3</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;以空格拼接字符串&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;abcd&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;计算字符串的长度</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">str3</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id26"><span class="section-number">1.3.4. </span>4. 字符串的拼接</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bottles</span><span class="o">=</span><span class="mi">99</span>
+
+<span class="n">base</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+
+<span class="n">base</span> <span class="o">+=</span><span class="s2">&quot;hujianli staduy python3.6 &quot;</span>
+
+<span class="n">base</span> <span class="o">+=</span><span class="nb">str</span><span class="p">(</span><span class="n">bottles</span><span class="p">)</span>
+
+<span class="n">base</span>
+<span class="s1">&#39;hujianli staduy python3.699&#39;</span>
+
+
+<span class="s2">&quot;hujianli&quot;</span> <span class="o">+</span> <span class="s2">&quot; recover&quot;</span> <span class="o">+</span> <span class="s2">&quot; 学习python3.6&quot;</span>
+<span class="s1">&#39;hujianli recover 学习python3.6&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id27"><span class="section-number">1.3.5. </span>5. 其他类型数据转为字符串</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/3 11:56</span>
+<span class="c1"># filename: 字符串操作.py</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">18</span>
+
+<span class="c1"># 使用str()、repr()或format()函数可以将非字符串值转换为字符串表示形式</span>
+<span class="n">s1</span> <span class="o">=</span> <span class="s2">&quot;This value of x is &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="s2">&quot;This value of x is &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="s2">&quot;This value of x is &quot;</span> <span class="o">+</span> <span class="nb">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;4d&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s3</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This value of x is 42</span>
+<span class="sd">This value of x is 42</span>
+<span class="sd">This value of x is   42</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># str()创建普通的字符串。</span>
+<span class="c1"># repr()函数通常会创建一个表达式字符串，可以使用evel()对它求值以重新创建对象。</span>
+</pre></div>
+</div>
+<p>使用反斜线进行转义</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">speen</span> <span class="o">=</span> <span class="s2">&quot;today we honor our friend, the backslash :</span><span class="se">\\</span><span class="s2">.&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">speen</span><span class="p">)</span>
+<span class="n">today</span> <span class="n">we</span> <span class="n">honor</span> <span class="n">our</span> <span class="n">friend</span><span class="p">,</span> <span class="n">the</span> <span class="n">backslash</span> <span class="p">:</span>\<span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id28"><span class="section-number">1.3.6. </span>6. 字符串格式化</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I am </span><span class="si">%s</span><span class="s2"> stduy </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;python&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I am </span><span class="si">{0}</span><span class="s2"> stduy </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;python&quot;</span><span class="p">)</span> <span class="p">)</span>
+<span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;I am </span><span class="si">{0}</span><span class="s2"> stduy </span><span class="si">{1}</span><span class="s2">&quot;</span>
+<span class="n">name</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">name</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> + </span><span class="si">%d</span><span class="s2"> = </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="o">+</span><span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> + </span><span class="si">%d</span><span class="s2"> = </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">3</span><span class="o">+</span><span class="mi">7</span><span class="p">))</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot; 分割线 &quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="s2">&quot;*&quot;</span><span class="p">))</span>
+
+<span class="n">template</span> <span class="o">=</span> <span class="s1">&#39;编号:</span><span class="si">%09d</span><span class="se">\t</span><span class="s1"> 公司名称：</span><span class="si">%s</span><span class="s1"> </span><span class="se">\t</span><span class="s1"> 官网 ：http://www.</span><span class="si">%s</span><span class="s1">.com&#39;</span>
+<span class="n">arg1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;xxx方&quot;</span><span class="p">,</span> <span class="s2">&quot;futong&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">template</span><span class="o">%</span><span class="n">arg1</span><span class="p">)</span>
+
+<span class="n">template2</span> <span class="o">=</span> <span class="s2">&quot;编号:</span><span class="si">{:0&gt;9s}</span><span class="se">\t</span><span class="s2">公司名称：</span><span class="si">{:s}</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> 官网:http://www.</span><span class="si">{:s}</span><span class="s2">.com &quot;</span>
+<span class="n">context1</span> <span class="o">=</span> <span class="n">template2</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;7&quot;</span><span class="p">,</span> <span class="s2">&quot;百度&quot;</span><span class="p">,</span> <span class="s2">&quot;baidu&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">context1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id29"><span class="section-number">1.3.7. </span>7.打印浮点数</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">number</span> <span class="o">=</span> <span class="mi">123</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">number</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">number</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">number</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:+.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">number</span><span class="p">))</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;圆周率PI 的值为：</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="mf">3.14</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;圆周率PI 的值为：</span><span class="si">%10f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="mf">3.141593</span><span class="p">)</span>  <span class="c1">#字段宽度为10</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;保留2位小数，圆周率PI 的值为：</span><span class="si">%10.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="mf">3.141593</span><span class="p">)</span>  <span class="c1">#字段宽度为10，字符串占据4个</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;保留2位小数， 圆周率PI的值为：</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="mf">3.141593</span><span class="p">)</span>   <span class="c1">#输出，没有字段宽度参数</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;字符串精度获取：</span><span class="si">%.5s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">))</span>    <span class="c1">#打印字符串前5个字符</span>
+</pre></div>
+</div>
+<section id="format">
+<h3><a class="toc-backref" href="#id30">format格式化字符串</a><a class="headerlink" href="#format" title="Permalink to this headline">¶</a></h3>
+<section id="id10">
+<h4>一对一填充<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;我正在学习:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;python基础知识&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h4>多对多填充<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;我正在学习：</span><span class="si">{}</span><span class="s2">中的</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;python数据分析&quot;</span><span class="p">,</span><span class="s2">&quot;python基础知识&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>浮点数设置<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<p>.2f表示以浮点型展示，且显示小数点后两位，也可以是.3f或者其他</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">约</span><span class="si">{:.2f}</span><span class="s2">亿&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;2018年中国单身人数&quot;</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h4>百分数设置<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<p>.2%表示以百分比的形式展示，且展示小数点后两位，也可以是.3%或者其他。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;中国男性占总人口的比例:</span><span class="si">{:.2%}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mf">0.519</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h4>指定占位符宽度<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">))</span>
+<span class="n">number</span> <span class="o">=</span> <span class="s2">&quot;ABCDE&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%6s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">number</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%06s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">number</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%8s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">number</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="python3fromat">
+<h3><a class="toc-backref" href="#id31">Python3的fromat用法</a><a class="headerlink" href="#python3fromat" title="Permalink to this headline">¶</a></h3>
+<p>Python2和Python3的format_v2与format_v3中可用格式化符号</p>
+<img alt="../../_images/python_fromat0003.png" src="../../_images/python_fromat0003.png" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">info1</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{1:s}</span><span class="s2"> is my best friend ,</span><span class="si">{1!r}</span><span class="s2"> is </span><span class="si">{0:d}</span><span class="s2"> years old.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;hujianli&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">info1</span><span class="p">)</span>  <span class="c1"># hujianli is my best friend ,&#39;hujianli&#39; is 7 years old.</span>
+
+<span class="c1"># 省略替换格式,默认填充</span>
+<span class="n">info2</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is my best friend ,he is </span><span class="si">{}</span><span class="s2"> years old.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">info2</span><span class="p">)</span>    <span class="c1">#hujianli is my best friend ,he is 19 years old.</span>
+</pre></div>
+</div>
+<p>转义与禁用转义</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hi,</span><span class="se">\n</span><span class="s2">Today is Friday.&quot;</span><span class="p">)</span>  <span class="c1">#Today is Friday.</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Hi,\n Today is Friday.&quot;</span><span class="p">)</span>    <span class="c1">#Hi,\n Today is Friday.</span>
+</pre></div>
+</div>
+<p>代码示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I am </span><span class="si">%s</span><span class="s2"> stduy </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;python&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I am </span><span class="si">{0}</span><span class="s2"> stduy </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;python&quot;</span><span class="p">)</span> <span class="p">)</span>
+<span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;I am </span><span class="si">{0}</span><span class="s2"> stduy </span><span class="si">{1}</span><span class="s2">&quot;</span>
+<span class="n">name</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">name</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> + </span><span class="si">%d</span><span class="s2"> = </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="o">+</span><span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> + </span><span class="si">%d</span><span class="s2"> = </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">3</span><span class="o">+</span><span class="mi">7</span><span class="p">))</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot; 分割线 &quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="s2">&quot;*&quot;</span><span class="p">))</span>
+
+<span class="n">template</span> <span class="o">=</span> <span class="s1">&#39;编号:</span><span class="si">%09d</span><span class="se">\t</span><span class="s1"> 公司名称：</span><span class="si">%s</span><span class="s1"> </span><span class="se">\t</span><span class="s1"> 官网 ：http://www.</span><span class="si">%s</span><span class="s1">.com&#39;</span>
+<span class="n">arg1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;xxx方&quot;</span><span class="p">,</span> <span class="s2">&quot;futong&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">template</span><span class="o">%</span><span class="n">arg1</span><span class="p">)</span>
+
+<span class="n">template2</span> <span class="o">=</span> <span class="s2">&quot;编号:</span><span class="si">{:0&gt;9s}</span><span class="se">\t</span><span class="s2">公司名称：</span><span class="si">{:s}</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> 官网:http://www.</span><span class="si">{:s}</span><span class="s2">.com &quot;</span>
+<span class="n">context1</span> <span class="o">=</span> <span class="n">template2</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;7&quot;</span><span class="p">,</span> <span class="s2">&quot;百度&quot;</span><span class="p">,</span> <span class="s2">&quot;baidu&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">context1</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/string1.png" src="../../_images/string1.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>python非常提倡的string.format()的格式化方法，其中{索引值}作为占位符
+</pre></div>
+</div>
+<img alt="../../_images/format.png" src="../../_images/format.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;my name is </span><span class="si">{name}</span><span class="s2">, age is </span><span class="si">{age}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="n">age</span><span class="o">=</span><span class="s2">&quot;22&quot;</span><span class="p">))</span>
+<span class="n">my</span> <span class="n">name</span> <span class="ow">is</span> <span class="n">hujianli</span><span class="p">,</span> <span class="n">age</span> <span class="ow">is</span> <span class="mi">22</span>
+
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;my name is </span><span class="si">{name}</span><span class="s2">, age is </span><span class="si">{age}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="n">age</span><span class="o">=</span><span class="s2">&quot;22&quot;</span><span class="p">))</span>
+<span class="n">my</span> <span class="n">name</span> <span class="ow">is</span> <span class="n">hujianli</span><span class="p">,</span> <span class="n">age</span> <span class="ow">is</span> <span class="mi">22</span>
+
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;my name is </span><span class="si">{0}</span><span class="s2">&quot;</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;hu&quot;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="s1">&#39;my name is hu&#39;</span>
+
+
+<span class="c1">#字典格式化</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">lang</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I LOVE </span><span class="si">%(program)s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s1">&#39;program&#39;</span><span class="p">:</span><span class="n">lang</span><span class="p">})</span>
+<span class="n">I</span> <span class="n">LOVE</span> <span class="n">python</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s1">&#39;</span><span class="si">{0:!^20s}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;BIG SALE&#39;</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="s1">&#39;!!!!!!BIG SALE!!!!!!&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;hello world&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;增加填充字段&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;format的使用&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;&gt;20&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;&lt;20&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;^20&quot;</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;*&gt;20&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;*&lt;20&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;*^20&quot;</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;格式化多个值&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&gt;10s}</span><span class="s2"> </span><span class="si">{:&gt;10s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span> <span class="s2">&quot;world&quot;</span><span class="p">))</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mf">1.2345</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;&gt;10&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;^10.2f&quot;</span><span class="p">))</span>
+
+<span class="c1"># 使用%进行格式化，较老的格式，不常用</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%-20s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">text</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%20s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">text</span><span class="p">)</span>
+
+<span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;编号， </span><span class="si">%09d</span><span class="s2"> </span><span class="se">\t</span><span class="s2">公司名称：</span><span class="si">%s</span><span class="s2"> </span><span class="se">\t</span><span class="s2">官网： http://www.</span><span class="si">%s</span><span class="s2">.com&quot;</span>     <span class="c1"># 定义模板</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">context1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;百度&quot;</span><span class="p">,</span> <span class="s2">&quot;baidu&quot;</span><span class="p">)</span>
+<span class="n">context2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="s2">&quot;百度2&quot;</span><span class="p">,</span> <span class="s2">&quot;baidu2&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">template</span> <span class="o">%</span> <span class="n">context1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">template</span> <span class="o">%</span> <span class="n">context2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="n">template2</span> <span class="o">=</span> <span class="s2">&quot;编号：</span><span class="si">{:0&gt;9s}</span><span class="se">\t</span><span class="s2">公司名称: </span><span class="si">{:s}</span><span class="se">\t</span><span class="s2"> 官网: http://www.</span><span class="si">{:s}</span><span class="s2">.com&quot;</span>  <span class="c1"># 定义模板</span>
+<span class="n">context01</span> <span class="o">=</span> <span class="n">template2</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;7&quot;</span><span class="p">,</span> <span class="s2">&quot;百度3&quot;</span><span class="p">,</span> <span class="s2">&quot;baidu3&quot;</span><span class="p">)</span>
+<span class="n">context02</span> <span class="o">=</span> <span class="n">template2</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;8&quot;</span><span class="p">,</span> <span class="s2">&quot;百度4&quot;</span><span class="p">,</span> <span class="s2">&quot;baidu4&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">context01</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">context02</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id15">
+<h2><a class="toc-backref" href="#id32"><span class="section-number">1.3.8. </span>8.字符串的反转</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">reverse</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">li</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">li</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">li</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">reverse</span><span class="p">(</span><span class="s2">&quot;胡建力啊啊啊啊哈哈哈哈哈&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">使用列表的反转，更简单，如下</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">reverse2</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">li</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">li</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">li</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">reverse2</span><span class="p">(</span><span class="s2">&quot;胡建力啊啊啊啊哈哈哈哈哈&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">一行代码实现字符串的反转</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">reverse3</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">s</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># 或者</span>
+
+<span class="c1"># 使用lambda来实现</span>
+<span class="n">lambda_str</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lambda_str</span><span class="p">(</span><span class="s2">&quot;hujianlishuaige&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h2><a class="toc-backref" href="#id33"><span class="section-number">1.3.9. </span>9.字符串操作技巧</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">##不推荐</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">]</span>
+<span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">:</span>
+  <span class="n">result</span> <span class="o">+=</span> <span class="n">s</span> <span class="c1"># 每次赋值都丢弃以前的字符串对象, 生成一个新对象</span>
+
+<span class="c1">##推荐</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">]</span>
+<span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="c1"># 没有额外的内存分配</span>
+</pre></div>
+</div>
+</section>
+<section id="id17">
+<h2><a class="toc-backref" href="#id34"><span class="section-number">1.3.10. </span>10.字符串切片</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python3</span>
+<span class="n">str1</span> <span class="o">=</span> <span class="s1">&#39;Hello Python!&#39;</span>
+<span class="n">str2</span> <span class="o">=</span> <span class="s2">&quot;Object Oriented Programming&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;str1[0]: &quot;</span><span class="p">,</span> <span class="n">str1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># str1[0]:  H</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;str2[1:5]: &quot;</span><span class="p">,</span> <span class="n">str2</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>  <span class="c1"># str2[1:5]:  bjec</span>
+</pre></div>
+</div>
+</section>
+<section id="id18">
+<h2><a class="toc-backref" href="#id35"><span class="section-number">1.3.11. </span>11.字符串拼接</a><a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python3</span>
+<span class="n">str1</span> <span class="o">=</span> <span class="s1">&#39;Hello Python!&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original String: - &quot;</span><span class="p">,</span> <span class="n">str1</span><span class="p">)</span>  <span class="c1"># Original String: -  Hello Python!</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Updated String: - &quot;</span><span class="p">,</span> <span class="n">str1</span> <span class="p">[:</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;John&#39;</span><span class="p">)</span>    <span class="c1"># Updated String: -  Hello John</span>
+</pre></div>
+</div>
+</section>
+<section id="id19">
+<h2><a class="toc-backref" href="#id36"><span class="section-number">1.3.12. </span>12.文本输入的变量插入.</a><a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/3 17:32</span>
+<span class="c1"># filename: 文本输入的变量插入.py</span>
+
+<span class="n">form</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">Dear </span><span class="si">%(name)s</span><span class="s2">,</span>
+<span class="s2">Please send back my </span><span class="si">%(item)s</span><span class="s2"> or pay me $</span><span class="si">%(amount)0.2f</span><span class="s2">,</span>
+<span class="s2">Sincerely yours,</span>
+<span class="s2">Joe Python User</span>
+<span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">{</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;hujianli&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;item&#39;</span><span class="p">:</span> <span class="s1">&#39;blender&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;amount&#39;</span><span class="p">:</span> <span class="mf">50.00</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+
+<span class="n">form</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">Dear </span><span class="si">%(name)s</span><span class="s2">,</span>
+<span class="s2">Please send back my </span><span class="si">%(item)s</span><span class="s2"> or pay me $</span><span class="si">%(amount)0.2f</span><span class="s2">,</span>
+<span class="s2">Sincerely yours,</span>
+<span class="s2">Joe Python User</span>
+<span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">{</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;hujianli&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;item&#39;</span><span class="p">:</span> <span class="s1">&#39;blender&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;amount&#39;</span><span class="p">:</span> <span class="mf">50.00</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">form2</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">Dear </span><span class="si">{name}</span><span class="s2">,</span>
+<span class="s2">Please send back my </span><span class="si">{item}</span><span class="s2"> or pay me $</span><span class="si">{amount:0.2f}</span><span class="s2">,</span>
+<span class="s2">Sincerely yours,</span>
+<span class="s2">Joe Python User</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;xiaojian&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mf">60.00</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">form2</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="n">form3</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">Template</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">Dear $name,</span>
+<span class="s2">Please send back my $item or pay me $amount,</span>
+<span class="s2">Sincerely yours,</span>
+<span class="s2">Joe Python User</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+<span class="n">info2</span> <span class="o">=</span> <span class="n">form3</span><span class="o">.</span><span class="n">substitute</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;huxiaojian&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;item&#39;</span><span class="p">:</span> <span class="s1">&#39;blener&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;amount&#39;</span><span class="p">:</span> <span class="s2">&quot;$</span><span class="si">%0.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="mf">1000.0</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">info2</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="jinja2">
+<h2><a class="toc-backref" href="#id37"><span class="section-number">1.3.13. </span>13.使用Jinja2模板处理字符串</a><a class="headerlink" href="#jinja2" title="Permalink to this headline">¶</a></h2>
+<p>Jinja2模板可以很方便处理一些普通字符串拼接任务比如，有一份电影评分数据列表，我需要把它渲染成一段文字并输出。</p>
+<p>如果你要拼接非结构化字符串，也请先考虑使用Jinja2等模板引擎，而不是手动拼接，因为用模板引擎处理字符串之后，代码写起来更高效，也更容易维护。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">render_movies</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">movies</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    文本方式展示电影列表信息</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">welcome_text</span> <span class="o">=</span> <span class="s1">&#39;Welcome, </span><span class="si">{}</span><span class="s1">.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+    <span class="n">text_parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">welcome_text</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">rating</span> <span class="ow">in</span> <span class="n">movies</span><span class="p">:</span>
+        <span class="c1"># 没有提供评分的电影，以 [NOT RATED] 代替</span>
+        <span class="n">rating_text</span> <span class="o">=</span> <span class="n">rating</span> <span class="k">if</span> <span class="n">rating</span> <span class="k">else</span> <span class="s1">&#39;[NOT RATED]&#39;</span>
+        <span class="n">movie_item</span> <span class="o">=</span> <span class="s1">&#39;* </span><span class="si">{}</span><span class="s1">, Rating: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">rating_text</span><span class="p">)</span>
+        <span class="n">text_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">movie_item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text_parts</span><span class="p">)</span>
+
+
+
+<span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Template</span>
+
+<span class="n">_MOVIES_TMPL</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">Welcome, {{username}}.</span>
+<span class="s1">{</span><span class="si">%f</span><span class="s1">or name, rating in movies %}</span>
+<span class="s1">* {{ name }}, Rating: {{ rating|default(&quot;[NOT RATED]&quot;, True) }}</span>
+<span class="s1">{</span><span class="si">%- e</span><span class="s1">ndfor %}</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">render_movies_j2</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">movies</span><span class="p">):</span>
+    <span class="n">tmpl</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">_MOVIES_TMPL</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tmpl</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">movies</span><span class="o">=</span><span class="n">movies</span><span class="p">)</span>
+
+
+<span class="n">movies</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;The Shawshank Redemption&#39;</span><span class="p">,</span> <span class="s1">&#39;9.3&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;The Prestige&#39;</span><span class="p">,</span> <span class="s1">&#39;8.5&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Mulan&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">render_movies</span><span class="p">(</span><span class="s1">&#39;piglei&#39;</span><span class="p">,</span> <span class="n">movies</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">render_movies_j2</span><span class="p">(</span><span class="s1">&#39;piglei&#39;</span><span class="p">,</span> <span class="n">movies</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02.%E4%BB%A3%E7%A0%81%E6%B3%A8%E9%87%8A.html" class="btn btn-neutral float-left" title="1.2. 代码注释" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04.%E5%88%97%E8%A1%A8%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html" class="btn btn-neutral float-right" title="1.4. 列表 List" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

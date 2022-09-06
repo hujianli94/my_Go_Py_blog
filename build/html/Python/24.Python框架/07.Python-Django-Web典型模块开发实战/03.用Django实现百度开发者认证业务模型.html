@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23.7.3. 用Django实现百度开发者认证业务模型 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="23.7.4. 区块链时代与Token登录" href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html" />
+    <link rel="prev" title="23.7.2. 用Django REST framework实现豆瓣API应用" href="02.%E7%94%A8Django-REST-framework%E5%AE%9E%E7%8E%B0%E8%B1%86%E7%93%A3API%E5%BA%94%E7%94%A8.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">23. Python框架</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../01.%E5%B8%B8%E7%94%A8%E7%9A%84GUI%E6%A1%86%E6%9E%B6/index.html">23.1. 常用的GUI框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02.Flask/index.html">23.2. Flask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../03.Scrapy/index.html">23.3. Scrapy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../04.Django/index.html">23.4. Django</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05.Tornado/index.html">23.5. Tornado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../06.Python%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Django-Flask/index.html">23.6. Python高效开发实战-Django、Flask</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">23.7. Python-Django-Web典型模块开发实战</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="01.Django-RESTful-API%E5%9F%BA%E7%A1%80.html">23.7.1. Django-RESTful-API基础</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02.%E7%94%A8Django-REST-framework%E5%AE%9E%E7%8E%B0%E8%B1%86%E7%93%A3API%E5%BA%94%E7%94%A8.html">23.7.2. 用Django REST framework实现豆瓣API应用</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">23.7.3. 用Django实现百度开发者认证业务模型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html">23.7.4. 区块链时代与Token登录</a></li>
+<li class="toctree-l4"><a class="reference internal" href="05.%E5%AE%9E%E7%8E%B0%E4%BC%98%E9%85%B7%E5%92%8C%E7%88%B1%E5%A5%87%E8%89%BA%E4%BC%9A%E5%91%98%E7%9A%84VIP%E6%A8%A1%E5%BC%8F.html">23.7.5. 实现优酷和爱奇艺会员的VIP模式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06.%E8%BF%9D%E7%A6%81%E8%AF%8D%E8%87%AA%E5%AE%A1%E6%9F%A5%E5%8A%9F%E8%83%BD.html">23.7.6. 违禁词自审查功能</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07.%E5%88%86%E6%9E%90%E5%90%BE%E7%88%B1%E7%A0%B4%E8%A7%A3%E8%AE%BA%E5%9D%9B%E5%8F%8D%E7%88%AC%E8%99%AB%E6%9C%BA%E5%88%B6.html">23.7.7. 分析吾爱破解论坛反爬虫机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html">23.7.8. 关于跨域问题的解决办法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="09.Django%E5%AE%9E%E7%8E%B0%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6.html">23.7.9. Django实现缓存机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html">23.7.10. 附1.Vue前端项目</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%842.%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E4%B8%8A%E7%BA%BF%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8.html">23.7.11. 附2.前后端分离项目上线部署到云服务器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="../index.html"><span class="section-number">23. </span>Python框架</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">23.7. </span>Python-Django-Web典型模块开发实战</a> &raquo;</li>
+      <li><span class="section-number">23.7.3. </span>用Django实现百度开发者认证业务模型</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Python/24.Python框架/07.Python-Django-Web典型模块开发实战/03.用Django实现百度开发者认证业务模型.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#django" id="id18">用Django实现百度开发者认证业务模型</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id19">1.内容生产者认证业务模型是基础</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id20">1.1内容生产者认证的原理</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id21">1.2 业界主流的两种认证方式</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id4" id="id22">2. Django实现通过手机号注册功能</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id23">2.1 初始化一个项目为功能演示做准备</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id24">2.2 前端逻辑</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id25">2.3 后端逻辑</a></p></li>
+<li><p><a class="reference internal" href="#django-1" id="id26">2.4 Django实现通过手机号注册功能</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id15" id="id27">3. Django实现邮箱激活功能</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pop3smtpimap" id="id28">3.1 什么是POP3、SMTP和IMAP</a></p></li>
+<li><p><a class="reference internal" href="#smtp" id="id29">3.2 开启邮箱的SMTP服务</a></p></li>
+<li><p><a class="reference internal" href="#id16" id="id30">3.3 后端实现</a></p></li>
+<li><p><a class="reference internal" href="#id17" id="id31">3.4 前端实现</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="django">
+<h1><a class="toc-backref" href="#id18"><span class="section-number">23.7.3. </span>用Django实现百度开发者认证业务模型</a><a class="headerlink" href="#django" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id19">1.内容生产者认证业务模型是基础</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<section id="id2">
+<h3><a class="toc-backref" href="#id20">1.1内容生产者认证的原理</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>用户从初次打开平台，到完成内容生产者认证的原理流程图。</p>
+<img alt="../../../_images/image-20220401165039550.png" src="../../../_images/image-20220401165039550.png" />
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id21">1.2 业界主流的两种认证方式</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li><p>通过邮箱激活的方式进行认证</p></li>
+<li><p>通过向网站平台上传个人信息的方式进行认证</p></li>
+</ol>
+<p>从实现技术上来说，这反而比用邮箱激活链接的认证方式要简单一些，因为上传这些个人信息完成认证与注册时上传用户名等信息的实现原理是一样的，都是通过从客户端到服务器端的一次post请求。</p>
+<p>注意：
+由于权限认证的业务涉及的隐密信息很多，因此做好数据安全非常重要，请大家将权限认证配合后面与网络安全相关的章节内容一起使用</p>
+</section>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id22">2. Django实现通过手机号注册功能</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>用户在认证之前，首先要完成注册。目前，在中国大陆地区，注册一个用户必须要绑定手机号码，并且平台方要为此而承担成本支出。</p>
+<p>我们将开发一套使用Django实现的通过手机号注册的功能</p>
+<section id="id5">
+<h3><a class="toc-backref" href="#id23">2.1 初始化一个项目为功能演示做准备</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id24">2.2 前端逻辑</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>使用vue-cli脚手架搭建vue演示项目demo3</p>
+<p>使用编辑器打开demo3，将demo3/src/App.vue中的代码替换如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="p">{{</span><span class="n">title</span><span class="p">}}</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span>
+  <span class="n">data</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="n">title</span><span class="p">:</span> <span class="s1">&#39;首页&#39;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id25">2.3 后端逻辑</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>新建Django项目demo4，同时新建App，命名为App01。</p>
+<p><strong>1.安装相关依赖包</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">djangorestframework</span> <span class="n">markdown</span> <span class="n">Django</span><span class="o">-</span><span class="nb">filter</span> <span class="n">pillow</span> <span class="n">Django</span><span class="o">-</span><span class="n">guardian</span> <span class="n">coreapi</span>
+</pre></div>
+</div>
+<p><strong>2.在demo4/settings.py中注册</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span>
+<span class="p">]</span>
+
+
+<span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.mysql&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;sendcode&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;USER&#39;</span><span class="p">:</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s1">&#39;OSChina@xxxx&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;HOST&#39;</span><span class="p">:</span> <span class="s1">&#39;192.168.1.107&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;PORT&#39;</span><span class="p">:</span> <span class="s1">&#39;3308&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;OPTIONS&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;init_command&quot;</span><span class="p">:</span> <span class="s2">&quot;SET default_storage_engine=INNODB;&quot;</span><span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>安装mysqlclient驱动</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">PyMYSQL</span>
+</pre></div>
+</div>
+<p>在项目的__init__py文件下添加mysql的驱动程序</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pymysql</span>
+
+<span class="n">pymysql</span><span class="o">.</span><span class="n">install_as_MySQLdb</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>3.在app01/models.py中重建用户表类，新建key值表类：</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">AbstractUser</span>
+
+
+<span class="c1"># Create your models here.</span>
+
+<span class="k">class</span> <span class="nc">UserProfile</span><span class="p">(</span><span class="n">AbstractUser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">is_auther</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;是否认证&#39;</span><span class="p">)</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;电话&#39;</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;; 邮箱&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;; 添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;用户&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span>
+
+
+<span class="k">class</span> <span class="nc">Key</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    key表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">UserProfile</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;开发者&#39;</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">app_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;应用名称&#39;</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;应用key值&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;; 添加时间 &#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;key表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span>
+</pre></div>
+</div>
+<p><strong>4.在demo4/settings.py中加入重建用户表的配置代码，</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AUTH_USER_MODEL</span><span class="o">=</span><span class="s1">&#39;app01.UserProfile&#39;</span>
+</pre></div>
+</div>
+<p><strong>5.执行数据更新命令：</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+</section>
+<section id="django-1">
+<span id="id8"></span><h3><a class="toc-backref" href="#id26">2.4 Django实现通过手机号注册功能</a><a class="headerlink" href="#django-1" title="Permalink to this headline">¶</a></h3>
+<img alt="../../../_images/image-20220401171317985.png" src="../../../_images/image-20220401171317985.png" />
+<section id="id9">
+<h4>1.注册功能的业务逻辑<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<p>（1）用户需要一个输入手机号的输入框和一个获取验证码的按钮（前端需求）。</p>
+<p>（2）在客户端要对用户输入的手机号做格式上的合法验证（前端需求）。</p>
+<p>（3）检验用户输入的手机号是否已经被注册过（后端需求）。</p>
+<p>（4）如果用户输入的手机号已经被占用，则给用户提示（前端需求）。</p>
+<p>（5）如果用户输入的手机号合法且没有被注册过，那么将手机号通过API发送给短信服务商（后端需求）。</p>
+<p>（6）如果用户没有收到短信验证码，可重新获取验证码（前端需求）。</p>
+<p>（7）如果用户收到了短信验证码，就发送到服务器端，服务器端判断其是否正确、是否超时，如果验证码错误或者验证码超时了，则返回错误信息；如果正确，则返回注册成功信息（后端需求）。</p>
+<p>（8）如果用户提交的验证码超时或者错误，则提示用户进行重新操作（前端信息）。</p>
+</section>
+<section id="id10">
+<h4>2.前端中开发注册用户的静态页面<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">title</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;registerwindow&quot;</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;title&quot;</span><span class="o">&gt;</span><span class="n">用户注册</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;item&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="o">&gt;</span><span class="n">用户名</span><span class="p">:</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nb">input</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="o">&gt;</span>
+      <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;item&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="o">&gt;</span><span class="n">密码</span><span class="p">:</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nb">input</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="o">&gt;</span>
+      <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;item&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="o">&gt;</span><span class="n">手机号</span><span class="p">:</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nb">input</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">button</span><span class="o">&gt;</span><span class="n">获取验证码</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+      <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;item&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="o">&gt;</span><span class="n">验证码</span><span class="p">:</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nb">input</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">button</span><span class="o">&gt;</span><span class="n">确认注册</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+      <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span>
+  <span class="n">data</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="n">title</span><span class="p">:</span> <span class="s1">&#39;首页&#39;</span><span class="p">,</span>
+      <span class="n">codebtn</span><span class="p">:</span> <span class="s1">&#39;获取验证码&#39;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">*</span> <span class="p">{</span>
+  <span class="n">margin</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">padding</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">box</span><span class="o">-</span><span class="n">sizing</span><span class="p">:</span> <span class="n">border</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">.</span><span class="n">registerwindow</span> <span class="p">{</span>
+  <span class="n">margin</span><span class="p">:</span> <span class="mi">0</span> <span class="n">auto</span><span class="p">;</span>
+  <span class="n">width</span><span class="p">:</span> <span class="mi">350</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">height</span><span class="p">:</span> <span class="mi">200</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">background</span><span class="p">:</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">148</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="o">.</span><span class="n">title</span> <span class="p">{</span>
+  <span class="n">margin</span><span class="p">:</span> <span class="mi">0</span> <span class="n">auto</span><span class="p">;</span>
+  <span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="p">:</span> <span class="mi">30</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">text</span><span class="o">-</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span>
+<span class="p">}</span>
+
+<span class="o">.</span><span class="n">item</span> <span class="p">{</span>
+  <span class="n">margin</span><span class="o">-</span><span class="n">top</span><span class="p">:</span> <span class="mi">10</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">display</span><span class="p">:</span> <span class="n">flex</span><span class="p">;</span>
+  <span class="n">flex</span><span class="o">-</span><span class="n">direction</span><span class="p">:</span> <span class="n">row</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">.</span><span class="n">text</span><span class="p">{</span>
+  <span class="n">text</span><span class="o">-</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span><span class="p">;</span>
+  <span class="n">width</span><span class="p">:</span> <span class="mi">80</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nb">input</span><span class="p">{</span>
+  <span class="n">width</span><span class="p">:</span> <span class="mi">140</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">button</span><span class="p">{</span>
+  <span class="n">width</span><span class="p">:</span> <span class="mi">80</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">margin</span><span class="o">-</span><span class="n">left</span><span class="p">:</span> <span class="mi">5</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>注意：
+本节中所编写的静态页面代码具有一定的普遍可复用性，可以方便大家在实际项目中使用，使大家将精力主要用于Django后端的学习
+前端知识相对薄弱的读者，可以直接拿到自己的项目中使用。</p>
+<img alt="../../../_images/image-20220401171744160.png" src="../../../_images/image-20220401171744160.png" />
+<p>编写前端验证用户信息的逻辑代码</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;h1&gt;{{ title }}&lt;/h1&gt;
+    &lt;div class=&quot;registerwindow&quot;&gt;
+      &lt;div class=&quot;title&quot;&gt;用户注册&lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;用户名:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;username&quot;&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;密码:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;pwd&quot;&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;邮箱:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;email&quot;&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;手机号:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;phone&quot;&gt;
+        &lt;button :disabled=&quot;disabled&quot; @click=&quot;authPhone&quot;&gt;{{ codebtn }}&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;验证码:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;code&quot;&gt;
+        &lt;button @click=&quot;authUserinfo&quot;&gt;确认注册&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &#39;app&#39;,
+  data () {
+    return {
+      title: &#39;首页&#39;,
+      disabled: false,
+      time: 0,
+      codebtn: &#39;获取验证码&#39;,
+      phone: &#39;&#39;,
+      username: &#39;&#39;,
+      pwd: &#39;&#39;,
+      email: &#39;&#39;,
+      code: &#39;&#39;
+    }
+  },
+  methods: {
+    // 用来向后台发送请求，获取验证码
+    getCode () {
+    },
+    // 提交完整的注册信息
+    goRegister () {
+    },
+    // 号码验证
+    authPhone () {
+      const reg = 11 &amp;&amp; /^((13|14|15|17|18)[0-9]{1}\d{8})$/
+      if (this.phone === &#39;&#39;) {
+        alert(&#39;请输入手机号码&#39;)
+      } else if (!reg.test(this.phone)) {
+        alert(&#39;手机格式不正确&#39;)
+      } else {
+        this.time = 60
+        this.disabled = true
+        this.timer()
+        this.getCode()
+      }
+    },
+    // 倒计时显示
+    timer () {
+      if (this.time &gt; 0) {
+        this.time--
+        this.codebtn = this.time + &#39;s&#39;
+        setTimeout(this.timer, 1000)
+      } else {
+        this.time = 0
+        this.codebtn = &#39;获取验证码&#39;
+        this.disabled = false
+      }
+    },
+    // 注册验证
+    authUserinfo () {
+      if (this.username === &#39;&#39;) {
+        alert(&#39;用户名不能为空&#39;)
+      } else if (this.pwd === &#39;&#39;) {
+        alert(&#39;密码不能为空&#39;)
+      } else if (this.phone === &#39;&#39;) {
+        alert(&#39;手机号码不能为空&#39;)
+      } else if (this.code === &#39;&#39;) {
+        alert(&#39;验证码不能为空&#39;)
+      } else {
+        this.goRegister()
+      }
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style&gt;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.registerwindow {
+  margin: 0 auto;
+  width: 350px;
+  height: 200px;
+  background: rgba(5, 55, 148, 0.5);
+}
+
+.title {
+  margin: 0 auto;
+  font-size: 30px;
+  text-align: center
+}
+
+.item {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.text {
+  text-align: center;
+  width: 80px;
+}
+
+input {
+  width: 140px;
+}
+
+button {
+  width: 80px;
+  margin-left: 5px;
+}
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>至此，实现了前端用户输入信息的验证，效果如图4-16所示。当用户获取到一条验证码后，限定用户一分钟之内不能再次获取（每条短信验证码的发送都是有成本的），防止有人不停地重新获取验证码。</p>
+<img alt="../../../_images/image-20220401173730824.png" src="../../../_images/image-20220401173730824.png" />
+<p>注意：
+前端对于获取验证码的频率限制，只能防止一些技术“小白”用户的“捣乱”，如果有一定技术的攻击者想要恶意重新获取验证码，前端的限制是没有意义的，需要在后端进行限制。</p>
+</section>
+<section id="id11">
+<h4>3.短信服务商的对接<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p>一般一些相对“小而专”的短信服务商所提供的短信服务，跟阿里云、腾讯云这些云计算服务提供的短信服务相比，服务质量并没有什么大的差别。但是从议价空间上，相对比较小的短信服务商，则可以根据所需短信服务的量级，给出更大的优惠。</p>
+<p>所有的短信服务商的对接原理都是大同小异，这里以云片网为例来介绍对接的流程。</p>
+<p>（1）注册云片网。在云片网首页（地址为 <a class="reference external" href="https://www.yunpian.com/">https://www.yunpian.com/</a>）</p>
+<p>本次不使用云片，因为需要实名认证，等待审核，我们使用打印输出的方式进行测试。</p>
+<p>（2）在后端项目demo4中写发送短信的脚本。在项目目录下新建utils目录，新建<code class="docutils literal notranslate"><span class="pre">yunpian.py</span></code>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+
+<span class="k">class</span> <span class="nc">YunPian</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">single_send_url</span> <span class="o">=</span> <span class="s1">&#39;HTTPS://sms.yunpian.com/v2/sms/single_send.json; &#39;</span>
+
+    <span class="k">def</span> <span class="nf">send_sms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">mobile</span><span class="p">):</span>
+        <span class="n">parmas</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;apikey&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
+            <span class="s1">&#39;mobile&#39;</span><span class="p">:</span> <span class="n">mobile</span><span class="p">,</span>
+            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;“**网”您的验证码是</span><span class="si">{code}</span><span class="s1">。如非本人操作，请忽略本短信&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="c1"># text必须要跟云片后台的模板内容保持一致，不然发送不出去！</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_send_url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">parmas</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">yun_pian</span> <span class="o">=</span> <span class="n">YunPian</span><span class="p">(</span><span class="s1">&#39;***************（你的apikey）&#39;</span><span class="p">)</span>
+    <span class="n">yun_pian</span><span class="o">.</span><span class="n">send_sms</span><span class="p">(</span><span class="s1">&#39;***（验证码）&#39;</span><span class="p">,</span> <span class="s1">&#39;*******（手机号）&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>4.后端编写验证码相关逻辑<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<p><strong>（1）在app01/models.py中新建验证码的表类：</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Code</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    验证码</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;手机号&#39;</span><span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;验证码&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;过期时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;验证码表&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">phone</span>
+</pre></div>
+</div>
+<p><strong>（2）在终端执行数据更新命令：</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<p><strong>（3）在settings.py中添加代码：</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 云片网apikey</span>
+<span class="n">APIKEY</span> <span class="o">=</span> <span class="s1">&#39;你云片网的apikey&#39;</span>
+</pre></div>
+</div>
+<p><strong>（4）在app01/views.py内写入发送验证码的逻辑类：</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SendCodeView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取手机验证码</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">promptMessage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status_code</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+
+        <span class="c1"># 3中django response的方式</span>
+        <span class="c1"># # json返回为中文</span>
+        <span class="c1"># return HttpResponse(json.dumps(result, ensure_ascii=False),</span>
+        <span class="c1">#                     content_type=&quot;application/json,charset=utf-8&quot;)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="c1"># return HttpResponse(json.dumps(result))</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">phone</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;phone&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">phone</span><span class="p">:</span>
+            <span class="c1"># 验证是否为有效手机号</span>
+            <span class="n">mobile_pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^(13\d|14[5|7]|15\d|166|17\d|18\d)\d</span><span class="si">{8}</span><span class="s1">$&#39;</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">mobile_pat</span><span class="p">,</span> <span class="n">phone</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+                <span class="c1"># 如果手机号合法，检查是否被注册过</span>
+                <span class="n">had_register</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">had_register</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;手机号已经被注册！&quot;</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">402</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># 检测是否发送过验证码，如果没发送过则发送验证码，如果发送过则另做处理</span>
+                    <span class="n">had_send</span> <span class="o">=</span> <span class="n">Code</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">had_send</span><span class="p">:</span>
+                        <span class="c1"># 如果这个号码发送过验证码，查看距离上次发送时间间隔是否达到一分钟</span>
+                        <span class="k">if</span> <span class="n">had_send</span><span class="o">.</span><span class="n">add_time</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span>
+                                <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)):</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;距离上次发送验证码不足1分钟！&#39;</span>
+                            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># 发送验证码</span>
+                            <span class="n">code</span> <span class="o">=</span> <span class="n">Code</span><span class="p">()</span>
+                            <span class="n">code</span><span class="o">.</span><span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span>
+                            <span class="c1"># 生成验证码</span>
+                            <span class="n">c</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">9999</span><span class="p">)</span>
+                            <span class="n">code</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                            <span class="c1"># 设定验证码的过期时间为20分钟以后</span>
+                            <span class="n">code</span><span class="o">.</span><span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+                            <span class="n">code</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                            <span class="c1"># 调用发送模块</span>
+                            <span class="c1"># TODO</span>
+                            <span class="c1"># code = Code.objects.filter(phone=phone).last().code</span>
+                            <span class="c1"># yunpian = YunPian(APIKEY)</span>
+                            <span class="c1"># sms_status = yunpian.send_sms(code=code, mobile=phone)</span>
+                            <span class="c1"># msg = sms_status</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;“**网”您的验证码是</span><span class="si">{code}</span><span class="s1">。如非本人操作，请忽略本短信&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">))</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;“**网”您的验证码是</span><span class="si">{code}</span><span class="s1">。如非本人操作，请忽略本短信&#39;</span>
+                            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># 发送验证码</span>
+                        <span class="n">code</span> <span class="o">=</span> <span class="n">Code</span><span class="p">()</span>
+                        <span class="n">code</span><span class="o">.</span><span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span>
+                        <span class="c1"># 生成验证码</span>
+                        <span class="n">c</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">9999</span><span class="p">)</span>
+                        <span class="n">code</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                        <span class="c1"># 设定验证码的过期时间为20分钟以后</span>
+                        <span class="n">code</span><span class="o">.</span><span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+                        <span class="n">code</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                        <span class="c1"># 调用发送模块</span>
+                        <span class="c1"># TODO</span>
+                        <span class="c1"># code = Code.objects.filter(phone=phone).last().code</span>
+                        <span class="c1"># yunpian = YunPian(APIKEY)</span>
+                        <span class="c1"># sms_status = yunpian.send_sms(code=code, mobile=phone)</span>
+                        <span class="c1"># msg = sms_status</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;“**网”您的验证码是</span><span class="si">{}</span><span class="s1">。如非本人操作，请忽略本短信&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)))</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;“**网”您的验证码是</span><span class="si">{}</span><span class="s1">。如非本人操作，请忽略本短信&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;手机号不合法！&#39;</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;手机号为空！&#39;</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在以上代码中，我们比较了两个时间，使用了replace(tzinfo=None)方法，将两个时间类型设置为相同的类型，如果直接进行比较，将会报错：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">TypeError</span><span class="p">:</span> <span class="n">can</span><span class="s1">&#39;t compare offset-naive and offset-aware datetimes</span>
+</pre></div>
+</div>
+<p>（5）在urls.py中增加路由：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">SendCodeView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;sendcode/&#39;</span><span class="p">,</span> <span class="n">SendCodeView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sendcode&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（6）简单地解决一下跨域问题：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">django</span><span class="o">-</span><span class="n">cors</span><span class="o">-</span><span class="n">headers</span>
+</pre></div>
+</div>
+<p>在settings.py中：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;corsheaders&#39;</span>
+<span class="p">]</span>
+
+<span class="n">MIDDLEWARE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># 放到中间件顶部</span>
+    <span class="s1">&#39;corsheaders.middleware.CorsMiddleware&#39;</span><span class="p">,</span>
+    <span class="o">......</span>
+    <span class="p">]</span>
+
+    <span class="n">CORS_ORIGIN_ALLOW_ALL</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h4>5.前端编写发送验证码的逻辑代码<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<p>（1）在demo3中，按Shift键并右击，在弹出的快捷菜单中，选择“在此处打开命令窗口”命令，打开cmd操作界面，安装axios，</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cnpm</span> <span class="n">install</span> <span class="n">axios</span> <span class="o">--</span><span class="n">save</span>
+</pre></div>
+</div>
+<p>（2）在demo3/src/App.vue中引入axios并完善getCode()方法：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;script&gt;
+import axios from &#39;axios&#39;
+
+export default {
+  name: &#39;app&#39;,
+  data () {
+    return {
+      title: &#39;首页&#39;,
+      disabled: false,
+      time: 0,
+      codebtn: &#39;获取验证码&#39;,
+      phone: &#39;&#39;,
+      username: &#39;&#39;,
+      pwd: &#39;&#39;,
+      email: &#39;&#39;,
+      code: &#39;&#39;
+    }
+  },
+  methods: {
+    // 用来向后台发送请求，获取验证码
+    getCode () {
+      const api = &#39;http://127.0.0.1:8080/sendcode/&#39;
+      console.log(api)
+      axios.get(api, {
+        params: {
+          phone: this.phone
+        }
+      })
+        .then((Response) =&gt; {
+          console.log(Response.data)
+          alert(JSON.stringify(Response.data))
+          // 根据返回的信息，做出响应的提示
+        })
+        .catch((error) =&gt; {
+          console.log(error)
+        })
+    },
+    // 提交完整的注册信息
+    goRegister () {
+      // 提交完整的注册信息
+      const api = &#39;http://127.0.0.1:8080/register/&#39;
+      axios.get(api, {
+        params: {
+          phone: this.phone,
+          username: this.username,
+          pwd: this.pwd,
+          code: this.code,
+          email: this.email
+        }
+      }
+      )
+        .then((Response) =&gt; {
+          console.log(Response.data)
+          alert(JSON.stringify(Response.data))
+          // 根据返回的信息，做出响应的提示
+        })
+        .catch((error) =&gt; {
+          console.log(error)
+        })
+    },
+    // 号码验证
+    authPhone () {
+      const reg = 11 &amp;&amp; /^((13|14|15|17|18)[0-9]{1}\d{8})$/
+      if (this.username === &#39;&#39;) {
+        alert(&#39;用户名不能为空&#39;)
+      } else if (this.pwd === &#39;&#39;) {
+        alert(&#39;密码不能为空&#39;)
+      } else if (this.phone === &#39;&#39;) {
+        alert(&#39;手机号码不能为空&#39;)
+      } else if (this.phone === &#39;&#39;) {
+        alert(&#39;请输入手机号码&#39;)
+      } else if (!reg.test(this.phone)) {
+        alert(&#39;手机格式不正确&#39;)
+      } else {
+        this.time = 60
+        this.disabled = true
+        this.timer()
+        this.getCode()
+      }
+    },
+
+    // 倒计时显示
+    timer () {
+      if (this.time &gt; 0) {
+        this.time--
+        this.codebtn = this.time + &#39;s&#39;
+        setTimeout(this.timer, 1000)
+      } else {
+        this.time = 0
+        this.codebtn = &#39;获取验证码&#39;
+        this.disabled = false
+      }
+    },
+    // 注册验证
+    authUserinfo () {
+      if (this.username === &#39;&#39;) {
+        alert(&#39;用户名不能为空&#39;)
+      } else if (this.pwd === &#39;&#39;) {
+        alert(&#39;密码不能为空&#39;)
+      } else if (this.phone === &#39;&#39;) {
+        alert(&#39;手机号码不能为空&#39;)
+      } else if (this.code === &#39;&#39;) {
+        alert(&#39;验证码不能为空&#39;)
+      } else {
+        this.goRegister()
+      }
+    }
+  }
+}
+&lt;/script&gt;
+</pre></div>
+</div>
+<blockquote>
+<div><p>注意：
+因篇幅所限，这里只给出了关键代码，我们可以根据从后端返回的状态码，在前端做进一步的业务提示代码。</p>
+</div></blockquote>
+</section>
+<section id="id14">
+<h4>6.完成确认注册功能<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<p>（1）在后端demo4/app01/views.py内写入注册新用户类：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RegisterView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    注册类</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">promptMessage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status_code</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+
+        <span class="c1"># 3中django response的方式</span>
+        <span class="c1"># # json返回为中文</span>
+        <span class="c1"># return HttpResponse(json.dumps(result, ensure_ascii=False),</span>
+        <span class="c1">#                     content_type=&quot;application/json,charset=utf-8&quot;)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="c1"># return HttpResponse(json.dumps(result))</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pwd&#39;</span><span class="p">)</span>
+        <span class="n">phone</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;phone&#39;</span><span class="p">)</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">username</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;用户名不能为空！&#39;</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pwd</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;密码不能为空！&#39;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;404&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">phone</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;手机号不能为空！&#39;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;404&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">email</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;邮箱不能为空！&#39;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;404&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">code</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;验证码不能为空！&#39;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;404&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c1"># 查找对比验证码</span>
+        <span class="n">code1</span> <span class="o">=</span> <span class="n">Code</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">code</span> <span class="o">==</span> <span class="n">code1</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+            <span class="c1"># 验证验证码是否已经过期</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">code1</span><span class="o">.</span><span class="n">end_time</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">end_time</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">():</span>
+                <span class="n">user</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="p">()</span>
+                <span class="n">user</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+                <span class="n">user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">pwd</span>
+                <span class="n">user</span><span class="o">.</span><span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span>
+                <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span>
+                <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;注册成功！&#39;</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;200&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;验证码已过期！&#39;</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;403&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;验证码错误！&#39;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;403&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promptMessage</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（2）在urls.py中配置路由代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">SendCodeView</span><span class="p">,</span> <span class="n">RegisterView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;sendcode/&#39;</span><span class="p">,</span> <span class="n">SendCodeView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sendcode&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;register/&#39;</span><span class="p">,</span> <span class="n">RegisterView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;register&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（3）在demo3/src/App.vue中的methods里编写注册方法goRegister()：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>// 提交完整的注册信息
+goRegister () {
+  // 提交完整的注册信息
+  const api = &#39;http://127.0.0.1:8080/register/&#39;
+  axios.get(api, {
+    params: {
+      phone: this.phone,
+      username: this.username,
+      pwd: this.pwd,
+      code: this.code,
+      email: this.email
+    }
+  }
+  )
+    .then((Response) =&gt; {
+      console.log(Response.data)
+      // 根据返回的信息，做出响应的提示
+    })
+    .catch((error) =&gt; {
+      console.log(error)
+    })
+},
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="id15">
+<h2><a class="toc-backref" href="#id27">3. Django实现邮箱激活功能</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<p>在真实的百度开发者认证业务中，认证这一步，是通过向百度提供更多的资质信息，然后发送一次短信验证来完成认证的，从技术实现上来说，这与注册功能是一样的。</p>
+<section id="pop3smtpimap">
+<h3><a class="toc-backref" href="#id28">3.1 什么是POP3、SMTP和IMAP</a><a class="headerlink" href="#pop3smtpimap" title="Permalink to this headline">¶</a></h3>
+<p>（1）POP3（Post Office Protocol - Version
+3，邮局协议版本3），它可以做的是，让用户将邮件服务器上的邮件下载到本地客户端，然后邮件服务器中的邮件并不保存，随之删除，就好像现实中的邮局将信件送到了用户的手里，这封信也不再存在于邮局中一样。</p>
+<p>根据我国相关规定，网络服务提供者必须要记录网民的上网时间、地点、域名和信息记录等信息，保存至少60天。虽然许多社交软件上都有“阅后即焚”的功能，但是根据我国相关规定，并不允许真正的“阅后即焚”，如果你的朋友通过QQ使用“阅后即焚”功能发送隐私文件给你，那么你要做好心理准备，这个文件也许你只能看5秒钟，但是却会在腾讯的服务器中存在很长很长的时间，至于会不会被其他人看到，就不得而知了。当然，这一切都是为了互联网的安全，我们要做的是知法、懂法并守法，文明上网。</p>
+<p>（2）IMAP（Internet Mail Access Protocol,
+Internet邮件访问协议），以前称做交互邮件访问协议（Interactive Mail
+Access Protocol）。</p>
+<p>对于POP3与IMAP的关系，我们可以用HTTP/HTTPS协议知识体系下一个非常形象的例子来阐释，POP3就相当于传统的软件，需要将软件下载到本地，安装之后才可以使用软件的功能；而IMAP相当于SAAS模式，就是可以将软件安装到服务器端，用户可以直接通过浏览器在线使用，免下载和安装，可以直接操作。</p>
+<p>（3）SMTP（Simple Mail Transfer
+Protocol，简单邮件传输协议），其作用很关键，只有开通了SMTP的邮箱，我们才可以同时向多个邮箱发送简单的邮件。</p>
+</section>
+<section id="smtp">
+<h3><a class="toc-backref" href="#id29">3.2 开启邮箱的SMTP服务</a><a class="headerlink" href="#smtp" title="Permalink to this headline">¶</a></h3>
+<img alt="../../../_images/image-20220402163431019.png" src="../../../_images/image-20220402163431019.png" />
+<p>生成授权码，生成的授权码为三方登录的密码，三方软件登录邮箱必须使用此授权码，请牢记。</p>
+<img alt="../../../_images/image-20220402163918048.png" src="../../../_images/image-20220402163918048.png" />
+<p>邮箱激活功能，与手机验证码功能类似，只不过它是通过邮箱代替短信服务商。邮箱激活功能的开发流程和手机验证码的流程相似，步骤介绍如下：</p>
+</section>
+<section id="id16">
+<h3><a class="toc-backref" href="#id30">3.3 后端实现</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<p>（1）在demo4/settings.py中增加邮箱配置代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 邮件客户端</span>
+<span class="n">EMAIL_HOST</span> <span class="o">=</span> <span class="s1">&#39;smtp.qq.com&#39;</span>
+<span class="n">EMAIL_PORT</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="c1"># 你的邮箱</span>
+<span class="n">EMAIL_HOST_USER</span> <span class="o">=</span> <span class="s1">&#39;1879324764@qq.com&#39;</span>
+<span class="n">EMAIL_HOST_PASSWORD</span> <span class="o">=</span> <span class="s1">&#39;xxxxxxxx&#39;</span>
+<span class="n">EMAIL_USE_TLS</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="c1"># 同样是你的邮箱，和上面的邮箱一样，都是发信者的邮箱</span>
+<span class="n">EMAIL_FROM</span> <span class="o">=</span> <span class="s1">&#39;1879324764@qq.com&#39;</span>
+</pre></div>
+</div>
+<p>（2）在app01/models.py中创建邮箱激活码表类：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">EmailVerifyRecord</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    邮箱激活码</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;激活码&#39;</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">EmailField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;邮箱&#39;</span><span class="p">)</span>
+    <span class="n">send_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;发送时间&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;邮箱验证码&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">(</span><span class="si">{1}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（3）打开终端，执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<p>（4）在utils目录下新建发送邮件脚本email_send.py:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">Random</span>
+<span class="kn">from</span> <span class="nn">app01.models</span> <span class="kn">import</span> <span class="n">EmailVerifyRecord</span>
+<span class="kn">from</span> <span class="nn">django.core.mail</span> <span class="kn">import</span> <span class="n">send_mail</span>
+<span class="kn">from</span> <span class="nn">demo4.settings</span> <span class="kn">import</span> <span class="n">EMAIL_FROM</span>
+
+
+<span class="k">def</span> <span class="nf">random_str</span><span class="p">(</span><span class="n">randomlength</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 生成随机验证码 &quot;&quot;&quot;</span>
+    <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">chars</span> <span class="o">=</span> <span class="s1">&#39;AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789&#39;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">random</span> <span class="o">=</span> <span class="n">Random</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">randomlength</span><span class="p">):</span>
+        <span class="nb">str</span> <span class="o">+=</span> <span class="n">chars</span><span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="nb">str</span>
+
+
+<span class="k">def</span> <span class="nf">send_register_email</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 发送邮件 &quot;&quot;&quot;</span>
+    <span class="n">email_record</span> <span class="o">=</span> <span class="n">EmailVerifyRecord</span><span class="p">()</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">random_str</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">email_record</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+    <span class="n">email_record</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span>
+    <span class="n">email_record</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">email_title</span> <span class="o">=</span> <span class="s1">&#39;**网注册激活链接&#39;</span>
+    <span class="n">email_body</span> <span class="o">=</span> <span class="s1">&#39;请点击下面的链接激活你的账号：http://127.0.0.1:8080/active/</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="n">send_mail</span><span class="p">(</span><span class="n">email_title</span><span class="p">,</span> <span class="n">email_body</span><span class="p">,</span> <span class="n">EMAIL_FROM</span><span class="p">,</span> <span class="p">[</span><span class="n">email</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>（5）在app01/views.py中新增代码：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">email_send</span>
+
+
+<span class="k">class</span> <span class="nc">SendActiveCodeView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    发送激活链接类</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">email</span><span class="p">:</span>
+            <span class="n">email_send</span><span class="o">.</span><span class="n">send_register_email</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;激活链接已发送都您的邮箱，请前往邮箱完成激活！&#39;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;200&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                                <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/json,charset=utf-8&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;未收到邮箱！&#39;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;404&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                                <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/json,charset=utf-8&quot;</span><span class="p">)</span>
+
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">EmailVerifyRecord</span>
+
+
+<span class="k">class</span> <span class="nc">ActiveView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    激活认证用户类</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">EmailVerifyRecord</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">item</span><span class="p">:</span>
+            <span class="n">email</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">email</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">is_auther</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;已认证为开发者，可以创建应用啦。&#39;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;200&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/json,charset=utf-8&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;认证失败&#39;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;403&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}}</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/json,charset=utf-8&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>注意：在激活类ActiveView中，默认是不会出现在短时间之内，不同的用户恰好生成并发送了相同激活码的情况。这种情况发生的可能性非常小，但是也并非完全不存在这种可能。想要解决这个问题，需要用到下一章关于登录的知识，等我们学完下一章的内容，再来完善这个类的代码逻辑。当然，大家不妨开动脑筋思考一下，不涉及登录的知识，是否可以通过其他的方式修改代码，以达到消除这种错误呢？</p>
+<p>（6）在urls.py中增加路由代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">SendCodeView</span><span class="p">,</span> <span class="n">RegisterView</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">SendActiveCodeView</span><span class="p">,</span> <span class="n">ActiveView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;sendcode/&#39;</span><span class="p">,</span> <span class="n">SendCodeView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sendcode&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;register/&#39;</span><span class="p">,</span> <span class="n">RegisterView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;register&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;sendactivecode/&#39;</span><span class="p">,</span> <span class="n">SendActiveCodeView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sendactivecode&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;active/&lt;str:code&gt;&#39;</span><span class="p">,</span> <span class="n">ActiveView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;active&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="id17">
+<h3><a class="toc-backref" href="#id31">3.4 前端实现</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<p>（1）在demo3/src目录下新建目录components，新建ActiveSendmail.vue组件。</p>
+<p>（2）父子组件传值，在App.vue中将用户的电子邮箱传到子组件ActiveSendmail.vue中。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;h1&gt;{{ title }}&lt;/h1&gt;
+    &lt;div class=&quot;registerwindow&quot;&gt;
+      &lt;div class=&quot;title&quot;&gt;用户注册&lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;用户名:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;username&quot;&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;密码:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;pwd&quot;&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;邮箱:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;email&quot;&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;手机号:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;phone&quot;&gt;
+        &lt;button :disabled=&quot;disabled&quot; @click=&quot;authPhone&quot;&gt;{{ codebtn }}&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;item&quot;&gt;
+        &lt;div class=&quot;text&quot;&gt;验证码:&lt;/div&gt;
+        &lt;input type=&quot;text&quot; v-model=&quot;code&quot;&gt;
+        &lt;button @click=&quot;authUserinfo&quot;&gt;确认注册&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;br&gt;
+      &lt;v-active :email=&#39;email&#39;&gt;&lt;/v-active&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import axios from &#39;axios&#39;
+import ActiveSendmail from &#39;@/components/ActiveSendmail&#39;
+
+export default {
+  name: &#39;app&#39;,
+  data () {
+    return {
+      title: &#39;首页&#39;,
+      disabled: false,
+      time: 0,
+      codebtn: &#39;获取验证码&#39;,
+      phone: &#39;&#39;,
+      username: &#39;&#39;,
+      pwd: &#39;&#39;,
+      email: &#39;&#39;,
+      code: &#39;&#39;
+    }
+  },
+  components: {
+    &#39;v-active&#39;: ActiveSendmail
+  },
+  methods: {
+    // 用来向后台发送请求，获取验证码
+    getCode () {
+      const api = &#39;http://127.0.0.1:8080/sendcode/&#39;
+      console.log(api)
+      axios.get(api, {
+        params: {
+          phone: this.phone
+        }
+      })
+        .then((Response) =&gt; {
+          console.log(Response.data)
+          alert(JSON.stringify(Response.data))
+          // 根据返回的信息，做出响应的提示
+        })
+        .catch((error) =&gt; {
+          console.log(error)
+        })
+    },
+    // 提交完整的注册信息
+    goRegister: function () {
+      // 提交完整的注册信息
+      const api = &#39;http://127.0.0.1:8080/register/&#39;
+      axios.get(api, {
+        params: {
+          phone: this.phone,
+          username: this.username,
+          pwd: this.pwd,
+          code: this.code,
+          email: this.email
+        }
+      })
+        .then((Response) =&gt; {
+          console.log(Response.data)
+          alert(JSON.stringify(Response.data))
+          // 根据返回的信息，做出响应的提示
+        })
+        .catch((error) =&gt; {
+          console.log(error)
+        })
+    },
+    // 号码验证
+    authPhone () {
+      const reg = 11 &amp;&amp; /^((13|14|15|17|18)[0-9]{1}\d{8})$/
+      if (this.username === &#39;&#39;) {
+        alert(&#39;用户名不能为空&#39;)
+      } else if (this.pwd === &#39;&#39;) {
+        alert(&#39;密码不能为空&#39;)
+      } else if (this.phone === &#39;&#39;) {
+        alert(&#39;手机号码不能为空&#39;)
+      } else if (this.phone === &#39;&#39;) {
+        alert(&#39;请输入手机号码&#39;)
+      } else if (!reg.test(this.phone)) {
+        alert(&#39;手机格式不正确&#39;)
+      } else {
+        this.time = 60
+        this.disabled = true
+        this.timer()
+        this.getCode()
+      }
+    },
+
+    // 倒计时显示
+    timer () {
+      if (this.time &gt; 0) {
+        this.time--
+        this.codebtn = this.time + &#39;s&#39;
+        setTimeout(this.timer, 1000)
+      } else {
+        this.time = 0
+        this.codebtn = &#39;获取验证码&#39;
+        this.disabled = false
+      }
+    },
+    // 注册验证
+    authUserinfo () {
+      if (this.username === &#39;&#39;) {
+        alert(&#39;用户名不能为空&#39;)
+      } else if (this.pwd === &#39;&#39;) {
+        alert(&#39;密码不能为空&#39;)
+      } else if (this.phone === &#39;&#39;) {
+        alert(&#39;手机号码不能为空&#39;)
+      } else if (this.code === &#39;&#39;) {
+        alert(&#39;验证码不能为空&#39;)
+      } else {
+        this.goRegister()
+      }
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style&gt;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.registerwindow {
+  margin: 0 auto;
+  width: 350px;
+  height: 200px;
+  background: rgba(5, 55, 148, 0.5);
+}
+
+.title {
+  margin: 0 auto;
+  font-size: 30px;
+  text-align: center
+}
+
+.item {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.text {
+  text-align: center;
+  width: 80px;
+}
+
+input {
+  width: 140px;
+}
+
+button {
+  width: 80px;
+  margin-left: 5px;
+}
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>（3）在激活认证的组件ActiveSendmail.vue中编写代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;sendcode&quot;&gt;认证激活&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import axios from &#39;axios&#39;
+export default {
+  name: &#39;ActiveSendmail.vue&#39;,
+  data () {
+    return { }
+  },
+  props: [&#39;email&#39;],
+  methods: {
+    sendcode () {
+      //   alert(this.email)
+      const api = &#39;http://127.0.0.1:8080/sendactivecode/&#39;
+      axios.get(api, {
+        params: {
+          email: this.email
+        }
+      }
+      )
+        .then((Response) =&gt; {
+          console.log(Response.data)
+          // 根据返回的信息，做出响应的提示
+        })
+        .catch((error) =&gt; {
+          console.log(error)
+        })
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>小结及进一步的设计思路在本节中，我们完成了通过邮件激活的方式对用户是否为开发者进行了认证。但是功能并不完善。</p></li>
+</ul>
+<p>因篇幅所限，我们没有开发注册成功和认证成功以后的前端响应代码，这一部分的工作，就交给各位读者来完善。对开发者的身份验证功能开发完毕后，想要进一步完善功能，可以参考百度开发者认证平台，在新建一个应用项目的同时，自动生成一个字符串格式的Key值。我们在刚开始建立demo4的时候，在app01/models.py中建立了一张Key值表，可以用这张表，记录已经通过认证的开发者所新建的应用项目和与之对应的Key值。这个Key值非常关键，开发者每一次通过API向平台请求服务时，Key值都要随着数据请求被提交到平台的服务端。</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02.%E7%94%A8Django-REST-framework%E5%AE%9E%E7%8E%B0%E8%B1%86%E7%93%A3API%E5%BA%94%E7%94%A8.html" class="btn btn-neutral float-left" title="23.7.2. 用Django REST framework实现豆瓣API应用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html" class="btn btn-neutral float-right" title="23.7.4. 区块链时代与Token登录" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

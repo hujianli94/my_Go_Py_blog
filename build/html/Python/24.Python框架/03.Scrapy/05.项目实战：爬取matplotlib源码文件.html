@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23.3.5. 项目实战：爬取matplotlib源码文件 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="23.3.6. 项目实战:下载360图片" href="06.%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%EF%BC%9A%E4%B8%8B%E8%BD%BD360%E5%9B%BE%E7%89%87.html" />
+    <link rel="prev" title="23.3.4. Scrapy下载文件和图片" href="04.Scrapy%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%92%8C%E5%9B%BE%E7%89%87.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">23. Python框架</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../01.%E5%B8%B8%E7%94%A8%E7%9A%84GUI%E6%A1%86%E6%9E%B6/index.html">23.1. 常用的GUI框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02.Flask/index.html">23.2. Flask</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">23.3. Scrapy</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="01.Scrapy%E7%88%AC%E8%99%AB%E6%A1%86%E6%9E%B6.html">23.3.1. Scrapy爬虫框架</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02.MongoDB%E7%9A%84%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E4%B8%8E%E5%AF%BC%E5%87%BA.html">23.3.2. MongoDB的常用操作与导出</a></li>
+<li class="toctree-l4"><a class="reference internal" href="03.Scrapy%E6%A1%86%E6%9E%B6%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0.html">23.3.3. Scrapy框架深入学习</a></li>
+<li class="toctree-l4"><a class="reference internal" href="04.Scrapy%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%92%8C%E5%9B%BE%E7%89%87.html">23.3.4. Scrapy下载文件和图片</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">23.3.5. 项目实战：爬取matplotlib源码文件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06.%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%EF%BC%9A%E4%B8%8B%E8%BD%BD360%E5%9B%BE%E7%89%87.html">23.3.6. 项目实战:下载360图片</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07.%E6%A8%A1%E6%8B%9F%E7%99%BB%E9%99%86webscraping.com%E7%BD%91%E7%AB%99.html">23.3.7. 模拟登陆webscraping.com网站</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08.%E8%AF%86%E5%88%AB%E9%AA%8C%E8%AF%81%E7%A0%81.html">23.3.8. 识别验证码</a></li>
+<li class="toctree-l4"><a class="reference internal" href="09.Cookies%E7%99%BB%E5%BD%95.html">23.3.9. Cookies登录</a></li>
+<li class="toctree-l4"><a class="reference internal" href="10.%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9ASQLite%E7%AF%87.html">23.3.10. 数据库：SQLite篇</a></li>
+<li class="toctree-l4"><a class="reference internal" href="11.%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMySQL%E7%AF%87.html">23.3.11. 数据库：MySQL篇</a></li>
+<li class="toctree-l4"><a class="reference internal" href="12.%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9AMongoDB%E7%AF%87.html">23.3.12. 数据库：MongoDB篇</a></li>
+<li class="toctree-l4"><a class="reference internal" href="13.%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%9ARedis%E7%AF%87.html">23.3.13. 数据库：Redis篇</a></li>
+<li class="toctree-l4"><a class="reference internal" href="14.Fiddler%E5%AD%A6%E4%B9%A0.html">23.3.14. Fiddler学习</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../04.Django/index.html">23.4. Django</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05.Tornado/index.html">23.5. Tornado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../06.Python%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Django-Flask/index.html">23.6. Python高效开发实战-Django、Flask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../07.Python-Django-Web%E5%85%B8%E5%9E%8B%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">23.7. Python-Django-Web典型模块开发实战</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="../index.html"><span class="section-number">23. </span>Python框架</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">23.3. </span>Scrapy</a> &raquo;</li>
+      <li><span class="section-number">23.3.5. </span>项目实战：爬取matplotlib源码文件</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Python/24.Python框架/03.Scrapy/05.项目实战：爬取matplotlib源码文件.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#matplotlib" id="id1">项目实战：爬取matplotlib源码文件</a></p></li>
+</ul>
+</div>
+<section id="matplotlib">
+<h1><a class="toc-backref" href="#id1"><span class="section-number">23.3.5. </span>项目实战：爬取matplotlib源码文件</a><a class="headerlink" href="#matplotlib" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>爬取网址：https://matplotlib.org/examples/
+爬取信息：爬取所有例子源码
+爬取方式：scrapy框架
+存储方式：FilesPipeline
+</pre></div>
+</div>
+<p>matplotlib是著名的python绘图库，通过例子列表进入页面阅读代码，点击‘source
+code’按钮即可下载源码文件。</p>
+<p>1.用scrapy shell 分析页面：</p>
+<p><code class="docutils literal notranslate"><span class="pre">scrapy</span> <span class="pre">shell</span> <span class="pre">https://matplotlib.org/examples/index.html</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">view(response)</span></code></p>
+<img alt="../../../_images/scrapy-matp00001.png" src="../../../_images/scrapy-matp00001.png" />
+<img alt="../../../_images/scrapy-ma00002.png" src="../../../_images/scrapy-ma00002.png" />
+<ul class="simple">
+<li><p>获取了每个例子的详情链接</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">link</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//div[@class=&quot;toctree-wrapper compound&quot;]/ul/li/ul/li/a/@href&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="nb">len</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="mi">506</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">link</span><span class="o">.</span><span class="n">extract_first</span><span class="p">()</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="s1">&#39;animation/animate_decay.html&#39;</span>
+
+
+
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span>  <span class="kn">from</span> <span class="nn">scrapy.linkextractors</span> <span class="kn">import</span> <span class="n">LinkExtractor</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">le</span> <span class="o">=</span> <span class="n">LinkExtractor</span><span class="p">(</span><span class="n">restrict_xpaths</span><span class="o">=</span><span class="s1">&#39;//li[@class=&quot;toctree-l2&quot;]/a&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="n">link</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">extract_links</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">link</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">5</span><span class="p">]:</span>
+<span class="p">[</span><span class="n">Link</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s1">&#39;https://matplotlib.org/examples/animation/animate_decay.html&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;animate_decay&#39;</span><span class="p">,</span> <span class="n">fragment</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">nofollow</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+ <span class="n">Link</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s1">&#39;https://matplotlib.org/examples/animation/basic_example.html&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;basic_example&#39;</span><span class="p">,</span> <span class="n">fragment</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">nofollow</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">link</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">url</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="s1">&#39;https://matplotlib.org/examples/animation/animate_decay.html&#39;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>-获取例子详情中source code的下载链接。</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">29</span><span class="p">]:</span> <span class="n">fetch</span><span class="p">(</span><span class="s1">&#39;https://matplotlib.org/examples/animation/animate_decay.html&#39;</span><span class="p">)</span>
+<span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">02</span> <span class="mi">15</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">11</span> <span class="p">[</span><span class="n">scrapy</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">downloader</span><span class="o">.</span><span class="n">tls</span><span class="p">]</span> <span class="n">WARNING</span><span class="p">:</span> <span class="n">Remote</span> <span class="n">certificate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">valid</span> <span class="k">for</span> <span class="n">hostname</span> <span class="s2">&quot;matplotlib.org&quot;</span><span class="p">;</span> <span class="s1">&#39;ssl391862.cloudflaressl.com&#39;</span><span class="o">!=</span><span class="s1">&#39;matplotlib.org&#39;</span>
+<span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">02</span> <span class="mi">15</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">12</span> <span class="p">[</span><span class="n">scrapy</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">engine</span><span class="p">]</span> <span class="n">DEBUG</span><span class="p">:</span> <span class="n">Crawled</span> <span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">&lt;</span><span class="n">GET</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">animation</span><span class="o">/</span><span class="n">animate_decay</span><span class="o">.</span><span class="n">html</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">referer</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">30</span><span class="p">]:</span> <span class="n">view</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">30</span><span class="p">]:</span> <span class="kc">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="n">le</span> <span class="o">=</span> <span class="n">LinkExtractor</span><span class="p">(</span><span class="n">restrict_xpaths</span><span class="o">=</span><span class="s1">&#39;//div[@class=&quot;section&quot;]/p[1]/a&#39;</span><span class="p">)</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">32</span><span class="p">]:</span> <span class="n">s_link</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">extract_links</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">33</span><span class="p">]:</span> <span class="n">s_link</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">33</span><span class="p">]:</span> <span class="p">[</span><span class="n">Link</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s1">&#39;https://matplotlib.org/examples/animation/animate_decay.py&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;source code&#39;</span><span class="p">,</span> <span class="n">fragment</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">nofollow</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">35</span><span class="p">]:</span> <span class="n">s_link</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">url</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">35</span><span class="p">]:</span> <span class="s1">&#39;https://matplotlib.org/examples/animation/animate_decay.py&#39;</span>
+</pre></div>
+</div>
+<p>css 选择详细链接方式如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fetch</span><span class="p">(</span><span class="s1">&#39;https://matplotlib.org/examples/index.html&#39;</span><span class="p">)</span>
+
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">34</span><span class="p">]:</span> <span class="n">le</span> <span class="o">=</span> <span class="n">LinkExtractor</span><span class="p">(</span><span class="n">restrict_css</span><span class="o">=</span><span class="s1">&#39;#matplotlib-examples &gt; div &gt; ul &gt; li &gt; ul &gt; li &gt; a&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">35</span><span class="p">]:</span> <span class="n">links</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">extract_links</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">]:</span> <span class="p">[</span> <span class="n">link</span><span class="o">.</span><span class="n">url</span> <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span> <span class="p">]</span>
+<span class="p">[</span><span class="s1">&#39;https://matplotlib.org/examples/animation/animate_decay.html&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;https://matplotlib.org/examples/animation/basic_example.html&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;https://matplotlib.org/examples/animation/basic_example_writer.html&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;https://matplotlib.org/examples/animation/bayes_update.html&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;https://matplotlib.org/examples/animation/double_pendulum_anim</span>
+</pre></div>
+</div>
+<p>css 获取详下载链接面的方式:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fetch</span><span class="p">(</span><span class="s1">&#39;https://matplotlib.org/examples/animation/animate_decay.html&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">49</span><span class="p">]:</span> <span class="n">le</span> <span class="o">=</span> <span class="n">LinkExtractor</span><span class="p">(</span><span class="n">restrict_css</span><span class="o">=</span><span class="s1">&#39;#animation-example-code-animate-decay-py &gt; p:nth-child(3) &gt; a&#39;</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">50</span><span class="p">]:</span> <span class="n">link_urls</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">extract_links</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">51</span><span class="p">]:</span> <span class="p">[</span><span class="n">url</span><span class="o">.</span><span class="n">url</span> <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">link_urls</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">51</span><span class="p">]:</span> <span class="p">[</span><span class="s1">&#39;https://matplotlib.org/examples/animation/animate_decay.py&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>2.实现代码：</p>
+<p><code class="docutils literal notranslate"><span class="pre">1)创建matplotlib项目，并根据genspider创建spider。</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">2)配置FilesPipeline，并指定下载目录。</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">3)实现Item</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">4)实现spider文件</span></code></p>
+<p>步骤01首先创建Scrapy项目,取名为<code class="docutils literal notranslate"><span class="pre">matplotlib_examples</span></code>，再使用<code class="docutils literal notranslate"><span class="pre">scrapy</span> <span class="pre">genspider</span></code>命令创建Spider</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ scrapy startproject matplotlib_examples
+$ cd matplotlib_examples
+$ scrapy genspider examples matplotlib.org
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>在settings.py中进行设置，并制定下载目录：</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">USER_AGENT</span> <span class="o">=</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36&#39;</span>
+<span class="n">DOWNLOAD_DELAY</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+<span class="c1">### 存储格式，可选项</span>
+<span class="c1">#json格式存储</span>
+<span class="c1"># FEED_URI = &#39;examples_src.json&#39;</span>
+<span class="c1"># FEEED_FORMAT = &quot;json&quot;  # 存入json文件</span>
+<span class="c1"># FEED_EXPORT_ENCODING = &quot;utf-8&quot;        #设置中文编</span>
+
+
+<span class="c1"># Obey robots.txt rules</span>
+<span class="n">ROBOTSTXT_OBEY</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">ITEM_PIPELINES</span> <span class="o">=</span> <span class="p">{</span>
+<span class="s1">&#39;scrapy.pipelines.files.FilesPipeline&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">FILES_STORE</span> <span class="o">=</span> <span class="s1">&#39;examples_src</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>在item.py添加file_urls和files两个字段。</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Define here the models for your scraped items</span>
+<span class="c1">#</span>
+<span class="c1"># See documentation in:</span>
+<span class="c1"># https://docs.scrapy.org/en/latest/topics/items.html</span>
+
+<span class="kn">import</span> <span class="nn">scrapy</span>
+
+
+<span class="k">class</span> <span class="nc">MatplotlibDownloadItem</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Item</span><span class="p">):</span>
+    <span class="n">file_urls</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>实现:raw-latex:<cite>spiders</cite>.py文件</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">scrapy.linkextractors</span> <span class="kn">import</span> <span class="n">LinkExtractor</span>
+<span class="kn">from</span> <span class="nn">matplotlib_examples.items</span> <span class="kn">import</span> <span class="n">MatplotlibDownloadItem</span>
+
+
+<span class="k">class</span> <span class="nc">MatplotSpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;matplot&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;matplotlib.org&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;https://matplotlib.org/examples/index.html&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="n">le</span> <span class="o">=</span> <span class="n">LinkExtractor</span><span class="p">(</span><span class="n">restrict_xpaths</span><span class="o">=</span><span class="s1">&#39;//li[@class=&quot;toctree-l2&quot;]/a&#39;</span><span class="p">)</span>
+        <span class="n">detail_links</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">extract_links</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">detail_link</span> <span class="ow">in</span> <span class="n">detail_links</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">detail_link</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_url</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">MatplotlibDownloadItem</span><span class="p">()</span>
+        <span class="n">le2</span> <span class="o">=</span> <span class="n">LinkExtractor</span><span class="p">(</span><span class="n">restrict_xpaths</span><span class="o">=</span><span class="s1">&#39;//div[@class=&quot;section&quot;]/p[1]/a&#39;</span><span class="p">)</span>
+        <span class="n">download_link</span> <span class="o">=</span> <span class="n">le2</span><span class="o">.</span><span class="n">extract_links</span><span class="p">(</span><span class="n">response</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">url</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;file_urls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">download_link</span><span class="p">]</span>
+        <span class="k">yield</span> <span class="n">item</span>
+
+
+<span class="c1"># # 导入CrawlerProcess类</span>
+<span class="c1"># from scrapy.crawler import CrawlerProcess</span>
+<span class="c1">#</span>
+<span class="c1"># # 获取项目的设置信息</span>
+<span class="c1"># from scrapy.utils.project import get_project_settings</span>
+<span class="c1">#</span>
+<span class="c1"># if __name__ == &#39;__main__&#39;:</span>
+<span class="c1">#     # 创建CrawlerProcess类对象，并将获取的设置信息传入</span>
+<span class="c1">#     process = CrawlerProcess(get_project_settings())</span>
+<span class="c1">#     # 设置需要启动的爬虫名称</span>
+<span class="c1">#     process.crawl(&#39;matplot&#39;)</span>
+<span class="c1">#     # 启动爬虫</span>
+<span class="c1">#     process.start()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>运行代码: <code class="docutils literal notranslate"><span class="pre">scrapy</span> <span class="pre">crawl</span> <span class="pre">matplot</span> <span class="pre">-o</span> <span class="pre">matplot.json</span></code></p></li>
+</ul>
+<p>或者 创建<code class="docutils literal notranslate"><span class="pre">main.py</span></code>文件。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/8/2 17:10</span>
+<span class="c1"># filename: main.py</span>
+
+<span class="kn">from</span> <span class="nn">scrapy</span> <span class="kn">import</span> <span class="n">cmdline</span>
+<span class="n">cmdline</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;scrapy crawl matplot -o examples.json&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+</pre></div>
+</div>
+<img alt="../../../_images/full_download0001.png" src="../../../_images/full_download0001.png" />
+<p>下载的文件目录被安置在：<code class="docutils literal notranslate"><span class="pre">source_download/full</span></code>目录下，
+而且文件名字是长度相等的奇怪数字，这些数字是下载文件urlde sha1散列值，</p>
+<p>虽然这样能避免名字重复，但是文件名不直观，很难对应文件内容，所以需要重新写一个脚本，
+依据matplot.json文件中的信息进行重命名。</p>
+<p>下面生成FilesPipeline的子类，对file_path方法中的命名规则进行重写。以具体文件为例：
+<code class="docutils literal notranslate"><span class="pre">https://matplotlib.org/examples/animation/animate_decay.py</span></code></p>
+<p>animation为类别，</p>
+<p>animate_decay.py为文件名，</p>
+<p>animation/animate_decay.py为文件路径。</p>
+<p>在<code class="docutils literal notranslate"><span class="pre">pipelines.py</span></code>中添加代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.pipelines.files</span> <span class="kn">import</span> <span class="n">FilesPipeline</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">class</span> <span class="nc">MyFilesPipeline</span><span class="p">(</span><span class="n">FilesPipeline</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在settings.py中添加代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ITEM_PIPELINES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># &#39;scrapy.pipelines.files.FilesPipeline&#39;: 1,</span>
+    <span class="s1">&#39;matplotlib_examples.pipelines.MyFilesPipeline&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">FILES_STORE</span> <span class="o">=</span> <span class="s1">&#39;examples_src&#39;</span>
+</pre></div>
+</div>
+<p>结果如下： <img alt="image1" src="../../../_images/scrapy-down0001.png" /></p>
+<p><a class="reference external" href="https://www.jianshu.com/p/b35f9722b031">https://www.jianshu.com/p/b35f9722b031</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="04.Scrapy%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6%E5%92%8C%E5%9B%BE%E7%89%87.html" class="btn btn-neutral float-left" title="23.3.4. Scrapy下载文件和图片" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="06.%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%EF%BC%9A%E4%B8%8B%E8%BD%BD360%E5%9B%BE%E7%89%87.html" class="btn btn-neutral float-right" title="23.3.6. 项目实战:下载360图片" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

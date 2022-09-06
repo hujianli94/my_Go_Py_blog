@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>15. 通用API开发 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="16. 用户权限相关API开发" href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html" />
+    <link rel="prev" title="14. 项目后端API开发" href="14.%E9%A1%B9%E7%9B%AE%E5%90%8E%E7%AB%AFAPI%E5%BC%80%E5%8F%91.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js+Node.js开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%87%86%E5%A4%87.html">1. 开发一个网站的准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Nodejs_vue%E5%9F%BA%E7%A1%80.html">2. Nodejs+vue基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html">3. 项目开发准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.%E9%A1%B9%E7%9B%AE%E5%90%8E%E5%8F%B0%E6%8A%80%E6%9C%AFExpress.html">4. 项目后台技术Express</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html">5. Vue.js开发基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue.js%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.html">6. Vue的生命周期</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html">7. Vue.js的模板语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue.js%E7%9A%84%E7%BB%84%E4%BB%B6%E5%8C%96.html">8. Vue.js的组件化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html">9. Vue.js的vue-router库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue.js%E7%9A%84%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E5%BA%93Vuex%E5%92%8CPinia.html">10. Vue.js的状态管理库Vuex和Pinia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.Vue-UI%E5%BA%93.html">11. Vue-UI库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.%E9%A1%B9%E7%9B%AE%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E.html">12. 项目需求分析和功能说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.%E9%A1%B9%E7%9B%AE%E7%AD%96%E5%88%92%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AE%BE%E8%AE%A1.html">13. 项目策划和功能设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14.%E9%A1%B9%E7%9B%AE%E5%90%8E%E7%AB%AFAPI%E5%BC%80%E5%8F%91.html">14. 项目后端API开发</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">15. 通用API开发</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">15.1. 1.获取页面导航栏</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">15.2. 2.获取底部详细内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">15.3. 3.获取友情链接</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">15.4. 4.获取首页轮播图</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">15.5. 5.获取热点文章列表内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">15.6. 6.获取文章列表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">15.7. 7.获取文章详情</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">15.8. 8.获取文章评论</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">15.9. 9.获取分类内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">15.10. 10.记录文章浏览量</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">16. 用户权限相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17.%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">17. 后台管理相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18.%E5%B0%8F%E7%BB%93.html">18. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19.%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%BC%80%E5%8F%91.html">19. 前端页面开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="20.%E4%B8%BB%E8%A6%81%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%BC%80%E5%8F%91.html">20. 主要页面的开发</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js+Node.js开发实战</a> &raquo;</li>
+      <li><span class="section-number">15. </span>通用API开发</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue_Node.js/15.通用API开发.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#api" id="id11">通用API开发</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id12">1.获取页面导航栏</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id13">2.获取底部详细内容</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id14">3.获取友情链接</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id15">4.获取首页轮播图</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id16">5.获取热点文章列表内容</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id17">6.获取文章列表</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id18">7.获取文章详情</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id19">8.获取文章评论</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id20">9.获取分类内容</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id21">10.记录文章浏览量</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="api">
+<h1><a class="toc-backref" href="#id11"><span class="section-number">15. </span>通用API开发</a><a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">15.1. </span>1.获取页面导航栏</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为：<a class="reference external" href="http://localhost:3000/getNavMenu">http://localhost:3000/getNavMenu</a></p>
+<p>展示型网站的首页一般都有导航标题栏，单击导航栏菜单，会跳转到一个新的页面（可能是分类或其他连接）。</p>
+<p>导航栏一般存在多级菜单，本例为了方便，仅展示一级菜单。导航栏存放在数据库中的格式如下方的JSON字符串所示。</p>
+<p>通过本接口获取的数据基本格式如下：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;主页&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://loaclhost&quot;</span>
+<span class="p">},</span> <span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;文章&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;/article/list&quot;</span>
+<span class="p">}]</span>
+</pre></div>
+</div>
+<p>注意：后端接口本身保存的就是JSON字符串，所以实现多级菜单是非常简单的，嵌套对象即可，前端同样也要实现多级菜单才可以正常显示。</p>
+<p>通过redis-cli工具可实现数据操作，使用set命令手动添加数据，同时指定其键名为book:nav_menu。</p>
+<p>导航栏路由建立在router文件夹的index.js文件中，为了避免大量的路由和逻辑导致程序编写混乱，应单独将逻辑处理部分提取出来，通过引入的方式进行应用。</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">getNavMenu</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+<span class="c1">// 获取footer显示内容</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getFooter&#39;</span><span class="p">,</span> <span class="nx">getFooter</span><span class="p">);</span>
+<span class="c1">//获取菜单</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getNavMenu&#39;</span><span class="p">,</span> <span class="nx">getNavMenu</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>访问导航栏路由后会调用getNavMenu()方法，接下来编写该方法。在项目文件中新建controller文件，在其中添加getData.js文件并在该文件中编写所有获取数据的代码逻辑，具体如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">redis</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../util/redisDB&quot;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">crypto</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;crypto&#39;</span><span class="p">);</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getNavMenu</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:nav_menu&quot;</span>
+    <span class="c1">//获取数据</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">))</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Postman中进行测试.返回如下数据：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;主页&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://loaclhost&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;文章&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;/article/list&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">15.2. </span>2.获取底部详细内容</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为：<a class="reference external" href="http://localhost:3000/getFooter">http://localhost:3000/getFooter</a></p>
+<p>通过本接口获取的数据基本格式如下：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span>  <span class="s2">&quot;版权所有&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;src&quot;</span><span class="p">:</span>  <span class="s2">&quot;http://loaclhost&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;text&quot;</span><span class="p">:</span>  <span class="s2">&quot;Stiller&quot;</span>
+
+  <span class="p">},</span>
+   <span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span>  <span class="s2">&quot;发送邮件&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;src&quot;</span><span class="p">:</span>  <span class="s2">&quot;mailto:1879324764@qq.com&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;text&quot;</span><span class="p">:</span>  <span class="s2">&quot;Gmail&quot;</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>首先在routers/index.js中编写相应的路由地址，修改后的index.js代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">getFooter</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+<span class="c1">// 获取footer显示内容</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getFooter&#39;</span><span class="p">,</span> <span class="nx">getFooter</span><span class="p">);</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/getData.js文件中添加getFooter对象，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//获取Footer相关内容</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getFooter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:footer&quot;</span>
+    <span class="c1">//获取数据</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">))</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最后通过Postman插件就可以获取相应的数据:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;版权所有&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://loaclhost&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Stiller&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;发送邮件&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;mailto:1879324764@qq.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Gmail&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">15.3. </span>3.获取友情链接</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为: <a class="reference external" href="http://localhost:3000/getLinks">http://localhost:3000/getLinks</a></p>
+<p>通过本接口获取的数据基本格式如下：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;baidu&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://baidu.com&quot;</span>
+<span class="p">}]</span>
+</pre></div>
+</div>
+<p>首先在routers/index.js中编写相应的路由地址，修改后的index.js代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">getLinks</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+
+<span class="c1">//获取友情链接</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getLinks&#39;</span><span class="p">,</span> <span class="nx">getLinks</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/getData.js文件中添加getLinks对象，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//获取友情链接</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getLinks</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:links&quot;</span>
+    <span class="c1">//获取数据</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">))</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最后通过Postman插件就可以获取相应的数据</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;baidu&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.baidu.com&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id15"><span class="section-number">15.4. </span>4.获取首页轮播图</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为: <a class="reference external" href="http://localhost:3000/getIndexPic">http://localhost:3000/getIndexPic</a></p>
+<p>通过本接口获取的数据基本格式如下：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
+    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;baidu&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.baidu.com&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;img&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.bejson.com/static/bejson/img/logo.png&quot;</span>
+<span class="p">}]</span>
+</pre></div>
+</div>
+<p>首先在routers/index.js文件中编写相应的路由地址，修改后的index.js文件代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">getIndexPic</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+
+<span class="c1">//获取首页轮播图片</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getIndexPic&#39;</span><span class="p">,</span> <span class="nx">getIndexPic</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/getData.js文件中添加getIndexPic对象，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//获取首页轮播图片相关内容</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getIndexPic</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:indexPic&quot;</span>
+    <span class="c1">//获取数据</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">))</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最后通过Postman就可以获取相应的数据</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;baidu&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.baidu.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;img&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.bejson.com/static/bejson/img/logo.png&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">15.5. </span>5.获取热点文章列表内容</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为: <a class="reference external" href="http://localhost:3000/getHotArticle">http://localhost:3000/getHotArticle</a></p>
+<p>通过本接口获取的数据基本格式如下：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
+    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;文章暂未上线&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;view&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">},</span> <span class="p">{</span>
+    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章3&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nt">&quot;view&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span>
+<span class="p">}]</span>
+</pre></div>
+</div>
+<p>获取热点文章时返回文章的发布时间、题目和ID，最多5条数据。如果文章已经发布但未上线或已下线，则返回文章暂未上线的提示。</p>
+<blockquote>
+<div><p>注意：新建文章时，会在Redis中新建名为book:a_view的有序列表，该列表按照时间戳保存文章key。</p>
+</div></blockquote>
+<p>首先在routers/index.js文件中编写相应的路由地址，修改后的index.js文件代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">getHotArticle</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+<span class="c1">//获得热点文章列表</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getHotArticle&#39;</span><span class="p">,</span> <span class="nx">getHotArticle</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/getData.js文件中添加getHotArticle对象，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//获取热点文章</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getHotArticle</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:a_view&quot;</span>
+    <span class="c1">//获得集合，只取得0,1,2,3,4五个</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">zrevrange</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">4</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+        <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="c1">//获得每一篇文章的题目和id以及日期</span>
+            <span class="k">return</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">member</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">data1</span> <span class="o">&amp;&amp;</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">show</span> <span class="o">!=</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span>
+                        <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="nx">util</span><span class="p">.</span><span class="nx">getLocalDate</span><span class="p">(</span><span class="nx">data1</span><span class="p">.</span><span class="nx">time</span><span class="p">),</span>
+                        <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">a_id</span><span class="p">,</span>
+                        <span class="s1">&#39;view&#39;</span><span class="o">:</span> <span class="nx">item</span><span class="p">.</span><span class="nx">score</span>
+                    <span class="p">}</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="s1">&#39;文章暂未上线&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;view&#39;</span><span class="o">:</span> <span class="mf">0</span><span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">})</span>
+        <span class="kd">let</span> <span class="nx">t_data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">t_data</span><span class="p">))</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>需要注意的是，使用map循环时不可避免地会碰到异步问题。</p>
+<p>笔者采用了await/async方式，使用Promise.all等待多个异步执行完毕后再获取汇总结果。如果直接在map后输出相关的值，则无法获取实际的值。</p>
+<p>获取热点文章列表，实际上和根据时间获取列表的逻辑一样，不同之处在于对取值的限制，热点文章还需要将获取的数值返回给前端。通过Postman插件可以获取相应的数据</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;文章暂未上线&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;view&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;文章暂未上线&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;view&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id17"><span class="section-number">15.6. </span>6.获取文章列表</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为: <a class="reference external" href="http://localhost:3000/getNewArticle">http://localhost:3000/getNewArticle</a></p>
+<p>可以先编写文章添加或修改的API，以提供数据源，使数据库中有了真实的数据后，再返回来编写相应数据获取的逻辑代码。新建文章时会在Redis中创建名为book:a_time的有序列表，该列表按照时间戳保存文章key。</p>
+<p>通过本接口获得的数据结构如下，返回的是文章的时间、题目和ID，暂时不提供分页功能，只是一次性返回所有的文章列表。如果文章已经发布但未上线或已下线，则返回文章暂未上线的提示。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章3&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:30:5&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章2&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:54&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:37&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>首先在routers/index.js文件中编写相应的路由地址，修改后的index.js文件代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">getNewArticle</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+
+<span class="c1">//获取最新文章列表</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getNewArticle&#39;</span><span class="p">,</span> <span class="nx">getNewArticle</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/getData.js文件中添加一个getNewArticle对象，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//获取最新的文章列表</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getNewArticle</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:a_time&quot;</span>
+    <span class="kd">let</span> <span class="nx">isAdmin</span> <span class="o">=</span> <span class="kc">false</span>
+    <span class="c1">//获取数据</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+    <span class="c1">//获得集合</span>
+    <span class="c1">//登录用户才判断</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;token&#39;</span> <span class="k">in</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//如果是管理员，则在加一次查找</span>
+        <span class="kd">let</span> <span class="nx">pKey</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:user:power:&quot;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">token</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">pKey</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">power</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="c1">//管理员权限</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">power</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">redis</span><span class="p">.</span><span class="nx">zrevrange</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                        <span class="c1">//获得每一篇文章的题目和id以及日期</span>
+                        <span class="k">return</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">member</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data1</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">data1</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="nx">util</span><span class="p">.</span><span class="nx">getLocalDate</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">score</span><span class="p">),</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">a_id</span><span class="p">,</span><span class="s1">&#39;show&#39;</span><span class="o">:</span><span class="nx">data1</span><span class="p">.</span><span class="nx">show</span><span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">})</span>
+                    <span class="p">})</span>
+                    <span class="kd">let</span> <span class="nx">t_data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">t_data</span><span class="p">)</span>
+                    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">t_data</span><span class="p">))</span>
+                <span class="p">})</span>
+            <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+                <span class="c1">// res.json(util.getReturnData(1, &#39;其他权限&#39;))</span>
+                <span class="c1">//    其他权限暂时依旧执行普通未登录效果</span>
+                <span class="nx">redis</span><span class="p">.</span><span class="nx">zrevrange</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+                    <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                        <span class="c1">//获得每一篇文章的题目和id以及日期</span>
+                        <span class="k">return</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">member</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">data1</span> <span class="o">&amp;&amp;</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">show</span> <span class="o">!=</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="nx">util</span><span class="p">.</span><span class="nx">getLocalDate</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">score</span><span class="p">),</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">a_id</span><span class="p">}</span>
+                            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="s1">&#39;文章暂未上线&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="mf">0</span><span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">})</span>
+                    <span class="p">})</span>
+                    <span class="kd">let</span> <span class="nx">t_data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+                    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">t_data</span><span class="p">))</span>
+                <span class="p">})</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">zrevrange</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+            <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="c1">//获得每一篇文章的题目和id以及日期</span>
+                <span class="k">return</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">member</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">data1</span> <span class="o">&amp;&amp;</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">show</span> <span class="o">!=</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="nx">util</span><span class="p">.</span><span class="nx">getLocalDate</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">score</span><span class="p">),</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">a_id</span><span class="p">}</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="s1">&#39;文章暂未上线&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="mf">0</span><span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">})</span>
+            <span class="p">})</span>
+            <span class="kd">let</span> <span class="nx">t_data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">t_data</span><span class="p">))</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上述代码通过键值获取有序列表中的值，同时查找这些值的内容，找到相应的文章并且汇总到最终的返回结果中。通过Postman插件可以获取相应的数据</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章3&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:30:5&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章2&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:54&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:37&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">15.7. </span>7.获取文章详情</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>实现的接口路由地址为：<a class="reference external" href="http://localhost:3000/getArticle/:id">http://localhost:3000/getArticle/:id</a></p>
+<p>可以先编写文章添加或修改的API，以提供数据源，使数据库中有了真实的数据后，再返回来编写相应数据获取的逻辑代码。</p>
+<p>本接口返回的应当是文章详情，需要文章的show字段为1，提供一个a_id作为参数，其数据基本格式如下：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;writer&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;tag&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;js&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;node&quot;</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1658280576995</span><span class="p">,</span>
+        <span class="nt">&quot;a_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;view&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;like&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>首先在routers/index.js文件中编写相应的路由地址，修改后的index.js文件代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">getArticle</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+
+<span class="c1">//获取文章的详情</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getArticle/:id&#39;</span><span class="p">,</span> <span class="nx">getArticle</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着编写逻辑处理的controller/getData.js文件，在其中编写一个getArticle对象，除了根据ID获取文章以外，还涉及文章的分类（文章的分类仅是一个唯一的ID），以及有序队列中的点赞数、阅读量的获取，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//根据id获取到文章的基本内容</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getArticle</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">//获取参数</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:article:&quot;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="c1">// console.log(data)</span>
+        <span class="c1">//判断是否显示文章内容</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">show</span> <span class="o">==</span> <span class="mf">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">//获取文章分类详情</span>
+                <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:a_type&quot;</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">type</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="nx">type</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">uid</span> <span class="o">==</span> <span class="nx">data</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">data</span><span class="p">.</span><span class="nx">typename</span> <span class="o">=</span> <span class="nx">item</span><span class="p">.</span><span class="nx">name</span>
+                        <span class="p">}</span>
+                    <span class="p">})</span>
+                    <span class="c1">//获取文章的阅读量</span>
+                    <span class="nx">redis</span><span class="p">.</span><span class="nx">zscore</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:a_view&quot;</span><span class="p">,</span> <span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">view</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">view</span><span class="p">)</span>
+                        <span class="nx">data</span><span class="p">.</span><span class="nx">view</span> <span class="o">=</span> <span class="nx">view</span>
+                        <span class="c1">//获取文章的点赞量</span>
+                        <span class="nx">redis</span><span class="p">.</span><span class="nx">zscore</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:a_like&quot;</span><span class="p">,</span> <span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">like</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                            <span class="nx">data</span><span class="p">.</span><span class="nx">like</span> <span class="o">=</span> <span class="nx">like</span>
+                            <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">))</span>
+                        <span class="p">})</span>
+                    <span class="p">})</span>
+                <span class="p">})</span>
+
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">403</span><span class="p">,</span> <span class="s1">&#39;该文章已经被删除或者是不存在&#39;</span><span class="p">))</span>
+            <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">404</span><span class="p">,</span> <span class="s1">&#39;该文章已经被删除或者是不存在&#39;</span><span class="p">))</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>注意，在功能设计中一些没有上线或不存在的文章是无法被访问的，需要提示相应的返回内容。通过Postman插件可以获取相应的数据。</p>
+<p>获取文章详情</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;writer&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;tag&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;js&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;node&quot;</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1658280576995</span><span class="p">,</span>
+        <span class="nt">&quot;a_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;view&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;like&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id19"><span class="section-number">15.8. </span>8.获取文章评论</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址是: <a class="reference external" href="http://localhost:3000/getArticleTalk/:id">http://localhost:3000/getArticleTalk/:id</a></p>
+<p>可以先编写文章添加或修改的API，以提供数据源，使数据库中有了真实的数据后，再返回来编写相应数据获取的逻辑代码。采用GET方式获取文章评论的接口，需要传递文章的唯一ID。</p>
+<p>首先在routers/index.js文件中编写相应的路由地址，修改后的index.js文件代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">getArticleTalk</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+<span class="c1">//获取文章评论</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getArticleTalk/:id&#39;</span><span class="p">,</span><span class="nx">getArticleTalk</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着编写处理逻辑的controller/getData.js文件，此处需要接收一个id参数，并通过ID查找评论数据，最终将该数据返回给前端。完整的代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//获得文章评论</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getArticleTalk</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:article:&quot;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;:talk&quot;</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">))</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>传递一篇文章的ID后，返回内容如下</p>
+<p>获取文章评论</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;talk&quot;</span><span class="p">:</span> <span class="s2">&quot;这是第一次评论&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1658280939748</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id20"><span class="section-number">15.9. </span>9.获取分类内容</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址是: <a class="reference external" href="http://localhost:3000/getArticles">http://localhost:3000/getArticles</a></p>
+<p>可以先编写文章添加或修改的API，以提供数据源，使数据库中有了真实的数据后，再返回来编写相应数据获取的逻辑代码。</p>
+<p>为了方便数据的传输，这里定义该接口为POST请求方式，传递的数据参数如下，传递tag时为小标签，传递type时为分类。</p>
+<blockquote>
+<div><p>注意：对于不更改数据和仅用于查询的接口，建议使用GET方式定义接口。</p>
+</div></blockquote>
+<p>本项目的所有接口发送数据时均采用JSON方式，在Postman中模拟时，选择Raw选项卡可以编辑JSON。</p>
+<p>首先在routers/index.js文件中编写相应的路由地址，修改后的index.js文件代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span> <span class="nx">getArticles</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+<span class="c1">//获取小标签或者是文章分类的内容</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/getArticles&#39;</span><span class="p">,</span> <span class="nx">getArticles</span><span class="p">)</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/getData.js文件中添加一个getArticles对象，该对象接收两个相关的参数：如果存在type，则以type为准；如果存在tag，则对tag字符串执行MD5算法。</p>
+<p>使用如下代码引入crypto包，其中包含了MD5算法，该模块是Node.js自带的，无须安装就可以使用其加密算法。</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span> <span class="nx">crypto</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;crypto&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>获取分类的数据列表之后，还需要获取完整的数据，再次使用数组的map循环完成这项工作。完整的代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//getArticles</span>
+<span class="c1">//根据小标签或者是分类获得所有的文章</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getArticles</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span>
+    <span class="c1">// 筛选，如果是tag则使用md5</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;tag&#39;</span> <span class="k">in</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">tKeyMd5</span> <span class="o">=</span> <span class="nx">crypto</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="s1">&#39;md5&#39;</span><span class="p">).</span><span class="nx">update</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">tag</span><span class="p">).</span><span class="nx">digest</span><span class="p">(</span><span class="s2">&quot;hex&quot;</span><span class="p">)</span>
+        <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;:tag:&#39;</span> <span class="o">+</span> <span class="nx">tKeyMd5</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;type&#39;</span> <span class="k">in</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//如是type则直接使用id</span>
+        <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;:a_type:&#39;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">type</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="s1">&#39;数据参数错误&#39;</span><span class="p">))</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+        <span class="c1">//    获得所有的数据</span>
+        <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="c1">// 获得每一篇文章的题目和id以及日期</span>
+            <span class="k">return</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">item</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">data1</span> <span class="o">&amp;&amp;</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">show</span> <span class="o">!=</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="nx">util</span><span class="p">.</span><span class="nx">getLocalDate</span><span class="p">(</span><span class="nx">data1</span><span class="p">.</span><span class="nx">time</span><span class="p">),</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">a_id</span><span class="p">}</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="s1">&#39;文章暂未上线&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="mf">0</span><span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">})</span>
+        <span class="kd">let</span> <span class="nx">t_data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">t_data</span><span class="p">))</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>指定不同的参数就可以获取相关的文章和内容。如果输入不正确的参数，则返回错误信息</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:36&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章2&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:54&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;文章暂未上线&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id21"><span class="section-number">15.10. </span>10.记录文章浏览量</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址是: <a class="reference external" href="http://localhost:3000/viewArticle/:id">http://localhost:3000/viewArticle/:id</a></p>
+<p>可以先编写文章添加或修改的API，以提供数据源，使数据库中有了真实的数据后，再返回来编写相应数据获取的逻辑代码。</p>
+<p>本小节的查看文章数据其实可以不使用接口，在每次获取文章详情时直接对文章的浏览量执行+1操作即可。笔者之所以提供独立的接口，是为了后续更多功能的实现。</p>
+<p>首先在routers/index.js文件中编写相应的路由地址，修改后的index.js文件代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">viewArticle</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/getData&#39;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+
+<span class="c1">//文章被查看数自动+1API</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/viewArticle/:id&#39;</span><span class="p">,</span> <span class="nx">viewArticle</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/getData.js文件中添加viewArticle对象，这里使用Redis提供的zincrby()方法，自动对该值执行+1操作，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//浏览量自动加一</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">viewArticle</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:article:&quot;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">zincrby</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s1">&#39;:a_view&#39;</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">,))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这样，当一次请求成功后，再次获取该文章的详情，会看到文章的浏览量发生了变化。每次请求可以增加一次浏览量</p>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;view&quot;:</span> <span class="pre">&quot;3&quot;,</span></code></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;writer&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;tag&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;js&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;node&quot;</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1658280576995</span><span class="p">,</span>
+        <span class="nt">&quot;a_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;view&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;like&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="14.%E9%A1%B9%E7%9B%AE%E5%90%8E%E7%AB%AFAPI%E5%BC%80%E5%8F%91.html" class="btn btn-neutral float-left" title="14. 项目后端API开发" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html" class="btn btn-neutral float-right" title="16. 用户权限相关API开发" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

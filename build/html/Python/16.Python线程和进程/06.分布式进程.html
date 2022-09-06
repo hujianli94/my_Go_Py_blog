@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>16.6. 分布式进程 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="17. Python与C语言扩展" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html" />
+    <link rel="prev" title="16.5. 多线程和多进程的区别" href="05.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">16. Python 进程和线程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BF%9B%E7%A8%8B.html">16.1. 进程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html">16.2. 线程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html">16.3. 协程与微线程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html">16.4. Python程序中concurrent模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB.html">16.5. 多线程和多进程的区别</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">16.6. 分布式进程</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">16.6.1. 分布式进程案例1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">16.6.2. 分布式进程案例2</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">16. </span>Python 进程和线程</a> &raquo;</li>
+      <li><span class="section-number">16.6. </span>分布式进程</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/16.Python线程和进程/06.分布式进程.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id4">分布式进程</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id5">分布式进程案例1</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id6">分布式进程案例2</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id4"><span class="section-number">16.6. </span>分布式进程</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>分布式进程指的是将Process进程分布到多台机器上，充分利用多台机器的性能完成复杂的任务。
+我们可以将这一点应用到分布式爬虫的开发中。</p>
+<p>分布式进程在Python中依然要用到multiprocessing模块。
+multiprocessing模块不但支持多进程，其中managers子模块还支持把多进程分布到多台机器上。
+可以写一个服务进程作为调度者，将任务分布到其他多个进程中，依靠网络通信进行管理。</p>
+<p>举个例子：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>在做爬虫程序时，常常会遇到这样的场景，我们想抓取某个网站的所有图片，如果使用多进程的话，
+一般是一个进程负责抓取图片的链接地址，将链接地址存放到Queue中，
+另外的进程负责从Queue中读取链接地址进行下载和存储到本地。
+现在把这个过程做成分布式，一台机器上的进程负责抓取链接，
+其他机器上的进程负责下载存储。
+那么遇到的主要问题是将Queue暴露到网络中，
+让其他机器进程都可以访问，分布式进程就是将这一个过程进行了封装，
+我们可以将这个过程称为本地队列的网络化。
+</pre></div>
+</div>
+<img alt="../../_images/fenbushi-process001.png" src="../../_images/fenbushi-process001.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>分布式进程 要实现上面例子的功能，创建分布式进程需要分为六个步骤：
+
+1）建立队列Queue，用来进行进程间的通信。服务进程创建任务队列task_queue，用来作为传递任务给任务进程的通道；服务进程创建结果队列result_queue，作为任务进程完成任务后回复服务进程的通道。在分布式多进程环境下，必须通过由Queuemanager获得的Queue接口来添加任务。
+
+
+2）把第一步中建立的队列在网络上注册，暴露给其他进程（主机），注册后获得网络队列，相当于本地队列的映像。
+
+3）建立一个对象（Queuemanager（BaseManager））实例manager，绑定端口和验证口令。
+
+4）启动第三步中建立的实例，即启动管理manager，监管信息通道。
+
+5）通过管理实例的方法获得通过网络访问的Queue对象，即再把网络队列实体化成可以使用的本地队列。
+
+6）创建任务到“本地”队列中，自动上传任务到网络队列中，分配给任务进程进行处理。
+</pre></div>
+</div>
+<section id="id2">
+<h2><a class="toc-backref" href="#id5"><span class="section-number">16.6.1. </span>分布式进程案例1</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>接下来通过程序实现上面的例子（Linux版），首先编写的是服务进程（taskManager.py），代码如下：</p>
+<p><code class="docutils literal notranslate"><span class="pre">task_Manager_Linux版.py</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/2/26 12:50</span>
+<span class="c1"># filename: task_Manager_Linux版.py</span>
+
+<span class="kn">import</span> <span class="nn">random</span><span class="o">,</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">queue</span> <span class="k">as</span> <span class="nn">Queue</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.managers</span> <span class="kn">import</span> <span class="n">BaseManager</span>
+
+<span class="c1"># 实现第一步：建立task_queue和result_queue，用来存放任务和结果</span>
+<span class="n">task_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+<span class="n">result_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">Queuemanager</span><span class="p">(</span><span class="n">BaseManager</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># 实现第二步：把创建的两个队列注册在网络上，利用register方法，callable参数关联了Queue对象，</span>
+<span class="c1"># 将Queue对象在网络中暴露</span>
+<span class="n">Queuemanager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;get_task_queue&#39;</span><span class="p">,</span> <span class="n">callable</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">task_queue</span><span class="p">)</span>
+<span class="n">Queuemanager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;get_result_queue&#39;</span><span class="p">,</span> <span class="n">callable</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">result_queue</span><span class="p">)</span>
+<span class="c1"># 实现第三步：绑定端口8001，设置验证口令‘qiye’。这个相当于对象的初始化</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">Queuemanager</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">8001</span><span class="p">),</span> <span class="n">authkey</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;admin#123&#39;</span><span class="p">)</span>
+<span class="c1"># 实现第四步：启动管理，监听信息通道</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="c1"># 实现第五步：通过管理实例的方法获得通过网络访问的Queue对象</span>
+<span class="n">task</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_task_queue</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_result_queue</span><span class="p">()</span>
+<span class="c1"># 实现第六步：添加任务</span>
+<span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ImageUrl_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;put task </span><span class="si">%s</span><span class="s1"> ...&#39;</span> <span class="o">%</span> <span class="n">url</span><span class="p">)</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="c1"># 获取返回结果</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;try get result...&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;result is </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="c1"># 关闭管理</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">taskManager_Windows版.py</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">queue</span> <span class="k">as</span> <span class="nn">Queue</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.managers</span> <span class="kn">import</span> <span class="n">BaseManager</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">freeze_support</span>
+
+<span class="c1"># 任务个数</span>
+<span class="n">task_number</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="c1"># 定义收发队列</span>
+<span class="n">task_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">task_number</span><span class="p">)</span>
+<span class="n">result_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">task_number</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_task</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">task_queue</span>
+
+
+<span class="k">def</span> <span class="nf">get_result</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">result_queue</span>
+
+
+<span class="c1"># 创建类似的QueueManager:</span>
+<span class="k">class</span> <span class="nc">QueueManager</span><span class="p">(</span><span class="n">BaseManager</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">win_run</span><span class="p">():</span>
+    <span class="c1"># windows下绑定调用接口不能使用lambda，所以只能先定义函数再绑定</span>
+    <span class="n">QueueManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;get_task_queue&#39;</span><span class="p">,</span> <span class="n">callable</span><span class="o">=</span><span class="n">get_task</span><span class="p">)</span>
+    <span class="n">QueueManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;get_result_queue&#39;</span><span class="p">,</span> <span class="n">callable</span><span class="o">=</span><span class="n">get_result</span><span class="p">)</span>
+    <span class="c1"># 绑定端口并设置验证口令，windows下需要填写ip地址，linux下不填默认为本地</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">QueueManager</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="mi">8001</span><span class="p">),</span> <span class="n">authkey</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;admin#123&#39;</span><span class="p">)</span>
+    <span class="c1"># 启动</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 通过网络获取任务队列和结果队列</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_task_queue</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_result_queue</span><span class="p">()</span>
+        <span class="c1"># 添加任务</span>
+        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ImageUrl_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;put task </span><span class="si">%s</span><span class="s1"> ...&#39;</span> <span class="o">%</span> <span class="n">url</span><span class="p">)</span>
+            <span class="n">task</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;try get result...&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;result is </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Manager error&#39;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># 一定要关闭，否则会爆管道未关闭的错误</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># windows下多进程可能会有问题，添加这句可以缓解</span>
+    <span class="n">freeze_support</span><span class="p">()</span>
+    <span class="n">win_run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">task_worker.py</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.managers</span> <span class="kn">import</span> <span class="n">BaseManager</span>
+
+
+<span class="c1"># 创建类似的QueueManager:</span>
+<span class="k">class</span> <span class="nc">QueueManager</span><span class="p">(</span><span class="n">BaseManager</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># 实现第一步：使用QueueManager注册获取Queue的方法名称</span>
+<span class="n">QueueManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;get_task_queue&#39;</span><span class="p">)</span>
+<span class="n">QueueManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;get_result_queue&#39;</span><span class="p">)</span>
+<span class="c1"># 实现第二步：连接到服务器:</span>
+<span class="n">server_addr</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Connect to server </span><span class="si">%s</span><span class="s1">...&#39;</span> <span class="o">%</span> <span class="n">server_addr</span><span class="p">)</span>
+<span class="c1"># 端口和验证口令注意保持与服务进程设置的完全一致:</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">QueueManager</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="p">(</span><span class="n">server_addr</span><span class="p">,</span> <span class="mi">8001</span><span class="p">),</span> <span class="n">authkey</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;admin#123&#39;</span><span class="p">)</span>
+<span class="c1"># 从网络连接:</span>
+<span class="n">m</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="c1"># 实现第三步：获取Queue的对象:</span>
+<span class="n">task</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get_task_queue</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get_result_queue</span><span class="p">()</span>
+<span class="c1"># 实现第四步：从task队列取任务,并把结果写入result队列:</span>
+<span class="k">while</span> <span class="p">(</span><span class="ow">not</span> <span class="n">task</span><span class="o">.</span><span class="n">empty</span><span class="p">()):</span>
+    <span class="n">image_url</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;run task download </span><span class="si">%s</span><span class="s1">...&#39;</span> <span class="o">%</span> <span class="n">image_url</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">---&gt;success&#39;</span> <span class="o">%</span> <span class="n">image_url</span><span class="p">)</span>
+<span class="c1"># 处理结束:</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;worker exit.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>执行<code class="docutils literal notranslate"><span class="pre">taskManager_Windows版.py</span></code>的输出如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_0</span> <span class="o">...</span>
+<span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_1</span> <span class="o">...</span>
+<span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_2</span> <span class="o">...</span>
+<span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_3</span> <span class="o">...</span>
+<span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_4</span> <span class="o">...</span>
+<span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_5</span> <span class="o">...</span>
+<span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_6</span> <span class="o">...</span>
+<span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_7</span> <span class="o">...</span>
+<span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_8</span> <span class="o">...</span>
+<span class="n">put</span> <span class="n">task</span> <span class="n">ImageUrl_9</span> <span class="o">...</span>
+<span class="k">try</span> <span class="n">get</span> <span class="n">result</span><span class="o">...</span>
+</pre></div>
+</div>
+<p>执行<code class="docutils literal notranslate"><span class="pre">task_worker.py</span></code>的输出如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Connect</span> <span class="n">to</span> <span class="n">server</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">...</span>
+<span class="n">run</span> <span class="n">task</span> <span class="n">download</span> <span class="n">ImageUrl_0</span><span class="o">...</span>
+<span class="n">run</span> <span class="n">task</span> <span class="n">download</span> <span class="n">ImageUrl_1</span><span class="o">...</span>
+<span class="n">run</span> <span class="n">task</span> <span class="n">download</span> <span class="n">ImageUrl_2</span><span class="o">...</span>
+<span class="n">run</span> <span class="n">task</span> <span class="n">download</span> <span class="n">ImageUrl_3</span><span class="o">...</span>
+<span class="n">run</span> <span class="n">task</span> <span class="n">download</span> <span class="n">ImageUrl_4</span><span class="o">...</span>
+<span class="n">run</span> <span class="n">task</span> <span class="n">download</span> <span class="n">ImageUrl_5</span><span class="o">...</span>
+<span class="o">.......</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">taskManager_Windows版.py</span></code>的输出</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="ow">is</span> <span class="n">ImageUrl_0</span><span class="o">---&gt;</span><span class="n">success</span>
+<span class="n">result</span> <span class="ow">is</span> <span class="n">ImageUrl_1</span><span class="o">---&gt;</span><span class="n">success</span>
+<span class="n">result</span> <span class="ow">is</span> <span class="n">ImageUrl_2</span><span class="o">---&gt;</span><span class="n">success</span>
+<span class="n">result</span> <span class="ow">is</span> <span class="n">ImageUrl_3</span><span class="o">---&gt;</span><span class="n">success</span>
+<span class="n">result</span> <span class="ow">is</span> <span class="n">ImageUrl_4</span><span class="o">---&gt;</span><span class="n">success</span>
+<span class="n">result</span> <span class="ow">is</span> <span class="n">ImageUrl_5</span><span class="o">---&gt;</span><span class="n">success</span>
+<span class="o">.....</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id6"><span class="section-number">16.6.2. </span>分布式进程案例2</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">task_master.py</span></code>服务进程负责启动<code class="docutils literal notranslate"><span class="pre">Queue</span></code>，把<code class="docutils literal notranslate"><span class="pre">Queue</span></code>注册到网络上，然后往<code class="docutils literal notranslate"><span class="pre">Queue</span></code>里面写入任务：</p>
+<p><code class="docutils literal notranslate"><span class="pre">task_master.py</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/30 22:04</span>
+<span class="c1"># @filename: task_master.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">queue</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.managers</span> <span class="kn">import</span> <span class="n">BaseManager</span>
+
+<span class="n">task_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+<span class="n">result_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">re_task_queue</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">task_queue</span>
+    <span class="k">return</span> <span class="n">task_queue</span>
+
+
+<span class="k">def</span> <span class="nf">re_result_queue</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">result_queue</span>
+    <span class="k">return</span> <span class="n">result_queue</span>
+
+
+<span class="k">class</span> <span class="nc">QueueManager</span><span class="p">(</span><span class="n">BaseManager</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">QueueManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;get_task_queue&quot;</span><span class="p">,</span> <span class="n">callable</span><span class="o">=</span><span class="n">re_task_queue</span><span class="p">)</span>
+    <span class="n">QueueManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;get_result_queue&quot;</span><span class="p">,</span> <span class="n">callable</span><span class="o">=</span><span class="n">re_result_queue</span><span class="p">)</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">QueueManager</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="mi">5000</span><span class="p">),</span> <span class="n">authkey</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;abc&#39;</span><span class="p">)</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">task</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_task_queue</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_result_queue</span><span class="p">()</span>
+
+    <span class="c1"># 将初始数据推入queue中</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Put task </span><span class="si">%d</span><span class="s2">...&quot;</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try to get results...&quot;</span><span class="p">)</span>
+    <span class="c1"># 阻塞之后等待queue写入数据后再次get出结果</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">r</span><span class="p">)</span>
+
+    <span class="n">manager</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Master exit.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>另一台机器上启动任务进程（本机上启动也可以）<code class="docutils literal notranslate"><span class="pre">task_worker</span></code>进行计算后，再次将数据put进<code class="docutils literal notranslate"><span class="pre">queue</span></code>中：</p>
+<p><code class="docutils literal notranslate"><span class="pre">task_worker.py</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/30 22:04</span>
+<span class="c1"># @filename: task_worker.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">queue</span> <span class="k">as</span> <span class="nn">Queue</span>
+<span class="kn">from</span> <span class="nn">multiprocessing.managers</span> <span class="kn">import</span> <span class="n">BaseManager</span>
+
+<span class="c1"># 创建类似的QueueManager:</span>
+<span class="k">class</span> <span class="nc">QueueManager</span><span class="p">(</span><span class="n">BaseManager</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="c1"># 由于这个QueueManager只从网络上获取Queue，所以注册时只提供名字:</span>
+<span class="n">QueueManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;get_task_queue&#39;</span><span class="p">)</span>
+<span class="n">QueueManager</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;get_result_queue&#39;</span><span class="p">)</span>
+
+<span class="c1"># 连接到服务器，也就是运行task_master.py的机器:</span>
+<span class="n">server_addr</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Connect to server </span><span class="si">%s</span><span class="s1">...&#39;</span> <span class="o">%</span> <span class="n">server_addr</span><span class="p">)</span>
+<span class="c1"># 端口和验证码注意保持与task_master.py设置的完全一致:</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">QueueManager</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="p">(</span><span class="n">server_addr</span><span class="p">,</span> <span class="mi">5000</span><span class="p">),</span> <span class="n">authkey</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;abc&#39;</span><span class="p">)</span>
+<span class="c1"># 从网络连接:</span>
+<span class="n">m</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="c1"># 获取Queue的对象:</span>
+<span class="n">task</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get_task_queue</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get_result_queue</span><span class="p">()</span>
+<span class="c1"># 从task队列取任务,并把结果写入result队列:</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;run task </span><span class="si">%d</span><span class="s1"> * </span><span class="si">%d</span><span class="s1">...&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> * </span><span class="si">%d</span><span class="s1"> = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="o">*</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;task queue is empty.&#39;</span><span class="p">)</span>
+<span class="c1"># 处理结束:</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;worker exit.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB.html" class="btn btn-neutral float-left" title="16.5. 多线程和多进程的区别" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html" class="btn btn-neutral float-right" title="17. Python与C语言扩展" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

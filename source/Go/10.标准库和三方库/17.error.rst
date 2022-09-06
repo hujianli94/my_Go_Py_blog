@@ -1,0 +1,146 @@
+.. contents::
+   :depth: 3
+..
+
+error
+=====
+
+Go语言不像其他编程语言一样可以对错误或者异常经常进行捕获操作，所以代码中经常会包含对错误信息的处理逻辑。在项目中如何处理错误类型，尤其是在大型项目中如何对错误信息进行处理呢？
+
+1.示例
+------
+
+.. code:: go
+
+   package main
+
+   import (
+       "errors"
+       "fmt"
+   )
+
+   func ErrorUsage() {
+
+       err := errors.New("err: found 1")
+       if err != nil {
+           fmt.Println(err.Error())    // err: found 1
+       }
+       err2 := fmt.Errorf("err: %s", "found 2")
+       if err2 != nil {
+           fmt.Println(err2.Error())   // err: found 2
+       }
+   }
+
+   func main() {
+       ErrorUsage()
+   }
+
+要实现错误类型，有errors.New和fmt.Errorf两种方式，它们实质上是一样的，一种带格式，另一种不带格式，底层其实是一样的。
+
+.. code:: go
+
+   func Errorf(format string, a ...interface{}) error {
+       p := newPrinter()
+       p.wrapErrs = true
+       p.doPrintf(format, a)
+       s := string(p.buf)
+       var err error
+       if p.wrappedErr == nil {
+           err = errors.New(s)
+       } else {
+           err = &wrapError{s, p.wrappedErr}
+       }
+       p.free()
+       return err
+   }
+
+
+   func New(text string) error {
+       return &errorString{text}
+   }
+
+   // errorString is a trivial implementation of error.
+   type errorString struct {
+       s string
+   }
+
+   func (e *errorString) Error() string {
+       return e.s
+   }
+
+实际上，errors.New实例化的errorString实现了内置的error接口。
+
+.. code:: go
+
+   type error interface {
+       Error() string
+   }
+
+如果想要自定义项目的错误类型，那么实现error接口即可。
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   type SelfError struct {
+       Code    int    `json:"code"`
+       Message string `json:"message"`
+   }
+
+   func (self SelfError) Error() string {
+       return fmt.Sprintf("Code: %d, Message: %s", self.Code, self.Message)
+   }
+
+   func UsageError(value string) error {
+       var self SelfError
+       if value == "" {
+           self.Code = 400
+           self.Message = "fail"
+           return self
+       }
+       return nil
+   }
+
+   func UserErrorUsage() {
+
+       err3 := UsageError("")
+       if err3 != nil {
+           fmt.Println(err3.Error())
+       }
+
+   }
+
+   func main() {
+       UserErrorUsage()    // Code: 400, Message: fail
+   }
+
+2.速记
+------
+
+``import "errors"``
+
+errors包实现了创建错误值的函数。
+
+使用字符串创建一个错误,请类比fmt包的Errorf方法，差不多可以认为是New(fmt.Sprintf(…))。
+
+.. code:: go
+
+   err := errors.New("emit macho dwarf: elf header corrupted")
+   if err != nil {
+       fmt.Print(err)    //emit macho dwarf: elf header corrupted
+   }
+   const name, id = "bimmler", 17
+   err := fmt.Errorf("user %q (id %d) not found", name, id)
+   if err != nil {
+       fmt.Print(err)    //user "bimmler" (id 17) not found
+   }
+
+如果读者经常阅读源代码，那么应该能从中发现一般的库是如何处理错误信息的。
+
+库的作用是解决某一类的问题，比如字符串处理、排序等，所以整体上和企业级的错误处理方式不太一样，一般开发者的思路是在库的起始位置定义一些频繁使用的错误类型。
+
+真实的企业项目一般是自定义一个结构体，定义好其中的字段，而后单独成为项目的error库（或程序包），该结构体实现了内置error接口。
+
+单独成为一个库的好处是能够在项目中多处复用。

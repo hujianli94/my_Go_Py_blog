@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6. Vue的生命周期 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="7. Vue.js的模板语法" href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html" />
+    <link rel="prev" title="5. Vue.js开发基础" href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js+Node.js开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%87%86%E5%A4%87.html">1. 开发一个网站的准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Nodejs_vue%E5%9F%BA%E7%A1%80.html">2. Nodejs+vue基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html">3. 项目开发准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.%E9%A1%B9%E7%9B%AE%E5%90%8E%E5%8F%B0%E6%8A%80%E6%9C%AFExpress.html">4. 项目后台技术Express</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html">5. Vue.js开发基础</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6. Vue的生命周期</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">6.1. 1.生命周期与钩子函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vue-js">6.2. 2.演示Vue.js的生命周期</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html">7. Vue.js的模板语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue.js%E7%9A%84%E7%BB%84%E4%BB%B6%E5%8C%96.html">8. Vue.js的组件化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html">9. Vue.js的vue-router库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue.js%E7%9A%84%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E5%BA%93Vuex%E5%92%8CPinia.html">10. Vue.js的状态管理库Vuex和Pinia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.Vue-UI%E5%BA%93.html">11. Vue-UI库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.%E9%A1%B9%E7%9B%AE%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E.html">12. 项目需求分析和功能说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.%E9%A1%B9%E7%9B%AE%E7%AD%96%E5%88%92%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AE%BE%E8%AE%A1.html">13. 项目策划和功能设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14.%E9%A1%B9%E7%9B%AE%E5%90%8E%E7%AB%AFAPI%E5%BC%80%E5%8F%91.html">14. 项目后端API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15.%E9%80%9A%E7%94%A8API%E5%BC%80%E5%8F%91.html">15. 通用API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">16. 用户权限相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17.%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">17. 后台管理相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18.%E5%B0%8F%E7%BB%93.html">18. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19.%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%BC%80%E5%8F%91.html">19. 前端页面开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="20.%E4%B8%BB%E8%A6%81%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%BC%80%E5%8F%91.html">20. 主要页面的开发</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js+Node.js开发实战</a> &raquo;</li>
+      <li><span class="section-number">6. </span>Vue的生命周期</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue_Node.js/06.Vue.js的生命周期.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vue" id="id3">Vue的生命周期</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id4">1.生命周期与钩子函数</a></p></li>
+<li><p><a class="reference internal" href="#vue-js" id="id5">2.演示Vue.js的生命周期</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="vue">
+<h1><a class="toc-backref" href="#id3"><span class="section-number">6. </span>Vue的生命周期</a><a class="headerlink" href="#vue" title="Permalink to this headline">¶</a></h1>
+<p>在Vue.js中，单文件的生命周期是所有方法的调用过程，即从实例的初始化开始，直到页面关闭。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id4"><span class="section-number">6.1. </span>1.生命周期与钩子函数</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Vue.js为开发者提供了生命周期钩子函数，方便用户在不同阶段添加自己的代码。生命周期和钩子函数的执行过程如图:</p>
+<figure class="align-default" id="id2">
+<img alt="image-20220223141614540" src="../_images/image-20220223141614540.png" />
+<figcaption>
+<p><span class="caption-text">image-20220223141614540</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Vue.js的生命周期是从一个组件或一个项目本身的初始化开始（new
+Vue()），之后调用beforeCreate()钩子函数初始化Vue.js实例，</p>
+<p>然后调用created()钩子函数，该函数包含组件或Vue.js项目初始化需要执行的内容。接下来挂载实例，执行beforeMount()钩子函数，</p>
+<p>并且在实例挂载后执行mounted()钩子函数。当页面数据更新时，调用beforeUpdate()钩子函数进行处理，数据更新完成后调用updated()钩子函数显示更新后的数据。</p>
+<p>整个Vue.js实例被销毁时调用beforeDestroy()钩子函数来完成，实例被销毁后调用destroyed()钩子函数。</p>
+<p>简单来说，生命周期中的钩子函数主要有以下8个：</p>
+<ul class="simple">
+<li><p>beforeCreate()（组件创建之前）；</p></li>
+<li><p>created()（组件创建完成）；</p></li>
+<li><p>beforeMount()（组件挂载之前）；</p></li>
+<li><p>mounted()（组件挂载完成）；</p></li>
+<li><p>beforeUpdate()（组件更新之前）；</p></li>
+<li><p>updated()（组件更新完成）；</p></li>
+<li><p>beforeDestroy()（组件销毁之前）；</p></li>
+<li><p>destroyed()（组件销毁完成）。</p></li>
+</ul>
+<blockquote>
+<div><p>注意：生命周期中的钩子函数不只上述8个，读者可查看官网中的钩子函数了解更多内容。</p>
+</div></blockquote>
+</section>
+<section id="vue-js">
+<h2><a class="toc-backref" href="#id5"><span class="section-number">6.2. </span>2.演示Vue.js的生命周期</a><a class="headerlink" href="#vue-js" title="Permalink to this headline">¶</a></h2>
+<p>编写生命周期不同状态的钩子函数，通过命令行的打印效果可以查看本例的生命周期执行情况。代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">img</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;./assets/logo.png&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">msg</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span>
+  <span class="n">data</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="n">msg</span><span class="p">:</span> <span class="s1">&#39;Welcome to Your Vue.js App hujianli&#39;</span><span class="p">,</span>
+      <span class="n">showItem</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+      <span class="n">noShowItem</span><span class="p">:</span> <span class="n">false</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="n">beforeCreate</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Vue beforeCreate&quot;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="n">created</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Vue created&quot;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="n">beforeMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Vue beforeMount&quot;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="n">mounted</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Vue mounted&quot;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="n">beforeUpdate</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Vue beforeUpdate&quot;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="n">updated</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Vue updated&quot;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="n">beforeDestroy</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Vue beforeDestroy&quot;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="n">destroyed</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Vue destroyed&quot;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="c1">#app {</span>
+  <span class="n">font</span><span class="o">-</span><span class="n">family</span><span class="p">:</span> <span class="s1">&#39;Avenir&#39;</span><span class="p">,</span> <span class="n">Helvetica</span><span class="p">,</span> <span class="n">Arial</span><span class="p">,</span> <span class="n">sans</span><span class="o">-</span><span class="n">serif</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">font</span><span class="o">-</span><span class="n">smoothing</span><span class="p">:</span> <span class="n">antialiased</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">osx</span><span class="o">-</span><span class="n">font</span><span class="o">-</span><span class="n">smoothing</span><span class="p">:</span> <span class="n">grayscale</span><span class="p">;</span>
+  <span class="n">text</span><span class="o">-</span><span class="n">align</span><span class="p">:</span> <span class="n">center</span><span class="p">;</span>
+  <span class="n">color</span><span class="p">:</span> <span class="c1">#2c3e50;</span>
+  <span class="n">margin</span><span class="o">-</span><span class="n">top</span><span class="p">:</span> <span class="mi">60</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">h1</span><span class="p">,</span> <span class="n">h2</span> <span class="p">{</span>
+  <span class="n">font</span><span class="o">-</span><span class="n">weight</span><span class="p">:</span> <span class="n">normal</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">ul</span> <span class="p">{</span>
+  <span class="nb">list</span><span class="o">-</span><span class="n">style</span><span class="o">-</span><span class="nb">type</span><span class="p">:</span> <span class="n">none</span><span class="p">;</span>
+  <span class="n">padding</span><span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">li</span> <span class="p">{</span>
+  <span class="n">display</span><span class="p">:</span> <span class="n">inline</span><span class="o">-</span><span class="n">block</span><span class="p">;</span>
+  <span class="n">margin</span><span class="p">:</span> <span class="mi">0</span> <span class="mi">10</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">a</span> <span class="p">{</span>
+  <span class="n">color</span><span class="p">:</span> <span class="c1">#42b983;</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>需要注意的是，命令行的输入代码，即console.log()本身需要被浏览器（宿主环境）控制。</p>
+<p>在一些浏览器环境中这是一个异步方法。也就是说，在实例生命周期非常紧密的情况下，打印顺序可能会不同。</p>
+<p>上面的这段代码没有出现此类问题，如果将示例5-10修改为调用destroyed()和before-
+Destroy()这两个钩子函数，此时Vue.js实例将自动发送热更新，该过程会调用destroyed()钩子函数。页面销毁时才执行的destroyed()和beforeDestroy()这两个钩子函数，其输出可能和下一页面的created()或beforeCreated()等函数输出顺序不一致。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[HMR] Waiting for update signal from WDS...
+App.vue?ea99:19 Vue beforeCreate
+App.vue?ea99:22 Vue created
+App.vue?ea99:25 Vue beforeMount
+App.vue?ea99:28 Vue mounted
+vue.esm.js?efeb:9132 You are running Vue in development mode.
+Make sure to turn on production mode when deploying for production.
+See more tips at https://vuejs.org/guide/deployment.html
+client?cd17:77 [WDS] Hot Module Replacement enabled.
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html" class="btn btn-neutral float-left" title="5. Vue.js开发基础" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html" class="btn btn-neutral float-right" title="7. Vue.js的模板语法" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

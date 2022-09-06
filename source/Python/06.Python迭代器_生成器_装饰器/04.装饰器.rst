@@ -1,0 +1,482 @@
+.. contents::
+   :depth: 3
+..
+
+装饰器
+======
+
+::
+
+   装饰器的作用，写一个可以反复使用的函数或者装饰器类，用于装饰其它函数
+   比如：账号密码多次需要登录的时候。
+         有些警告信息、提示信息多个地方需要显示的。
+         实现一个需求，不用到处修改代码，统一入口
+
+以下就是一个简单的装饰器函数的定义代码：
+
+::
+
+   　　def demo_decorater (fun):          #定义装饰器函数（参数为fun，可所受函数对象）
+   　　   def new_fun (*args,**kwargs):   #新定义一个包装器函数用于返回
+   　　      pass
+   　　      fun(*args,**kwargs)          #包装器函数中调用被装饰的函数
+   　　      pass
+   　　   return new_fun                  #返回包装器函数
+
+此外，装饰器还可以嵌套装饰，比如以下代码中，函数decorated_fun()同时被abc和disp_run_time装饰器装饰，插入了两种不同类型的功能：
+
+::
+
+   　　@abc
+   　　@disp_run_time
+   　　def decorated_fun():
+   　　   pass
+
+1.装饰符
+--------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/1/8 22:09
+   # filename: @装饰符.py
+
+   def checkParams(fn):
+       def wrapper(strname):
+           if isinstance(strname, (str)):
+               return fn(strname)
+           print("variable strname is not a string type")
+           return
+
+       return wrapper
+
+
+   @checkParamss
+   def wrapperfun(strname):
+       def recoder(age):
+           print("姓名：", strname, "年纪:", age)
+       return recoder
+
+
+   fa = wrapperfun("hujianli")
+   fa(22)      # 姓名： hujianli 年纪: 22
+   fun = wrapperfun(22) #variable strname is not a string type
+
+1.1 一个普通的装饰器函数
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/5/10 21:55
+   # filename: sample01.py
+
+   def abc(fun):
+       # 定义一个装饰器abc
+       def warpper(*args, **kwargs):
+           # 定义包装饰器函数
+           print("开始运行....")
+           # 调用被装饰的函数
+           fun(*args, **kwargs)
+           print("运行结束!")
+
+       return warpper
+
+
+   @abc
+   def demo_decoration(x):  # 返回包装饰器函数
+       a = []
+       for i in range(x):
+           a.append(i)
+       print(a)
+
+
+   @abc
+   def hello(name):
+       print("Hello {}!".format(name))
+
+
+   if __name__ == '__main__':
+       demo_decoration(5)
+       print()
+       hello("hujianli")
+
+   """
+   开始运行....
+   [0, 1, 2, 3, 4]
+   运行结束!
+
+   开始运行....
+   Hello hujianli!
+   运行结束!
+   """
+
+.. code:: python
+
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/23 21:52
+   # filename: 装饰器函数001.py
+
+   import datetime
+
+
+   def time(func):
+       def wrapper():
+           start_time = datetime.datetime.now()
+           print(start_time)
+           func()
+           end_time = datetime.datetime.now()
+           print(end_time)
+           print("time use :{}".format(end_time - start_time))
+       return wrapper
+
+
+   @time
+   def loop():
+       print("start.....")
+       for i in range(100000000):
+           pass
+       print("finish......")
+
+
+   if __name__ == '__main__':
+       loop()
+       
+   """
+   2019-09-23 21:55:12.081090
+   start.....
+   finish......
+   2019-09-23 21:55:14.501618
+   time use :0:00:02.420528
+   """
+
+1.2 带参数的装饰器 1
+~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   def pre_str(pre=''):
+       def decorator(old_function):
+           def new_function(a, b):
+               print("*"*30)
+               print(pre + ' input',"用户名:", a)
+               print(pre + ' input',"密码:", b)
+               print("*"*30)
+               return old_function(a, b)
+           return new_function
+       return decorator
+
+   #不带参数，默认值参数
+   @pre_str()
+   def sum_str(a,b):
+       return a,b
+
+   #装饰square_sum()，带参数^_^
+   @pre_str("^_^")
+   def square_sum(a, b):
+       return a,b
+
+   #装饰器square_diff(),带参数T_T
+   @pre_str("T_T")
+   def square_diff(a,b):
+       return a,b
+
+   if __name__ == '__main__':
+       print(sum_str("xiaojian722","admin#123"))
+       print(square_sum("hujianli", "123.com"))
+       print(square_diff("hujianli","1234.com"))
+
+装饰器也是可以带参数的，比如“@abc（”callcall“）”。可以将实例9-6中的装饰器函数改写为带参数的装饰器，代码如下：
+
+.. code:: python
+
+   　def abc(action):
+   　　   def mabc(fun):
+   　　      def wrapper (*args,**kwargs):
+   　　         print ('开始运行...',action)
+   　　         fun (*args,**kwargs)
+   　　         print ('运行结束！', action)
+   　　      return wrapper
+   　　   return mabc
+
+1.3 带参数的装饰器 2
+~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   import time
+
+
+   def abc(action):
+       def mabc(func):
+           def wrapper(*args, **kwargs):
+               print("开始运行....", action)
+               func(*args, **kwargs)
+               print("运行结束！....", action)
+
+           return wrapper
+       return mabc
+
+
+   def timer(func):
+       def deco(*args, **kwargs):
+           start_time = time.time()
+           func(*args, **kwargs)
+           end_time = time.time()
+           print(end_time - start_time)
+
+       return deco
+
+
+   @timer
+   @abc("print_name")  # 带参数的装饰器
+   def deam_print_name(name):
+       time.sleep(2)
+       print("Hello {}!".format(name))
+
+
+   @timer
+   @abc("list_info")  # 带参数的装饰器
+   def deam_list_print(x):
+       a = []
+       time.sleep(2)
+       for i in range(x):
+           a.append(i)
+       print(a)
+
+
+   if __name__ == '__main__':
+       deam_list_print(8)
+       print(''.center(100, "#"))
+       print("".center(100, "#"))
+       deam_print_name("hujianli")
+
+1.4 带参数的装饰器 3
+~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   import time
+
+   def timer(parameter):
+       def out_wrapper(func):
+           def wrapper(*args,**kwargs):
+               if parameter == "task1":
+                   start = time.time()
+                   func(*args,**kwargs)
+                   stop = time.time()
+                   print("the task1 run time is :",stop - start)
+               elif parameter == "task2":
+                   start = time.time()
+                   func(*args,**kwargs)
+                   stop = time.time()
+                   print("the task2 run time is :",stop - start)
+           return wrapper
+       return out_wrapper
+
+
+   @timer("task1")
+   def task1():
+       time.sleep(2)
+       print("in the task1")
+
+   @timer("task2")
+   def task2():
+       time.sleep(3)
+       print("in the task2")
+
+   if __name__ == '__main__':
+       task1()
+       print("我是分割线".center(100, "*"))
+       task2()
+
+2.定义装饰类的装饰器
+--------------------
+
+::
+
+   采用的方法是：定义内嵌类的函数，返回新类
+
+**代码示例**
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   #定义装饰类的装饰器，采用的方法是：定义内嵌类的函数，返回新类
+
+   #定义一个类装饰器及其使用的例子
+   def abc(myclss):
+       class InnerClass:
+           def __init__(self, z=0):
+               self.z = 0
+               self.wrapper = myclss()     #实例化被装饰的类
+
+           def position(self):
+               self.wrapper.position()
+               print('z axis:',self.z)
+       return InnerClass                   #返回新定义的类
+
+
+   '''
+   定义一个能够装饰类的装饰器abc，定义了一个内嵌类InnerClass用于代替被装饰的类，并返回新的内嵌类，实例化普通类
+   之后，得到的就是被装饰器装饰后的类
+   '''
+   @abc
+   class coordination:
+       def __init__(self, x=0, y=0):
+           self.x = x
+           self.y = y
+
+       def position(self):
+           print("x axis:", self.x)
+           print("y axis:", self.y)
+
+   if __name__ == '__main__':
+       coor = coordination()
+       coor.position()
+
+2.1类装饰器
+~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   def decorator_class(SomeClass):
+       class NewClass(object):
+           def __init__(self,age):
+               self.total_display = 0
+               self.wrapped = SomeClass(age)
+
+           def display(self):
+               self.total_display +=1
+               print("*"*20)
+               print("total display", self.total_display)
+               print("*"*20)
+               self.wrapped.display()
+       return NewClass
+
+   @decorator_class
+   class Bird:
+       def __init__(self,age):
+           self.age = age
+
+       def display(self):
+           print("My age is ",self.age)
+
+
+   if __name__ == '__main__':
+       eagle_lord = Bird(5)
+       for i in range(3):
+           eagle_lord.display()
+
+.. _类装饰器-1:
+
+2.2类装饰器
+~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/23 21:57
+   # filename: 装饰类002.py
+
+   def addSex(myClass):
+       class InnerClass:
+           def __init__(self, name, age, sex):
+               self.sex = sex
+               self.wrapper = myClass(name, age)
+
+           def showInfo(self):
+               self.wrapper.showInfo()
+               print("sex:{}".format(self.sex))
+
+       return InnerClass
+
+
+   @addSex
+   class Person:
+       def __init__(self, name, age):
+           self.name = name
+           self.age = age
+
+       def showInfo(self):
+           print("name:{}".format(self.name))
+           print("age:{}".format(self.age))
+
+
+   if __name__ == '__main__':
+       p = Person("Tom", 18, "MALE")
+       p.showInfo()
+
+   """
+   name:Tom
+   age:18
+   sex:MALE
+   """
+
+3.利用装饰器实现失败重试
+------------------------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/1/8 22:34
+   # filename: sample04.py
+   import subprocess
+   import requests
+
+
+   def Retry(second):
+       def decorator(func):
+           def warpper(*args, **kwargs):
+               att = 0  # 计数器
+               while att < second:  # 按照计数器条件来循环
+                   print(att)
+                   try:
+                       return func(*args, **kwargs)  # 运行请求，或者命令
+                   except Exception as e:
+                       att += 1  # 计数器累加
+
+           return warpper
+
+       return decorator
+
+
+   @Retry(3)
+   def cmd_01(cmd):
+       subprocess.call(cmd)
+
+
+   # 简单的爬虫,重试3次爬取
+   @Retry(3)
+   def get_respone(url):
+       r = requests.get(url)
+       return r
+
+
+   cmd_01("dir1")
+   get_respone("http://www.baidu1.com")
+
+4.七个好用的装饰器
+------------------
+
+https://mp.weixin.qq.com/s/XLbBpbQClKOYB3E9XBfSrQ

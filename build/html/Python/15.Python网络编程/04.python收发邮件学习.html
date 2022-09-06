@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>15.4. Python发送邮件 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="15.5. python实现通用的NTP时间服务器" href="05.python%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E7%9A%84NTP%E6%97%B6%E9%97%B4%E6%9C%8D%E5%8A%A1%E5%99%A8.html" />
+    <link rel="prev" title="15.3. socketserver编程" href="03.socketserver%E7%BC%96%E7%A8%8B.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">15. Python 网络编程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80.html">15.1. TCP/IP协议</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.socket%E7%BC%96%E7%A8%8B.html">15.2. socket编程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.socketserver%E7%BC%96%E7%A8%8B.html">15.3. socketserver编程</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">15.4. Python发送邮件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#test">15.4.1. 发送一个简单的test邮件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">15.4.2. 完整的发送邮件代码</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#html">15.4.3. 发送HTML的邮件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#html2">15.4.4. 发送html邮件示例2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">15.4.5. 发送代码示例3</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">15.4.6. 发送带附件的邮件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smtp">15.4.7. 加密SMTP邮件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">15.4.8. Python 发送图片到邮件正文</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#htmlplain">15.4.9. 同时支持HTML和Plain格式的邮件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">15.4.10. 加密SMTP协议</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pop3">15.4.11. POP3下载查阅邮件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">15.4.12. 封装一个发送邮件的函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">15.4.13. 封装一个发邮件的类</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">15.4.14. 封装一个发邮件的类2,</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="05.python%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E7%9A%84NTP%E6%97%B6%E9%97%B4%E6%9C%8D%E5%8A%A1%E5%99%A8.html">15.5. python实现通用的NTP时间服务器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E4%BD%BF%E7%94%A8Python%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAgeek%E9%82%AE%E4%BB%B6%E5%AE%A2%E6%88%B7%E7%AB%AF.html">15.6. 使用Python实现一个geek邮件客户端</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84REST%E6%8E%A5%E5%8F%A3.html">15.7. 07.创建一个简单的REST接口</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">15. </span>Python 网络编程</a> &raquo;</li>
+      <li><span class="section-number">15.4. </span>Python发送邮件</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/15.Python网络编程/04.python收发邮件学习.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#python" id="id15">Python发送邮件</a></p>
+<ul>
+<li><p><a class="reference internal" href="#test" id="id16">发送一个简单的test邮件</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id17">代码如下</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id2" id="id18">完整的发送邮件代码</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id19">代码示例 1</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id20">代码示例 2</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id21">代码示例 3</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#html" id="id22">发送HTML的邮件</a></p></li>
+<li><p><a class="reference internal" href="#html2" id="id23">发送html邮件示例2</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id24">发送代码示例3</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id25">发送带附件的邮件</a></p>
+<ul>
+<li><p><a class="reference internal" href="#mimeapplication" id="id26">代码示例2(使用 MIMEApplication,传输文件中文文件会乱码，暂时无解决办法)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#smtp" id="id27">加密SMTP邮件</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id28">Python 发送图片到邮件正文</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id9" id="id29">发送图片作为附件如下</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id30">带图片及附件的邮件</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#htmlplain" id="id31">同时支持HTML和Plain格式的邮件</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id32">加密SMTP协议</a></p></li>
+<li><p><a class="reference internal" href="#pop3" id="id33">POP3下载查阅邮件</a></p></li>
+<li><p><a class="reference internal" href="#id12" id="id34">封装一个发送邮件的函数</a></p></li>
+<li><p><a class="reference internal" href="#id13" id="id35">封装一个发邮件的类</a></p></li>
+<li><p><a class="reference internal" href="#id14" id="id36">封装一个发邮件的类2,</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="python">
+<h1><a class="toc-backref" href="#id15"><span class="section-number">15.4. </span>Python发送邮件</a><a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>MTP（Simple Mail Transfer Protocol）即简单邮件传输协议,它是一组用于由源地址到目的地址传送邮件的规则，由它来控制信件的中转方式。
+python的smtplib提供了一种很方便的途径发送电子邮件。它对smtp协议进行了简单的封装。
+Python创建 SMTP 对象语法如下：
+
+import smtplib
+smtpObj = smtplib.SMTP( [host [, port [, local_hostname]]] )
+参数说明：
+    host: SMTP 服务器主机。 你可以指定主机的ip地址或者域名如: runoob.com，这个是可选参数。
+    port: 如果你提供了 host 参数, 你需要指定 SMTP 服务使用的端口号，一般情况下 SMTP 端口号为25。
+    local_hostname: 如果 SMTP 在你的本机上，你只需要指定服务器地址为 localhost 即可。
+    Python SMTP 对象使用 sendmail 方法发送邮件，语法如下：
+
+SMTP.sendmail(from_addr, to_addrs, msg[, mail_options, rcpt_options])
+参数说明：
+
+from_addr: 邮件发送者地址。
+to_addrs: 字符串列表，邮件发送地址。
+msg: 发送消息
+这里要注意一下第三个参数，msg 是字符串，表示邮件。我们知道邮件一般由标题，发信人，收件人，邮件内容，附件等构成，发送邮件的时候，要注意 msg 的格式。这个格式就是 smtp 协议中定义的格式。
+</pre></div>
+</div>
+<section id="test">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">15.4.1. </span>发送一个简单的test邮件</a><a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h2>
+<section id="id1">
+<h3><a class="toc-backref" href="#id17">代码如下</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Python对SMTP支持有smtplib和email两个模块，email负责构造邮件，smtplib负责发送邮件。</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s2">&quot;hello,send by Python....你好.&quot;</span><span class="p">,</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="c1">#注意到构造MIMEText对象时</span>
+<span class="c1"># 第一个参数就是邮件正文，</span>
+<span class="c1"># 第二个参数是MIME的subtype，传入&#39;plain&#39;表示纯文本，最终的MIME就是&#39;text/plain&#39;，</span>
+<span class="c1"># 最后一定要用utf-8编码保证多语言兼容性。</span>
+
+
+<span class="c1">#通过SMTP发出去</span>
+<span class="c1">#Email地址和口令</span>
+<span class="n">from_addr</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>
+<span class="n">from_passwd</span> <span class="o">=</span> <span class="s2">&quot;rpesbfgwmqcycceh&quot;</span>   <span class="c1">#使用网页邮件中生成的授权码</span>
+<span class="c1">#收件人地址</span>
+<span class="n">to_addr</span> <span class="o">=</span> <span class="s2">&quot;13262662216@163.com&quot;</span>
+<span class="c1">#SMTP服务器地址</span>
+<span class="n">smtp_server</span> <span class="o">=</span> <span class="s2">&quot;smtp.qq.com&quot;</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">smtp_server</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span> <span class="c1"># SMTP协议默认端口是25</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="n">from_passwd</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="p">[</span><span class="n">to_addr</span><span class="p">],</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">15.4.2. </span>完整的发送邮件代码</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<section id="id3">
+<h3><a class="toc-backref" href="#id19">代码示例 1</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.utils</span> <span class="kn">import</span> <span class="n">parseaddr</span><span class="p">,</span> <span class="n">formataddr</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+
+<span class="k">def</span> <span class="nf">_format_addr</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">parseaddr</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">formataddr</span><span class="p">((</span><span class="n">Header</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">addr</span><span class="p">))</span>
+
+<span class="c1">#通过SMTP发出去</span>
+<span class="c1">#Email地址和口令</span>
+<span class="n">from_addr</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>
+<span class="n">from_passwd</span> <span class="o">=</span> <span class="s2">&quot;rpesbfgwmqcycceh&quot;</span>   <span class="c1">#使用网页邮件中生成的授权码</span>
+<span class="c1">#收件人地址</span>
+<span class="n">to_addr</span> <span class="o">=</span> <span class="s2">&quot;13262662216@163.com&quot;</span>
+<span class="c1">#SMTP服务器地址</span>
+<span class="n">smtp_server</span> <span class="o">=</span> <span class="s2">&quot;smtp.qq.com&quot;</span>
+
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s1">&#39;hello, send by Python...&#39;</span><span class="p">,</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="n">from_addr</span><span class="p">))</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;收件者 &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">to_addr</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;邮件的主题信息……&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1">#开始发送邮件</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">smtp_server</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="n">from_passwd</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="p">[</span><span class="n">to_addr</span><span class="p">],</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id20">代码示例 2</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># -*- coding: UTF-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+
+<span class="c1"># 第三方 SMTP 服务</span>
+<span class="n">mail_host</span><span class="o">=</span><span class="s2">&quot;smtp.qq.com&quot;</span>  <span class="c1">#设置服务器</span>
+<span class="n">mail_user</span><span class="o">=</span><span class="s2">&quot;1879324764@qq.com&quot;</span>   <span class="c1">#用户名</span>
+<span class="n">mail_pass</span><span class="o">=</span><span class="s2">&quot;rpesbfgwmqcycceh&quot;</span>  <span class="c1">#口令</span>
+
+
+<span class="n">sender</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>
+<span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;13262662216@163.com&quot;</span><span class="p">]</span>  <span class="c1"># 接收邮件，可设置为你的QQ邮箱或者其他邮箱</span>
+
+<span class="n">message</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s1">&#39;Python 邮件发送测试...&#39;</span><span class="p">,</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s2">&quot;测试邮件发送&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">Header</span><span class="p">(</span><span class="s2">&quot;测试&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;Python SMTP 邮件测试&#39;</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">smtpObj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">()</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">mail_host</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>    <span class="c1"># 25 为 SMTP 端口号</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">mail_user</span><span class="p">,</span><span class="n">mail_pass</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receivers</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;邮件发送成功&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTPException</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: 无法发送邮件&quot;</span><span class="p">)</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/snmp1.PNG" src="../../_images/snmp1.PNG" />
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id21">代码示例 3</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+
+<span class="n">SMTP_SERVER</span> <span class="o">=</span> <span class="s1">&#39;smtp.qq.com&#39;</span>
+<span class="n">SMTP_PORT</span> <span class="o">=</span><span class="mi">25</span>
+
+
+<span class="k">def</span> <span class="nf">send_mail</span><span class="p">(</span><span class="n">user</span><span class="p">,</span><span class="n">pwd</span><span class="p">,</span><span class="n">to</span><span class="p">,</span><span class="n">subject</span><span class="p">,</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
+
+    <span class="n">smtp_server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">SMTP_SERVER</span><span class="p">,</span><span class="n">SMTP_PORT</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connecting to mail server.&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">smtp_server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting Encrypted Seccion.&quot;</span><span class="p">)</span>
+
+        <span class="n">smtp_server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+        <span class="n">smtp_server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Logging Into Mail Server&quot;</span><span class="p">)</span>
+
+        <span class="n">smtp_server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user</span><span class="p">,</span><span class="n">pwd</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sending mail ..&quot;</span><span class="p">)</span>
+
+        <span class="n">smtp_server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">user</span><span class="p">,</span><span class="n">to</span><span class="p">,</span><span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sending Mail Failed :</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">smtp_server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">send_mail</span><span class="p">(</span><span class="s1">&#39;1879324764@qq.com&#39;</span><span class="p">,</span><span class="s1">&#39;qvhsgcjnkvyccedc&#39;</span><span class="p">,</span><span class="s1">&#39;13262662216@163.com&#39;</span><span class="p">,</span><span class="s1">&#39;Inportant&#39;</span><span class="p">,</span><span class="s1">&#39;Test message&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>如果本地主机安装了sendmail服务，发送邮件的代码可以更改为：</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="sd">sender = &#39;from@163.com&#39;</span>
+<span class="sd">receivers = [&#39;to@aliyun.com&#39;] # 接收邮件，可设置为你的邮箱</span>
+
+<span class="sd"># 三个参数：第一个为文本内容，第二个 plain 设置文本格式，第三个 utf-8 设置编码</span>
+<span class="sd">message = MIMEText(&#39;Python 邮件发送测试...&#39;, &#39;plain&#39;, &#39;utf-8&#39;)</span>
+<span class="sd">message[&#39;From&#39;] = Header(&quot;邮件测试&quot;, &#39;utf-8&#39;)</span>
+<span class="sd">message[&#39;To&#39;] = Header(&quot;测试&quot;, &#39;utf-8&#39;)</span>
+<span class="sd">subject = &#39;Python SMTP 邮件测试&#39;</span>
+<span class="sd">message[&#39;Subject&#39;] = Header(subject, &#39;utf-8&#39;)</span>
+
+<span class="sd">try:</span>
+<span class="sd">    smtpObj = smtplib.SMTP(&quot;localhost&quot;)</span>
+<span class="sd">    smtpObj.sendmail(sender, receivers, message.as_string())</span>
+<span class="sd">    print (&quot;邮件发送成功&quot;)</span>
+<span class="sd">except smtplib.SMTPException as e:</span>
+<span class="sd">    print (&quot;Error: 无法发送邮件.Case:%s&quot; % e)</span>
+
+<span class="sd">finally:</span>
+<span class="sd">    server.close()</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="html">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">15.4.3. </span>发送HTML的邮件</a><a class="headerlink" href="#html" title="Permalink to this headline">¶</a></h2>
+<p>代码示例1</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.utils</span> <span class="kn">import</span> <span class="n">parseaddr</span><span class="p">,</span> <span class="n">formataddr</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+
+<span class="k">def</span> <span class="nf">_format_addr</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">parseaddr</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">formataddr</span><span class="p">((</span><span class="n">Header</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">addr</span><span class="p">))</span>
+
+<span class="c1">#通过SMTP发出去</span>
+<span class="c1">#Email地址和口令</span>
+<span class="n">from_addr</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>
+<span class="n">from_passwd</span> <span class="o">=</span> <span class="s2">&quot;rpesbfgwmqcycceh&quot;</span>   <span class="c1">#使用网页邮件中生成的授权码</span>
+<span class="c1">#收件人地址</span>
+<span class="n">to_addr</span> <span class="o">=</span> <span class="s2">&quot;13262662216@163.com&quot;</span>
+<span class="c1">#SMTP服务器地址</span>
+<span class="n">smtp_server</span> <span class="o">=</span> <span class="s2">&quot;smtp.qq.com&quot;</span>
+
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s1">&#39;&lt;html&gt;&lt;body&gt;&lt;h1&gt;小健的博客&lt;/h1&gt;&#39;</span> <span class="o">+</span>
+    <span class="s1">&#39;&lt;p&gt;博客浏览地址: &lt;a href=&quot;https://xiaojian722.readthedocs.io/en/latest/index.html&quot;&gt;小健的自动化运维之路&lt;/a&gt; 开启学习旅程&lt;/p&gt;&#39;</span> <span class="o">+</span>
+    <span class="s1">&#39;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="n">from_addr</span><span class="p">))</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;收件者 &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">to_addr</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;邮件的主题信息……&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+<span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">smtp_server</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="n">from_passwd</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="p">[</span><span class="n">to_addr</span><span class="p">],</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+<span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="html2">
+<h2><a class="toc-backref" href="#id23"><span class="section-number">15.4.4. </span>发送html邮件示例2</a><a class="headerlink" href="#html2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+
+<span class="n">sender</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>    <span class="c1">#发件的邮箱</span>
+<span class="n">pwd</span> <span class="o">=</span> <span class="s2">&quot;ducszyrzqulyhjeg&quot;</span>        <span class="c1">#开通邮箱服务后，设置的客户端授权密码</span>
+
+<span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;13262662216@163.com&#39;</span><span class="p">]</span>     <span class="c1">#接收的邮箱</span>
+
+<span class="n">mail_msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;p&gt;Python 邮件发送测试...&lt;/p&gt;</span>
+<span class="s2">&lt;p&gt;&lt;a href=&quot;http://www.runoob.com&quot;&gt;这是一个链接&lt;/a&gt;&lt;/p&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># 三个参数：第一个为文本内容，第二个 plain 设置文本格式，第三个 utf-8 设置编码</span>
+<span class="n">message</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">mail_msg</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;邮件测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;Python SMTP 邮件测试&#39;</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 使用非本地服务器，需要建立ssl连接</span>
+    <span class="n">smtpObj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="s1">&#39;smtp.qq.com&#39;</span><span class="p">,</span><span class="mi">465</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">pwd</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receivers</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;邮件发送成功....&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTPException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error :无法发送邮件.Case:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../../_images/snmp2.PNG" src="../../_images/snmp2.PNG" />
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id24"><span class="section-number">15.4.5. </span>发送代码示例3</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#coding: utf-8</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.gmail.com&quot;</span>
+<span class="n">SUBJECT</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;官网流量数据报表&quot;</span>
+<span class="n">TO</span> <span class="o">=</span> <span class="s2">&quot;test@qq.com&quot;</span>
+<span class="n">FROM</span> <span class="o">=</span> <span class="s2">&quot;test@gmail.com&quot;</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;table width=&quot;800&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;4&quot;&gt;</span>
+<span class="s2">      &lt;tr&gt;</span>
+<span class="s2">        &lt;td bgcolor=&quot;#CECFAD&quot; height=&quot;20&quot; style=&quot;font-size:14px&quot;&gt;*官网数据  &lt;a href=&quot;monitor.domain.com&quot;&gt;更多&gt;&gt;&lt;/a&gt;&lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">      &lt;tr&gt;</span>
+<span class="s2">        &lt;td bgcolor=&quot;#EFEBDE&quot; height=&quot;100&quot; style=&quot;font-size:13px&quot;&gt;</span>
+<span class="s2">        1）日访问量:&lt;font color=red&gt;152433&lt;/font&gt;  访问次数:23651 页面浏览量:45123 点击数:545122  数据流量:504Mb&lt;br&gt;</span>
+<span class="s2">        2）状态码信息&lt;br&gt;</span>
+<span class="s2">        &amp;nbsp;&amp;nbsp;500:105  404:3264  503:214&lt;br&gt;</span>
+<span class="s2">        3）访客浏览器信息&lt;br&gt;</span>
+<span class="s2">        &amp;nbsp;&amp;nbsp;IE:50</span><span class="si">%  f</span><span class="s2">irefox:10</span><span class="si">% c</span><span class="s2">hrome:30</span><span class="si">% o</span><span class="s2">ther:10%&lt;br&gt;</span>
+<span class="s2">        4）页面信息&lt;br&gt;</span>
+<span class="s2">        &amp;nbsp;&amp;nbsp;/index.php 42153&lt;br&gt;</span>
+<span class="s2">        &amp;nbsp;&amp;nbsp;/view.php 21451&lt;br&gt;</span>
+<span class="s2">        &amp;nbsp;&amp;nbsp;/login.php 5112&lt;br&gt;</span>
+<span class="s2">    &lt;/td&gt;</span>
+<span class="s2">      &lt;/tr&gt;</span>
+<span class="s2">    &lt;/table&gt;&quot;&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;html&quot;</span><span class="p">,</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SUBJECT</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">FROM</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">TO</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">HOST</span><span class="p">,</span><span class="s2">&quot;25&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s2">&quot;test@gmail.com&quot;</span><span class="p">,</span><span class="s2">&quot;123456&quot;</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">FROM</span><span class="p">,</span> <span class="n">TO</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="nb">print</span> <span class="s2">&quot;邮件发送成功！&quot;</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="s2">&quot;失败：&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id25"><span class="section-number">15.4.6. </span>发送带附件的邮件</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>代码示例1 (适用于发送小的txt文件附件)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python3</span>
+
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+
+<span class="n">sender</span> <span class="o">=</span> <span class="s1">&#39;from@runoob.com&#39;</span>
+<span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;429240967@qq.com&#39;</span><span class="p">]</span>  <span class="c1"># 接收邮件，可设置为你的QQ邮箱或者其他邮箱</span>
+
+<span class="c1">#创建一个带附件的实例</span>
+<span class="n">message</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s2">&quot;菜鸟教程&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">Header</span><span class="p">(</span><span class="s2">&quot;测试&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;Python SMTP 邮件测试&#39;</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="c1">#邮件正文内容</span>
+<span class="n">message</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="s1">&#39;这是菜鸟教程Python 邮件发送测试……&#39;</span><span class="p">,</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+<span class="c1"># 构造附件1，传送当前目录下的 test.txt 文件</span>
+<span class="n">att1</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s1">&#39;base64&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">att1</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/octet-stream&#39;</span>
+<span class="c1"># 这里的filename可以任意写，写什么名字，邮件中显示什么名字</span>
+<span class="n">att1</span><span class="p">[</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;attachment; filename=&quot;test.txt&quot;&#39;</span>
+<span class="n">message</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">att1</span><span class="p">)</span>
+
+<span class="c1"># 构造附件2，传送当前目录下的 runoob.txt 文件</span>
+<span class="n">att2</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;runoob.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s1">&#39;base64&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">att2</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/octet-stream&#39;</span>
+<span class="n">att2</span><span class="p">[</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;attachment; filename=&quot;runoob.txt&quot;&#39;</span>
+<span class="n">message</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">att2</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">smtpObj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receivers</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;邮件发送成功&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTPException</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Error: 无法发送邮件&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/snmp3.PNG" src="../../_images/snmp3.PNG" />
+<section id="mimeapplication">
+<h3><a class="toc-backref" href="#id26">代码示例2(使用 MIMEApplication,传输文件中文文件会乱码，暂时无解决办法)</a><a class="headerlink" href="#mimeapplication" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+<span class="kn">from</span> <span class="nn">email.mime.application</span> <span class="kn">import</span> <span class="n">MIMEApplication</span>
+
+<span class="n">sender</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>  <span class="c1"># 发件的邮箱</span>
+<span class="n">pwd</span> <span class="o">=</span> <span class="s2">&quot;ducszyrzqulyhjeg&quot;</span>  <span class="c1"># 开通邮箱服务后，设置的客户端授权密码</span>
+
+<span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;13262662216@163.com&#39;</span><span class="p">]</span>  <span class="c1"># 接收的邮箱</span>
+
+<span class="c1"># 创建一个带附件的实例</span>
+<span class="n">message</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;邮件测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;Python SMTP 邮件测试&#39;</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="c1"># 邮件正文内容</span>
+<span class="n">message</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="s2">&quot;这是Python邮件发送测试....&quot;</span><span class="p">,</span> <span class="s2">&quot;plan&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+<span class="c1"># 构造附件1，传送当前目录下的test.txt文件</span>
+<span class="n">zipFile</span> <span class="o">=</span> <span class="s2">&quot;华为云Fusioncloud整体规划.xlsx&quot;</span>
+<span class="n">att1</span> <span class="o">=</span> <span class="n">MIMEApplication</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;doc/&quot;</span> <span class="o">+</span> <span class="n">zipFile</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">att1</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/octet-stream&#39;</span>
+<span class="c1"># 这里的filename 可以任意写，写什么名字，邮件中就显示什么名字</span>
+<span class="n">att1</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">zipFile</span><span class="p">)</span>
+<span class="n">message</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">att1</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 使用非本地服务器，需要建立ssl连接</span>
+    <span class="n">smtpObj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="s1">&#39;smtp.qq.com&#39;</span><span class="p">,</span> <span class="mi">465</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">pwd</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receivers</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;邮件发送成功....&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTPException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error :无法发送邮件.Case:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>代码示例2</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ！/usr/bin/env python</span>
+<span class="c1"># -*-coding:utf-8 -*-</span>
+
+<span class="c1">#需求2:发送邮件正文加附件</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+<span class="kn">from</span> <span class="nn">email.mime.base</span> <span class="kn">import</span> <span class="n">MIMEBase</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.utils</span> <span class="kn">import</span> <span class="n">parseaddr</span><span class="p">,</span> <span class="n">formataddr</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+
+<span class="k">def</span> <span class="nf">_format_addr</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">parseaddr</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">formataddr</span><span class="p">((</span><span class="n">Header</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">addr</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">send_email</span><span class="p">(</span><span class="n">info</span><span class="p">,</span><span class="n">file_paths</span><span class="p">):</span>
+    <span class="c1"># 发件人地址</span>
+    <span class="n">from_addr</span> <span class="o">=</span> <span class="s1">&#39;1879324764@qq.com&#39;</span>
+    <span class="c1"># 邮箱密码</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="s1">&#39;rpesbfgwmqcycceh&#39;</span>
+    <span class="c1"># 收件人地址,可同时添加多个</span>
+    <span class="n">to_addrs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;13262662216@163.com&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;hujl&lt;hujl@futongcloud.com.cn&gt;&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="c1"># 邮箱服务器地址</span>
+    <span class="n">smtp_server</span> <span class="o">=</span> <span class="s1">&#39;smtp.qq.com&#39;</span>
+
+    <span class="n">local_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+
+    <span class="n">content</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">        小伙伴们，everybody</span>
+<span class="s1">        </span><span class="si">{info}</span><span class="s1"></span>
+<span class="s1">        邮件发送时间时间: </span><span class="si">{local_time}</span><span class="s1"></span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">,</span> <span class="n">local_time</span><span class="o">=</span><span class="n">local_time</span><span class="p">)</span>
+    <span class="c1"># 设置邮件信息</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+
+
+    <span class="c1"># 构造附件</span>
+    <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">file_paths</span><span class="p">:</span>
+        <span class="n">attachment</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;application&#39;</span><span class="p">,</span> <span class="s1">&#39;octet-stream&#39;</span><span class="p">)</span><span class="c1">#参数的意义未深究</span>
+        <span class="n">attachment</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">attachment</span><span class="p">)</span>
+        <span class="n">attachment</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span><span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span><span class="c1"># 前2个参数意义未深究</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">attachment</span><span class="p">)</span>
+
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;胡小健 &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">from_addr</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;501运维小伙子们 &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">to_addrs</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;活动计划表&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+    <span class="c1"># 发送邮件</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">smtp_server</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">465</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="n">to_addrs</span><span class="o">=</span><span class="n">to_addrs</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+
+    <span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">        早上好,吃饭了吗~</span>
+<span class="s1">        小胡，小健，小力。小肥脸、林梦成</span>
+<span class="s1">    &#39;&#39;&#39;</span>
+    <span class="n">file_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1.SMTP发送邮件_test.py&quot;</span><span class="p">]</span>
+    <span class="n">send_email</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">file_paths</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>代码示例3</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+<span class="kn">from</span> <span class="nn">smtplib</span> <span class="kn">import</span> <span class="n">SMTP_SSL</span>
+
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+
+
+
+<span class="c1">#qq邮箱smtp服务器</span>
+<span class="n">host_server</span> <span class="o">=</span> <span class="s1">&#39;smtp.qq.com&#39;</span>
+<span class="c1">#sender_qq为发件人的qq号码</span>
+<span class="n">sender_qq</span> <span class="o">=</span> <span class="s1">&#39;1879324764@qq.com&#39;</span>
+<span class="c1">#pwd为qq邮箱的授权码</span>
+<span class="n">pwd</span> <span class="o">=</span> <span class="s1">&#39;qvhsgcjnkvyccedc&#39;</span> <span class="c1">##</span>
+<span class="c1">#发件人的邮箱</span>
+<span class="n">sender_qq_mail</span> <span class="o">=</span> <span class="s1">&#39;1879324764@qq.com&#39;</span>
+<span class="c1">#收件人邮箱</span>
+<span class="n">receiver</span> <span class="o">=</span> <span class="s1">&#39;13262662216@163.com&#39;</span>
+
+<span class="c1">#邮件的正文内容</span>
+<span class="n">mail_content</span> <span class="o">=</span> <span class="s2">&quot;你好，&lt;p&gt;这是使用python登录qq邮箱发送HTML格式邮件的测试：&lt;/p&gt;&lt;p&gt;&lt;a href=&#39;http://www.yiibai.com&#39;&gt;易百教程&lt;/a&gt;&lt;/p&gt;&quot;</span>
+<span class="c1">#邮件标题</span>
+<span class="n">mail_title</span> <span class="o">=</span> <span class="s1">&#39;Maxsu的邮件&#39;</span>
+
+<span class="c1">#邮件正文内容</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+<span class="c1">#msg = MIMEText(mail_content, &quot;plain&quot;, &#39;utf-8&#39;)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">mail_title</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s2">&quot;From&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender_qq_mail</span>
+<span class="n">msg</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s2">&quot;接收者测试&quot;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="c1">## 接收者的别名</span>
+
+<span class="c1">#邮件正文内容</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">mail_content</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+
+<span class="c1"># 构造附件1，传送当前目录下的 test.txt 文件</span>
+<span class="n">att1</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;发送邮件.py&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s1">&#39;base64&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">att1</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/octet-stream&#39;</span>
+<span class="c1"># 这里的filename可以任意写，写什么名字，邮件中显示什么名字</span>
+<span class="n">att1</span><span class="p">[</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;attachment; filename=&quot;sedmain1.py&quot;&#39;</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">att1</span><span class="p">)</span>
+
+
+<span class="c1"># 构造附件2，传送当前目录下的 runoob.txt 文件</span>
+<span class="n">att2</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test.py&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s1">&#39;base64&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">att2</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/octet-stream&#39;</span>
+<span class="n">att2</span><span class="p">[</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;attachment; filename=&quot;test.py&quot;&#39;</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">att2</span><span class="p">)</span>
+
+
+<span class="c1">#ssl登录</span>
+<span class="n">smtp</span> <span class="o">=</span> <span class="n">SMTP_SSL</span><span class="p">(</span><span class="n">host_server</span><span class="p">)</span>
+<span class="c1">#set_debuglevel()是用来调试的。参数值为1表示开启调试模式，参数值为0关闭调试模式</span>
+<span class="n">smtp</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">smtp</span><span class="o">.</span><span class="n">ehlo</span><span class="p">(</span><span class="n">host_server</span><span class="p">)</span>
+<span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">sender_qq</span><span class="p">,</span> <span class="n">pwd</span><span class="p">)</span>
+
+<span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">sender_qq_mail</span><span class="p">,</span> <span class="n">receiver</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+<span class="n">smtp</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="smtp">
+<h2><a class="toc-backref" href="#id27"><span class="section-number">15.4.7. </span>加密SMTP邮件</a><a class="headerlink" href="#smtp" title="Permalink to this headline">¶</a></h2>
+<p>代码示例1</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.utils</span> <span class="kn">import</span> <span class="n">parseaddr</span><span class="p">,</span> <span class="n">formataddr</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+
+<span class="k">def</span> <span class="nf">_format_addr</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">parseaddr</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">formataddr</span><span class="p">((</span><span class="n">Header</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">addr</span><span class="p">))</span>
+
+<span class="c1">#通过SMTP发出去</span>
+<span class="c1">#Email地址和口令</span>
+<span class="n">from_addr</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>
+<span class="n">from_passwd</span> <span class="o">=</span> <span class="s2">&quot;rpesbfgwmqcycceh&quot;</span>   <span class="c1">#使用网页邮件中生成的授权码</span>
+<span class="c1">#收件人地址</span>
+<span class="n">to_addr</span> <span class="o">=</span> <span class="s2">&quot;13262662216@163.com&quot;</span>
+<span class="c1">#SMTP服务器地址</span>
+<span class="n">smtp_server</span> <span class="o">=</span> <span class="s2">&quot;smtp.qq.com&quot;</span>
+<span class="n">smtp_port</span> <span class="o">=</span> <span class="mi">587</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">smtp_server</span><span class="p">,</span><span class="n">smtp_port</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+<span class="n">server</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s1">&#39;&lt;html&gt;&lt;body&gt;&lt;h1&gt;小健的博客&lt;/h1&gt;&#39;</span> <span class="o">+</span>
+    <span class="s1">&#39;&lt;p&gt;博客浏览地址: &lt;a href=&quot;https://xiaojian722.readthedocs.io/en/latest/index.html&quot;&gt;小健的自动化运维之路&lt;/a&gt; 开启学习旅程&lt;/p&gt;&#39;</span> <span class="o">+</span>
+    <span class="s1">&#39;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="n">from_addr</span><span class="p">))</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;收件者 &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">to_addr</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;邮件的主题信息……&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">smtp_server</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="n">from_passwd</span><span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="p">[</span><span class="n">to_addr</span><span class="p">],</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;邮件发送成功！&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;email 发送失败&quot;</span><span class="p">,</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id28"><span class="section-number">15.4.8. </span>Python 发送图片到邮件正文</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>’’’ *
+大部分邮件服务商都会自动屏蔽带有外链的图片，因为不知道这些链接是否指向恶意网站。</p>
+<ul class="simple">
+<li><p>要把图片嵌入邮件正文，我们只需按照发送附件的方式把邮件作为附件添加进去，
+然后在HTML中通过引用src=“<a class="reference external" href="cid:0">cid:0</a>”把附件作为图片嵌入。如果有多张图片，就需要给它们依次编号，然后引用不同的cid:x。</p></li>
+</ul>
+<p>’’’</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="kn">import</span> <span class="n">MIMEImage</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+
+<span class="n">sender</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>    <span class="c1">#发件的邮箱</span>
+<span class="n">pwd</span> <span class="o">=</span> <span class="s2">&quot;ducszyrzqulyhjeg&quot;</span>        <span class="c1">#开通邮箱服务后，设置的客户端授权密码</span>
+
+<span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;13262662216@163.com&#39;</span><span class="p">]</span>     <span class="c1">#接收的邮箱</span>
+
+<span class="c1"># 创建一个带附件的实例</span>
+<span class="n">message</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;related&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;邮件测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;Python SMTP 邮件测试&#39;</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="n">msgAlternative</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;alternative&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msgAlternative</span><span class="p">)</span>
+
+<span class="n">mail_msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; &lt;p&gt;Python 邮件发送测试...&lt;/p&gt;</span>
+<span class="s2">&lt;p&gt;&lt;a href=&quot;https://www.python.org&quot;&gt;Python 官方网站&lt;/a&gt;&lt;/p&gt;</span>
+<span class="s2">&lt;p&gt;图片演示：&lt;/p&gt; &lt;p&gt;&lt;img src=&quot;cid:image1&quot;&gt;&lt;/p&gt; &quot;&quot;&quot;</span>
+
+<span class="n">msgAlternative</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">mail_msg</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+<span class="c1">#指定图片为当前目录</span>
+<span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test.png&#39;</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+<span class="n">msgImage</span> <span class="o">=</span> <span class="n">MIMEImage</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># 定义图片 ID，在 HTML 文本中引用</span>
+<span class="n">msgImage</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;image1&gt;&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msgImage</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 使用非本地服务器，需要建立ssl连接</span>
+    <span class="n">smtpObj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="s1">&#39;smtp.qq.com&#39;</span><span class="p">,</span><span class="mi">465</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">pwd</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receivers</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;邮件发送成功....&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTPException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error :无法发送邮件.Case:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</pre></div>
+</div>
+<img alt="../../_images/snmp4.PNG" src="../../_images/snmp4.PNG" />
+<section id="id9">
+<h3><a class="toc-backref" href="#id29">发送图片作为附件如下</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 邮件对象:</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;Python爱好者 &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">from_addr</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_format_addr</span><span class="p">(</span><span class="s1">&#39;管理员 &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">to_addr</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;来自SMTP的问候……&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+<span class="c1"># 邮件正文是MIMEText:</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="s1">&#39;send with file...&#39;</span><span class="p">,</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+<span class="c1"># 添加附件就是加上一个MIMEBase，从本地读取一个图片:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/Users/michael/Downloads/test.png&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="c1"># 设置附件的MIME和文件名，这里是png类型:</span>
+    <span class="n">mime</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+    <span class="c1"># 加上必要的头信息:</span>
+    <span class="n">mime</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;test.png&#39;</span><span class="p">)</span>
+    <span class="n">mime</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;0&gt;&#39;</span><span class="p">)</span>
+    <span class="n">mime</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;X-Attachment-Id&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span>
+    <span class="c1"># 把附件的内容读进来:</span>
+    <span class="n">mime</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="c1"># 用Base64编码:</span>
+    <span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">mime</span><span class="p">)</span>
+    <span class="c1"># 添加到MIMEMultipart:</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">mime</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id30">带图片及附件的邮件</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>实现带附件格式的业务服务质量周报邮件</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/4/17 15:18</span>
+<span class="c1"># filename: 5.周报邮件带附件.py</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="kn">import</span> <span class="n">MIMEImage</span>
+<span class="kn">from</span> <span class="nn">email.mime.base</span> <span class="kn">import</span> <span class="n">MIMEBase</span>  <span class="c1"># MIME子类的基类</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>  <span class="c1"># 导入编码器</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.qq.com&quot;</span>
+<span class="n">SUBJECT</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;官网业务服务质量周报&quot;</span>
+<span class="n">TO</span> <span class="o">=</span> <span class="s2">&quot;13262662216@163.com&quot;</span>
+<span class="n">FROM</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">addimg</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">imgid</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param src: 图片路径</span>
+<span class="sd">    :param imgid: 图片id</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>  <span class="c1"># 打开文件</span>
+    <span class="n">msgImage</span> <span class="o">=</span> <span class="n">MIMEImage</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c1"># 创建MIMEImage对象，读取图片内容作为参数</span>
+    <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># 关闭文件</span>
+    <span class="n">msgImage</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">,</span> <span class="n">imgid</span><span class="p">)</span>  <span class="c1"># 指定图片文件的Content-ID</span>
+    <span class="k">return</span> <span class="n">msgImage</span>  <span class="c1"># 返回msgImage对象</span>
+
+
+<span class="c1"># 创建一个带附件的实例</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;related&#39;</span><span class="p">)</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SUBJECT</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FROM</span>
+<span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TO</span>
+
+<span class="c1"># 邮件正文内容</span>
+<span class="n">msgtext</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s2">&quot;&lt;font color=red&gt;官网业务周平均延时图表:&lt;br&gt;&lt;img src=</span><span class="se">\&quot;</span><span class="s2">cid:weekly</span><span class="se">\&quot;</span><span class="s2"> border=</span><span class="se">\&quot;</span><span class="s2">1</span><span class="se">\&quot;</span><span class="s2">&gt;&lt;br&gt;详细内容见附件。&lt;/font&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msgtext</span><span class="p">)</span>  <span class="c1"># 将msgtext内容附加到MIMEMultipart对象中</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">addimg</span><span class="p">(</span><span class="s2">&quot;img/manhua.png&quot;</span><span class="p">,</span> <span class="s1">&#39;weekly&#39;</span><span class="p">))</span>  <span class="c1"># 使用MIMEMultipart对象附加MIMEImage的内容</span>
+
+<span class="c1"># 附件文件1定义</span>
+<span class="c1"># 创建一个MIMEText对象，附加表格文件（week.xlsx）</span>
+<span class="n">Path</span> <span class="o">=</span> <span class="s2">&quot;doc/&quot;</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;华为云Fusioncloud整体规划.xlsx&#39;</span>
+<span class="n">attachfile</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;applocation&#39;</span><span class="p">,</span> <span class="s1">&#39;octet-stream&#39;</span><span class="p">)</span>  <span class="c1"># 创建对象指定主要类型和次要类型</span>
+<span class="n">attachfile</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">Path</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c1"># 将消息内容设置为有效载荷</span>
+<span class="n">attachfile</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>  <span class="c1"># 扩展标题设置</span>
+<span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">attachfile</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">attachfile</span><span class="p">)</span>  <span class="c1"># 附加对象加入到msg</span>
+
+
+<span class="c1"># 附件文件2定义</span>
+<span class="c1"># 创建一个MIMEText对象，附加表格文件（xxx.png）</span>
+<span class="n">Path</span> <span class="o">=</span> <span class="s2">&quot;img/&quot;</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;manhua.png&#39;</span>
+<span class="n">attachfile_png</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;applocation&#39;</span><span class="p">,</span> <span class="s1">&#39;octet-stream&#39;</span><span class="p">)</span>  <span class="c1"># 创建对象指定主要类型和次要类型</span>
+<span class="n">attachfile_png</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">Path</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c1"># 将消息内容设置为有效载荷</span>
+<span class="n">attachfile_png</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>  <span class="c1"># 扩展标题设置</span>
+<span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">attachfile_png</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">attachfile_png</span><span class="p">)</span>  <span class="c1"># 附加对象加入到msg</span>
+
+
+<span class="c1"># 附件文件3定义</span>
+<span class="c1"># 创建一个MIMEText对象，附加表格文件（xxx.pdf）</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;Java从小白到大牛.pdf&#39;</span>
+<span class="n">attachfile_pdf</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;applocation&#39;</span><span class="p">,</span> <span class="s1">&#39;octet-stream&#39;</span><span class="p">)</span>  <span class="c1"># 创建对象指定主要类型和次要类型</span>
+<span class="n">attachfile_pdf</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c1"># 将消息内容设置为有效载荷</span>
+<span class="n">attachfile_pdf</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>  <span class="c1"># 扩展标题设置</span>
+<span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">attachfile_pdf</span><span class="p">)</span>
+<span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">attachfile_pdf</span><span class="p">)</span>  <span class="c1"># 附加对象加入到msg</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">smtpObj = smtplib.SMTP([host [, port [, local_hostname]]])</span>
+<span class="sd">语法中各个参数说明如下。</span>
+<span class="sd">host: SMTP服务器主机。可以指定主机的IP地址或域名（如www.baidu.com），是可选参数。</span>
+<span class="sd">port：如果提供了host参数，就需要指定SMTP服务使用的端口号。一般情况下SMTP的端口号为25。</span>
+<span class="sd">local_hostname：如果SMTP在本地主机上，只需要指定服务器地址为localhost即可。</span>
+
+
+<span class="sd">SMTP.sendmail(from_addr, to_addrs, msg[, mail_options, rcpt_options]</span>
+<span class="sd">语法中各个参数说明如下。</span>
+
+<span class="sd">from_addr：邮件发送者的地址。</span>
+<span class="sd">to_addrs：字符串列表，邮件发送地址。</span>
+<span class="sd">msg：发送消息。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># try:</span>
+<span class="c1">#     server = smtplib.SMTP()</span>
+<span class="c1">#     server.connect(HOST, &quot;25&quot;)        ##通过 connect 方法连接 smtp 主机</span>
+<span class="c1">#     server.starttls()                 ## 启动安全传输模式</span>
+<span class="c1">#     server.login(&quot;1879324764@qq.com&quot;, &quot;ducszyrzqulyhjeg&quot;) # 邮箱账号登录校验</span>
+<span class="c1">#     server.sendmail(FROM, TO, msg.as_string())    # 邮件发送</span>
+<span class="c1">#     server.quit()                     # 断开 smtp 连接</span>
+<span class="c1">#     print(&quot;邮件发送成功！&quot;)</span>
+<span class="c1"># except Exception as e:</span>
+<span class="c1">#     print(&quot;失败：&quot; + str(e))</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 使用非本地服务器，需要建立ssl连接</span>
+    <span class="n">smtpObj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="s1">&#39;smtp.qq.com&#39;</span><span class="p">,</span> <span class="mi">465</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s2">&quot;1879324764@qq.com&quot;</span><span class="p">,</span> <span class="s2">&quot;ducszyrzqulyhjeg&quot;</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">FROM</span><span class="p">,</span> <span class="n">TO</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;邮件发送成功....&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTPException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error :无法发送邮件.Case:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="htmlplain">
+<h2><a class="toc-backref" href="#id31"><span class="section-number">15.4.9. </span>同时支持HTML和Plain格式的邮件</a><a class="headerlink" href="#htmlplain" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">如果我们发送HTML邮件，收件人通过浏览器或Outlook之类的软件就可以正常浏览邮件内容。</span>
+<span class="sd">如果收件人使用的设备太古老，查看不了HTML邮件怎么办呢？</span>
+<span class="sd">办法是在发送HTML的同时附加一个纯文本，如果收件人无法查看HTML格式的邮件，</span>
+<span class="sd">就可以自动降级查看纯文本邮件。</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="kn">import</span> <span class="n">MIMEImage</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+
+
+<span class="n">sender</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>    <span class="c1">#发件的邮箱</span>
+<span class="n">pwd</span> <span class="o">=</span> <span class="s2">&quot;ducszyrzqulyhjeg&quot;</span>        <span class="c1">#开通邮箱服务后，设置的客户端授权密码</span>
+
+<span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;13262662216@163.com&#39;</span><span class="p">]</span>     <span class="c1">#接收的邮箱</span>
+
+<span class="n">msgRoot</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;related&#39;</span><span class="p">)</span>
+<span class="n">msgRoot</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;邮件测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">msgRoot</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;Python SMTP 邮件测试&#39;</span>
+<span class="n">msgRoot</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="n">msgAlternative</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;alternative&#39;</span><span class="p">)</span>
+<span class="n">msgRoot</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msgAlternative</span><span class="p">)</span>
+
+<span class="n">msgAlternative</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="s1">&#39;send with file&#39;</span><span class="p">,</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+<span class="n">mail_msg</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span>
+<span class="n">msgAlternative</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">mail_msg</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+<span class="c1"># 指定图片为当前目录</span>
+<span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test.png&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+<span class="n">msgImage</span> <span class="o">=</span> <span class="n">MIMEImage</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="c1"># 定义图片 ID，在 HTML 文本中引用</span>
+<span class="n">msgImage</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;image1&gt;&#39;</span><span class="p">)</span>
+<span class="n">msgRoot</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msgImage</span><span class="p">)</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 使用非本地服务器，需要建立ssl连接</span>
+    <span class="n">smtpObj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="s1">&#39;smtp.qq.com&#39;</span><span class="p">,</span> <span class="mi">465</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">pwd</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receivers</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;邮件发送成功....&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTPException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error :无法发送邮件.Case:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h2><a class="toc-backref" href="#id32"><span class="section-number">15.4.10. </span>加密SMTP协议</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+
+<span class="n">sender</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>    <span class="c1">#发件的邮箱</span>
+<span class="n">pwd</span> <span class="o">=</span> <span class="s2">&quot;ducszyrzqulyhjeg&quot;</span>        <span class="c1">#开通邮箱服务后，设置的客户端授权密码</span>
+
+<span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;13262662216@163.com&#39;</span><span class="p">]</span>     <span class="c1">#接收的邮箱</span>
+
+
+<span class="c1"># 三个参数：第一个为文本内容，第二个 plain 设置文本格式，第三个 utf-8 设置编码</span>
+<span class="n">message</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="s2">&quot;Python邮件发送测试.....&quot;</span><span class="p">,</span> <span class="s2">&quot;plain&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;邮件测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="s1">&#39;测试&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;Python SMTP 邮件测试&#39;</span>
+<span class="n">message</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 使用非本地服务器，需要建立ssl连接</span>
+    <span class="c1"># smtpObj = smtplib.SMTP_SSL(&#39;smtp.qq.com&#39;,465)</span>
+    <span class="n">smtp_server</span> <span class="o">=</span> <span class="s2">&quot;smtp.qq.com&quot;</span>
+    <span class="n">smtpObj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">smtp_server</span><span class="p">,</span> <span class="mi">587</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">pwd</span><span class="p">)</span>
+    <span class="n">smtpObj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">receivers</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;邮件发送成功....&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTPException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error :无法发送邮件.Case:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">常用邮箱SMTP加密方式</span>
+
+<span class="sd">使用上述SMTP协议发送邮件实则发送的是明文邮件，如果想要加密，有如下几种方式。</span>
+<span class="sd">1）明文传输:　端口号是25。</span>
+<span class="sd">server = smtplib.SMTP(smtp_sever,25)</span>
+
+
+<span class="sd">2）SSL加密: 端口号是465，通信过程加密，邮件数据安全。</span>
+<span class="sd">server = smtplib.SMTP_SSL(smtp_sever,465)</span>
+
+
+<span class="sd">3）TLS加密: 端口号是587，通信过程加密，邮件数据安全，使用正常的smtp端口。</span>
+<span class="sd">对于TLS加密方式需要先建立SSL连接，然后再发送邮件。此处使用starttls()来建立安全连接</span>
+<span class="sd">server = smtplib.SMTP(smtp_sever,587)</span>
+<span class="sd">server.starttls()</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="c1"># 如果本地主机安装了sendmail服务，发送邮件的代码可以更改为：</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="sd">sender = &#39;from@163.com&#39;</span>
+<span class="sd">receivers = [&#39;to@aliyun.com&#39;] # 接收邮件，可设置为你的邮箱</span>
+
+<span class="sd"># 三个参数：第一个为文本内容，第二个 plain 设置文本格式，第三个 utf-8 设置编码</span>
+<span class="sd">message = MIMEText(&#39;Python 邮件发送测试...&#39;, &#39;plain&#39;, &#39;utf-8&#39;)</span>
+<span class="sd">message[&#39;From&#39;] = Header(&quot;邮件测试&quot;, &#39;utf-8&#39;)</span>
+<span class="sd">message[&#39;To&#39;] = Header(&quot;测试&quot;, &#39;utf-8&#39;)</span>
+<span class="sd">subject = &#39;Python SMTP 邮件测试&#39;</span>
+<span class="sd">message[&#39;Subject&#39;] = Header(subject, &#39;utf-8&#39;)</span>
+
+<span class="sd">try:</span>
+<span class="sd">    smtpObj = smtplib.SMTP(&quot;localhost&quot;)</span>
+<span class="sd">    smtpObj.sendmail(sender, receivers, message.as_string())</span>
+<span class="sd">    print (&quot;邮件发送成功&quot;)</span>
+<span class="sd">except smtplib.SMTPException as e:</span>
+<span class="sd">    print (&quot;Error: 无法发送邮件.Case:%s&quot; % e)</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+<img alt="../../_images/smpt_ssl2.PNG" src="../../_images/smpt_ssl2.PNG" />
+</section>
+<section id="pop3">
+<h2><a class="toc-backref" href="#id33"><span class="section-number">15.4.11. </span>POP3下载查阅邮件</a><a class="headerlink" href="#pop3" title="Permalink to this headline">¶</a></h2>
+<p>代码示例 1</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">email.parser</span> <span class="kn">import</span> <span class="n">Parser</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">decode_header</span>
+<span class="kn">from</span> <span class="nn">email.utils</span> <span class="kn">import</span> <span class="n">parseaddr</span>
+
+<span class="kn">import</span> <span class="nn">poplib</span>
+
+<span class="c1"># 输入邮件地址, 口令和POP3服务器地址:</span>
+<span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;1879324764@qq.com&quot;</span>
+<span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;rpesbfgwmqcycceh&quot;</span>
+<span class="n">pop3_server</span> <span class="o">=</span> <span class="s2">&quot;smtp.qq.com&quot;</span>
+
+<span class="k">def</span> <span class="nf">guess_charset</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <span class="n">charset</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_charset</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">charset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">content_type</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">content_type</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;charset=&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">charset</span> <span class="o">=</span> <span class="n">content_type</span><span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="mi">8</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">charset</span>
+
+<span class="k">def</span> <span class="nf">decode_str</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">value</span><span class="p">,</span> <span class="n">charset</span> <span class="o">=</span> <span class="n">decode_header</span><span class="p">(</span><span class="n">s</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">charset</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">charset</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+<span class="k">def</span> <span class="nf">print_info</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">indent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">,</span> <span class="s1">&#39;To&#39;</span><span class="p">,</span> <span class="s1">&#39;Subject&#39;</span><span class="p">]:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">header</span><span class="o">==</span><span class="s1">&#39;Subject&#39;</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">decode_str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">hdr</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="n">parseaddr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">decode_str</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">addr</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;  &#39;</span> <span class="o">*</span> <span class="n">indent</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">is_multipart</span><span class="p">()):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_payload</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">part </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;  &#39;</span> <span class="o">*</span> <span class="n">indent</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">--------------------&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;  &#39;</span> <span class="o">*</span> <span class="n">indent</span><span class="p">))</span>
+            <span class="n">print_info</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">indent</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">content_type</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_type</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">content_type</span><span class="o">==</span><span class="s1">&#39;text/plain&#39;</span> <span class="ow">or</span> <span class="n">content_type</span><span class="o">==</span><span class="s1">&#39;text/html&#39;</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_payload</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">charset</span> <span class="o">=</span> <span class="n">guess_charset</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">charset</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">charset</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">Text: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;  &#39;</span> <span class="o">*</span> <span class="n">indent</span><span class="p">,</span> <span class="n">content</span> <span class="o">+</span> <span class="s1">&#39;...&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">Attachment: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;  &#39;</span> <span class="o">*</span> <span class="n">indent</span><span class="p">,</span> <span class="n">content_type</span><span class="p">))</span>
+
+<span class="c1"># 连接到POP3服务器:</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">poplib</span><span class="o">.</span><span class="n">POP3</span><span class="p">(</span><span class="n">pop3_server</span><span class="p">)</span>
+<span class="c1"># 可以打开或关闭调试信息:</span>
+<span class="n">server</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># 可选:打印POP3服务器的欢迎文字:</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">getwelcome</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+<span class="c1"># 身份认证:</span>
+<span class="n">server</span><span class="o">.</span><span class="n">user</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+<span class="n">server</span><span class="o">.</span><span class="n">pass_</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+<span class="c1"># stat()返回邮件数量和占用空间:</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Messages: </span><span class="si">%s</span><span class="s1">. Size: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">server</span><span class="o">.</span><span class="n">stat</span><span class="p">())</span>
+<span class="c1"># list()返回所有邮件的编号:</span>
+<span class="n">resp</span><span class="p">,</span> <span class="n">mails</span><span class="p">,</span> <span class="n">octets</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+<span class="c1"># 可以查看返回的列表类似[b&#39;1 82923&#39;, b&#39;2 2184&#39;, ...]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mails</span><span class="p">)</span>
+<span class="c1"># 获取最新一封邮件, 注意索引号从1开始:</span>
+<span class="n">index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mails</span><span class="p">)</span>
+<span class="n">resp</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">octets</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">retr</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+<span class="c1"># lines存储了邮件的原始文本的每一行,</span>
+<span class="c1"># 可以获得整个邮件的原始文本:</span>
+<span class="n">msg_content</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="c1"># 稍后解析出邮件:</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">()</span><span class="o">.</span><span class="n">parsestr</span><span class="p">(</span><span class="n">msg_content</span><span class="p">)</span>
+<span class="n">print_info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="c1"># 可以根据邮件索引号直接从服务器删除邮件:</span>
+<span class="c1"># server.dele(index)</span>
+<span class="c1"># 关闭连接:</span>
+<span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h2><a class="toc-backref" href="#id34"><span class="section-number">15.4.12. </span>封装一个发送邮件的函数</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/4/17 20:27</span>
+<span class="c1"># filename: 发送邮件函数封装.py</span>
+
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.base</span> <span class="kn">import</span> <span class="n">MIMEBase</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.header</span> <span class="kn">import</span> <span class="n">Header</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>
+
+
+<span class="c1"># Python对SMTP支持有smtplib和email两个模块，email负责构造邮件，smtplib负责发送邮件。</span>
+
+
+<span class="k">def</span> <span class="nf">get_email_obj</span><span class="p">(</span><span class="n">email_subject</span><span class="p">,</span> <span class="n">email_from</span><span class="p">,</span> <span class="n">to_addr_list</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    构造邮件对象，并设置邮件主题、发件人、收件人，最后返回邮件对象</span>
+<span class="sd">    :param email_subject:邮件主题</span>
+<span class="sd">    :param email_from:发件人</span>
+<span class="sd">    :param to_addr_list:收件人列表</span>
+<span class="sd">    :return :邮件对象 email_obj</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># 构造 MIMEMultipart 对象做为根容器</span>
+    <span class="n">email_obj</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+    <span class="n">email_to</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to_addr_list</span><span class="p">)</span>  <span class="c1"># 将收件人地址用“,”连接</span>
+    <span class="c1"># 邮件主题、发件人、收件人</span>
+    <span class="n">email_obj</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">email_subject</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">email_obj</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">email_from</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">email_obj</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">email_to</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">email_obj</span>
+
+
+<span class="k">def</span> <span class="nf">attach_content</span><span class="p">(</span><span class="n">email_obj</span><span class="p">,</span> <span class="n">email_content</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="n">charset</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    创建邮件正文，并将其附加到跟容器：邮件正文可以是纯文本，也可以是HTML（为HTML时，需设置content_type值为 &#39;html&#39;）</span>
+<span class="sd">    :param email_obj:邮件对象</span>
+<span class="sd">    :param email_content:邮件正文内容</span>
+<span class="sd">    :param content_type:邮件内容格式 &#39;plain&#39;、&#39;html&#39;..，默认为纯文本格式 &#39;plain&#39;</span>
+<span class="sd">    :param charset:编码格式，默认为 utf-8</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">email_content</span><span class="p">,</span> <span class="n">content_type</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>  <span class="c1"># 创建邮件正文对象</span>
+    <span class="n">email_obj</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>  <span class="c1"># 将邮件正文附加到根容器</span>
+
+
+<span class="k">def</span> <span class="nf">attach_part</span><span class="p">(</span><span class="n">email_obj</span><span class="p">,</span> <span class="n">source_path</span><span class="p">,</span> <span class="n">part_name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    添加附件：附件可以为照片，也可以是文档</span>
+<span class="sd">    :param email_obj:邮件对象</span>
+<span class="sd">    :param source_path:附件源文件路径</span>
+<span class="sd">    :param part_name:附件名</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">part</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;application&#39;</span><span class="p">,</span> <span class="s1">&#39;octet-stream&#39;</span><span class="p">)</span>  <span class="c1"># &#39;octet-stream&#39;: binary data   创建附件对象</span>
+    <span class="n">part</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c1"># 将附件源文件加载到附件对象</span>
+    <span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+    <span class="n">part</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;gbk&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">part_name</span><span class="p">))</span>  <span class="c1"># 给附件添加头文件</span>
+    <span class="n">email_obj</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>  <span class="c1"># 将附件附加到根容器</span>
+
+
+<span class="k">def</span> <span class="nf">send_email</span><span class="p">(</span><span class="n">email_obj</span><span class="p">,</span> <span class="n">email_host</span><span class="p">,</span> <span class="n">host_port</span><span class="p">,</span> <span class="n">from_addr</span><span class="p">,</span> <span class="n">pwd</span><span class="p">,</span> <span class="n">to_addr_list</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    发送邮件</span>
+<span class="sd">    :param email_obj:邮件对象</span>
+<span class="sd">    :param email_host:SMTP服务器主机</span>
+<span class="sd">    :param host_port:SMTP服务端口号</span>
+<span class="sd">    :param from_addr:发件地址</span>
+<span class="sd">    :param pwd:发件地址的授权码，而非密码</span>
+<span class="sd">    :param to_addr_list:收件地址</span>
+<span class="sd">    :return:发送成功，返回 True；发送失败，返回 False</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            # import smtplib</span>
+<span class="sd">            # smtp_obj = smtplib.SMTP([host[, port[, local_hostname]]] )</span>
+<span class="sd">                # host: SMTP服务器主机。</span>
+<span class="sd">                # port: SMTP服务端口号，一般情况下SMTP端口号为25。</span>
+<span class="sd">            # smtp_obj = smtplib.SMTP(&#39;smtp.qq.com&#39;, 25)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">smtp_obj</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="n">email_host</span><span class="p">,</span> <span class="n">host_port</span><span class="p">)</span>  <span class="c1"># 连接 smtp 邮件服务器</span>
+        <span class="n">smtp_obj</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="n">pwd</span><span class="p">)</span>
+        <span class="n">smtp_obj</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">from_addr</span><span class="p">,</span> <span class="n">to_addr_list</span><span class="p">,</span> <span class="n">email_obj</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>  <span class="c1"># 发送邮件：email_obj.as_string()：发送的信息</span>
+        <span class="n">smtp_obj</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>  <span class="c1"># 关闭连接</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;发送成功！&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTPException</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;发送失败！&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># （QQ邮箱）</span>
+    <span class="n">email_host</span> <span class="o">=</span> <span class="s2">&quot;smtp.qq.com&quot;</span>  <span class="c1"># smtp 邮件服务器</span>
+    <span class="n">host_port</span> <span class="o">=</span> <span class="mi">465</span>  <span class="c1"># smtp 邮件服务器端口：SSL 连接</span>
+    <span class="n">from_addr</span> <span class="o">=</span> <span class="s2">&quot;发件地址&quot;</span>  <span class="c1"># 发件地址</span>
+    <span class="n">pwd</span> <span class="o">=</span> <span class="s2">&quot;授权码&quot;</span>  <span class="c1"># 发件地址的授权码，而非密码</span>
+
+    <span class="c1"># （163邮箱）</span>
+    <span class="c1"># email_host = &quot;smtp.163.com&quot;             # smtp 邮件服务器</span>
+    <span class="c1"># host_port = 465                         # smtp 邮件服务器端口：SSL 连接</span>
+    <span class="c1"># from_addr = &quot;发件地址&quot;                  # 发件地址</span>
+    <span class="c1"># pwd = &quot;授权码&quot;                    # 发件地址的授权码，而非密码</span>
+
+    <span class="n">to_addr_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;邮箱1&quot;</span><span class="p">,</span> <span class="s2">&quot;邮箱2&quot;</span><span class="p">]</span>  <span class="c1"># 收件地址</span>
+
+    <span class="n">email_content</span> <span class="o">=</span> <span class="s2">&quot;邮件主题&quot;</span>
+    <span class="n">email_content_html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;p&gt;Python 邮件发送...&lt;/p&gt;</span>
+<span class="s2">    &lt;p&gt;&lt;a href=&quot;http://www.runoob.com&quot;&gt;菜鸟教程链接&lt;/a&gt;&lt;/p&gt;</span>
+<span class="s2">    &lt;p&gt;图片：&lt;/p&gt;</span>
+<span class="s2">    &lt;p&gt;&lt;img src=&quot;cid:image1&quot;&gt;&lt;/p&gt;</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">email_subject</span> <span class="o">=</span> <span class="s2">&quot;邮件主题&quot;</span>
+    <span class="n">email_from</span> <span class="o">=</span> <span class="s2">&quot;发件人&quot;</span>
+    <span class="n">source_path</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;D:\我的文档\My Pictures\avatar.jpg&quot;</span>
+    <span class="n">part_name</span> <span class="o">=</span> <span class="s1">&#39;avatar.png&#39;</span>
+
+    <span class="n">email_obj</span> <span class="o">=</span> <span class="n">get_email_obj</span><span class="p">(</span><span class="n">email_subject</span><span class="p">,</span> <span class="n">email_from</span><span class="p">,</span> <span class="n">to_addr_list</span><span class="p">)</span>
+    <span class="n">attach_content</span><span class="p">(</span><span class="n">email_obj</span><span class="p">,</span> <span class="n">email_content</span><span class="p">)</span>
+    <span class="n">attach_part</span><span class="p">(</span><span class="n">email_obj</span><span class="p">,</span> <span class="n">source_path</span><span class="p">,</span> <span class="n">part_name</span><span class="p">)</span>
+    <span class="n">send_email</span><span class="p">(</span><span class="n">email_obj</span><span class="p">,</span> <span class="n">email_host</span><span class="p">,</span> <span class="n">host_port</span><span class="p">,</span> <span class="n">from_addr</span><span class="p">,</span> <span class="n">pwd</span><span class="p">,</span> <span class="n">to_addr_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h2><a class="toc-backref" href="#id35"><span class="section-number">15.4.13. </span>封装一个发邮件的类</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># !/usr/bin/python</span>
+<span class="c1"># encoding=utf-8</span>
+<span class="c1"># Filename: send_email.py</span>
+<span class="kn">from</span> <span class="nn">email.mime.image</span> <span class="kn">import</span> <span class="n">MIMEImage</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+
+
+<span class="k">class</span> <span class="nc">SendEmail</span><span class="p">:</span>
+    <span class="c1"># 构造函数：初始化基本信息</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">passwd</span><span class="p">):</span>
+        <span class="n">l_info</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_user</span> <span class="o">=</span> <span class="n">user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_account</span> <span class="o">=</span> <span class="n">l_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_account</span> <span class="o">+</span> <span class="s2">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span>
+
+        <span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">()</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_account</span><span class="p">,</span> <span class="n">passwd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span> <span class="o">=</span> <span class="n">server</span>
+
+        <span class="c1"># 发送文件或html邮件</span>
+
+    <span class="k">def</span> <span class="nf">sendTxtMail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_list</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">):</span>
+        <span class="c1"># 如果发送的是文本邮件，则_subtype设置为plain</span>
+        <span class="c1"># 如果发送的是html邮件，则_subtype设置为html</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">_subtype</span><span class="o">=</span><span class="n">subtype</span><span class="p">,</span> <span class="n">_charset</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_me</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to_list</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_me</span><span class="p">,</span> <span class="n">to_list</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># 发送带附件的文件或html邮件</span>
+    <span class="k">def</span> <span class="nf">sendAttachMail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_list</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">):</span>
+        <span class="c1"># 创建一个带附件的实例</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+        <span class="c1"># 增加附件1</span>
+        <span class="n">att1</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;readme1&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s1">&#39;base64&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">att1</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/octet-stream&#39;</span>
+        <span class="c1"># 这里的filename可以任意写，写什么名字，邮件中显示什么名字</span>
+        <span class="n">att1</span><span class="p">[</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;attachment; filename=&quot;readme1.txt&quot;&#39;</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">att1</span><span class="p">)</span>
+
+        <span class="c1"># 增加附件2</span>
+        <span class="n">att2</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;readme2&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s1">&#39;base64&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">att2</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/octet-stream&#39;</span>
+        <span class="n">att2</span><span class="p">[</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;attachment; filename=&quot;readme2.txt&quot;&#39;</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">att2</span><span class="p">)</span>
+
+        <span class="c1"># 增加邮件内容</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">_subtype</span><span class="o">=</span><span class="n">subtype</span><span class="p">,</span> <span class="n">_charset</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_me</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to_list</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_me</span><span class="p">,</span> <span class="n">to_list</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># 发送带附件的文件或html邮件</span>
+    <span class="k">def</span> <span class="nf">sendImageMail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_list</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">):</span>
+        <span class="c1"># 创建一个带附件的实例</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+
+        <span class="c1"># 增加邮件内容</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">_subtype</span><span class="o">=</span><span class="n">subtype</span><span class="p">,</span> <span class="n">_charset</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+        <span class="c1"># 增加图片附件</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">MIMEImage</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;test.png&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="c1"># 附件列表中显示的文件名</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment;filename=test.jpg&#39;</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_me</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">to_list</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_me</span><span class="p">,</span> <span class="n">to_list</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># 析构函数：释放资源</span>
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">mailto_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;13262662216@163.com&#39;</span><span class="p">]</span>
+    <span class="n">mail</span> <span class="o">=</span> <span class="n">SendEmail</span><span class="p">(</span><span class="s1">&#39;smtp.qq.com&#39;</span><span class="p">,</span> <span class="s1">&#39;1879324764@qq.com&#39;</span><span class="p">,</span> <span class="s1">&#39;ducszyrzqulyhjeg&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mail</span><span class="o">.</span><span class="n">sendTxtMail</span><span class="p">(</span><span class="n">mailto_list</span><span class="p">,</span> <span class="s2">&quot;测试邮件&quot;</span><span class="p">,</span> <span class="s2">&quot;hello world！&lt;br&gt;&lt;br&gt;&lt;h1&gt;你好，发送文本文件测试&lt;h1&gt;&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;发送成功&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;发送失败&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mail</span><span class="o">.</span><span class="n">sendAttachMail</span><span class="p">(</span><span class="n">mailto_list</span><span class="p">,</span> <span class="s2">&quot;测试邮件-带两个附件&quot;</span><span class="p">,</span> <span class="s2">&quot;hello world！&lt;br&gt;&lt;br&gt;&lt;h1&gt;你好，发送文本文件测试&lt;h1&gt;&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;发送成功&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;发送失败&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mail</span><span class="o">.</span><span class="n">sendImageMail</span><span class="p">(</span><span class="n">mailto_list</span><span class="p">,</span> <span class="s2">&quot;测试邮件-带一个图片的附件&quot;</span><span class="p">,</span> <span class="s2">&quot;hello world！&lt;br&gt;&lt;br&gt;&lt;h1&gt;你好，发送文本文件测试&lt;h1&gt;&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;发送成功&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;发送失败&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h2><a class="toc-backref" href="#id36"><span class="section-number">15.4.14. </span>封装一个发邮件的类2,</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>借鉴–博客园Py.qi</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.base</span> <span class="kn">import</span> <span class="n">MIMEBase</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>
+
+<span class="k">class</span> <span class="nc">mailsender</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">_from</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_attachments</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">host</span><span class="p">,</span><span class="n">port</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smtp_ssl</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="n">port</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">pwd</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_from</span> <span class="o">=</span> <span class="n">user</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;login ...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">pwd</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_attachment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span> <span class="c1">#添加附加</span>
+        <span class="n">att</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s1">&#39;application&#39;</span><span class="p">,</span> <span class="s1">&#39;octet-stream&#39;</span><span class="p">)</span>
+        <span class="n">att</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">att</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
+        <span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">att</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attachments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">att</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">to_addr</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;alternative&#39;</span><span class="p">)</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="s1">&#39;plain&#39;</span><span class="p">,</span> <span class="n">_charset</span> <span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;from&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;to&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_addr</span>
+        <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attachments</span><span class="p">:</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">att</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_from</span><span class="p">,</span> <span class="n">to_addr</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;邮件发送成功！&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">emailtext</span><span class="p">,</span><span class="n">to_email</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;邮件消息：&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">mailsender</span><span class="p">(</span><span class="s1">&#39;smtp.163.com&#39;</span><span class="p">,</span><span class="s1">&#39;25&#39;</span><span class="p">)</span>
+    <span class="n">email</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;92066@163.com&#39;</span><span class="p">,</span><span class="s1">&#39;xxxxx&#39;</span><span class="p">)</span>
+    <span class="n">email</span><span class="o">.</span><span class="n">add_attachment</span><span class="p">(</span><span class="s1">&#39;2.png&#39;</span><span class="p">)</span>
+    <span class="n">email</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;hello test&#39;</span><span class="p">,</span><span class="n">emailtext</span><span class="p">,</span><span class="n">to_email</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>更多邮件发送可以参考如下博客：</p></li>
+</ul>
+<p><a class="reference external" href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001432005226355aadb8d4b2f3f42f6b1d6f2c5bd8d5263000">廖雪峰老师的教程</a></p>
+<p><a class="reference external" href="http://www.runoob.com/python/python-email.html">菜鸟教程</a></p>
+<p><a class="reference external" href="https://www.jb51.net/article/49216.htm">脚本之家</a></p>
+<p><a class="reference external" href="http://www.cnblogs.com/zhangxinqi/p/9113859.html">博客园经典发邮件</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="03.socketserver%E7%BC%96%E7%A8%8B.html" class="btn btn-neutral float-left" title="15.3. socketserver编程" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="05.python%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E7%9A%84NTP%E6%97%B6%E9%97%B4%E6%9C%8D%E5%8A%A1%E5%99%A8.html" class="btn btn-neutral float-right" title="15.5. python实现通用的NTP时间服务器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

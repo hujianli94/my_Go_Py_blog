@@ -1,0 +1,339 @@
+.. contents::
+   :depth: 3
+..
+
+轻量级线程-goroutine
+====================
+
+1.进程/线程
+-----------
+
+进程是程序在操作系统中的一次执行过程，系统进行资源分配和调度的一个独立单位。
+
+线程是进程的一个执行实体，是 CPU
+调度和分派的基本单位，它是比进程更小的能独立运行的基本单位。
+
+一个进程可以创建和撤销多个线程，同一个进程中的多个线程之间可以并发执行。
+
+2.并发/并行
+-----------
+
+1. 多线程程序在单核上运行，就是并发
+2. 多线程程序在多核上运行，就是并行
+
+并发与并行并不相同，并发主要由切换时间片来实现“同时”运行，并行则是直接利用多核实现多线程的运行，Go程序可以设置使用核心数，以发挥多核计算机的能力。
+
+**并发和并行之间的区别。**
+
+-  并发（concurrency）：把任务在不同的时间点交给处理器进行处理。在同一时间点，任务并不会同时运行。
+-  并行（parallelism）：把每一个任务分配给每一个处理器独立完成。在同一时间点，任务一定是同时运行。
+
+举生活中的一个例子:
+
+-  并发：
+   吃饭时，电话来了，需要停止吃饭去接电话，电话完后继续来吃饭，这个过程就是并发执行。
+-  并行： 吃饭时，电话来了，边接电话边吃饭，这个过程是并行执行。
+
+GO在GOMAXPROCS数量与任务数量相等时，可以做到并行执行，但一般情况下都是并发执行。
+
+并发不是并行。并行是让不同的代码片段同时在不同的物理处理器上执行。
+并行的关键是同时做很多事情，而并发是指同时管理很多事情，这些事情可能只做了一半就被暂停去做别的事情了。
+
+在很多情况下，并发的效果比并行好，因为操作系统和硬件的总资源一般很少，但能支持系统同时做很多事情。
+这种“使用较少的资源做更多的事情”的哲学，也是指导 Go语言设计的哲学。
+
+3.协程/线程
+-----------
+
+协程：独立的栈空间，共享堆空间，调度由用户自己控制，本质上有点类似于用户级线程，这些用户级线程的调度也是自己实现的。
+
+线程：一个线程上可以跑多个协程，协程是轻量级的线程。
+
+优雅的并发编程范式，完善的并发支持，出色的并发性能是Go语言区别于其他语言的一大特色。使用Go语言开发服务器程序时，就需要对它的并发机制有深入的了解。
+
+::
+
+   goroutine的概念类似于线程，但goroutine由Go程序运行时的调度和管理。Go程序会智能地将goroutine中的任务合理
+   地分配给每个CPU。
+
+   Go程序从main包的main()函数开始，在程序启动时，Go程序就会为main()函数创建一个默认的goroutine。
+
+4.使用普通函数创建goroutine
+---------------------------
+
+Go程序中使用go关键字为一个函数创建一个goroutine。一个函数可以被创建多个goroutine，一个goroutine必须对应一个函数。
+
+1. 格式
+
+goroutine语法：
+
+::
+
+   go 函数名(参数列表)
+
+   · 函数名：要调用的函数名
+   · 参数列表：调用函数需要传入的参数。
+
+   使用go关键字创建goroutine时，被调用函数的返回值会被忽略。
+
+4.1 例子
+~~~~~~~~
+
+使用go关键字，将running()函数并发执行，每隔一秒打印一次计数器， 而 main
+的 goroutine 则等待用户输入，两个行为可以同时进行。
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "time"
+   )
+
+   func running() {
+       var times int
+
+       // 使用for形成一个无限循环。
+       for {
+           // times变量在循环中不断自增。
+           times++
+           // 输出times变量的值。
+           fmt.Println("tick:", times)
+           // 使用time.Sleep暂停1秒后继续循环。
+           time.Sleep(time.Second)
+       }
+   }
+
+   func main() {
+       // 使用go关键字让running()函数并发运行。
+       go running()
+
+       // 接受用户输入，直到按Enter键时将输入的内容写入input变量中并返回，整个程序终止。
+       var input string
+       fmt.Scanln(&input)
+   }
+
+命令行输出如下：
+
+::
+
+   tick 1
+   tick 2
+   tick 3
+   tick 4
+   tick 5
+
+5.使用匿名函数创建goroutine
+---------------------------
+
+go关键字后也可以为匿名函数或闭包启动goroutine。
+
+5.1 使用匿名函数创建goroutine的格式
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+使用匿名函数或闭包创建 goroutine 时，除了将函数定义部分写在 go
+的后面之外，还需要加上匿名函数的调用参数，格式如下：
+
+::
+
+   go func( 参数列表 ){
+       函数体
+   }( 调用参数列表 )
+
+   其中：
+
+   ·参数列表：函数体内的参数变量列表。
+   ·函数体：匿名函数的代码。
+   ·调用参数列表：启动goroutine时，需要向匿名函数传递的调用参数。
+
+5.2 匿名函数创建goroutine的例子1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+在main()函数中创建一个匿名函数并为匿名函数启动goroutine。
+匿名函数没有参数。代码将并行执行定时打印计数的效果
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "time"
+   )
+
+   func main() {
+       // go后面接匿名函数启动goroutine。
+       go func() {
+           var times int
+           for {
+               times++
+               fmt.Println("tick", times)
+               time.Sleep(time.Second)
+           }
+       }()
+
+       var input string
+       fmt.Scanln(&input)
+   }
+
+   /*
+   tick 1
+   tick 2
+   tick 3
+   tick 4
+   tick 5
+   .....
+    */
+
+**提示：所有goroutine在main()函数结束时会一同结束。**
+
+goroutine虽然类似于线程概念，但是从调度性能上没有线程细致，而细致程度取决于Go程序的goroutine调度器的实现和运行环境。
+
+终止goroutine的最好方法就是自然返回goroutine对应的函数。
+虽然可以用golang.org/x/net/context包进行goroutine生命期深度控制，但这种方法仍然处于内部试验阶段，并不是官方推荐的特性。
+
+截止Go 1.9版本，暂时没有标准接口获取goroutine的ID。
+
+5.3 匿名函数创建goroutine的例子2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "runtime"
+       "sync"
+   )
+
+   func main() {
+       //// 分配一个逻辑处理器给调度器使用
+       runtime.GOMAXPROCS(1)
+
+       // wg用来等待程序完成
+       // 计数加2，表示要等待两个goroutine
+       var wg sync.WaitGroup
+       wg.Add(2)
+       fmt.Println("Start Goroutines")
+
+       // 启动第1个goroutine
+       go func() {
+           // 在函数退出时调用Done来通知main函数工作已经完成
+           defer wg.Done()
+           //// 显示字母表3次
+           for count := 0; count < 3; count++ {
+               for char := 'a'; char < 'a'+26; char++ {
+                   fmt.Printf("%c ",char)
+               }
+           }
+       }()
+
+       // 启动第2个goroutine
+       go func() {
+           // 在函数退出时调用Done来通知main函数工作已经完成
+           defer wg.Done()
+           //// 显示字母表3次
+           for count := 0; count < 3; count++ {
+               for char := 'A'; char < 'A'+26; char++ {
+                   fmt.Printf("%c ",char)
+               }
+           }
+       }()
+
+       //等待goroutine结束
+       fmt.Println("Waiting To Finish")
+       wg.Wait()
+       fmt.Println("\nTerminating Program")
+
+   }
+
+6.调整并发的运行性能(GOMAXPROCS)
+--------------------------------
+
+在Go程序运行时（runtime）实现了一个小型的任务调度器。
+这套调度器的工作原理类似于操作系统调度线程，
+Go程序调度器可以高效地将CPU资源分配给每一个任务。
+传统逻辑中，开发者需要维护线程池中线程与CPU核心数量的对应关系。
+同样的，Go地中也可以通过\ ``runtime.GOMAXPROCS()``\ 函数做到，格式为：
+
+::
+
+   runtime.GOMAXPROCS(逻辑CPU数量)
+
+这里的逻辑CPU数量可以有如下几种数值：
+
+-  <1：不修改任何数值。
+-  =1：单核心执行。
+-  >1：多核并发执行。
+
+一般情况下，可以使用\ ``runtime.NumCPU()``\ 查询CPU数量，并使用\ ``runtime.GOMAXPROCS()``\ 函数进行设置，例如：
+
+::
+
+   runtime.GOMAXPROCS(runtime.NumCPU())
+
+Go 1.5版本之前，默认使用的是单核心执行。 从Go
+1.5版本开始，默认执行上面语句以便让代码并发执行，最大效率地利用CPU。
+
+GOMAXPROCS同时也是一个环境变量，在应用程序启动前设置环境变量也可以起到相同的作用。
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "runtime"
+   )
+
+   func main() {
+       // 获取当前系统cpu的数量
+       num := runtime.NumCPU()
+       // 设置num的cpu运行go程序
+       runtime.GOMAXPROCS(num)
+       fmt.Println("num = ", num)      //num =  4
+   }
+
+6.1 示例代码
+~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "runtime"
+       "time"
+   )
+
+   func A() {
+       for i := 1; i < 10; i++ {
+           fmt.Println("A", i)
+       }
+   }
+
+   func B() {
+       for i := 1; i < 10; i++ {
+           fmt.Println("B", i)
+       }
+   }
+   func main() {
+       // 设置CPU的核心数量
+       // runtime.GOMAXPROCS(1)
+
+       num := runtime.NumCPU()
+       runtime.GOMAXPROCS(num)
+       go A()
+       go B()
+       time.Sleep(time.Second)
+
+   }
+
+Go语言中的操作系统线程和goroutine的关系：
+
+1. 一个操作系统线程对应用户态多个goroutine。
+2. go程序可以同时使用多个操作系统线程。
+3. goroutine和OS线程是多对多的关系，即m:n。

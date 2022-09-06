@@ -1,0 +1,257 @@
+.. contents::
+   :depth: 3
+..
+
+用赋值表达式减少重复代码
+========================
+
+赋值表达式（assignment expression）是\ **Python
+3.8**\ 新引入的语法，它会用到海象操作符（walrus operator）。
+
+这种写法可以解决某些持续已久的代码重复问题。a =
+b是一条普通的赋值语句，读作a equals b，而a := b则是赋值表达式，读作a
+walrus b。
+
+这个符号为什么叫walrus呢？因为把:=顺时针旋转90º之后，冒号就是海象的一双眼睛，等号就是它的一对獠牙。
+
+举个例子，如果有一筐新鲜水果给果汁店做食材，那我们就可以这样定义其中的内容：
+
+.. code:: python
+
+   fresh_fruit = {
+       'apple': 10,
+       'banana': 8,
+       'lemon': 5,
+   }
+
+顾客点lemon之前，我们先得确认现在还有没有lemon可以榨汁。所以，要先查出lemon的数量，然后用\ ``if``\ 语句判断它是不是非零的值。
+
+.. code:: python
+
+   def make_lemonade(count):
+       print(f'Making {count} lemons into lemonade')
+
+   def out_of_stock():
+       print('Out of stock!')
+
+   count = fresh_fruit.get('lemon', 0)
+   if count:
+       make_lemonade(count)
+   else:
+       out_of_stock()
+
+我们再Python里面经常要先获取某个值，然后判断它是否非零，如果是就执行某段代码。对于这种用法，我们以前总是要通过各种技巧，来避免\ ``count``\ 这样的变量重复出现在代码之中，这些技巧有时会让代码变得难懂。
+Python引入赋值表达式正是为了解决这样的问题。下面改用海象操作符来写：
+
+.. code:: python
+
+   if count := fresh_fruit.get('lemon', 0):
+       make_lemonade(count)
+   else:
+       out_of_stock()
+
+假设客人点的是苹果汁(apple)，需要4个苹果。按照传统的写法：
+
+.. code:: python
+
+   def make_cider(count):
+       print(f'Making cider with {count} apples')
+
+   count = fresh_fruit.get('apple', 0)
+   if count >= 4:
+       make_cider(count)
+   else:
+       out_of_stock()
+
+下面再通过海象操作符，把代码写得更清晰一些。
+
+.. code:: python
+
+   if (count := fresh_fruit.get('apple', 0)) >= 4:
+       make_cider(count)
+   else:
+       out_of_stock()
+
+与上面的例子类似。但是，我们这次赋值表达式放到了一対括号里面。为什么？因为我们要在\ ``if``\ 语句里面把这个赋值表达式的结果与\ ``4``\ 这个值比较。
+
+还有一种类似的逻辑也会出现刚才说的重复代码：我们要根据情况给某个变量赋予不同的值，紧接着要用这个变量做参数来调用某个函数。例如，若顾客要点香蕉冰沙，
+那我们首先得把香蕉切成好几份，然后用其中的两份来制作这道冰沙。如果不够两份，那就抛出香蕉不足异常。下面先用传统的写法来实现：
+
+.. code:: python
+
+   def slice_bananas(count):
+       print(f'Slicing {count} bananas')
+       return count * 4
+
+   class OutOfBananas(Exception):
+       pass
+
+   def make_smoothies(count):
+       print(f'Making a smoothies with {count} banana slices')
+
+   pieces = 0
+   count = fresh_fruit.get('banana', 0)
+   if count >= 2:
+       pieces = slice_bananas(count)
+
+   try:
+       smoothies = make_smoothies(pieces)
+   except OutOfBananas:
+       out_of_stock()
+
+改用海象操作符实现，可以少写一行代码，而且能压低\ ``count``\ 变量的地位，让它只出现在\ ``if``\ 块里：
+
+.. code:: python
+
+   pieces = 0
+   if (count := fresh_fruit.get('banana', 0)) >= 2:
+       pieces = slice_bananas(count)
+
+   try:
+       smoothies = make_smoothies(pieces)
+   except OutOfBananas:
+       out_of_stock()
+
+对于在\ ``if``\ 与\ ``else``\ 分支里面分别定义\ ``pieces``\ 变量的写法来说，海象操作符也能让代码变得清晰：
+
+.. code:: python
+
+   if (count := fresh_fruit.get('banana', 0)) >= 2:
+       pieces = slice_bananas(count)
+   else:
+       pieces = 0
+
+   try:
+       smoothies = make_smoothies(pieces)
+   except OutOfBananas:
+       out_of_stock()
+
+例如，我们想按照一定的顺序给客人制作饮品。下面这段代码先判断能不能做香蕉冰沙，若不能，就做苹果汁，还不行，就做柠檬(lemon)汁:
+
+.. code:: python
+
+   count = fresh_fruit.get('banana', 0)
+   if count >= 2:
+       pieces = slice_bananas(count)
+       to_enjoy = make_smoothies(pieces)
+   else:
+       count = fresh_fruit.get('apple', 0)
+       if count >= 4:
+           to_enjoy = make_cider(count)
+       else:
+           count = fresh_fruit.get('lemon', 0)
+           if count:
+               to_enjoy = make_lemonade(count)
+           else:
+               to_enjoy = 'Nothing'
+
+这种难看的写法其实很常见。幸好有了海象操作符，让我们能轻松地模拟出接近\ ``switch/case``\ 的方案。
+
+.. code:: python
+
+   if (count := fresh_fruit.get('banana', 0)) >= 2:
+       pieces = slice_bananas(count)
+       to_enjoy = make_smoothies(pieces)
+   elif (count := fresh_fruit.get('apple', 0)) >= 4:
+       to_enjoy = make_cider(count)
+   elif count := fresh_fruit.get('lemon', 0):
+       to_enjoy = make_lemonade(count)
+   else:
+       to_enjoy = 'Nothing'
+
+Python新手还会遇到一个困难，就是缺少\ ``do/while``\ 循环结构。例如，我们要把新来的水果做成果汁并且装到瓶子里面，直到水果用完为止。下面先用\ ``while``\ 循环来实现：
+
+.. code:: python
+
+   FRUIT_TO_PICK = [
+       {'apple': 1, 'banana': 3},
+       {'lemon': 2, 'lime': 5},
+       {'orange': 3, 'melon': 2},
+   ]
+
+   def pick_fruit():
+       if FRUIT_TO_PICK:
+           return FRUIT_TO_PICK.pop(0)
+       else:
+           return []
+
+   def make_juice(fruit, count):
+       return [(fruit, count)]
+
+   bottles = []
+   fresh_fruit = pick_fruit()
+   while fresh_fruit:
+       for fruit, count in fresh_fruit.items():
+           batch = make_juice(fruit, count)
+           bottles.extend(batch)
+       fresh_fruit = pick_fruit()
+
+   print(bottles)
+
+这种写法必须把\ ``fresh_fruit = pick_fruit()``\ 写两次。
+
+如果想复用这行代码，可以考虑loop-and-a-half模式。这个模式虽然能消除重复，但是会让\ ``while``\ 循环看起来很笨，因为它成了无限循环，只能通过\ ``break``\ 跳出循环。
+
+.. code:: python
+
+   FRUIT_TO_PICK = [
+       {'apple': 1, 'banana': 3},
+       {'lemon': 2, 'lime': 5},
+       {'orange': 3, 'melon': 2},
+   ]
+
+   def pick_fruit():
+       if FRUIT_TO_PICK:
+           return FRUIT_TO_PICK.pop(0)
+       else:
+           return []
+
+   def make_juice(fruit, count):
+       return [(fruit, count)]
+
+   bottles = []
+   while True:                     # Loop
+       fresh_fruit = pick_fruit()
+       if not fresh_fruit:         # And a half
+           break
+       for fruit, count in fresh_fruit.items():
+           batch = make_juice(fruit, count)
+           bottles.extend(batch)
+
+   print(bottles)
+
+有了海象操作符，就不需要使用这种模式了，我们可以在每轮循环的开头给\ ``fresh_fruit``\ 变量赋值，并根据变量的值来决定要不要继续循环。
+
+.. code:: python
+
+   FRUIT_TO_PICK = [
+       {'apple': 1, 'banana': 3},
+       {'lemon': 2, 'lime': 5},
+       {'orange': 3, 'melon': 2},
+   ]
+
+   def pick_fruit():
+       if FRUIT_TO_PICK:
+           return FRUIT_TO_PICK.pop(0)
+       else:
+           return []
+
+   def make_juice(fruit, count):
+       return [(fruit, count)]
+
+   bottles = []
+   while fresh_fruit := pick_fruit(): # 如果碰到 [] ，则while循环结束 。很简单易读。
+       for fruit, count in fresh_fruit.items():
+           batch = make_juice(fruit, count)
+           bottles.extend(batch)
+
+   print(bottles) 
+
+总之，如果某个表达式或赋值操作多次出现在一组代码里面，那就可以考虑用赋值表达式把这段diam改得简单一些
+。
+
+   要点：
+
+   赋值表达式通过海象操作符（:=）给变量赋值，并且让这个值成为这条表达式的结果，我们可以利用这项特性来缩减代码。
+
+   如果赋值表达式是大表达式里的一部分，就得用一对括号把它括起来。虽说Python不支持switch/case与do/while结构，但可以利用赋值表达式清晰地模拟出这种逻辑。

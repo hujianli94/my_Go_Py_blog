@@ -1,0 +1,200 @@
+.. contents::
+   :depth: 3
+..
+
+Python数据类型转换
+==================
+
+python中的数据类型有：list、str、tuple、dict、set、float、int
+
+转换示例
+--------
+
+::
+
+   print('int("23.5"):\t',int(23.9))
+   print('int("23.001"):\t',int(23.001))
+   print('int("23"):\t',int("23"))
+
+   print('float(3):\t',float(3))
+   print('float("3"):\t',float('3'))
+   print('float("3.2"):\t',float('3.2'))
+
+   print('str(23):\t',str(23))
+   print('str(23.3):\t',str(23.3))
+
+   try:
+       print('int("23.1"):\t',int("23.1"))     # 报错
+   except:
+       print("error ,转换错误")
+
+整数、浮点数、字符串之间的转换
+------------------------------
+
+代码示例1
+~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   print("int('12.3')",int(12.3))
+   print("int('12.0002')",int(12.0002))
+   print("int('123')",int("123"))
+
+   print('整数转为浮点数',float(12))
+   print('字符串转换为浮点数',float("123"))
+
+   print("整数、浮点数转换为字符串".center(100,"#"))
+   print("str('123')",str(123))
+   print("str('123.001')",str(123.001))
+
+   input_number = input("please input int:")
+   print(input_number)
+
+字符串转列表 /列表转字符串
+--------------------------
+
+字符串–>列表 示例
+~~~~~~~~~~~~~~~~~
+
+::
+
+   In [1]: hu = "abc"
+
+   In [2]: list(hu)
+   Out[2]: ['a', 'b', 'c']
+
+   In [3]: hu = "my name is 123"
+   In [4]: hu.split()
+   Out[4]: ['my', 'name', 'is', '123']
+
+列表–>字符串 示例
+~~~~~~~~~~~~~~~~~
+
+::
+
+   In [7]: lst = ["1","2","3","4","hu"]
+   In [8]: ",".join(lst)
+   Out[8]: '1,2,3,4,hu'
+   #引入学习一个内建函数,join()函数是字符串操作函数，用于字符串连接。 拼接字符串有 + 和join两种方式
+
+   #join有拼接字符串和转列表为字符串的作用和str的spllit()功能反过来
+   In [44]: list1 = ["1","2","3","4"]
+   In [46]: "+".join(list1)
+   Out[46]: '1+2+3+4'
+
+   #不规则的类别，先转为标准列表，再转为字符串
+   In [13]: hu_list = [1,2,3,4,5,"jianli"]
+   In [14]: hu_list1 = [str(hu) for hu in hu_list ]
+   In [17]: ",".join(hu_list1)
+   Out[17]: '1,2,3,4,5,jianli'
+
+列表转元祖/元祖转列表
+---------------------
+
+::
+
+   In [9]: lst
+   Out[9]: ['1', '2', '3', '4', 'hu']
+
+   In [10]: tuple(lst)
+   Out[10]: ('1', '2', '3', '4', 'hu')
+
+   In [11]: hu_tuple = tuple(lst)
+   In [12]: list(hu_tuple)
+   Out[12]: ['1', '2', '3', '4', 'hu']
+
+   In [14]: a_tuple = ('ready','fire','aim')
+
+   In [15]: list(a_tuple)
+   Out[15]: ['ready', 'fire', 'aim']
+
+字典格式字符串—> 字典
+---------------------
+
+::
+
+   #方式一
+   #引入学习一个内建函数
+   #eval()函数将字符串当成 Python 表达式来处理
+   In [38]: hu = 1
+   In [39]: eval('hu+1')
+   Out[39]: 2
+
+   In [23]: s = '{"a": 1, "b": 2, "c": 3}'
+   In [24]: type(s)
+   Out[24]: str
+
+   In [25]: d = eval(s)
+   In [26]: type(d)
+   Out[26]: dict
+   In [27]: d
+   Out[27]: {'a': 1, 'b': 2, 'c': 3}
+
+   #方式二
+   In [32]: import json
+   In [33]: s = '{"a": 1, "b": 2, "c": 3}'
+   In [34]: type(s)
+   Out[34]: str
+
+   In [35]: d = json.loads(s)
+   In [36]: type(d)
+   Out[36]: dict
+   In [37]: d
+   Out[37]: {'a': 1, 'b': 2, 'c': 3}
+
+二进制bytes与字符串的互转
+-------------------------
+
+::
+
+   # bytes转字符串方式一
+   b=b'\xe9\x80\x86\xe7\x81\xab'
+   string=str(b,'utf-8')
+   print(string)
+
+   # bytes转字符串方式二
+   b=b'\xe9\x80\x86\xe7\x81\xab'
+   string=b.decode() # 第一参数默认utf8，第二参数默认strict
+   print(string)
+
+   # bytes转字符串方式三
+   b=b'\xe9\x80\x86\xe7\x81haha\xab'
+   string=b.decode('utf-8','ignore') # 忽略非法字符，用strict会抛出异常
+   print(string)
+
+   # bytes转字符串方式四
+   b=b'\xe9\x80\x86\xe7\x81haha\xab'
+   string=b.decode('utf-8','replace') # 用？取代非法字符
+   print(string)
+
+   # 字符串转bytes方式一
+   str1='逆火'
+   b=bytes(str1, encoding='utf-8')
+   print(b)
+
+   # 字符串转bytes方式二
+   b=str1.encode('utf-8')
+   print(b)
+
+整数和bytes互相转换
+-------------------
+
+.. code:: python
+
+   import struct
+
+   def byte2int(b):
+       if isinstance(b, int):
+           return b
+       else:
+           return struct.unpack("!B", b)[0]
+
+
+   def int2byte(i):
+       return struct.pack("!B", i)
+
+   if __name__ == '__main__':
+       print(int2byte(2))
+       print(byte2int(b'\x02'))

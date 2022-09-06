@@ -1,0 +1,114 @@
+.. contents::
+   :depth: 3
+..
+
+.. raw:: html
+
+   <!--
+    * @Descripttion: 
+    * @version: 
+    * @Author: hujianli
+    * @Date: 2022-07-09 21:39:29
+    * @LastEditors: hujianli
+    * @LastEditTime: 2022-07-10 18:20:45
+   -->
+
+声明接口
+========
+
+接口是双方约定的一种合作协议。接口实现者不需要关心接口会被怎样使用，调用者也不用关心接口的实现细节。
+
+接口是一种类型，也是一种抽象结构，不会暴露所含数据的格式、类型及结构。
+
+1.接口的声明格式
+----------------
+
+每个接口由数个方法组成。接口的形式代码如下：
+
+.. code:: go
+
+   type 接口类型名 interface {
+       方法名1(参数列表1) 返回值列表1
+       方法名2(参数列表2) 返回值列表2
+       ......
+   }
+
+   type Namer interface {
+       Method1(param_list) return_type
+       Method2(param_list) return_type
+       ...
+   }
+
+· 接口类型名： 使用type将接口定义为自定义的类型名。 ·
+方法名：当方法名首字母是大写时，且这个接口类型名首字母也是大写时，这个接口可以被接口所在的包（package）之外的代码访问。
+· 参数列表、返回值列表：
+参数列表和返回值列表中的参数变量名可以被忽略，例如：
+
+.. code:: go
+
+   type writer interface {
+       Writer([]byte) error
+   }
+
+1.1开发中常见的接口及写法
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+例如io包中的Writer接口：
+
+.. code:: go
+
+   type Writer interface {
+       Write(p []byte) (n int, err error)
+   }
+
+有一个对象以字符串形式展现的接口，在调用String()方法时，都可以获得对象对应的字符串，在fmt包中定义如下：
+
+.. code:: go
+
+   type Stringer interface {
+       String() string
+   }
+
+Stringer接口在Go语言中使用频率非常高，类似Java中的ToString的操作。
+
+Go语言中接口中的方法并不多，Go希望一个接口能精准的描述它自己的功能，通过多个接口的嵌入和组合的方式将简单的接口扩展为复杂的接口。
+
+1.2使用接口代码示例
+~~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+
+   // 创建一个notifier的接口
+   type notifier interface {
+       notify()
+   }
+
+   // user在程序里定义一个用户类型
+   type user struct {
+       name  string
+       email string
+   }
+
+   // notify是使用指针接收者实现的方法
+   func (u *user) notify() {
+       fmt.Printf("Sending user email to %s<%s>\n", u.name, u.email)
+   }
+
+   func sendNotification(n notifier) {
+       n.notify()
+   }
+
+   func main() {
+       // 创建一个user类型的值，并发送通知
+       name := user{
+           name:  "hujianli",
+           email: "123@qq.com",
+       }
+       // 传入地址
+       sendNotification(&name)
+
+   }

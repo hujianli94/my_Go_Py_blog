@@ -1,0 +1,176 @@
+.. contents::
+   :depth: 3
+..
+
+类型别名
+========
+
+.. _类型别名-1:
+
+1.类型别名
+----------
+
+类型别名是Go 1.9
+版本添加的新功能，主要用于代码升级、迁移中类型的兼容性问题。
+
+在C/C++
+语言中，代码重构升级可以使用宏快速定义新的一段代码。Go语言中没有选择加入宏，
+而是将解决重构中最麻烦的类型名变更问题。
+
+Go 1.9版本之前的内建类型定义代码是这样写的：
+
+.. code:: go
+
+   type byte uint8
+   type rune int32
+
+而在Go 1.9版本之后变为：
+
+.. code:: go
+
+   type byte = uint8
+   type rune = int32
+
+2.区分类型别名与类型定义
+------------------------
+
+类型别名的写法为：
+
+::
+
+   type TypeAlias = Type
+
+.. code:: go
+
+   package main
+
+   import "fmt"
+   // 将NewInt定义为int类型
+   type NewInt int
+
+   // 给int取一个IntAlias的别名
+   type IntAlias = int
+
+   func main() {
+       var a NewInt
+       var a2 IntAlias
+       fmt.Printf("a type : %T\n", a)
+       fmt.Printf("a2 type : %T\n", a2)
+   }
+
+   //a type : main.NewInt
+   //a2 type : int
+
+3.非本地类型不能定义方法
+------------------------
+
+能够随意地为各种类型起名字，是否意味着可以在自己包里为这些类型任意添加方法？
+
+.. code:: go
+
+   package main
+
+   import "time"
+
+   // 定义time.Duration的别名为MyDuration
+   type MyDuration = time.Duration
+
+   // 为MyDuration添加一个函数
+   func (m MyDuration) EasySet(a string) {}
+
+   func main() {
+
+   }
+
+编译上面代码报错，信息如下：
+
+cannot define new methods on non-local type time.Duration
+
+编译器提示：不能在一个非本地的类型time.Duration上定义新方法。非本地方法指的就是使用time.Duration的代码所在的包，也就是main包。
+因为time.Duration是在time包中定义的，在main包中使用。time.Duration包与main包不在同一个包中，因此不能为不在一个包中的类型定义方法。
+
+解决这个问题有下面两种方法：
+
+-  将第8行修改为type MyDuration
+   time.Duration，也就是将MyDuration从别名改为类型。
+
+-  将MyDuration的别名定义放在time包中。
+
+.. code:: go
+
+   package main
+
+   import "time"
+
+   // 定义time.Duration的别名为MyDuration
+   type MyDuration time.Duration
+
+   // 为MyDuration添加一个函数
+   func (m MyDuration) EasySet(a string) {}
+
+   func main() {
+
+   }
+
+4.在结构体成员嵌入时使用别名
+----------------------------
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "reflect"
+   )
+
+   // 定义商标结构
+   type Brand struct {
+   }
+
+   // 为商标结构添加Show方法
+   func (t Brand) Show() {
+   }
+
+   // 为Brand定义一个别名FakeBrand
+   type FakeBrand = Brand
+
+   // 定义车辆结构
+   type Vehicle struct {
+
+       // 嵌入两个结构
+       FakeBrand
+       Brand
+   }
+
+   func main() {
+
+       // 声明a变量为车辆类型
+       var a Vehicle
+
+       // // 指定调用FakeBrand的Show
+       // a.FakeBrand.Show()
+
+       // 取a的类型反射对象
+       ta := reflect.TypeOf(a)
+
+       // 遍历a的所有成员
+       for i := 0; i < ta.NumField(); i++ {
+
+           // a的成员信息
+           f := ta.Field(i)
+
+           // 打印成员的字段名和类型
+           fmt.Printf("FieldName: %v, FieldType: %v\n", f.Name, f.Type.Name())
+       }
+   }
+
+代码输出如下：
+
+::
+
+   FieldName: FakeBrand, FieldType: Brand
+   FieldName: Brand, FieldType: Brand
+
+这个例子中，FakeBrand是Brand的一个别名。在Vehicle中嵌入FakeBrand和Brand并不意味着嵌入两个Brand。FakeBrand的类型会以名字的方式保留在Vehicle的成员中。
+在调用Show()方法时，因为两个类型都有Show()方法，会发生歧义，证明FakeBrand的本质确实是Brand类型。

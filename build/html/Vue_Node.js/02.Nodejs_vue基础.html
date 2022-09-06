@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Nodejs+vue基础 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. 项目开发准备" href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html" />
+    <link rel="prev" title="1. 开发一个网站的准备" href="01.%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%87%86%E5%A4%87.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js+Node.js开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%87%86%E5%A4%87.html">1. 开发一个网站的准备</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2. Nodejs+vue基础</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#node-js">2.1. 1.安装Node.js</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#windowsnodejs">2.1.1. 1.1 windows中安装nodejs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#linuxnodejs">2.1.2. 1.2 Linux中安装nodejs</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#node-jshello-world">2.2. 2.第一个Node.js示例—Hello World</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node-jsexpress">2.3. 3.Node.js后端框架Express</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#express">2.3.1. 3.1 Express的安装</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#restful-api">2.4. 4.RESTful API规范</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vue-js">2.5. 5.页面显示框架Vue.js</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">2.5.1. 5.1 Vue.js的安装</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vue-jshello-worldcdn">2.5.2. 5.2 用Vue.js编写Hello World—CDN方式</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vue-jshello-worldwebpack">2.5.3. 5.3 用Vue.js编写Hello World—Webpack方式</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">2.6. 6. 其他页面显示框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#javascriptwebstorm">2.7. 7.JavaScript开发利器—WebStorm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">2.8. 8.小结</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html">3. 项目开发准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.%E9%A1%B9%E7%9B%AE%E5%90%8E%E5%8F%B0%E6%8A%80%E6%9C%AFExpress.html">4. 项目后台技术Express</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html">5. Vue.js开发基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue.js%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.html">6. Vue的生命周期</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html">7. Vue.js的模板语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue.js%E7%9A%84%E7%BB%84%E4%BB%B6%E5%8C%96.html">8. Vue.js的组件化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html">9. Vue.js的vue-router库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue.js%E7%9A%84%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E5%BA%93Vuex%E5%92%8CPinia.html">10. Vue.js的状态管理库Vuex和Pinia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.Vue-UI%E5%BA%93.html">11. Vue-UI库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.%E9%A1%B9%E7%9B%AE%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E.html">12. 项目需求分析和功能说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.%E9%A1%B9%E7%9B%AE%E7%AD%96%E5%88%92%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AE%BE%E8%AE%A1.html">13. 项目策划和功能设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14.%E9%A1%B9%E7%9B%AE%E5%90%8E%E7%AB%AFAPI%E5%BC%80%E5%8F%91.html">14. 项目后端API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15.%E9%80%9A%E7%94%A8API%E5%BC%80%E5%8F%91.html">15. 通用API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">16. 用户权限相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17.%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">17. 后台管理相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18.%E5%B0%8F%E7%BB%93.html">18. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19.%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%BC%80%E5%8F%91.html">19. 前端页面开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="20.%E4%B8%BB%E8%A6%81%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%BC%80%E5%8F%91.html">20. 主要页面的开发</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js+Node.js开发实战</a> &raquo;</li>
+      <li><span class="section-number">2. </span>Nodejs+vue基础</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue_Node.js/02.Nodejs_vue基础.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#nodejs-vue" id="id4">Nodejs+vue基础</a></p>
+<ul>
+<li><p><a class="reference internal" href="#node-js" id="id5">1.安装Node.js</a></p>
+<ul>
+<li><p><a class="reference internal" href="#windowsnodejs" id="id6">1.1 windows中安装nodejs</a></p></li>
+<li><p><a class="reference internal" href="#linuxnodejs" id="id7">1.2 Linux中安装nodejs</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#node-jshello-world" id="id8">2.第一个Node.js示例—Hello World</a></p></li>
+<li><p><a class="reference internal" href="#node-jsexpress" id="id9">3.Node.js后端框架Express</a></p>
+<ul>
+<li><p><a class="reference internal" href="#express" id="id10">3.1 Express的安装</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#restful-api" id="id11">4.RESTful API规范</a></p></li>
+<li><p><a class="reference internal" href="#vue-js" id="id12">5.页面显示框架Vue.js</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id13">5.1 Vue.js的安装</a></p></li>
+<li><p><a class="reference internal" href="#vue-jshello-worldcdn" id="id14">5.2 用Vue.js编写Hello World—CDN方式</a></p></li>
+<li><p><a class="reference internal" href="#vue-jshello-worldwebpack" id="id15">5.3 用Vue.js编写Hello World—Webpack方式</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id2" id="id16">6. 其他页面显示框架</a></p></li>
+<li><p><a class="reference internal" href="#javascriptwebstorm" id="id17">7.JavaScript开发利器—WebStorm</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id18">8.小结</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="nodejs-vue">
+<h1><a class="toc-backref" href="#id4"><span class="section-number">2. </span>Nodejs+vue基础</a><a class="headerlink" href="#nodejs-vue" title="Permalink to this headline">¶</a></h1>
+<p>Node.js是一个基于Chrome
+V8引擎的JavaScript运行环境.从开发者角度来说，原本运行在Web浏览器中的JavaScript代码，现在可以运行在任何装有Node.js的环境中。</p>
+<blockquote>
+<div><p>简单一句话：让原本只会前端的人，也能使用javascripts来写后端服务了</p>
+</div></blockquote>
+<p>Node.js分为两个不同的版本：LTS和Current。</p>
+<blockquote>
+<div><p>注意：</p>
+<p>LTS版本是长期支持的稳定版本，即该版本内容稳定。</p>
+<p>Current版本是根据当前项目的开发进度实时更新的可发布版本，包含最新的性能优化和代码优化，但版本中会有一些Bug。</p>
+</div></blockquote>
+<section id="node-js">
+<h2><a class="toc-backref" href="#id5"><span class="section-number">2.1. </span>1.安装Node.js</a><a class="headerlink" href="#node-js" title="Permalink to this headline">¶</a></h2>
+<section id="windowsnodejs">
+<h3><a class="toc-backref" href="#id6"><span class="section-number">2.1.1. </span>1.1 windows中安装nodejs</a><a class="headerlink" href="#windowsnodejs" title="Permalink to this headline">¶</a></h3>
+<p>1、首先我们上node.js官网(<a class="reference external" href="https://nodejs.org/zh-cn/">https://nodejs.org/zh-cn/</a>)，下载最新的长期版本，直接运行安装完成之后，我们就已经具备了node和npm的环境啦。</p>
+<p>下载–点击安装—配置环境变量</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="mi">18793</span><span class="o">&gt;</span><span class="n">node</span> <span class="o">-</span><span class="n">v</span>
+<span class="n">v14</span><span class="o">.</span><span class="mf">15.0</span>
+
+<span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="mi">18793</span><span class="o">&gt;</span><span class="n">npm</span> <span class="o">-</span><span class="n">v</span>
+<span class="mf">6.14</span><span class="o">.</span><span class="mi">12</span>
+</pre></div>
+</div>
+<p><strong>npm配置(node_global和node_cache)</strong></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>打开cmd
+<span class="c1"># 安装淘宝npm</span>
+$ npm install -g cnpm --registry<span class="o">=</span>https://registry.npm.taobao.org
+
+<span class="c1"># vue-cli 安装依赖包</span>
+$ cnpm install --g vue-cli
+
+
+<span class="c1"># 执行</span>
+$ npm config <span class="nb">set</span> prefix <span class="s2">&quot;D:\nodejs\node_global&quot;</span>
+$ npm config <span class="nb">set</span> cache <span class="s2">&quot;D:\nodejs\node_cache&quot;</span>
+</pre></div>
+</div>
+<p><strong>如果这种方法无法修改还可以：</strong></p>
+<p>在nodejs的安装目录中找到<code class="docutils literal notranslate"><span class="pre">node_modules\npm\npmrc</span></code>文件</p>
+<p>修改如下即可</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prefix</span> <span class="o">=</span> <span class="n">D</span><span class="p">:</span>\<span class="n">nodejs</span>\<span class="n">node_global</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">D</span><span class="p">:</span>\<span class="n">nodejs</span>\<span class="n">node_cache</span>
+</pre></div>
+</div>
+<p><strong>yarn安装及配置</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span> <span class="o">-</span><span class="n">g</span> <span class="n">yarn</span>
+</pre></div>
+</div>
+<p>安装完后使用<code class="docutils literal notranslate"><span class="pre">yarn</span> <span class="pre">-v</span></code>可查看版本号</p>
+<p>新建两个文件夹 yarn_global和yarn_cache</p>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="n">yarn</span> <span class="n">config</span> <span class="k">set</span> <span class="n">global</span><span class="p">-</span><span class="n">folder</span> <span class="s">&quot;D:\nodejs\yarn_global&quot;</span>
+<span class="n">yarn</span> <span class="n">config</span> <span class="k">set</span> <span class="n">cache</span><span class="p">-</span><span class="n">folder</span> <span class="s">&quot;D:\nodejs\yarn_cache&quot;</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>参考文献：</p>
+<p><a class="reference external" href="https://www.cnblogs.com/gaozejie/p/14919624.html">https://www.cnblogs.com/gaozejie/p/14919624.html</a></p>
+<p><a class="reference external" href="https://www.cnblogs.com/you-men/p/13968922.html">https://www.cnblogs.com/you-men/p/13968922.html</a></p>
+</div></blockquote>
+</section>
+<section id="linuxnodejs">
+<h3><a class="toc-backref" href="#id7"><span class="section-number">2.1.2. </span>1.2 Linux中安装nodejs</a><a class="headerlink" href="#linuxnodejs" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">nodejs</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">dist</span><span class="o">/</span><span class="n">v10</span><span class="o">.</span><span class="mf">16.3</span><span class="o">/</span><span class="n">node</span><span class="o">-</span><span class="n">v10</span><span class="o">.</span><span class="mf">16.3</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">xz</span>
+<span class="n">tar</span> <span class="o">-</span><span class="n">Jxf</span> <span class="n">node</span><span class="o">-</span><span class="n">v10</span><span class="o">.</span><span class="mf">16.3</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">xz</span>
+
+<span class="p">[</span><span class="n">root</span><span class="nd">@localhost</span> <span class="n">app</span><span class="p">]</span><span class="c1"># cd node-v10.16.3-linux-x64/bin/</span>
+<span class="p">[</span><span class="n">root</span><span class="nd">@localhost</span> <span class="nb">bin</span><span class="p">]</span><span class="c1"># ./node -v</span>
+<span class="n">v10</span><span class="o">.</span><span class="mf">16.3</span>
+
+<span class="c1"># 环境变量</span>
+<span class="n">echo</span> <span class="s2">&quot;export PATH=$PATH:/app/node-v10.16.3-linux-x64/bin&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">node</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">source</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span>
+
+<span class="c1"># 或者软连接</span>
+<span class="n">ln</span> <span class="o">/</span><span class="n">app</span><span class="o">/</span><span class="n">node</span><span class="o">-</span><span class="n">v10</span><span class="o">.</span><span class="mf">16.3</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">node</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span>
+<span class="n">ln</span> <span class="o">/</span><span class="n">app</span><span class="o">/</span><span class="n">node</span><span class="o">-</span><span class="n">v10</span><span class="o">.</span><span class="mf">16.3</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">npm</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="node-jshello-world">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">2.2. </span>2.第一个Node.js示例—Hello World</a><a class="headerlink" href="#node-jshello-world" title="Permalink to this headline">¶</a></h2>
+<p>编写Hello World示例。</p>
+<p><code class="docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">World.js</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">http</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">)</span>
+
+<span class="n">http</span><span class="o">.</span><span class="n">createServer</span><span class="p">(</span><span class="n">function</span> <span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="n">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="s1">&#39;text/html&#39;</span><span class="p">});</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="s1">&#39;&lt;h1&gt;Hello World&lt;/h1&gt;&#39;</span><span class="p">);</span>
+<span class="p">})</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span>
+
+<span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Server running at http://127.0.0.1:3000/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>这样就完成了第一个最简单的Node.js项目。</p>
+</section>
+<section id="node-jsexpress">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">2.3. </span>3.Node.js后端框架Express</a><a class="headerlink" href="#node-jsexpress" title="Permalink to this headline">¶</a></h2>
+<p>简单来说，Express框架本身是对Node.js中的HTTP模块进行的一层抽象，就是这层抽象使得开发者可以无须注意细节，直接上手进行页面和业务逻辑的开发。</p>
+<p>Express的主要功能包括：</p>
+<ul class="simple">
+<li><p>设置中间件来响应HTTP请求；</p></li>
+<li><p>定义路由表执行不同的HTTP请求动作；</p></li>
+<li><p>通过向模板传递参数动态渲染HTML页面。</p></li>
+</ul>
+<section id="express">
+<h3><a class="toc-backref" href="#id10"><span class="section-number">2.3.1. </span>3.1 Express的安装</a><a class="headerlink" href="#express" title="Permalink to this headline">¶</a></h3>
+<p>（1）新建项目文件夹，并且通过命令提示行进入该文件夹</p>
+<p>（2）使用npm命令初始化Node.js项目，命令如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">init</span>
+</pre></div>
+</div>
+<p>（3）执行Express的安装命令如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span> <span class="n">express</span>
+</pre></div>
+</div>
+<p>（4）安装成功后，package.json文件会自动添加Express为依赖项，更改后的内容如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;express2020&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.0.0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;private&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s2">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;node ./bin/www&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;cookie-parser&quot;</span><span class="p">:</span> <span class="s2">&quot;~1.4.4&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="s2">&quot;~2.6.9&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;express&quot;</span><span class="p">:</span> <span class="s2">&quot;~4.16.1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http-errors&quot;</span><span class="p">:</span> <span class="s2">&quot;~1.6.3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;morgan&quot;</span><span class="p">:</span> <span class="s2">&quot;~1.9.1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pug&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0.0-beta11&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<section id="expresshello-world">
+<h4>3.1.1 Express项目示例—Hello World<a class="headerlink" href="#expresshello-world" title="Permalink to this headline">¶</a></h4>
+<p>（1）新建一个入口文件app.js，完整的代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>// 引入Express模块和实例化
+const express = require(&#39;express&#39;)
+const app = express()
+
+// 设定根路由显示Hello World
+app.get(&#39;/&#39;, (req, res) =&gt; res.send(&#39;Hello World!&#39;))
+
+// 监听3000端口为http服务
+app.listen(3000, () =&gt; console.log(`Example app listening on port 3000!`))
+</pre></div>
+</div>
+<p>（2）使用如下命令运行程序，然后在浏览器中输入http://127.0.0.1:3000，即可访问该页面</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">node</span> <span class="n">app</span><span class="o">.</span><span class="n">js</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="restful-api">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">2.4. </span>4.RESTful API规范</a><a class="headerlink" href="#restful-api" title="Permalink to this headline">¶</a></h2>
+<p>RESTful是目前最流行的API设计规范，其核心思想就是对客户端发起的请求进行5种划分，不同的操作对应5种不同的HTTP请求方法，这是以逻辑操作功能为基础进行划分的，而不是传统的API设计以路径方式进行划分。</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>GET：从服务器端取出资源（一项或多项）。</p></li>
+<li><p>POST：在服务器端新建一个资源。</p></li>
+<li><p>PUT：在服务器端更新资源（客户端提供改变后的完整资源）。</p></li>
+<li><p>PATCH：在服务器端更新资源（客户端提供改变的属性）。</p></li>
+<li><p>DELETE：从服务器端删除资源。</p></li>
+<li><p>HEAD：获取资源的元数据。</p></li>
+<li><p>OPTIONS：获取信息，关于资源的哪些属性是客户端可以改变的。</p></li>
+</ul>
+</div></blockquote>
+<p>符合RESTful的API设计就是所有的API路由符合上述划分。也就是说，相同的请求路径，由于请求方式不同，可能获取的数据结果不同，或执行不同的数据操作。</p>
+<blockquote>
+<div><p>注意：如300系列的重定向、400系列的客户端错误和500系列的服务器错误等。通过HTTP查看具体的状态码并且了解其含义，可以方便地定位问题所在。</p>
+</div></blockquote>
+</section>
+<section id="vue-js">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">2.5. </span>5.页面显示框架Vue.js</a><a class="headerlink" href="#vue-js" title="Permalink to this headline">¶</a></h2>
+<p>Vue.js被设计为自底向上逐层应用。Vue.js的核心库只关注视图层，方便与第三方库或既有项目整合，非常容易学习。Vue.js的官方主页为https://cn.vuejs.org/</p>
+<p>Vue.js项目在GitHub上获得了近15万颗星的成绩。</p>
+<p>注意：Vue.js不支持IE 8及以下版本，因为它使用了IE 8无法模拟的ECMAScript
+5特性，但它支持所有兼容ECMAScript 5的浏览器。</p>
+<section id="id1">
+<h3><a class="toc-backref" href="#id13"><span class="section-number">2.5.1. </span>5.1 Vue.js的安装</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>安装Vue.js有三种方法：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">1.</span><span class="n">本地文件</span>
+<span class="mf">2.</span><span class="n">CND引入</span>
+<span class="mf">3.</span><span class="n">npm</span> <span class="n">install</span> <span class="n">vue</span>
+</pre></div>
+</div>
+<p>（1）类似于Bootstrap或jQuery，直接通过HTML文件中的<code class="docutils literal notranslate"><span class="pre">&lt;script&gt;&lt;/script&gt;</span></code>标签引用。</p>
+<p>对于制作原型或学习，你可以这样使用最新版本：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://cdn.jsdelivr.net/npm/vue/dist/vue.js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>对于生产环境，我们推荐链接到一个明确的版本号和构建文件，以避免新版本造成的不可预期的破坏：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://cdn.jsdelivr.net/npm/vue@2.6.12&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>如果你使用原生 ES Modules，这里也有一个兼容 ES Module 的构建文件：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;module&quot;</span><span class="o">&gt;</span>
+  <span class="kn">import</span> <span class="nn">Vue</span> <span class="kn">from</span> <span class="s1">&#39;https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.esm.browser.js&#39;</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>（2）npm安装方式。新建项目文件夹，使用npm
+init命令初始化项目，然后使用如下命令安装Vue.js，与Express的安装步骤一样。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span> <span class="n">vue</span>
+</pre></div>
+</div>
+<p>package.json文件会自动添加Vue.js的依赖项，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;vue202105-books&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.1.0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;private&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s2">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;serve&quot;</span><span class="p">:</span> <span class="s2">&quot;vue-cli-service serve&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build&quot;</span><span class="p">:</span> <span class="s2">&quot;vue-cli-service build&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;lint&quot;</span><span class="p">:</span> <span class="s2">&quot;vue-cli-service lint&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;core-js&quot;</span><span class="p">:</span> <span class="s2">&quot;^3.6.5&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;vue&quot;</span><span class="p">:</span> <span class="s2">&quot;^2.6.11&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;devDependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;@vue/cli-plugin-babel&quot;</span><span class="p">:</span> <span class="s2">&quot;~4.5.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;@vue/cli-plugin-eslint&quot;</span><span class="p">:</span> <span class="s2">&quot;~4.5.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;@vue/cli-service&quot;</span><span class="p">:</span> <span class="s2">&quot;~4.5.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;babel-eslint&quot;</span><span class="p">:</span> <span class="s2">&quot;^10.1.0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;eslint&quot;</span><span class="p">:</span> <span class="s2">&quot;^6.7.2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;eslint-plugin-vue&quot;</span><span class="p">:</span> <span class="s2">&quot;^6.2.2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;vue-template-compiler&quot;</span><span class="p">:</span> <span class="s2">&quot;^2.6.11&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;eslintConfig&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;root&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+    <span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;node&quot;</span><span class="p">:</span> <span class="n">true</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;extends&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&quot;plugin:vue/essential&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;eslint:recommended&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;parserOptions&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;parser&quot;</span><span class="p">:</span> <span class="s2">&quot;babel-eslint&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;rules&quot;</span><span class="p">:</span> <span class="p">{}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;browserslist&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;&gt; 1%&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;last 2 versions&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;not dead&quot;</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="vue-jshello-worldcdn">
+<h3><a class="toc-backref" href="#id14"><span class="section-number">2.5.2. </span>5.2 用Vue.js编写Hello World—CDN方式</a><a class="headerlink" href="#vue-jshello-worldcdn" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/vue/dist/vue.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;!-- 目的: 将数据渲染到页面上 --&gt;
+&lt;div id=&quot;app&quot;&gt;
+    &lt;!-- 将数据填充到HTML标签中, 插值表达式支持基本的计算操作 --&gt;
+    {{ text }}
+&lt;/div&gt;
+
+&lt;script&gt;
+    var vm = new Vue({
+        // Vue实例选项
+        /*
+            el  作用:
+                1. 指定/设置 当前Vue实例所管理的视图
+                2. 值也可以为其他选择器,class或者DOM元素,/.,吗但发生作用的只有第一个
+                3. 值也可以为DOM元素
+
+                注意: 不能让el直接管理html或者body 报错! mount -&gt;挂载
+        */
+        el: &#39;#app&#39;,
+
+        // 模拟ajax返回的数据
+        data: {
+            /*
+                data作用:  指定/设置 当前vue实例所管理视图中要使用的数据
+
+                1 . data的值可以是一个对象
+                2 . data中的数据 可以通过Vue实例对象,属性名(vm.msg),去访问数据
+                3 . 访问数据  可以通过vm.$data.msg访问数据
+
+                特点:  响应式数据(当数据发生变化时,视图中用数据的位置会自动发生变化)
+            */
+            text: &#39;hello world!!!!!&#39;,
+        },
+
+
+    })
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+</section>
+<section id="vue-jshello-worldwebpack">
+<h3><a class="toc-backref" href="#id15"><span class="section-number">2.5.3. </span>5.3 用Vue.js编写Hello World—Webpack方式</a><a class="headerlink" href="#vue-jshello-worldwebpack" title="Permalink to this headline">¶</a></h3>
+<p>Webpack暂时没使用，跳过，用的时候在学习一下</p>
+<p>参考下面文献</p>
+<blockquote>
+<div><p>注意：Webpack还存在很多不同的用法，读者可以参考官方文档https://webpack.js.org/。</p>
+</div></blockquote>
+</section>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">2.6. </span>6. 其他页面显示框架</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Vue.js的API参考了AngularJS、KnockoutJS、Ractive.js和Rivets.js，因此作为一个后来者，Vue.js是对上述框架的总结和优化，不仅如此，它还增加了很多新的特性，所以非常流行。</p>
+<p><em>除了Vue.js框架之外，值得一提的还有React.js框架。</em></p>
+<p>Vue.js框架的优点如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>- 生态丰富，学习成本低；
+- 简单易用；·官方库较多，程序开发风格统一且文档全面；
+- 轻量、高效；·依赖其他开源模块较少，可以简单地实现功能重构。
+</pre></div>
+</div>
+<p>Vue.js框架的缺点如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>- 使用者和贡献者较为单一，GitHub中的使用者大部分是中文使用者；
+- 非官方的小众库不一定支持Vue.js。
+</pre></div>
+</div>
+<p>React.js的优点如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>- 灵活和优秀的响应性；
+- 虚拟DOM使性能得到极大提升；
+- 丰富的JavaScript库，面对全世界的贡献者；
+- 丰富、强大的扩展性；
+- 有Facebook等专业开发人员的支持；
+- 多平台的优势，并且React Native等技术已广泛使用。
+</pre></div>
+</div>
+<p>React.js的缺点如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>- 功能复杂，体积庞大；
+- 学习难度比较高。
+</pre></div>
+</div>
+</section>
+<section id="javascriptwebstorm">
+<h2><a class="toc-backref" href="#id17"><span class="section-number">2.7. </span>7.JavaScript开发利器—WebStorm</a><a class="headerlink" href="#javascriptwebstorm" title="Permalink to this headline">¶</a></h2>
+<p>JavaScript拥有大量的IDE，甚至一些并非专门为JavaScript准备的开发工具都支持它（如Eclipse、NetBeans等）。</p>
+<p>还有一些常见的IDE，如VSCode或Notepad++也提供了大量的扩展和自定义选项来实现JavaScript专用IDE的效果。</p>
+<p>JetBrains系列的WebStorm，官方网址为https://www.jetbrains.com/webstorm/，用户可以免费试用30天。</p>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">2.8. </span>8.小结</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>介绍了工程网站需要的两个关键技术：Node.js和Vue.js。</p>
+<p>其中，Node.js分为两部分来介绍：纯Node.js和Node.js框架（Express）</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01.%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%87%86%E5%A4%87.html" class="btn btn-neutral float-left" title="1. 开发一个网站的准备" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html" class="btn btn-neutral float-right" title="3. 项目开发准备" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

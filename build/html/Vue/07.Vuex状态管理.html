@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7. Vuex状态管理 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="8. Vue的异步请求" href="08.Vue%E7%9A%84%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82.html" />
+    <link rel="prev" title="6. Vue-Router路由" href="06.Vue-Router%E8%B7%AF%E7%94%B1.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js企业开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.Vue%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8.html">1. Vue基础入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Vue%E5%86%85%E7%BD%AE%E6%8C%87%E4%BB%A4.html">2. Vue内置指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.Vue%E5%AE%9E%E4%BE%8B%E6%A0%B8%E5%BF%83%E9%80%89%E9%A1%B9.html">3. Vue实例核心选项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.Vue%E5%B7%A5%E7%A8%8B%E5%8C%96%E9%A1%B9%E7%9B%AE.html">4. Vue工程化项目</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Vue%E7%BB%84%E4%BB%B6.html">5. 深入了解Vue组件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue-Router%E8%B7%AF%E7%94%B1.html">6. Vue-Router路由</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7. Vuex状态管理</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">7.1. 1.Vuex的安装和使用</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#npm">7.1.1. 1.1 使用npm安装</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#yarn">7.1.2. 1.2 使用yarn安装</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">7.2. 2.Vuex核心概念</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">7.3. 3.Vuex规范目录结构</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue%E7%9A%84%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82.html">8. Vue的异步请求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%B8%B2%E6%9F%93.html">9. 服务器端渲染</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue3%E6%96%B0%E7%89%B9%E6%80%A7%E8%AF%A6%E8%AE%B2.html">10. Vue3新特性详讲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.TypeScript%E5%85%A5%E9%97%A8.html">11. TypeScript入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.Vite.html">12. Vite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.Vue3%E5%AE%9E%E8%B7%B5.html">13. Vue3 实践</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js企业开发实战</a> &raquo;</li>
+      <li><span class="section-number">7. </span>Vuex状态管理</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue/07.Vuex状态管理.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vuex" id="id4">Vuex状态管理</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id5">1.Vuex的安装和使用</a></p>
+<ul>
+<li><p><a class="reference internal" href="#npm" id="id6">1.1 使用npm安装</a></p></li>
+<li><p><a class="reference internal" href="#yarn" id="id7">1.2 使用yarn安装</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id2" id="id8">2.Vuex核心概念</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id9">3.Vuex规范目录结构</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="vuex">
+<h1><a class="toc-backref" href="#id4"><span class="section-number">7. </span>Vuex状态管理</a><a class="headerlink" href="#vuex" title="Permalink to this headline">¶</a></h1>
+<p>Vuex是一个专为Vue.js应用程序开发的状态管理工具。</p>
+<p>它采用了集中式存储管理应用的所有状态，并以相应的规则保证状态以一种可预测的方式发生变化。</p>
+<p>简单来说，Vuex是一个适用于在Vue项目开发时使用的状态管理工具，如果在一个项目开发过程中频繁地使用组件传参的方式实现数据的同步，那么在项目的扩展、管理和维护方面将是一个灾难。</p>
+<p>为此，Vue为这些被多个组件频繁使用的数据提供了一个统一的管理工具，即Vuex。</p>
+<p>在具有Vuex的Vue项目中，我们只需把这些值定义在Vuex的状态管理对象中，就可以在整个项目的组件内使用。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id5"><span class="section-number">7.1. </span>1.Vuex的安装和使用</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<section id="npm">
+<h3><a class="toc-backref" href="#id6"><span class="section-number">7.1.1. </span>1.1 使用npm安装</a><a class="headerlink" href="#npm" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ npm install vuex@next --save
+</pre></div>
+</div>
+</section>
+<section id="yarn">
+<h3><a class="toc-backref" href="#id7"><span class="section-number">7.1.2. </span>1.2 使用yarn安装</a><a class="headerlink" href="#yarn" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ yarn add vuex@next --save
+</pre></div>
+</div>
+<p>在一个模块化的打包系统中，必须显式地通过Vue.use()来注册Vuex。</p>
+<p><code class="docutils literal notranslate"><span class="pre">/src/store/index.js</span></code>文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createStore</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vuex&#39;</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="n">createStore</span><span class="p">({</span>
+  <span class="n">state</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">getters</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">mutations</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">actions</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">},</span>
+  <span class="n">modules</span><span class="p">:</span> <span class="p">{</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>在<code class="docutils literal notranslate"><span class="pre">main.js</span></code>中</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createApp</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vue&#39;</span>
+<span class="kn">import</span> <span class="nn">App</span> <span class="kn">from</span> <span class="s1">&#39;./App.vue&#39;</span>
+<span class="kn">import</span> <span class="nn">router</span> <span class="kn">from</span> <span class="s1">&#39;./router&#39;</span>
+<span class="kn">import</span> <span class="nn">store</span> <span class="kn">from</span> <span class="s1">&#39;./store&#39;</span>
+<span class="kn">import</span> <span class="nn">ElementPlus</span> <span class="kn">from</span> <span class="s1">&#39;element-plus&#39;</span>
+<span class="kn">import</span> <span class="s1">&#39;element-plus/dist/index.css&#39;</span>
+
+<span class="n">createApp</span><span class="p">(</span><span class="n">App</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">store</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">router</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">ElementPlus</span><span class="p">)</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">7.2. </span>2.Vuex核心概念</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>参考文献</p>
+<p>Vue 状态管理工具-Vuex</p>
+<p><a class="reference external" href="https://juejin.cn/post/7047118350090469412">https://juejin.cn/post/7047118350090469412</a></p>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">7.3. </span>3.Vuex规范目录结构</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>因为把整个store放到index.js中是不合理的，所以需要拆分。示例目录格式如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>├── index.html
+├── main.js
+├── api
+│   └── ... # 抽取出API请求
+├── components
+│   ├── App.vue
+│   └── ...
+└── store
+    ├── index.js          # 我们组装模块并导出 store 的地方
+    ├── actions.js        # 根级别的 action
+    ├── mutations.js      # 根级别的 mutation
+    └── modules
+        ├── cart.js       # 购物车模块
+        └── products.js   # 产品模块
+</pre></div>
+</div>
+<p>对应的内容存放在对应的文件中，在/store/index.js文件中存放并导出store对象。</p>
+<p>state中的数据尽量放到index.js中。而modules中的Astore局部模块状态如果多也可以进行细分。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="06.Vue-Router%E8%B7%AF%E7%94%B1.html" class="btn btn-neutral float-left" title="6. Vue-Router路由" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="08.Vue%E7%9A%84%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82.html" class="btn btn-neutral float-right" title="8. Vue的异步请求" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

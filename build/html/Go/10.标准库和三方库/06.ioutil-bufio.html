@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10.6. ioutil/bufio &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10.7. time" href="07.time.html" />
+    <link rel="prev" title="10.5. strconv" href="05.strconv.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">10. 标准库和三方库</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.strings.html">10.1. strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.bytes.html">10.2. bytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.fmt.html">10.3. fmt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Json.html">10.4. Json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.strconv.html">10.5. strconv</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">10.6. ioutil/bufio</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ioutil">10.6.1. 1.ioutil库</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bufio">10.6.2. 2.bufio库</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="07.time.html">10.7. time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.os-path-filepath.html">10.8. os/path/filepath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.regexp.html">10.9. regexp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.log.html">10.10. log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.reflect-unsafe.html">10.11. reflect/unsafe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.unicode.html">10.12. unicode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.flag%E5%92%8Cgo-flags.html">10.13. flag和go-flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.net-url.html">10.14. net/url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.sort.html">10.15. sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.net-http.html">10.16. net/http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.error.html">10.17. error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.template%E6%A8%A1%E6%9D%BF.html">10.18. template模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.%E6%93%8D%E4%BD%9Cmysql.html">10.19. 操作mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html">10.20. Go语言常用资料及工具详细汇总</a></li>
+<li class="toctree-l3"><a class="reference internal" href="21.Socket%E7%BD%91%E7%BB%9C.html">10.21. Socket网络</a></li>
+<li class="toctree-l3"><a class="reference internal" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html">10.22. go标准库和三方库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.cobra.html">10.23. cobra</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.viper.html">10.24. viper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.math-rand.html">10.25. math-rand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="26.zap-%E6%97%A5%E5%BF%97%E6%A8%A1%E5%9D%97.html">10.26. zap-日志模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">10. </span>标准库和三方库</a> &raquo;</li>
+      <li><span class="section-number">10.6. </span>ioutil/bufio</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/10.标准库和三方库/06.ioutil-bufio.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#ioutil-bufio" id="id13">ioutil/bufio</a></p>
+<ul>
+<li><p><a class="reference internal" href="#ioutil" id="id14">1.ioutil库</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id15">1.1 ioutil常见方法</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id16">1.2 示例-网络请求</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id17">1.3 示例-文件目录操作</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id18">1.4 示例-遍历文件夹</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id19">1.5 通过ioutil包进行文件操作</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id20">1.6 示例代码</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#bufio" id="id21">2.bufio库</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id7" id="id22">2.1 bufio读文件</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id23">2.2 bufio写文件</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="ioutil-bufio">
+<h1><a class="toc-backref" href="#id13"><span class="section-number">10.6. </span>ioutil/bufio</a><a class="headerlink" href="#ioutil-bufio" title="Permalink to this headline">¶</a></h1>
+<p>ioutil库提供了常见的I/O接口，bufio库实现了缓存IO。</p>
+<section id="ioutil">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">10.6.1. </span>1.ioutil库</a><a class="headerlink" href="#ioutil" title="Permalink to this headline">¶</a></h2>
+<p>ioutil标准库中提供了一些常用、方便的IO操作函数</p>
+<p>除了io包可以读写数据，Go语言中还提供了一个辅助的工具包就是ioutil，里面的方法虽然不多，但是都还蛮好用的。</p>
+<p>io库的两个基本接口为Reader和Writer。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Reader</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Read</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Write</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>接口是方法的集合。接口的命名建议采用X_er这种形式。</p>
+<p>接口的具体实现依赖于其他结构体。</p>
+<p>内置的其他很多库都实现了这两个接口</p>
+<img alt="../../_images/image-20220704105915603.png" src="../../_images/image-20220704105915603.png" />
+<p>如何知道是否实现了对应的接口？只需查看具体的结构体是否实现了相应的方法即可。</p>
+<p>以strings的Reader为例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span> <span class="n">Reader</span> <span class="n">struct</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">内含隐藏或非导出字段</span>
+<span class="p">}</span>
+    <span class="n">func</span> <span class="n">NewReader</span><span class="p">(</span><span class="n">s</span> <span class="n">string</span><span class="p">)</span> <span class="o">*</span><span class="n">Reader</span>
+    <span class="n">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Reader</span><span class="p">)</span> <span class="n">Len</span><span class="p">()</span> <span class="nb">int</span>
+    <span class="n">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Reader</span><span class="p">)</span> <span class="n">Read</span><span class="p">(</span><span class="n">b</span> <span class="p">[]</span><span class="n">byte</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="nb">int</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span>
+    <span class="n">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Reader</span><span class="p">)</span> <span class="n">ReadByte</span><span class="p">()</span> <span class="p">(</span><span class="n">b</span> <span class="n">byte</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span>
+    <span class="n">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Reader</span><span class="p">)</span> <span class="n">UnreadByte</span><span class="p">()</span> <span class="n">error</span>
+    <span class="n">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Reader</span><span class="p">)</span> <span class="n">ReadRune</span><span class="p">()</span> <span class="p">(</span><span class="n">ch</span> <span class="n">rune</span><span class="p">,</span> <span class="n">size</span> <span class="nb">int</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span>
+    <span class="n">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Reader</span><span class="p">)</span> <span class="n">UnreadRune</span><span class="p">()</span> <span class="n">error</span>
+    <span class="n">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Reader</span><span class="p">)</span> <span class="n">Seek</span><span class="p">(</span><span class="n">offset</span> <span class="n">int64</span><span class="p">,</span> <span class="n">whence</span> <span class="nb">int</span><span class="p">)</span> <span class="p">(</span><span class="n">int64</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+    <span class="n">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Reader</span><span class="p">)</span> <span class="n">ReadAt</span><span class="p">(</span><span class="n">b</span> <span class="p">[]</span><span class="n">byte</span><span class="p">,</span> <span class="n">off</span> <span class="n">int64</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="nb">int</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span>
+    <span class="n">func</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span><span class="n">Reader</span><span class="p">)</span> <span class="n">WriteTo</span><span class="p">(</span><span class="n">w</span> <span class="n">io</span><span class="o">.</span><span class="n">Writer</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="n">int64</span><span class="p">,</span> <span class="n">err</span> <span class="n">error</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Reader有Read方法，与io库中Reader的Read方法带有相同的参数和返回值，所以strings库的Reader实现了io库的Reader接口。</p>
+<section id="id1">
+<h3><a class="toc-backref" href="#id15">1.1 ioutil常见方法</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// Discard 是一个 io.Writer 接口,调用它的 Write 方法将不做任何事情,</span>
+<span class="c1">// 并且始终成功返回.</span>
+<span class="kd">var</span> <span class="nx">Discard</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span> <span class="p">=</span> <span class="nx">devNull</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">// ReadAll 读取 r 中的所有数据,返回读取的数据和遇到的错误.</span>
+<span class="c1">// 如果读取成功，则 err 返回 nil,而不是 EOF，因为 ReadAll 定义为读取</span>
+<span class="c1">// 所有数据,所以不会把 EOF 当做错误处理.</span>
+<span class="kd">func</span> <span class="nx">ReadAll</span><span class="p">(</span><span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+
+<span class="c1">// ReadFile 读取文件中的所有数据,返回读取的数据和遇到的错误.</span>
+<span class="c1">// 如果读取成功,则 err 返回 nil,而不是 EOF</span>
+<span class="kd">func</span> <span class="nx">ReadFile</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+
+<span class="c1">// WriteFile 向文件中写入数据,写入前会清空文件.</span>
+<span class="c1">// 如果文件不存在,则会以指定的权限创建该文件.</span>
+<span class="c1">// 返回遇到的错误.</span>
+<span class="kd">func</span> <span class="nx">WriteFile</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">perm</span> <span class="nx">os</span><span class="p">.</span><span class="nx">FileMode</span><span class="p">)</span> <span class="kt">error</span>
+
+<span class="c1">// ReadDir 读取指定目录中的所有目录和文件(不包括子目录).</span>
+<span class="c1">// 返回读取到的文件信息列表和遇到的错误,列表是经过排序的.</span>
+<span class="kd">func</span> <span class="nx">ReadDir</span><span class="p">(</span><span class="nx">dirname</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="nx">os</span><span class="p">.</span><span class="nx">FileInfo</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+
+<span class="c1">// NopCloser 将 r 包装为一个 ReadCloser 类型,但 Close 方法不做任何事情.</span>
+<span class="kd">func</span> <span class="nx">NopCloser</span><span class="p">(</span><span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ReadCloser</span>
+
+<span class="c1">// TempFile 在 dir 目录中创建一个以 prefix 为前缀的临时文件,并将其以读写模式打开.</span>
+<span class="c1">// 返回创建的文件对象和遇到的错误.</span>
+<span class="c1">// 如果 dir 为空,则在默认的临时目录中创建文件(参见 os.TempDir),多次</span>
+<span class="c1">// 调用会创建不同的临时文件,调用者可以通过 f.Name() 获取文件的完整路径.</span>
+<span class="c1">// 调用本函数所创建的临时文件,应该由调用者自己删除.</span>
+<span class="kd">func</span> <span class="nx">TempFile</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">prefix</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+
+<span class="c1">// TempDir 功能同 TempFile,只不过创建的是目录,返回目录的完整路径.</span>
+<span class="kd">func</span> <span class="nx">TempDir</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">prefix</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3><a class="toc-backref" href="#id16">1.2 示例-网络请求</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">IoUsage</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">url</span> <span class="o">:=</span> <span class="s">&quot;http://httpbin.org/anything?name=xix&quot;</span>
+    <span class="nx">request</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">NewRequest</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">MethodPost</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="s">`{&quot;name&quot;:&quot;XieXie&quot;}`</span><span class="p">))</span>
+    <span class="nx">client</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">DefaultClient</span>
+    <span class="nx">response</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Do</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">by</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">by</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id17">1.3 示例-文件目录操作</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// ioutil.ReadFile读取整个文件</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 读取文件</span>
+    <span class="nx">content</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadFile</span><span class="p">(</span><span class="s">&quot;./main.go&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;read file failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">content</span><span class="p">))</span>
+
+    <span class="c1">// 写入文件</span>
+    <span class="nx">str</span> <span class="o">:=</span> <span class="s">&quot;hello world&quot;</span>
+    <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">WriteFile</span><span class="p">(</span><span class="s">&quot;./test.txt&quot;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">str</span><span class="p">),</span> <span class="mo">0644</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;write file failed, err: &quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 创建临时目录</span>
+    <span class="nx">dir</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">TempDir</span><span class="p">(</span><span class="s">&quot;./&quot;</span><span class="p">,</span> <span class="s">&quot;Test&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Remove</span><span class="p">(</span><span class="nx">dir</span><span class="p">)</span> <span class="c1">// 用完删除</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nx">dir</span><span class="p">)</span>
+
+    <span class="c1">// 创建临时文件</span>
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">TempFile</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="s">&quot;Test&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Remove</span><span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">Name</span><span class="p">())</span> <span class="c1">// 用完删除</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Name</span><span class="p">())</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id18">1.4 示例-遍历文件夹</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;log&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">listFiles</span><span class="p">(</span><span class="nx">dirname</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">level</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// level用来记录当前递归的层次</span>
+    <span class="c1">// 生成有层次感的空格</span>
+    <span class="nx">s</span> <span class="o">:=</span> <span class="s">&quot;|--&quot;</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">level</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="nx">s</span> <span class="p">=</span> <span class="s">&quot;|   &quot;</span> <span class="o">+</span> <span class="nx">s</span>
+    <span class="p">}</span>
+
+    <span class="nx">fileInfos</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadDir</span><span class="p">(</span><span class="nx">dirname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">fi</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">fileInfos</span> <span class="p">{</span>
+        <span class="nx">filename</span> <span class="o">:=</span> <span class="nx">dirname</span> <span class="o">+</span> <span class="s">&quot;\\&quot;</span> <span class="o">+</span> <span class="nx">fi</span><span class="p">.</span><span class="nx">Name</span><span class="p">()</span> <span class="c1">// windows</span>
+        <span class="c1">// filename := dirname + &quot;/&quot; + fi.Name()  // linux</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s%s\n&quot;</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">fi</span><span class="p">.</span><span class="nx">IsDir</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// 继续遍历fi这个目录</span>
+            <span class="nx">listFiles</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">level</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">dirname</span> <span class="o">:=</span> <span class="s">&quot;F:\\Linux仓库&quot;</span>
+    <span class="nx">listFiles</span><span class="p">(</span><span class="nx">dirname</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id19">1.5 通过ioutil包进行文件操作</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">filenName1</span> <span class="o">:=</span> <span class="s">&quot;blockchain.txt&quot;</span>
+    <span class="c1">// 打开文件</span>
+    <span class="nx">data</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadFile</span><span class="p">(</span><span class="nx">filenName1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;文件打开异常&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="nx">filenName2</span> <span class="o">:=</span> <span class="s">&quot;block2.txt&quot;</span>
+    <span class="nx">s1</span> <span class="o">:=</span> <span class="s">&quot;胡建力陪你学golang&quot;</span>
+    <span class="c1">// 写入文件</span>
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">WriteFile</span><span class="p">(</span><span class="nx">filenName2</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s1</span><span class="p">),</span> <span class="mo">0777</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;文件写入异常&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;文件写入ok&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">filenName2</span> <span class="p">=</span> <span class="s">&quot;block2.txt_back&quot;</span>
+    <span class="c1">// 文件复制</span>
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">WriteFile</span><span class="p">(</span><span class="nx">filenName2</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">ModePerm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;文件复制异常&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;文件复制ok&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 遍历目录</span>
+    <span class="nx">dirName</span> <span class="o">:=</span> <span class="s">&quot;./&quot;</span>
+    <span class="nx">fileinfos</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadDir</span><span class="p">(</span><span class="nx">dirName</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;目录遍历异常&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">fileinfos</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Name</span><span class="p">(),</span> <span class="nx">v</span><span class="p">.</span><span class="nx">IsDir</span><span class="p">(),</span> <span class="nx">v</span><span class="p">.</span><span class="nx">Size</span><span class="p">(),</span> <span class="nx">v</span><span class="p">.</span><span class="nx">ModTime</span><span class="p">())</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 创建目录</span>
+    <span class="nx">filename</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">TempDir</span><span class="p">(</span><span class="s">&quot;./&quot;</span><span class="p">,</span> <span class="s">&quot;temp&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;创建目录失败&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 创建文件</span>
+    <span class="nx">file1</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">TempFile</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="s">&quot;temp&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;创建文件失败&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">file1</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">file1</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id20">1.6 示例代码</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//NopCloser返回一个读取对象的ReadCloser接口</span>
+    <span class="c1">//用于提供Close方法</span>
+    <span class="nx">r</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span>
+    <span class="nx">rcl</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">NopCloser</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span>
+    <span class="k">defer</span> <span class="nx">rcl</span><span class="p">.</span><span class="nx">Close</span><span class="p">();</span>
+
+    <span class="c1">//ReadAll读取所有数据</span>
+    <span class="nx">r2</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="s">&quot;1234567890&quot;</span><span class="p">);</span>
+    <span class="nx">p</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">r2</span><span class="p">);</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">p</span><span class="p">));</span>  <span class="c1">// 1234567890</span>
+
+    <span class="c1">//读取目录下信息</span>
+    <span class="nx">fileInfo</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadDir</span><span class="p">(</span><span class="s">&quot;./&quot;</span><span class="p">);</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">fileInfo</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">Name</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="c1">//读取整个文件数据</span>
+    <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadFile</span><span class="p">(</span><span class="s">&quot;E:/go/project/test.log&quot;</span><span class="p">);</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+
+    <span class="c1">//向指定文件写入数据，如果文件不存在，则创建文件，写入数据之前清空文件</span>
+    <span class="nx">ioutil</span><span class="p">.</span><span class="nx">WriteFile</span><span class="p">(</span><span class="s">&quot;./xxx.txt&quot;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;hello,world&quot;</span><span class="p">),</span> <span class="mo">0655</span><span class="p">);</span>
+
+    <span class="c1">//在当前目录下，创建一个以test为前缀的临时文件夹，并返回文件夹路径</span>
+    <span class="nx">name</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">TempDir</span><span class="p">(</span><span class="s">&quot;./&quot;</span><span class="p">,</span> <span class="s">&quot;test&quot;</span><span class="p">);</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+
+    <span class="c1">//在当前目录下，创建一个以test为前缀的文件，并以读写模式打开文件，并返回os.File指针</span>
+    <span class="nx">file</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">TempFile</span><span class="p">(</span><span class="s">&quot;./&quot;</span><span class="p">,</span> <span class="s">&quot;test&quot;</span><span class="p">);</span>
+    <span class="nx">file</span><span class="p">.</span><span class="nx">WriteString</span><span class="p">(</span><span class="s">&quot;写入字符串&quot;</span><span class="p">);</span>
+    <span class="nx">file</span><span class="p">.</span><span class="nx">Close</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="bufio">
+<h2><a class="toc-backref" href="#id21"><span class="section-number">10.6.2. </span>2.bufio库</a><a class="headerlink" href="#bufio" title="Permalink to this headline">¶</a></h2>
+<p>bufio实现了带缓冲的I/O操作，达到高效读写。</p>
+<p>bufio包对io包下的对象Reader、Writer进行包装，分别实现了io.Reader和io.Writer接口，提供了数据缓冲功能，能够一定程度减少大块数据读写带来的开销，所以bufio比直接读写更快。</p>
+<p>把文件读取进缓冲区之后，再读取的时候就可以避免文件系统的输出，从而提高速度；在进行写操作时，先把文件写入缓冲区，然后由缓冲区写入文件系统。</p>
+<p>有人可能会困惑：直接把“内容—文件”和“内容—缓冲区—文件”相比，缓冲区似乎没有起到作用。其实在生活中也有这样的例子，比如每当家里产生垃圾的时候，不会有人马上去楼下倒垃圾，因为这样反复地上下楼非常麻烦，通常家里都会准备个小垃圾桶，等垃圾桶装满了之后把一批垃圾一起倒掉。用计算机的思想来看，垃圾桶就充当了缓冲区的角色。</p>
+<section id="id7">
+<h3><a class="toc-backref" href="#id22">2.1 bufio读文件</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p><strong>NewReader()和NewReaderSize()</strong></p>
+<p>这两个方法返回一个新的Reader，用于读取文件。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* bufio.NewReader()函数 */</span>
+<span class="kd">func</span> <span class="nx">NewReader</span><span class="p">(</span><span class="nx">rd</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="o">*</span><span class="nx">Reader</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">NewReaderSize</span><span class="p">(</span><span class="nx">rd</span><span class="p">,</span> <span class="nx">defaultBufSize</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// 调用了NewReaderSize函数,设置了默认的BufSize(4096)</span>
+
+<span class="cm">/* bufio.NewReaderSize() */</span>
+<span class="kd">func</span> <span class="nx">NewReaderSize</span><span class="p">(</span><span class="nx">rd</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">,</span> <span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Reader</span>
+<span class="c1">// 与NewReader的区别是可以手动设置BufSize</span>
+
+<span class="cm">/* Reader */</span>
+<span class="c1">// Reader implements buffering for an io.Reader object.</span>
+<span class="kd">type</span> <span class="nx">Reader</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">buf</span>          <span class="p">[]</span><span class="kt">byte</span>
+    <span class="nx">rd</span>           <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span> <span class="c1">// reader provided by the client</span>
+    <span class="nx">r</span><span class="p">,</span> <span class="nx">w</span>         <span class="kt">int</span>       <span class="c1">// buf read and write positions</span>
+    <span class="nx">err</span>          <span class="kt">error</span>
+    <span class="nx">lastByte</span>     <span class="kt">int</span> <span class="c1">// last byte read for UnreadByte; -1 means invalid</span>
+    <span class="nx">lastRuneSize</span> <span class="kt">int</span> <span class="c1">// size of last rune read for UnreadRune; -1 means invalid</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<section id="id8">
+<h4>bufio文件读取方法<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Read() */</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nx">Read</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="c1">// 当缓存区有内容的时,将缓存区内容全部填入p并清空缓存区;</span>
+<span class="c1">// 当len(p)&gt;len(buf),即要读取的内容比缓存区还要大,直接去文件读取;</span>
+<span class="c1">// 当len(p)&lt;len(buf),即要读取的内容比缓存区小,缓存区从文件读取内容充满缓存区,并将p填满(此时缓存区有剩余内容);</span>
+<span class="c1">// 以后再次读取时缓存区有内容,将缓存区内容全部填入p并清空缓存区(此时和情况1一样).</span>
+
+
+<span class="cm">/* ReadLine() */</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nx">ReadLine</span><span class="p">()</span> <span class="p">(</span><span class="nx">line</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">isPrefix</span> <span class="kt">bool</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="c1">// 每次读取一行文件.</span>
+
+<span class="cm">/* ReadString() */</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nx">ReadString</span><span class="p">(</span><span class="nx">delim</span> <span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="c1">// 按指定字符读取文件.</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h4>读取文件示例<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">ReadFile</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="s">&quot;io_test.txt&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+
+    <span class="nx">rd</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">line</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rd</span><span class="p">.</span><span class="nx">ReadString</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="o">==</span> <span class="nx">err</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id23">2.2 bufio写文件</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p><strong>NewWriter()和NewReaderSize()</strong></p>
+<p>这两个方法返回一个新的Writer，用于写操作。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* bufio.NewWriter()函数 */</span>
+<span class="kd">func</span> <span class="nx">NewWriter</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">)</span> <span class="o">*</span><span class="nx">Writer</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">NewWriterSize</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">defaultBufSize</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// 调用NewWriterSize函数,传入默认的buf(4096)</span>
+
+
+<span class="cm">/* bufio.NewWriterSize()函数 */</span>
+<span class="kd">func</span> <span class="nx">NewWriterSize</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">size</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="nx">Writer</span>
+</pre></div>
+</div>
+<section id="id11">
+<h4>bufio文件写入的方法<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// Write 向b写入p中的数据.</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Writer</span><span class="p">)</span> <span class="nx">Write</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">nn</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+
+<span class="c1">// WriteString 向b中写入字符串s,返回写入字节数量和错误.</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Writer</span><span class="p">)</span> <span class="nx">WriteString</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+
+<span class="c1">// WriteRune 向b写入r的 UTF-8 编码,返回r的编码长度.</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Writer</span><span class="p">)</span> <span class="nx">WriteRune</span><span class="p">(</span><span class="nx">r</span> <span class="kt">rune</span><span class="p">)</span> <span class="p">(</span><span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+
+<span class="c1">// Flush 将缓存中的数据提交到底层的 io.Writer 中.</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Writer</span><span class="p">)</span> <span class="nx">Flush</span><span class="p">()</span> <span class="kt">error</span>
+
+<span class="c1">// Available 返回缓存中未使用的空间的长度.</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Writer</span><span class="p">)</span> <span class="nx">Available</span><span class="p">()</span> <span class="kt">int</span>
+
+<span class="c1">// Buffered 返回缓存中未提交的数据的长度.</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Writer</span><span class="p">)</span> <span class="nx">Buffered</span><span class="p">()</span> <span class="kt">int</span>
+
+<span class="c1">// Reset 将 b 的底层 Writer 重新指定为 w,同时丢弃缓存中的所有数据,复位</span>
+<span class="c1">// 所有标记和错误信息.相当于创建了一个新的 bufio.Writer.</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Writer</span><span class="p">)</span> <span class="nx">Reset</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>写入文件示例<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">file</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">OpenFile</span><span class="p">(</span><span class="s">&quot;xx.txt&quot;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_CREATE</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_TRUNC</span><span class="p">|</span><span class="nx">os</span><span class="p">.</span><span class="nx">O_WRONLY</span><span class="p">,</span> <span class="mo">0666</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;open file failed, err:&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+
+    <span class="nx">writer</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">NewWriter</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="nx">writer</span><span class="p">.</span><span class="nx">WriteString</span><span class="p">(</span><span class="s">&quot;hello world\n&quot;</span><span class="p">)</span> <span class="c1">// 将数据先写入缓存</span>
+    <span class="p">}</span>
+    <span class="nx">writer</span><span class="p">.</span><span class="nx">Flush</span><span class="p">()</span> <span class="c1">// 将缓存中的内容写入文件</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.strconv.html" class="btn btn-neutral float-left" title="10.5. strconv" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.time.html" class="btn btn-neutral float-right" title="10.7. time" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

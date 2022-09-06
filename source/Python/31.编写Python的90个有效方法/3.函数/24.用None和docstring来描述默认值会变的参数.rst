@@ -1,0 +1,117 @@
+.. contents::
+   :depth: 3
+..
+
+用None和docstring来描述默认值会变的参数
+=======================================
+
+有时，我们想把那种不能够提前固定的值，当作关键字参数的默认值。例如，记录日志消息时，默认的时间应该是触发事件的那一刻。
+
+所以，如果调用者没有明确指定时间，那么就默认把调用函数的那一刻当成这条日志的记录时间。
+
+现在试试下面这种写法，假定它能让when参数的默认值随着这个函数每次的执行时间而发生变化。
+
+.. code:: python
+
+   from time import sleep
+   from datetime import datetime
+
+
+   def log(message, when=datetime.now()):
+       print(f"{when}:{message}")
+
+
+   log("Hi there!")
+   sleep(0.1)
+   log("Hello again")
+
+这样写不行。因为datetime.now只执行了一次，所以每条日志的时间戳（timestamp）相同。
+
+*参数的默认值只会在系统加载这个模块的时候，计算一遍，而不会在每次执行时都重新计算*\ ，这通常意味着这些默认值在程序启动后，就已经定下来了。
+
+只要包含这段代码的那个模块已经加载进来，那么when参数的默认值就是加载时计算的那个datetime.now()，系统不会重新计算。
+
+要想在Python里实现这种效果，惯用的办法是把参数的默认值设为None，同时在docstring文档里面写清楚，这个参数为None时，函数会怎么运作。
+
+.. code:: python
+
+   def log(message, when=None):
+       """
+       Args:
+           message: Message to print
+           when: datetime of when the message occurred.
+               Defaults to the present time.
+
+       Returns:
+
+       """
+       if when is None:
+           when = datetime.now()
+       print(f"{when}:{message}")
+
+
+   log("Hi there!")
+   sleep(1)
+   log("Hello again")
+
+例如，我们要写一个函数对采用JSON格式编码的数据做解码。如果无法解码，那么就返回调用时所指定的默认结果，假如调用者当时没有明确指定，那就返回空白的字典。
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther: 18793
+   # Date：2021/10/28 12:00
+   # filename: sample08.py
+   import json
+
+   def decode(data, default=None):
+       """
+       Args:
+           data: JSON data to decode .
+           default: Value to return if decoding fails .
+               Defaults to an empty dictionart .
+       Returns:
+       """
+       try:
+           return json.loads(data)
+       except ValueError:
+           if default is None:
+               default = {}
+           return default
+
+
+   foo = decode("bad data")
+   foo["stuff"] = 5
+   bar = decode("also bad")
+   bar["meep"] = 1
+   print("foo:", foo)
+   print("Bar:", bar)
+   assert foo is not bar
+
+这个思路可以跟类型注解搭配起来。下面这种写法把when参数标注成可选（Optional）值，并限定其类型为datetime。于是，它的取值就只有两种可能，要么是None，要么是datetime对象
+
+::
+
+   from typing import Optional
+
+
+   def log_typed(message: str, when: Optional[datetime] = None) -> None:
+       """
+       Args:
+           message:
+           when:
+
+       Returns:
+       """
+       if when is None:
+           when = datetime.now()
+       print(f"{when}:{message}")
+
+..
+
+   要点:
+
+   -  参数的默认值只会计算一次，也就是在系统把定义函数的那个模块加载进来的时候。所以，如果默认值将来可能由调用方修改（例如{}、[]）或者要随着调用时的情况变化（例如datetime.now()），那么程序就会出现奇怪的效果。
+   -  如果关键字参数的默认值属于这种会发生变化的值，那就应该写成None，并且要在docstring里面描述函数此时的默认行为。
+   -  默认值为None的关键字参数，也可以添加类型注解。

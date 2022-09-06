@@ -1,0 +1,394 @@
+.. contents::
+   :depth: 3
+..
+
+viper
+=====
+
+1.配置工具的选择
+----------------
+
+通常，在一个或多个项目中会有多种格式的配置文件，比如PHP的php.ini文件、Nginx的server.conf文件，那么使用Golang怎么去读取这些不同格式的配置文件呢？
+
+比如常见的有
+JSON文件、INI文件、YAML文件和TOML文件等等。其中这些文件，对应的Golang处理库如下：
+
+-  encoding/json – 标准库中的包，可以处理JSON配置文件，缺点是不能加注释
+-  gcfg&goconfig – 处理INI配置文件
+-  toml – 处理TOML配置文件
+-  viper – 处理JSON, TOML, YAML, HCL以及Java properties配置文件
+
+通常情况下，推荐使用viper库来读取配置文件，虽然它不支持ini格式的配置文件，但我们可以使用goconfig
+或gcfg.v1库读取ini 格式配置文件。
+
+**viper 支持以下功能：**
+
+-  支持Yaml、Json、 TOML、HCL 等格式的配置文件
+-  可以从文件、 io.Reader 、环境变量、cli命令行读取配置
+-  支持自动转换的类型解析
+-  可以远程从Key/Value中读取配置，需要导入 viper/remote 包
+-  监听配置文件。以往我们修改配置文件后需要重启服务生效，而Viper使用watch函数可以让配置自动生效。
+
+2.安装viper
+-----------
+
+.. code:: shell
+
+   $ go get github.com/spf13/viper
+   $ go get github.com/fsnotify/fsnotify
+
+3.使用viper读取JSON配置文件
+---------------------------
+
+假设现在有一份 json 格式的配置文件 config.json
+
+.. code:: json
+
+   {
+     "date": "2019-04-30",
+     "mysql": {
+       "url": "127.0.0.1:3306",
+       "username": "root",
+       "password": "123456"
+     }
+   }
+
+读取json配置文件
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "github.com/spf13/viper"
+       "os"
+   )
+
+   func main() {
+       viper.SetConfigName("config")     // 设置配置文件的名字
+       viper.AddConfigPath(".")           // 添加配置文件所在的路径
+       viper.SetConfigType("json")       // 设置配置文件类型，可选
+       err := viper.ReadInConfig()
+       if err != nil {
+           fmt.Printf("config file error: %s\n", err)
+           os.Exit(1)
+       }
+       urlValue := viper.Get("mysql.url")
+       fmt.Println("mysql url:", urlValue)
+       fmt.Printf("mysql url: %s\nmysql username: %s\nmysql password: %s",
+           viper.Get("mysql.url"), viper.Get("mysql.username"), viper.Get("mysql.password"))
+   }
+
+   // 运行程序，查看效果
+
+   /*
+   mysql url: 127.0.0.1:3306
+   mysql url: 127.0.0.1:3306
+   mysql username: root
+   mysql password: 123456
+   */
+
+4.使用viper读取yaml配置文件
+---------------------------
+
+假设现在有一份yaml格式的配置文件 config_yaml.yaml
+
+.. code:: yaml
+
+   port: 10666
+   mysql:
+     url: "127.0.0.1:3306"
+     username: root
+     password: 123456
+
+读取yaml配置文件
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "github.com/fsnotify/fsnotify"
+       "github.com/spf13/viper"
+       "os"
+   )
+
+   func main() {
+       // viper.SetConfigName("config_yaml")               // 把json文件换成yaml文件，只需要配置文件名 (不带后缀)即可
+       // viper.AddConfigPath(".")                         // 添加配置文件所在的路径
+       // // viper.SetConfigType("json")                   // 设置配置文件类型
+       // err := viper.ReadInConfig()
+
+       // 与上面等效
+       viper.SetConfigFile("config_yaml.yaml")        // 指定配置文件路径，完整名称
+       err := viper.ReadInConfig()               // 读取配置信息
+
+       if err != nil {
+           fmt.Printf("config file error: %s\n", err)
+           os.Exit(1)
+       }
+
+       viper.WatchConfig()           // 监听配置变化
+       viper.OnConfigChange(func(e fsnotify.Event) {
+           fmt.Println("配置发生变更：", e.Name)
+       })
+
+       urlValue := viper.Get("mysql.url")
+       fmt.Println("mysql url:", urlValue)
+       fmt.Printf("mysql url: %s\nmysql username: %s\nmysql password: %s",
+           viper.Get("mysql.url"), viper.Get("mysql.username"), viper.GetString("mysql.password"))
+   }
+
+
+
+   /*
+   mysql url: 127.0.0.1:3306
+   mysql url: 127.0.0.1:3306
+   mysql username: root
+   mysql password: 123456
+   */
+
+5.viper其他重要功能
+-------------------
+
+5.1获取子级配置
+~~~~~~~~~~~~~~~
+
+当配置层级关系较多的时候，有时候我们需要直接获取某个子级的所有配置，可以这样操作：
+
+.. code:: yaml
+
+   app:
+     cache1:
+       max-items: 100
+       item-size: 64
+     cache2:
+       max-items: 200
+       item-size: 80
+
+如果要读取cache1下的max-items，只需要执行viper.Get(“app.cache1.max-items”)就可以了。
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "github.com/fsnotify/fsnotify"
+       "github.com/spf13/viper"
+       "os"
+   )
+
+   func main() {
+       viper.SetConfigName("config_yaml")     // 把json文件换成yaml文件，只需要配置文件名 (不带后缀)即可
+       viper.AddConfigPath(".")           // 添加配置文件所在的路径
+       // viper.SetConfigType("json")       // 设置配置文件类型
+       err := viper.ReadInConfig()
+       if err != nil {
+           fmt.Printf("config file error: %s\n", err)
+           os.Exit(1)
+       }
+
+       viper.WatchConfig()           // 监听配置变化
+       viper.OnConfigChange(func(e fsnotify.Event) {
+           fmt.Println("配置发生变更：", e.Name)
+       })
+
+       urlValue := viper.Get("app.cache1.max-items")
+       fmt.Println("cache1-max-items:", urlValue)
+   }
+
+5.2解析配置-传递给结构体
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+可以将配置绑定到某个结构体、map上，有两个方法可以做到这一点：
+
+.. code:: go
+
+   Unmarshal(rawVal interface{}) : error
+   UnmarshalKey(key string, rawVal interface{}) : error
+
+假设现在有一份yaml格式的配置文件 config.yaml
+
+.. code:: yaml
+
+   port: 3306
+   mysql:
+     url: "127.0.0.1:3306"
+     username: root
+     password: 123456
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "github.com/spf13/viper"
+   )
+
+   type Config struct {
+       Port  int        `mapstructure:"port"`
+       Mysql *MysqlInfo `mapstructure:"mysql"`
+   }
+
+   type MysqlInfo struct {
+       Url      string `mapstructure:"url"`
+       Username string `mapstructure:"username"`
+       Password string `mapstructure:"password"`
+   }
+
+   var config = new(Config)
+   var mysql = new(MysqlInfo)
+
+
+   func main() {
+       viper.SetConfigFile("config.yaml") // 指定配置文件路径
+       err := viper.ReadInConfig()               // 读取配置信息
+       if err != nil {                           // 读取配置信息失败
+           panic(fmt.Errorf("Fatal error config file: %s \n", err))
+       }
+       // 将读取的配置信息保存至全局变量config
+       if err := viper.Unmarshal(config); err != nil {
+           panic(fmt.Errorf("unmarshal conf failed, err:%s \n", err))
+       }
+       fmt.Println(config.Port)        // 3306
+
+       err = viper.UnmarshalKey("mysql", &mysql) // 将配置解析到 mysql 变量
+       if err != nil {
+           panic(fmt.Errorf("unable to decode into struct, %v", err))
+       }
+       fmt.Println(mysql.Url)          // 127.0.0.1:3306
+       fmt.Println(mysql.Password)     // 123456
+   }
+
+5.3 获取值
+~~~~~~~~~~
+
+在Viper中，有一些根据值的类型获取值的方法，存在以下方法：
+
+.. code:: go
+
+   Get(key string) : interface{}
+   GetBool(key string) : bool
+   GetFloat64(key string) : float64
+   GetInt(key string) : int
+   GetString(key string) : string
+   GetStringMap(key string) : map[string]interface{}
+   GetStringMapString(key string) : map[string]string
+   GetStringSlice(key string) : []string
+   GetTime(key string) : time.Time
+   GetDuration(key string) : time.Duration
+   IsSet(key string) : bool
+
+如果 Get 函数未找到值，则返回对应类型的一个零值。可以通过 IsSet()
+方法来检测一个健是否存在。
+
+.. code:: go
+
+   fmt.Println(viper.GetString("port") )
+
+   if viper.GetBool("verbose") {
+       fmt.Println("verbose enabled")
+   }
+
+   fmt.Println(viper.GetBool("port") ) // true
+   fmt.Println(viper.IsSet("port") )   // true
+
+5.4 修改对应的配置
+~~~~~~~~~~~~~~~~~~
+
+.. code:: go
+
+   fmt.Println(viper.GetString("port") )
+   fmt.Println(viper.GetBool("port") )     // true
+   fmt.Println(viper.IsSet("hostname") )   // false
+   viper.Set("port",3306)
+   fmt.Println(viper.GetString("port") )
+
+6.viper读取配置文件
+-------------------
+
+参考文献：
+
+https://learnku.com/articles/33908
+
+7.使用goconfig读取ini配置文件
+-----------------------------
+
+安装goconfig
+
+.. code:: shell
+
+   $ go get github.com/Unknwon/goconfig
+
+假设database.conf配置文件，如下所示
+
+::
+
+   [mysql]
+   username=root
+   password=123456
+   url=127.0.0.1:3306
+   [redis]
+   address=127.0.0.1:6379
+
+使用goconfig读取ini格式配置文件
+
+.. code:: go
+
+   package main
+
+   import (
+       "fmt"
+       "github.com/Unknwon/goconfig"
+       "os"
+   )
+
+   var cfg *goconfig.ConfigFile
+
+   func init() {
+       config, err := goconfig.LoadConfigFile("database.conf")    // 加载配置文件
+       if err != nil {
+           fmt.Println("get config file error")
+           os.Exit(-1)
+       }
+       cfg = config
+   }
+
+   func GlobalConfig() {
+       glob, _ := cfg.GetSection("mysql")      // 读取全部mysql配置
+       fmt.Println(glob)       // map[password:123456 url:127.0.0.1:3306 username:root]
+   }
+
+   func main() {
+       password, _ := cfg.GetValue("mysql", "password")  // 读取单个值
+       fmt.Println(password)           // 123456
+       username, _ := cfg.GetValue("mysql", "username")  // 读取单个值
+       fmt.Println(username)           // root
+       err := cfg.Reload()   // 重载配置
+       if err != nil {
+           fmt.Printf("reload config file error: %s", err)
+       }
+       GlobalConfig()
+   }
+
+加载完全局配置后，该配置长驻内存，需要动态加载的话，使用cfg.Reload()方法。
+
+运行程序，效果如下。
+
+.. code:: bash
+
+   $ go run goconfig.go
+   123456
+   root
+   map[password:123456 url:127.0.0.1:3306 username:root]
+
+8.参考文献
+----------
+
+https://darjun.github.io/2020/01/18/godailylib/viper/
+
+https://www.yuque.com/petrels/ugpuss/xfaf7w#I1EP0

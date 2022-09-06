@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>20.6. Python处理大数据日志文件 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="20.7. 你可能不知道的Python技巧" href="12.%E4%BD%A0%E5%8F%AF%E8%83%BD%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84Python%E6%8A%80%E5%B7%A7.html" />
+    <link rel="prev" title="20.5.2. 整体GUI代码" href="10.%E5%86%99%E4%B8%80%E4%B8%AAwindows%E4%B8%8A%E7%9A%84360%E5%B7%A5%E5%85%B7/02.%E6%95%B4%E4%BD%93GUI%E4%BB%A3%E7%A0%81.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">20. Python进阶学习</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/index.html">20.1. 数据结构和算法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E6%96%87%E6%9C%AC%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2/index.html">20.2. 文本与字符串</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E6%95%B0%E5%AD%97%E6%97%A5%E6%9C%9F%E5%92%8C%E6%97%B6%E9%97%B4/index.html">20.3. 数字日期时间</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F.html">20.4. 冒泡排序</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.%E5%86%99%E4%B8%80%E4%B8%AAwindows%E4%B8%8A%E7%9A%84360%E5%B7%A5%E5%85%B7/index.html">20.5. 写一个windows上的360工具</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">20.6. Python处理大数据日志文件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">20.6.1. 处理日志文件</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="12.%E4%BD%A0%E5%8F%AF%E8%83%BD%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84Python%E6%8A%80%E5%B7%A7.html">20.7. 你可能不知道的Python技巧</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.python3%E5%AE%9E%E7%94%A8%E7%BC%96%E7%A8%8B%E6%8A%80%E5%B7%A7%E8%BF%9B%E9%98%B6/index.html">20.8. python3实用编程技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">20. </span>Python进阶学习</a> &raquo;</li>
+      <li><span class="section-number">20.6. </span>Python处理大数据日志文件</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/21.Python进阶学习/11.Python处理大数据日志文件.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#python" id="id3">Python处理大数据日志文件</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id4">处理日志文件</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id5">分割日志文件</a></p></li>
+<li><p><a class="reference internal" href="#map" id="id6">用Map函数处理小文件</a></p></li>
+<li><p><a class="reference internal" href="#reduce" id="id7">用Reduce函数归集数据</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="python">
+<h1><a class="toc-backref" href="#id3"><span class="section-number">20.6. </span>Python处理大数据日志文件</a><a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id4"><span class="section-number">20.6.1. </span>处理日志文件</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<img alt="../../_images/python_log_chuli0001.png" src="../../_images/python_log_chuli0001.png" />
+<section id="id2">
+<h3><a class="toc-backref" href="#id5">分割日志文件</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>当日志文件很大时，没办法将其打开，就需要对日志进行分割</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/1/7 11:25</span>
+<span class="c1"># filename: 分割日志文件.py</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">os.path</span><span class="o">,</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">FileSplit</span><span class="p">(</span><span class="n">sourceFile</span><span class="p">,</span> <span class="n">targetFolder</span><span class="p">):</span>
+    <span class="n">sFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">sourceFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># 每个小文件中保存100000条数据</span>
+    <span class="n">dataLine</span> <span class="o">=</span> <span class="n">sFile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="n">tempData</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 缓存列表</span>
+    <span class="n">fileNum</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">targetFolder</span><span class="p">):</span>  <span class="c1"># 如果目标目录不存在，则创建</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">targetFolder</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">dataLine</span><span class="p">:</span>  <span class="c1"># 有数据开始读取</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+            <span class="n">tempData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataLine</span><span class="p">)</span>  <span class="c1"># 将一行数据添加到列表中</span>
+            <span class="n">dataLine</span> <span class="o">=</span> <span class="n">sFile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dataLine</span><span class="p">:</span>  <span class="c1"># 没有数据需要保存</span>
+                <span class="k">break</span>
+        <span class="n">tFilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetFolder</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sourceFile</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fileNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
+        <span class="n">tFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">tFilename</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span>  <span class="c1"># 创建小文件</span>
+        <span class="n">tFile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">tempData</span><span class="p">)</span>  <span class="c1"># 将列表保存到文件中</span>
+        <span class="n">tFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">tempData</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 清空缓存列表</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">tFilename</span> <span class="o">+</span> <span class="s2">&quot;创建于：&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()))</span>
+        <span class="n">fileNum</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">sFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">FileSplit</span><span class="p">(</span><span class="s2">&quot;access.log&quot;</span><span class="p">,</span> <span class="s2">&quot;access&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>·
+设置分割文件要保存数据的数量，并设置一个空列表作为缓存用来保存分割文件的数据</p>
+<p>·
+打开大的文件，逐行读取数据，再将其添加到缓存列表中，当达到分割文件保存数量时，将缓存列表的数据写入文件</p>
+<p>· 清空缓存列表。继续从大的日志文件中读入数据，重复前面的操作。</p>
+</section>
+<section id="map">
+<h3><a class="toc-backref" href="#id6">用Map函数处理小文件</a><a class="headerlink" href="#map" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/1/7 11:37</span>
+<span class="c1"># filename: Map函数处理小文件.py</span>
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">os.path</span><span class="o">,</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<span class="k">def</span> <span class="nf">Map</span><span class="p">(</span><span class="n">sourceFile</span><span class="p">,</span> <span class="n">targetFolder</span><span class="p">):</span>
+    <span class="n">sFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">sourceFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">dataLine</span> <span class="o">=</span> <span class="n">sFile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="n">tempData</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># 缓存列表</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">targetFolder</span><span class="p">):</span>  <span class="c1"># 如果目标目录不存在，则创建</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">targetFolder</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">dataLine</span><span class="p">:</span>  <span class="c1"># 有数据开始读取</span>
+        <span class="n">p_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(GET|POST)\s(.*?)\sHTTP/1.[01]]&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>  <span class="c1"># 使用正则表达式解析数据</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">p_re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">dataLine</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">visitUrl</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">visitUrl</span> <span class="ow">in</span> <span class="n">tempData</span><span class="p">:</span>
+                <span class="n">tempData</span><span class="p">[</span><span class="n">visitUrl</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tempData</span><span class="p">[</span><span class="n">visitUrl</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">dataLine</span> <span class="o">=</span> <span class="n">sFile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c1"># 读入下一行数据</span>
+    <span class="n">sFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">t_List</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tempData</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">t_List</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">tFilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetFolder</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sourceFile</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_map.txt&quot;</span><span class="p">)</span>
+    <span class="n">tFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">tFilename</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span>
+    <span class="n">tFile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">t_List</span><span class="p">)</span>
+    <span class="n">tFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">Map</span><span class="p">(</span><span class="s2">&quot;access</span><span class="se">\\</span><span class="s2">access.log1.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;access&quot;</span><span class="p">)</span>
+    <span class="n">Map</span><span class="p">(</span><span class="s2">&quot;access</span><span class="se">\\</span><span class="s2">access.log2.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;access&quot;</span><span class="p">)</span>
+    <span class="n">Map</span><span class="p">(</span><span class="s2">&quot;access</span><span class="se">\\</span><span class="s2">access.log3.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;access&quot;</span><span class="p">)</span>
+    <span class="n">Map</span><span class="p">(</span><span class="s2">&quot;access</span><span class="se">\\</span><span class="s2">access.log4.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;access&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>·定义一个字典，用字典来保存访问页面和访问量。</p>
+<p>· 用正则提取页面地址</p>
+<p>·
+判断字典中是否有此键，若有在此键的值上加一，若没有则新建一个键，并设置访问量为1</p>
+<p>· 对字典进行排序后加入到列表中</p>
+<p>· 将列表数据写入到新的_map.txt文件中</p>
+</section>
+<section id="reduce">
+<h3><a class="toc-backref" href="#id7">用Reduce函数归集数据</a><a class="headerlink" href="#reduce" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/1/7 12:44</span>
+<span class="c1"># filename: Reduce归集处理.py</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="k">def</span> <span class="nf">Reduce</span><span class="p">(</span><span class="n">sourceFolder</span><span class="p">,</span> <span class="n">targetFolder</span><span class="p">):</span>
+    <span class="n">tempData</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># 缓存列表</span>
+    <span class="n">p_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(.*?)(\d{1,}$)&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>  <span class="c1"># 用正则表达式解析数据</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">sourceFolder</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_map.txt&quot;</span><span class="p">):</span>  <span class="c1"># 是reduce文件</span>
+                <span class="n">sFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+                <span class="n">dataLine</span> <span class="o">=</span> <span class="n">sFile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="c1"># 将数据装入字典</span>
+                <span class="k">while</span> <span class="n">dataLine</span><span class="p">:</span>  <span class="c1"># 有数据</span>
+                    <span class="n">subdata</span> <span class="o">=</span> <span class="n">p_re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">dataLine</span><span class="p">)</span>  <span class="c1"># 用空格分割数据</span>
+                    <span class="k">if</span> <span class="n">subdata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">tempData</span><span class="p">:</span>
+                        <span class="n">tempData</span><span class="p">[</span><span class="n">subdata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">subdata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">tempData</span><span class="p">[</span><span class="n">subdata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">subdata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">dataLine</span> <span class="o">=</span> <span class="n">sFile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c1"># 读入下一行数据</span>
+
+    <span class="n">t_List</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># 对字典进行排序并装入列表</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tempData</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">t_List</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 最后将列表输出到xxx_reduce.txt文件</span>
+    <span class="n">tFilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">targetFolder</span><span class="p">,</span> <span class="n">targetFolder</span> <span class="o">+</span> <span class="s2">&quot;_reduce.txt&quot;</span><span class="p">)</span>
+    <span class="n">tFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">tFilename</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span>
+    <span class="n">tFile</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">t_List</span><span class="p">)</span>
+    <span class="n">tFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">Reduce</span><span class="p">(</span><span class="s2">&quot;access&quot;</span><span class="p">,</span> <span class="s2">&quot;access&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>· 定义一个空字典，用来归并所有页面访问量数据</p>
+<p>· 使用os.walk循环目录，找到”_map.txt”的文件进行处理</p>
+<p>·
+逐个读入”_map.txt”文件，将数据装入字典，进行排序后，传入列表中，最后将列表输出到文件中。</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="10.%E5%86%99%E4%B8%80%E4%B8%AAwindows%E4%B8%8A%E7%9A%84360%E5%B7%A5%E5%85%B7/02.%E6%95%B4%E4%BD%93GUI%E4%BB%A3%E7%A0%81.html" class="btn btn-neutral float-left" title="20.5.2. 整体GUI代码" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="12.%E4%BD%A0%E5%8F%AF%E8%83%BD%E4%B8%8D%E7%9F%A5%E9%81%93%E7%9A%84Python%E6%8A%80%E5%B7%A7.html" class="btn btn-neutral float-right" title="20.7. 你可能不知道的Python技巧" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

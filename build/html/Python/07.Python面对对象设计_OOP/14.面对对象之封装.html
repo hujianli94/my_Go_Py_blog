@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7.14. 面对对象之封装特性 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="7.15. 类的高级特性" href="15.%E7%B1%BB%E7%9A%84%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7.html" />
+    <link rel="prev" title="7.13. 方法的动态特性" href="13.%E6%96%B9%E6%B3%95%E7%9A%84%E5%8A%A8%E6%80%81%E7%89%B9%E6%80%A7.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">7. Python面对对象设计_OOP</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E4%BB%80%E4%B9%88%E6%98%AF%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1.html">7.1. 什么是面对对象设计</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%B1%BB%E7%9A%84%E6%96%B9%E6%B3%95.html">7.2. 类的方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E7%B1%BB%E4%B8%AD%E7%9A%84__init__%E6%96%B9%E6%B3%95.html">7.3. 类中的__init__方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04%E4%B8%80%E4%B8%AA%E5%9F%BA%E7%A1%80%E6%9C%89%E5%B1%9E%E6%80%A7%E5%92%8C%E6%96%B9%E6%B3%95%E7%9A%84%E7%B1%BB.html">7.4. 一个基础有方法和属性的类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E7%B1%BB%E4%B8%AD%E5%8F%AF%E8%B0%83%E7%94%A8%E8%87%AA%E5%B7%B1%E6%96%B9%E6%B3%95%E5%92%8C%E5%A4%96%E9%83%A8%E5%87%BD%E6%95%B0.html">7.5. 类中调用自身方法和函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E7%B1%BB%E5%B1%9E%E6%80%A7%E5%92%8C%E5%AE%9E%E4%BE%8B%E5%B1%9E%E6%80%A7.html">7.6. 类属性和实例属性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E7%B1%BB%E6%96%B9%E6%B3%95%E3%80%81%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95%E3%80%81%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95.html">7.7. 类方法、静态方法、实例方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.property%E8%A3%85%E9%A5%B0%E5%99%A8%EF%BC%8C%E5%B0%86%E6%96%B9%E6%B3%95%E8%BD%AC%E4%B8%BA%E5%B1%9E%E6%80%A7%2C%E5%8A%A8%E6%80%81%E5%B1%9E%E6%80%A7.html">7.8. property装饰器，将方法转为属性,动态属性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E5%AD%90%E7%B1%BB%E7%BB%A7%E6%89%BF%E7%88%B6%E7%B1%BB%E5%90%8E%E8%BF%9B%E8%A1%8C%E6%96%B9%E6%B3%95%E9%87%8D%E5%86%99.html">7.9. 子类继承父类后方法重写</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.python%E7%9A%84%E6%A0%B9%E7%B1%BB.html">7.10. python的根类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF.html">7.11. 类的继承</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.%E6%9E%9A%E4%B8%BE%E7%B1%BB.html">7.12. 枚举类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.%E6%96%B9%E6%B3%95%E7%9A%84%E5%8A%A8%E6%80%81%E7%89%B9%E6%80%A7.html">7.13. 方法的动态特性</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">7.14. 面对对象之封装特性</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">7.14.1. 为属性添加限制，访问限制（隐藏和封装）</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="15.%E7%B1%BB%E7%9A%84%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7.html">7.15. 类的高级特性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="16.%E4%B8%80%E4%BA%9B%E9%AD%94%E6%B3%95%E6%96%B9%E6%B3%95.html">7.16. 一些魔法方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="17.%E7%B1%BB%E7%9A%84%E5%8F%8D%E5%B0%84%EF%BC%8C%E8%AE%BE%E7%BD%AE%E3%80%81%E5%88%A0%E9%99%A4%E3%80%81%E6%A3%80%E6%B5%8B.html">7.17. 类的检测、判断、设置、删除、获取</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.%E5%A4%9A%E6%80%81-%E9%B8%AD%E5%AD%90%E7%B1%BB%E5%9E%8B.html">7.18. 多态-鸭子类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.%E7%B1%BB%E5%B1%9E%E6%80%A7%E6%8F%8F%E8%BF%B0%E7%AC%A6.html">7.19. 类属性描述符</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E7%B1%BB%E7%A4%BA%E4%BE%8B.html">7.20. 一个简单的类的例子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="21.%E4%BA%BA%E5%BC%80%E6%9E%AA%E5%B0%84%E5%87%BB%E5%AD%90%E5%BC%B9_OOP.html">7.21. 人开枪射击子弹_OOP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="22.%E7%BB%84%E5%90%88.html">7.22. 组合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.%E6%89%A9%E5%B1%95%E5%88%97%E8%A1%A8%E3%80%81%E5%AD%97%E5%85%B8.html">7.23. 扩展列表、字典</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95.html">7.24. 工厂方法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">7. </span>Python面对对象设计_OOP</a> &raquo;</li>
+      <li><span class="section-number">7.14. </span>面对对象之封装特性</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/07.Python面对对象设计_OOP/14.面对对象之封装.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id8">面对对象之封装特性</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id9">为属性添加限制，访问限制（隐藏和封装）</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id10">私有属性设置说明</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id11">私有属性的保护和设置</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id12">代码示例2</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id8"><span class="section-number">7.14. </span>面对对象之封装特性</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<section id="id2">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">7.14.1. </span>为属性添加限制，访问限制（隐藏和封装）</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>隐藏类的实现细节</p></li>
+<li><p>让使用者只能通过事先预定的方法来访问数据，可以在方法里面加入控制逻辑，限制对属性的不合理访问</p></li>
+<li><p>可以进行数据检查，有利于保证数据的完整性</p></li>
+<li><p>便于修改，提高代码的可维护性</p></li>
+</ul>
+<p>良好的封装，有两个方面： *
+将对象的属性和实现细节隐藏起来，不允许外部直接访问 *
+把方法暴露出来，让方法控制对这些属性进行安全的访问和操作</p>
+<p>该暴露的暴露出来，该隐藏的隐藏起来</p>
+<p>eg</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/5/10 16:59</span>
+<span class="c1"># filename: 封装.py</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;示范隐藏的hide方法&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__name</span>
+
+    <span class="k">def</span> <span class="nf">setname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">&lt;</span><span class="mi">3</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;用户名长度必须在3~8之间&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getname</span><span class="p">,</span><span class="n">setname</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span> <span class="nf">setage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">age</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">age</span> <span class="o">&lt;</span> <span class="mi">18</span> <span class="ow">or</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="mi">70</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;用户年龄必须在18~80之间&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__age</span> <span class="o">=</span> <span class="n">age</span>
+
+    <span class="k">def</span> <span class="nf">getage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__age</span>
+
+    <span class="n">age</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getage</span><span class="p">,</span> <span class="n">setage</span><span class="p">)</span>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">User</span><span class="p">()</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;hujianli&quot;</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">19</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">age</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">_User__hide</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>eg</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># !/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/5/18 7:38</span>
+<span class="c1"># filename: 封装性,私有方法和私有属性.py</span>
+<span class="k">class</span> <span class="nc">Animal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">sex</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sex</span> <span class="o">=</span> <span class="n">sex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__weight</span> <span class="o">=</span> <span class="n">weight</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__weight</span> <span class="o">+=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__run</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;eat.....&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        私有方法</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__weight</span> <span class="o">-=</span> <span class="mf">0.01</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;run.....&quot;</span><span class="p">)</span>
+
+
+<span class="n">a1</span> <span class="o">=</span> <span class="n">Animal</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span>
+<span class="c1"># print(dir(a1))</span>
+<span class="n">a1</span><span class="o">.</span><span class="n">eat</span><span class="p">()</span>
+<span class="c1"># a1.run()            #会报错，私有方法不能直接调用</span>
+<span class="c1"># a1._Animal__run()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">a1</span><span class="o">.</span><span class="n">_Animal__weight</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>输出结果：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run</span><span class="o">.....</span>
+<span class="n">eat</span><span class="o">.....</span>
+<span class="mf">10.49</span>
+</pre></div>
+</div>
+<section id="id3">
+<h3><a class="toc-backref" href="#id10">私有属性设置说明</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>_foo        #protected （保护类型）的成员，只允许类本身和子类可以访问，
+单前置下划线,私有化属性或方法，禁止通过from modules import *导入,但是类对象和子类可以访问
+
+__foo       #使用类型的成员，只允许定义它类本身可以访问，不可以通过实例名称来访问，
+需要使用dir()查看后访问。通过“实例名.类名__xxxx”方式访问。
+
+__foo__     #系统定义的名字，特殊的方法
+</pre></div>
+</div>
+<p>所有双下划线“__”开始命名的成员都为私有成员。</p>
+<p>类的成员与下划线总结：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>_name、_name_、_name__:建议性的私有成员，不要在外部访问。
+__name、 __name_ :强制的私有成员，但是你依然可以蛮横地在外部危险访问。
+__name__:特殊成员，与私有性质无关，例如__doc__。
+name_、name__:没有任何特殊性，普通的标识符，但最好不要这么起名。
+</pre></div>
+</div>
+<section id="id4">
+<h4>代码示例 1<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Swan</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    天鹅类</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">_neck_swan</span> <span class="o">=</span> <span class="s1">&#39;天鹅的脖子很长&#39;</span>      <span class="c1">#受保护类型的属性</span>
+    <span class="n">__neck_swan2</span> <span class="o">=</span> <span class="s1">&#39;天鹅的脖子很长&#39;</span>      <span class="c1">#私有类型的属性</span>
+
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;这是构造方法中受到保护类型的属性&#39;</span><span class="p">,</span> <span class="n">Swan</span><span class="o">.</span><span class="n">__neck_swan2</span><span class="p">)</span>  <span class="c1">#访问保护类型的属性</span>
+
+    <span class="k">def</span> <span class="nf">my</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;my方法: &quot;</span><span class="p">,</span> <span class="n">Swan</span><span class="o">.</span><span class="n">__neck_swan2</span><span class="p">)</span>
+
+<span class="n">swan</span> <span class="o">=</span> <span class="n">Swan</span><span class="p">()</span>   <span class="c1">#创建Swan类的实例(对象)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;直接访问:&#39;</span><span class="p">,</span> <span class="n">swan</span><span class="o">.</span><span class="n">_neck_swan</span><span class="p">)</span> <span class="c1">#通过实例类型来访问受保护类型的属性</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">swan1</span> <span class="o">=</span> <span class="n">Swan</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;私有类型的属性： &#39;</span><span class="p">,</span> <span class="n">swan1</span><span class="o">.</span><span class="n">_Swan__neck_swan2</span><span class="p">)</span>
+
+<span class="n">swan1</span><span class="o">.</span><span class="n">_Swan__neck_swan2</span> <span class="o">=</span> <span class="s2">&quot;我修改了私有属性,天鹅的脖子很很很长&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;修改私有属性后：&#39;</span><span class="p">,</span><span class="n">swan1</span><span class="o">.</span><span class="n">_Swan__neck_swan2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="n">swan1</span><span class="o">.</span><span class="n">my</span><span class="p">()</span>      <span class="c1">#修改的私有属性，在方法中不会生效</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h4>代码示例 2<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">要让内部的属性不被外部直接访问</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;run&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">food</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;eat &quot;</span> <span class="o">+</span> <span class="n">food</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">age</span><span class="p">,</span><span class="n">height</span><span class="p">,</span><span class="n">weight</span><span class="p">,</span><span class="n">money</span><span class="p">,</span><span class="n">input_hu</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__money</span> <span class="o">=</span> <span class="n">money</span>  <span class="c1">#此属性已经变为&#39;_Person__money&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__input__</span> <span class="o">=</span> <span class="n">input_hu</span>
+
+    <span class="c1">#通过内部的方法，去修改私有属性</span>
+    <span class="c1">#通过自定义的方法实现对私有属性的赋值与取值</span>
+    <span class="k">def</span> <span class="nf">set_Money</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">money</span><span class="p">):</span>
+        <span class="c1">#数据的过滤</span>
+        <span class="k">if</span> <span class="n">money</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">money</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__money</span> <span class="o">=</span> <span class="n">money</span>
+
+    <span class="k">def</span> <span class="nf">get_Money</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__money</span>
+
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;这里是析构函数&quot;</span><span class="p">)</span>
+
+
+<span class="n">per</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">per</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">Person</span><span class="p">))</span>
+<span class="n">per</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="mi">18</span>
+
+<span class="c1">#一般帅的人不这么使用，很不方便</span>
+<span class="n">per</span><span class="o">.</span><span class="n">_Person__money</span> <span class="o">=</span> <span class="mi">22</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">per</span><span class="o">.</span><span class="n">_Person__money</span><span class="p">)</span>  <span class="c1">#__money此时已经变成_Person__money了</span>
+
+<span class="c1">#如果让内部属性不被外部直接访问，在属性前加__下划线</span>
+<span class="c1">#如果在属性前加__下划线，那么这个属性就变成了私有属性,不能再实例化之后直接访问</span>
+<span class="c1"># per.__money = 10</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">per</span><span class="o">.</span><span class="n">age</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">per</span><span class="o">.</span><span class="n">get_Money</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;开始赋值set_money&quot;</span> <span class="o">+</span> <span class="s2">&quot; ====ing&quot;</span><span class="p">)</span>
+<span class="n">per</span><span class="o">.</span><span class="n">set_Money</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;赋值之后的money是: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">per</span><span class="o">.</span><span class="n">get_Money</span><span class="p">()))</span>
+
+<span class="c1">#在python中__xxx___ 属于特殊变量，特殊变量的值可以直接访问</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;这是一个__xx__的特殊变量: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">per</span><span class="o">.</span><span class="n">__input__</span><span class="p">)</span>
+
+<span class="c1">#一个下划线_xxx的变量，看到这样的变量时，表示当成私有属性，虽然可以直接在外部访问</span>
+<span class="c1">#这是一个约定束城</span>
+
+
+
+
+<span class="k">class</span> <span class="nc">Student</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">score</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__score</span> <span class="o">=</span> <span class="n">score</span>
+
+    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;学生:</span><span class="si">{}</span><span class="s2">； 分数</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__name</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">__score</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">set_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">secore</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__score</span> <span class="o">=</span> <span class="n">secore</span>
+
+    <span class="k">def</span> <span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__score</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">hu</span> <span class="o">=</span> <span class="n">Student</span><span class="p">(</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span><span class="s2">&quot;100&quot;</span><span class="p">)</span>
+    <span class="n">hu</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;修改前的分数</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hu</span><span class="o">.</span><span class="n">get_score</span><span class="p">()))</span>
+    <span class="n">hu</span><span class="o">.</span><span class="n">set_score</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;修改后的分数</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hu</span><span class="o">.</span><span class="n">get_score</span><span class="p">()))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id11">私有属性的保护和设置</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="k">class</span> <span class="nc">Duck</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_name</span><span class="p">):</span> <span class="c1">#构造函数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__name</span> <span class="o">=</span> <span class="n">input_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;inside the getter&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__name</span>
+
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">set_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">put_name</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;开始设置属性:name的值&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__name</span> <span class="o">=</span> <span class="n">put_name</span>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;hujianli&quot;</span>
+    <span class="n">hu</span> <span class="o">=</span> <span class="n">Duck</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">hu</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;分割线&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span>
+    <span class="n">hu</span><span class="o">.</span><span class="n">set_name</span> <span class="o">=</span> <span class="s2">&quot;xiaojian&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">hu</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">hu</span><span class="o">.</span><span class="n">_Duck__name</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id12">代码示例2</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+
+<span class="c1">#通过装饰器方法来获取私有属性</span>
+<span class="k">class</span> <span class="nc">TVShow</span><span class="p">:</span>       <span class="c1">#电视节目类</span>
+    <span class="n">list_film</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;战狼2&quot;</span><span class="p">,</span> <span class="s2">&quot;红海行动&quot;</span><span class="p">,</span> <span class="s2">&quot;西游记女儿国&quot;</span><span class="p">,</span> <span class="s2">&quot;熊出没变形记&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__show</span> <span class="o">=</span> <span class="n">show</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        定义方法</span>
+<span class="sd">        :return:私有属性</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__show</span>      <span class="c1">#返回类的实例</span>
+
+    <span class="nd">@show</span><span class="o">.</span><span class="n">setter</span>                <span class="c1">#让属性可以进行修改</span>
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">TVShow</span><span class="o">.</span><span class="n">list_film</span><span class="p">:</span>       <span class="c1">#判断值是否在列表中</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__show</span> <span class="o">=</span> <span class="s1">&#39;您选择了《&#39;</span><span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s2">&quot;》,稍后将播放&quot;</span>    <span class="c1">#修改返回值</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__show</span> <span class="o">=</span> <span class="s2">&quot;您点播的电影不存在&quot;</span>
+
+
+<span class="n">tvshow</span> <span class="o">=</span> <span class="n">TVShow</span><span class="p">(</span><span class="s2">&quot;战狼2&quot;</span><span class="p">)</span>  <span class="c1">#创建类的实例</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;正在播放:《&quot;</span><span class="p">,</span> <span class="n">tvshow</span><span class="o">.</span><span class="n">show</span><span class="p">,</span> <span class="s2">&quot;》&quot;</span><span class="p">)</span>     <span class="c1">#获取属性值</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;您可以从&quot;</span><span class="p">,</span> <span class="n">TVShow</span><span class="o">.</span><span class="n">list_film</span><span class="p">,</span> <span class="s2">&quot;中选择台点播的电影&quot;</span><span class="p">)</span>
+
+<span class="n">tvshow</span><span class="o">.</span><span class="n">show</span> <span class="o">=</span> <span class="s1">&#39;红海行动&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tvshow</span><span class="o">.</span><span class="n">show</span><span class="p">)</span>      <span class="c1">#获取属性值</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">tvshow = TVShow(&quot;正在播放《战狼2》&quot;)  #创建类的实例</span>
+<span class="sd">print(&quot;默认输出: &quot;, tvshow.show)     #获取属性值</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="c1">#修改装饰器的值会报错</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">tvshow.show = &quot;正在播放《红海行动》&quot;</span>
+<span class="sd">print(&quot;默认输出: &quot;, tvshow.show)     #获取属性值</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="13.%E6%96%B9%E6%B3%95%E7%9A%84%E5%8A%A8%E6%80%81%E7%89%B9%E6%80%A7.html" class="btn btn-neutral float-left" title="7.13. 方法的动态特性" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="15.%E7%B1%BB%E7%9A%84%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7.html" class="btn btn-neutral float-right" title="7.15. 类的高级特性" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

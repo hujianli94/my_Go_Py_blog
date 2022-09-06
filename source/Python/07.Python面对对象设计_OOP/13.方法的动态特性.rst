@@ -1,0 +1,189 @@
+.. contents::
+   :depth: 3
+..
+
+方法的动态特性
+==============
+
+可以将外部函数 动态的添加到类中
+-------------------------------
+
+代码示例
+~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   class Fruit(object):
+       pass
+
+   def add(self):          #定义在类外的函数
+       print("grow...")
+
+   if __name__ == '__main__':
+       Fruit.grow = add            #将函数加到方法中
+       fuit = Fruit()              #实例化类
+       fuit.grow()                 #调用类中的方法
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   class Fruit():
+       def grow(self):
+           print("grow....")
+
+   def update():
+       print("grow..........")
+
+   if __name__ == '__main__':
+       fruit = Fruit()
+       fruit.grow()
+       fruit.grow = update     #使用update函数来更新方法
+       fruit.grow()
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+
+   def square(arg):
+       return arg ** 2
+
+   class Sum:
+       def __init__(self,val):
+           self.val = val
+
+       def __call__(self, arg):
+           return self.val + arg
+
+
+   class Product:
+       def __init__(self, val):
+           self.val = val
+
+       def method(self, arg):
+           return self.val * arg
+
+
+   if __name__ == '__main__':
+       sobject = Sum(2)
+       poject = Product(3)
+
+   actions = [square, sobject, poject.method]
+
+   for act in actions:
+       print(act(5))
+
+   print(actions[-1](5))
+   print([act(5) for act in actions])
+   print(list(map(lambda act:act(5),actions)))
+
+   table = {act(5): act for act in actions}
+   print(table.keys())
+   print(table.values())
+   print(table.items())
+
+使用type函数动态创建类
+----------------------
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/14 13:09
+   # filename: 使用type函数动态创建类.py
+   def fn(self):
+       print("fn函数")
+
+
+   # 使用type()定义Dog类
+   Dog = type("Dog", (object,), dict(walk=fn, age=6))
+
+   """
+   参数1：创建的类名
+   参数2：继承的父类集合，必须要有一个逗号
+   参数3：字典对象，key为变量名或者方法名，value如果是函数代表方法，如果是普通值，代表类变量
+   """
+
+   #創建Dog对象
+   d = Dog()
+
+   #分别查看d、Dog的类型
+   print(type(d))
+   print(type(Dog))
+   d.walk()
+   print(Dog.age)
+
+使用metaclass 定义统一特性方法
+------------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/14 13:59
+   # filename: 使用metaclass.py
+
+   # metaclass类的__new__方法的作用就是：当丞相使用class定义新类时，如果指定了metaclass，那么metaclass的__new__方法就会被自动执行
+
+   class ItemMetaClass(type):
+       def __new__(cls, name, bases, attrs):
+           # 为该类动态添加一个cal_price方法
+           attrs['cal_price'] = lambda self: self.price * self.discount
+           return type.__new__(cls, name, bases, attrs)
+
+
+   # 定义Book类
+   class Book(metaclass=ItemMetaClass):
+       __slots__ = ["name", "price", "_discount"]
+
+       def __init__(self, name, price):
+           self.name = name
+           self.price = price
+
+       @property
+       def discount(self):
+           return self._discount
+
+       @discount.setter
+       def discount(self, discount):
+           self._discount = discount
+
+
+   # 定义CellPhone
+   class CellPhone(metaclass=ItemMetaClass):
+       __slots__ = ["price", "_discount"]
+
+       def __init__(self, price):
+           self.price = price
+
+       @property
+       def discount(self):
+           return self._discount
+
+       @discount.setter
+       def discount(self, discount):
+           self._discount = discount
+
+
+   if __name__ == '__main__':
+       b = Book("python入门到精通", 99)
+       b.discount = 0.95
+       # 创建Book对象的cal_price()方法
+       print(b.cal_price())
+
+       hu = CellPhone(2000)
+       hu.discount = 0.85
+       # 创建CellPhone对象的cal_price()方法
+       print(hu.cal_price())
+
+输出信息
+
+::
+
+   94.05
+   1700.0

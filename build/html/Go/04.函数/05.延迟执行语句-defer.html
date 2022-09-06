@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.5. 延迟执行语句-defer &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4.6. 处理运行时错误" href="06.%E5%A4%84%E7%90%86%E8%BF%90%E8%A1%8C%E6%97%B6%E9%94%99%E8%AF%AF.html" />
+    <link rel="prev" title="4.4. 可变参数" href="04.%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">4. 函数</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E5%A3%B0%E6%98%8E%E5%87%BD%E6%95%B0.html">4.1. 声明函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0.html">4.2. 匿名函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E9%97%AD%E5%8C%85.html">4.3. 闭包</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0.html">4.4. 可变参数</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.5. 延迟执行语句-defer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">4.5.1. 1.多个延迟执行语句的处理顺序</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">4.5.2. 2.使用延迟执行语句，在函数结束时自动释放资源</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E5%A4%84%E7%90%86%E8%BF%90%E8%A1%8C%E6%97%B6%E9%94%99%E8%AF%AF.html">4.6. 处理运行时错误</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E5%AE%95%E6%9C%BA-panic.html">4.7. 宕机-panic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E5%AE%95%E6%9C%BA%E6%81%A2%E5%A4%8D-recover.html">4.8. 宕机恢复-recover</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95.html">4.9. 单元测试</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93/index.html">10. 标准库和三方库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">4. </span>函数</a> &raquo;</li>
+      <li><span class="section-number">4.5. </span>延迟执行语句-defer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/04.函数/05.延迟执行语句-defer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#defer" id="id6">延迟执行语句-defer</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id7">1.多个延迟执行语句的处理顺序</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id8">2.使用延迟执行语句，在函数结束时自动释放资源</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id9">2.1 使用延迟并发解锁</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id10">2.2 使用延迟释放文件句柄</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id11">2.3 使用延迟释放网络连接句柄</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="defer">
+<h1><a class="toc-backref" href="#id6"><span class="section-number">4.5. </span>延迟执行语句-defer</a><a class="headerlink" href="#defer" title="Permalink to this headline">¶</a></h1>
+<p>Go语言的defer语句会将其后面跟随的语句进行延迟处理。
+在defer归属的函数即将返回时，将延迟处理的语句按defer的逆序进行执行，也就是说，先被defer的语句
+最后被执行，最后被defer的语句，最先被执行。</p>
+<p>defer后面必须是函数或方法的调用，不能是语句。</p>
+<p>defer语句必须先注册后才能执行，如果defer位于return之后，则defer因为没有注册，不会执行。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nb">println</span><span class="p">(</span><span class="s">&quot;defer &quot;</span><span class="p">)</span>
+    <span class="p">}()</span>
+
+    <span class="nb">println</span><span class="p">(</span><span class="s">&quot;func body&quot;</span><span class="p">)</span>
+    <span class="nx">a</span> <span class="o">:=</span> <span class="mi">0</span>
+    <span class="nb">println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+    <span class="k">return</span>
+
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nb">println</span><span class="p">(</span><span class="s">&quot;second&quot;</span><span class="p">)</span>
+    <span class="p">}()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>主动调用<code class="docutils literal notranslate"><span class="pre">os.Exit(int)</span></code>之后defer将不再被执行（即使defer已经提前被注册）</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;os&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nb">println</span><span class="p">(</span><span class="s">&quot;defer &quot;</span><span class="p">)</span>
+    <span class="p">}()</span>
+
+    <span class="nb">println</span><span class="p">(</span><span class="s">&quot;func body&quot;</span><span class="p">)</span>
+    <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<section id="id1">
+<h2><a class="toc-backref" href="#id7"><span class="section-number">4.5.1. </span>1.多个延迟执行语句的处理顺序</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>延迟执行语句示例1</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;defer begin&quot;</span><span class="p">)</span>
+    <span class="c1">// 将defer放入延迟调用栈</span>
+    <span class="k">defer</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">defer</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1">// 最后一个放入，位于栈顶，最先调用</span>
+    <span class="k">defer</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;defer end&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*defer begin</span>
+<span class="cm">defer end</span>
+<span class="cm">3</span>
+<span class="cm">2</span>
+<span class="cm">1*/</span>
+</pre></div>
+</div>
+<p>代码的执行顺序与最终的执行顺序是反向的。
+延迟调用是在defer所在函数结束时进行，函数结束可以是正常返回时，也可以是发生宕机时。</p>
+<p>延迟执行语句示例2</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="c1">//定义结构体</span>
+<span class="kd">type</span> <span class="nx">Test</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// 定义结构体方法</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">Test</span><span class="p">)</span> <span class="nx">Close</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="s">&quot;closed&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//声明一个数组</span>
+    <span class="nx">ts</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">Test</span><span class="p">{{</span><span class="s">&quot;a&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s">&quot;b&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s">&quot;c&quot;</span><span class="p">}}</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">t</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">ts</span> <span class="p">{</span>
+        <span class="nx">t2</span> <span class="o">:=</span> <span class="nx">t</span>
+        <span class="c1">//t2.Close()</span>
+        <span class="k">defer</span> <span class="nx">t2</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>多个 defer 注册，按 FILO 次序执行 ( 先进后出
+)。哪怕函数或某个延迟调用发生错误，这些调用依旧会被执行。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kd">func</span> <span class="nx">test</span><span class="p">(</span><span class="nx">x</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="nb">println</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">)</span>
+    <span class="k">defer</span> <span class="nb">println</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">)</span>
+
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nb">println</span><span class="p">(</span><span class="mi">100</span><span class="o">/</span><span class="nx">x</span><span class="p">)</span>
+    <span class="p">}()</span>
+    <span class="k">defer</span> <span class="nb">println</span><span class="p">(</span><span class="s">&quot;c&quot;</span><span class="p">)</span>
+
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">test</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*c</span>
+<span class="cm">b</span>
+<span class="cm">a</span>
+<span class="cm">panic: runtime error: integer divide by zero*/</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">*</span></code>滥用 defer 可能会导致性能问题，尤其是在一个 “大循环” 里。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;sync&quot;</span>
+    <span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">lock</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+
+<span class="kd">func</span> <span class="nx">test</span><span class="p">(</span><span class="nx">x</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lock</span><span class="p">.</span><span class="nx">Lock</span><span class="p">()</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%d &quot;</span><span class="p">,</span><span class="nx">x</span><span class="p">)</span>
+    <span class="nx">lock</span><span class="p">.</span><span class="nx">Unlock</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">testdefer</span><span class="p">(</span><span class="nx">x</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lock</span><span class="p">.</span><span class="nx">Lock</span><span class="p">()</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%d &quot;</span><span class="p">,</span><span class="nx">x</span><span class="p">)</span>
+    <span class="k">defer</span> <span class="nx">lock</span><span class="p">.</span><span class="nx">Unlock</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">t1</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">()</span>
+        <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+            <span class="nx">test</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">elapsed</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Since</span><span class="p">(</span><span class="nx">t1</span><span class="p">)</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;test elapsed: &quot;</span><span class="p">,</span> <span class="nx">elapsed</span><span class="p">)</span>
+    <span class="p">}()</span>
+    <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">t1</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">()</span>
+        <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+            <span class="nx">testdefer</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">elapsed</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Since</span><span class="p">(</span><span class="nx">t1</span><span class="p">)</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;testdefer elapsed: &quot;</span><span class="p">,</span> <span class="nx">elapsed</span><span class="p">)</span>
+    <span class="p">}()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">4.5.2. </span>2.使用延迟执行语句，在函数结束时自动释放资源</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>比如打开和关闭文件，接收请求和回复请求，加锁和解锁等，在这些操作中最容易忽略的是在每个函数退出时处正确
+的释放和关闭资源。
+defer正好是函数退出时执行的语句，所以defer能非常好的处理资源释放问题。</p>
+<section id="id3">
+<h3><a class="toc-backref" href="#id9">2.1 使用延迟并发解锁</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>解锁一个互斥所。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">mu</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+<span class="kd">var</span> <span class="nx">m</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span> <span class="kt">int</span><span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">lookup</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+    <span class="nx">mu</span><span class="p">.</span><span class="nx">Lock</span><span class="p">()</span>
+    <span class="k">defer</span> <span class="nx">mu</span><span class="p">.</span><span class="nx">Unlock</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nx">m</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>下面的例子会在函数中并发使用map，为防止竞态问题，使用sync.Mutex进行加锁。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;sync&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="p">(</span>
+    <span class="c1">// 一个演示用的映射,实例化一个map，键是string，值是int</span>
+    <span class="nx">valueByKey</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span> <span class="kt">int</span><span class="p">)</span>
+
+    <span class="c1">// 保证使用映射时的并发安全的互斥锁</span>
+    <span class="nx">valueByKeyGuard</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+<span class="p">)</span>
+
+<span class="c1">// 根据键读取值</span>
+<span class="kd">func</span> <span class="nx">readValue</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+    <span class="c1">// 对共享资源加锁,使用互斥量加锁</span>
+    <span class="nx">valueByKeyGuard</span><span class="p">.</span><span class="nx">Lock</span><span class="p">()</span>
+
+    <span class="c1">//取值</span>
+    <span class="nx">v</span> <span class="o">:=</span><span class="nx">valueByKey</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+
+    <span class="c1">// 对共享资源解锁，使用互斥量解锁</span>
+    <span class="nx">valueByKeyGuard</span><span class="p">.</span><span class="nx">Unlock</span><span class="p">()</span>
+
+    <span class="c1">// 返回值，返回获取map的值</span>
+    <span class="k">return</span> <span class="nx">v</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">readValue</span><span class="p">(</span><span class="s">&quot;hujianli&quot;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用defer语句对上面的代码进行简化</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;sync&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="p">(</span>
+    <span class="c1">// 一个演示用的映射,实例化一个map，键是string，值是int</span>
+    <span class="nx">valueByKey1</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">int</span><span class="p">)</span>
+
+    <span class="c1">// 保证使用映射时的并发安全的互斥锁</span>
+    <span class="nx">valueByKeyGuard1</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
+<span class="p">)</span>
+
+<span class="c1">// 根据键读取值</span>
+<span class="kd">func</span> <span class="nx">readValue1</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+    <span class="c1">// 对共享资源加锁,使用互斥量加锁</span>
+    <span class="nx">valueByKeyGuard1</span><span class="p">.</span><span class="nx">Lock</span><span class="p">()</span>
+
+    <span class="c1">// defer后面的语句不会马上调用，而是延迟到函数结束时调用</span>
+    <span class="k">defer</span> <span class="nx">valueByKeyGuard1</span><span class="p">.</span><span class="nx">Unlock</span><span class="p">()</span>
+    <span class="c1">// 返回值，返回获取map的值</span>
+    <span class="k">return</span> <span class="nx">valueByKey1</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">readValue1</span><span class="p">(</span><span class="s">&quot;hujianli&quot;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面代码中使用defer添加解锁，该语句不会马上执行，而是等待readValue1返回时才会被执行。</p>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id10">2.2 使用延迟释放文件句柄</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>关闭一个打开的文件</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">ReadFile</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">reutrn</span> <span class="nx">ReadAll</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// 根据文件名查询其大小,返回文件名和文件大小</span>
+<span class="kd">func</span> <span class="nx">fileSize</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 根据文件名打开文件，返回文件句柄和错误</span>
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+    <span class="c1">// 如果打开发生错误，返回文件大小为0</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">filename</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="p">}</span>
+    <span class="c1">// 获取文件状态信息</span>
+    <span class="nx">info</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>
+    <span class="c1">// 如果获取信息时发生错误，关闭文件并返回文件大小为0</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nx">filename</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="p">}</span>
+    <span class="c1">// 取文件名称和大小</span>
+    <span class="nx">name</span> <span class="o">:=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">Name</span><span class="p">()</span>
+    <span class="nx">size</span> <span class="o">:=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">Size</span><span class="p">()</span>
+    <span class="c1">// 返回文件名称和大小</span>
+    <span class="k">return</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">size</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">f_name</span><span class="p">,</span> <span class="nx">f_size</span> <span class="o">:=</span> <span class="nx">fileSize</span><span class="p">(</span><span class="s">&quot;deferTest03.go&quot;</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;name: %s  size: %dK&quot;</span><span class="p">,</span> <span class="nx">f_name</span><span class="p">,</span> <span class="nx">f_size</span><span class="p">)</span>   <span class="c1">//name: deferTest03.go  size: 606K</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用defer对代码进行优化</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// 根据文件名查询其大小,返回文件名和文件大小</span>
+<span class="kd">func</span> <span class="nx">fileSize</span><span class="p">(</span><span class="nx">filename</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 根据文件名打开文件，返回文件句柄和错误</span>
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">error1</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+    <span class="c1">// 如果打开发生错误，返回文件大小为0</span>
+    <span class="k">if</span> <span class="nx">error1</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">filename</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="p">}</span>
+    <span class="c1">// 延迟调用Close，此时Close不会调用</span>
+    <span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="c1">// 获取文件状态信息</span>
+    <span class="nx">info</span><span class="p">,</span> <span class="nx">error2</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>
+    <span class="c1">// 如果获取信息时发生错误，关闭文件并返回文件大小为0</span>
+    <span class="k">if</span> <span class="nx">error2</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">filename</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="p">}</span>
+    <span class="c1">// 取文件名称和大小</span>
+    <span class="nx">name</span> <span class="o">:=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">Name</span><span class="p">()</span>
+    <span class="nx">size</span> <span class="o">:=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">Size</span><span class="p">()</span>
+    <span class="c1">// 返回文件名称和大小</span>
+    <span class="k">return</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">size</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">f_name</span><span class="p">,</span> <span class="nx">f_size</span> <span class="o">:=</span> <span class="nx">fileSize</span><span class="p">(</span><span class="s">&quot;deferTest03.go&quot;</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;name: %s  size: %dK&quot;</span><span class="p">,</span> <span class="nx">f_name</span><span class="p">,</span> <span class="nx">f_size</span><span class="p">)</span>   <span class="c1">//name: deferTest03.go  size: 606K</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>文件句柄操作示例</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;bufio&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">do</span><span class="p">()</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">file</span><span class="p">,</span> <span class="kt">error</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="s">&quot;D:\\go_studay/go_path/src/github.com/function001/defer06/test.log&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="kt">error</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="kt">error</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="c1">//  看这里，这里是重点，如果打开正常，有数据，就正常关闭句柄</span>
+    <span class="k">if</span> <span class="nx">file</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">{</span>
+        <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="nx">f</span><span class="o">:=</span><span class="nx">file</span><span class="p">.</span><span class="nx">Close</span><span class="p">();</span><span class="nx">f</span> <span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+                <span class="nx">err</span> <span class="p">=</span> <span class="nx">f</span>
+            <span class="p">}</span>
+        <span class="p">}()</span>
+    <span class="p">}</span>
+    <span class="nx">reader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">file</span><span class="p">)</span>
+    <span class="kd">var</span> <span class="nx">line</span> <span class="p">[]</span><span class="kt">byte</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="nx">data</span><span class="p">,</span> <span class="nx">prefix</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nx">ReadLine</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+
+        <span class="nx">line</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="nx">data</span><span class="o">...</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">!</span><span class="nx">prefix</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;data:%s\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">line</span><span class="p">))</span>
+            <span class="nx">line</span> <span class="p">=</span> <span class="nx">line</span><span class="p">[:]</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">do</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id11">2.3 使用延迟释放网络连接句柄</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">do</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">,</span><span class="nx">err</span> <span class="o">:=</span><span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;http://www.baidu.com&quot;</span><span class="p">)</span>
+    <span class="c1">// 当且仅当 http.Get 成功执行时才使用 defer</span>
+    <span class="k">if</span> <span class="nx">res</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">defer</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">do</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="04.%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0.html" class="btn btn-neutral float-left" title="4.4. 可变参数" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="06.%E5%A4%84%E7%90%86%E8%BF%90%E8%A1%8C%E6%97%B6%E9%94%99%E8%AF%AF.html" class="btn btn-neutral float-right" title="4.6. 处理运行时错误" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

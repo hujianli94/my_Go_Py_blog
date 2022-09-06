@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4. 项目后台技术Express &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5. Vue.js开发基础" href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html" />
+    <link rel="prev" title="3. 项目开发准备" href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js+Node.js开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%87%86%E5%A4%87.html">1. 开发一个网站的准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Nodejs_vue%E5%9F%BA%E7%A1%80.html">2. Nodejs+vue基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html">3. 项目开发准备</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4. 项目后台技术Express</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">4.1. 1 Express应用程序生成器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">4.2. 2 Express提供的路由</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">4.2.1. 示例：使用生成器创建新的项目</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#response">4.2.2. Response的方法</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">4.3. 3 使用Express托管静态文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">4.4. 4 Express和数据库交互</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#node-jsmongodb">4.4.1. 4.1 Node.js与MongoDB集成</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#node-jsredis">4.4.2. 4.2 Node.js与Redis集成</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#node-jsmysql">4.4.3. 4.3 Node.js与MySQL集成</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">4.5. 5 Express高级应用</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">4.5.1. 5.1 Express中的中间件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">4.5.2. 5.2 Express错误处理</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">4.6. 小结</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html">5. Vue.js开发基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue.js%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.html">6. Vue的生命周期</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html">7. Vue.js的模板语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue.js%E7%9A%84%E7%BB%84%E4%BB%B6%E5%8C%96.html">8. Vue.js的组件化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html">9. Vue.js的vue-router库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue.js%E7%9A%84%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E5%BA%93Vuex%E5%92%8CPinia.html">10. Vue.js的状态管理库Vuex和Pinia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.Vue-UI%E5%BA%93.html">11. Vue-UI库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.%E9%A1%B9%E7%9B%AE%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E.html">12. 项目需求分析和功能说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.%E9%A1%B9%E7%9B%AE%E7%AD%96%E5%88%92%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AE%BE%E8%AE%A1.html">13. 项目策划和功能设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14.%E9%A1%B9%E7%9B%AE%E5%90%8E%E7%AB%AFAPI%E5%BC%80%E5%8F%91.html">14. 项目后端API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15.%E9%80%9A%E7%94%A8API%E5%BC%80%E5%8F%91.html">15. 通用API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">16. 用户权限相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17.%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">17. 后台管理相关API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18.%E5%B0%8F%E7%BB%93.html">18. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19.%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%BC%80%E5%8F%91.html">19. 前端页面开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="20.%E4%B8%BB%E8%A6%81%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%BC%80%E5%8F%91.html">20. 主要页面的开发</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js+Node.js开发实战</a> &raquo;</li>
+      <li><span class="section-number">4. </span>项目后台技术Express</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue_Node.js/04.项目后台技术Express.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#express" id="id11">项目后台技术Express</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id12">1 Express应用程序生成器</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id13">2 Express提供的路由</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id14">示例：使用生成器创建新的项目</a></p></li>
+<li><p><a class="reference internal" href="#response" id="id15">Response的方法</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id4" id="id16">3 使用Express托管静态文件</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id17">4 Express和数据库交互</a></p>
+<ul>
+<li><p><a class="reference internal" href="#node-jsmongodb" id="id18">4.1 Node.js与MongoDB集成</a></p></li>
+<li><p><a class="reference internal" href="#node-jsredis" id="id19">4.2 Node.js与Redis集成</a></p></li>
+<li><p><a class="reference internal" href="#node-jsmysql" id="id20">4.3 Node.js与MySQL集成</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id7" id="id21">5 Express高级应用</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id8" id="id22">5.1 Express中的中间件</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id23">5.2 Express错误处理</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id10" id="id24">小结</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="express">
+<h1><a class="toc-backref" href="#id11"><span class="section-number">4. </span>项目后台技术Express</a><a class="headerlink" href="#express" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">4.1. </span>1 Express应用程序生成器</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Express就是一款支持前后端分离方式的开发框架。</p>
+<p>Express是一款基于Node.js平台的Web应用开发框架，也是JavaScript
+Web应用开发框架中最适合新手的一款极简开发框架。</p>
+<p>打开命令行管理工具，输入如下命令安装express-generator。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ npm install express-generator -g
+</pre></div>
+</div>
+<p>安装成功后，使用express命令可以进行项目操作。express命令有不同的参数，例如，使用-h查看帮助信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="mi">18793</span><span class="o">&gt;</span><span class="n">express</span> <span class="o">-</span><span class="n">h</span>
+
+  <span class="n">Usage</span><span class="p">:</span> <span class="n">express</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="p">[</span><span class="nb">dir</span><span class="p">]</span>
+
+  <span class="n">Options</span><span class="p">:</span>
+
+        <span class="o">--</span><span class="n">version</span>        <span class="n">output</span> <span class="n">the</span> <span class="n">version</span> <span class="n">number</span>
+    <span class="o">-</span><span class="n">e</span><span class="p">,</span> <span class="o">--</span><span class="n">ejs</span>            <span class="n">add</span> <span class="n">ejs</span> <span class="n">engine</span> <span class="n">support</span>
+        <span class="o">--</span><span class="n">pug</span>            <span class="n">add</span> <span class="n">pug</span> <span class="n">engine</span> <span class="n">support</span>
+        <span class="o">--</span><span class="n">hbs</span>            <span class="n">add</span> <span class="n">handlebars</span> <span class="n">engine</span> <span class="n">support</span>
+    <span class="o">-</span><span class="n">H</span><span class="p">,</span> <span class="o">--</span><span class="n">hogan</span>          <span class="n">add</span> <span class="n">hogan</span><span class="o">.</span><span class="n">js</span> <span class="n">engine</span> <span class="n">support</span>
+    <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">view</span> <span class="o">&lt;</span><span class="n">engine</span><span class="o">&gt;</span>  <span class="n">add</span> <span class="n">view</span> <span class="o">&lt;</span><span class="n">engine</span><span class="o">&gt;</span> <span class="n">support</span> <span class="p">(</span><span class="n">dust</span><span class="o">|</span><span class="n">ejs</span><span class="o">|</span><span class="n">hbs</span><span class="o">|</span><span class="n">hjs</span><span class="o">|</span><span class="n">jade</span><span class="o">|</span><span class="n">pug</span><span class="o">|</span><span class="n">twig</span><span class="o">|</span><span class="n">vash</span><span class="p">)</span> <span class="p">(</span><span class="n">defaults</span> <span class="n">to</span> <span class="n">jade</span><span class="p">)</span>
+        <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">view</span>        <span class="n">use</span> <span class="n">static</span> <span class="n">html</span> <span class="n">instead</span> <span class="n">of</span> <span class="n">view</span> <span class="n">engine</span>
+    <span class="o">-</span><span class="n">c</span><span class="p">,</span> <span class="o">--</span><span class="n">css</span> <span class="o">&lt;</span><span class="n">engine</span><span class="o">&gt;</span>   <span class="n">add</span> <span class="n">stylesheet</span> <span class="o">&lt;</span><span class="n">engine</span><span class="o">&gt;</span> <span class="n">support</span> <span class="p">(</span><span class="n">less</span><span class="o">|</span><span class="n">stylus</span><span class="o">|</span><span class="n">compass</span><span class="o">|</span><span class="n">sass</span><span class="p">)</span> <span class="p">(</span><span class="n">defaults</span> <span class="n">to</span> <span class="n">plain</span> <span class="n">css</span><span class="p">)</span>
+        <span class="o">--</span><span class="n">git</span>            <span class="n">add</span> <span class="o">.</span><span class="n">gitignore</span>
+    <span class="o">-</span><span class="n">f</span><span class="p">,</span> <span class="o">--</span><span class="n">force</span>          <span class="n">force</span> <span class="n">on</span> <span class="n">non</span><span class="o">-</span><span class="n">empty</span> <span class="n">directory</span>
+    <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>           <span class="n">output</span> <span class="n">usage</span> <span class="n">information</span>
+</pre></div>
+</div>
+<p>不通过手动方式建立JavaScript文件，而直接采用命令行的方式新建Express应用。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ express --no-view myapp
+</pre></div>
+</div>
+<p>即通过命令行搭建了一个完整的项目框架，也为使用者提供了后续的操作提示。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tree
+.
+├── app.js
+├── bin
+     └── www
+├── package.json
+├── public
+          ├── images
+│         ├── index.html
+│         ├── javascripts
+│         └── stylesheets
+│         └── style.css
+└── routes
+    ├── index.js
+    └── users.js
+</pre></div>
+</div>
+<p>使用npm install命令安装依赖项，此时获得一个可运行的项目框架，</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>等到依赖项安装完毕，接下来通过如下命令启动项目。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">D</span><span class="p">:</span>\<span class="mi">0</span><span class="n">项目</span>\<span class="n">vue202104</span>\<span class="n">myapp</span><span class="o">&gt;</span><span class="nb">set</span> <span class="n">DEBUG</span><span class="o">=</span><span class="n">myapp</span><span class="p">:</span><span class="o">*</span> <span class="o">&amp;</span> <span class="n">npm</span> <span class="n">start</span>
+
+<span class="o">&gt;</span> <span class="n">myapp</span><span class="o">@</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">0</span> <span class="n">start</span> <span class="n">D</span><span class="p">:</span>\<span class="mi">0</span><span class="n">项目</span>\<span class="n">vue202104</span>\<span class="n">myapp</span>
+<span class="o">&gt;</span> <span class="n">node</span> <span class="o">./</span><span class="nb">bin</span><span class="o">/</span><span class="n">www</span>
+
+  <span class="n">myapp</span><span class="p">:</span><span class="n">server</span> <span class="n">Listening</span> <span class="n">on</span> <span class="n">port</span> <span class="mi">3000</span> <span class="o">+</span><span class="mi">0</span><span class="n">ms</span>
+</pre></div>
+</div>
+<p>注意：在不同的操作系统中启动项目的命令不同。</p>
+<p>在mac OS、UNIX或Linux的发行版中，启动命令是</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DEBUG</span> <span class="o">=</span><span class="n">myapp</span><span class="p">:</span><span class="o">*</span> <span class="n">npm</span> <span class="n">start</span>
+</pre></div>
+</div>
+<p>上述命令在本机的3000端口启动了一个服务，通过浏览器访问http://localhost:3000</p>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">4.2. </span>2 Express提供的路由</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Express提供了路由，通过定义路由，可以设计不同的URI地址，可以支持HTTP的各个不同方法（包括GET、POST和其他请求方式）。路由的基本定义如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">res</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;Hello World!&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上述代码定义了项目的根路由，当访问路径是localhost时（使用GET方式），执行第2个参数中的方法，即向请求输出一句“Hello
+World！”</p>
+<p>除了HTTP的几种常见请求方式外，Express还提供了一种可以捕获所有请求的方法app.all()，它会在所有该地址的请求前执行。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="s1">&#39;/secret&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Accessing the secret section ...&#39;</span><span class="p">)</span>
+  <span class="nb">next</span><span class="p">()</span>    <span class="o">//</span><span class="k">pass</span> <span class="n">control</span> <span class="n">to</span> <span class="n">the</span> <span class="nb">next</span> <span class="n">handler</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>Express定义的路由地址支持字符串模式和正则表达式。也就是说，对于如下形式的路由，以a开头并以b结尾的任何地址的GET请求都会被执行。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/a*b&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">res</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s1">&#39;Hello World!&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>路由的路径可以传递参数。在定义路径时，通过“:”标记来确定参数的名称，之后可以通过res参数中的params对象获取该参数，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/users/:userId/books/:booksId&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">res</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">params</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>上述代码的路由路径中包含两个参数：一个参数代表用户的ID，命名为userId；另一个参数是获取书本的ID，命名为bookId。这两个参数都会被用户的请求（Request）所包含，可以通过Request.params对象获取这两个参数传递的值。</p>
+<section id="id3">
+<h3><a class="toc-backref" href="#id14"><span class="section-number">4.2.1. </span>示例：使用生成器创建新的项目</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>打开位于routes文件夹中的index.js，在其中增加新代码，具体如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">express</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">router</span> <span class="o">=</span> <span class="n">express</span><span class="o">.</span><span class="n">Router</span><span class="p">();</span>
+
+<span class="o">/*</span> <span class="n">GET</span> <span class="n">home</span> <span class="n">page</span><span class="o">.</span> <span class="o">*/</span>
+<span class="n">router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">next</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">res</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="n">title</span><span class="p">:</span> <span class="s1">&#39;Express&#39;</span> <span class="p">});</span>
+<span class="p">});</span>
+
+<span class="o">//</span> <span class="n">响应相关请求</span>
+<span class="n">router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/username/:username/say/:sayText&#39;</span><span class="p">,</span><span class="n">function</span> <span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">req为请求</span> <span class="n">res为响应</span>
+  <span class="n">res</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">username</span> <span class="o">+</span> <span class="s2">&quot;说：&quot;</span> <span class="o">+</span> <span class="n">req</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">sayText</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="n">module</span><span class="o">.</span><span class="n">exports</span> <span class="o">=</span> <span class="n">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>通过命令启动该项目，当在浏览器中访问http://localhost:3000/username/tom/say/Hello页面时，会显示路径携带参数处理后的结果:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>tom说：Hello
+</pre></div>
+</div>
+<p>Express框架还为接口开发者提供了传输JSON的方式：Response.json或Response.jsonp。可以通过访问该接口获取数据，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/json&quot;</span><span class="p">,</span> <span class="n">function</span> <span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="n">res</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">返回json数据</span>
+    <span class="n">let</span> <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;Tom&quot;</span><span class="p">,</span>
+        <span class="n">say</span><span class="p">:</span> <span class="s2">&quot;Hello&quot;</span>
+    <span class="p">}</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>访问http://localhost:3000/json最终的返回效果如下</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Tom&quot;</span><span class="p">,</span><span class="s2">&quot;say&quot;</span><span class="p">:</span><span class="s2">&quot;Hello&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="response">
+<h3><a class="toc-backref" href="#id15"><span class="section-number">4.2.2. </span>Response的方法</a><a class="headerlink" href="#response" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>方法</p></th>
+<th class="head"><p>说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>res.download()</p></td>
+<td><p>下载一个文件</p></td>
+</tr>
+<tr class="row-odd"><td><p>res.end()</p></td>
+<td><p>结束一个请求的过程</p></td>
+</tr>
+<tr class="row-even"><td><p>res.json()</p></td>
+<td><p>返回一个json串</p></td>
+</tr>
+<tr class="row-odd"><td><p>res.jsonp()</p></td>
+<td><p>以JSONp的形式返回一个JSON</p></td>
+</tr>
+<tr class="row-even"><td><p>res.redirect()</p></td>
+<td><p>重定向一个页面，页面跳转</p></td>
+</tr>
+<tr class="row-odd"><td><p>res.reder()</p></td>
+<td><p>渲染一个模板视图</p></td>
+</tr>
+<tr class="row-even"><td><p>res.send()</p></td>
+<td><p>以各种形式返回一个任意的数据类型</p></td>
+</tr>
+<tr class="row-odd"><td><p>res.sendFile()</p></td>
+<td><p>发送一个文件流</p></td>
+</tr>
+<tr class="row-even"><td><p>res.sendStatus()</p></td>
+<td><p>定义一个返回的状态和代码</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">4.3. </span>3 使用Express托管静态文件</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>Express项目无论是否使用模板渲染文件，都会涉及静态文件，如图像、CSS文件或JavaScript等。配置这些Express中的静态资源文件，需要使用express.static对象的内置中间件函数。以下代码就是将public目录下的图片、CSS文件和JavaScript文件对外开放，可以直接访问。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">开放public目录</span>
+<span class="n">router</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="s1">&#39;public&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>如果需要使用多个文件夹作为静态资源文件夹，可以多次调用中间件函数。静态资源还可以用“别名”的方式开放文件夹，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">原本定义的public目录为静态资源目录</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;public&#39;</span><span class="p">)));</span>
+
+<span class="o">//</span> <span class="n">定义的image目录为静态图片资源目录</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;image&#39;</span><span class="p">)));</span>
+
+<span class="o">//</span> <span class="n">赋予别名</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/static&#39;</span><span class="p">,</span> <span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;public&#39;</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>Express图片展示</p>
+<p>具体方法如下：</p>
+<p>（1）新建Express工程，安装该项目的依赖项，编辑app.js文件，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">express</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">path</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">cookieParser</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;cookie-parser&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;morgan&#39;</span><span class="p">);</span>
+
+<span class="n">var</span> <span class="n">indexRouter</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./routes/index&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">usersRouter</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./routes/users&#39;</span><span class="p">);</span>
+
+<span class="n">var</span> <span class="n">app</span> <span class="o">=</span> <span class="n">express</span><span class="p">();</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">logger</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">));</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">json</span><span class="p">());</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">urlencoded</span><span class="p">({</span> <span class="n">extended</span><span class="p">:</span> <span class="n">false</span> <span class="p">}));</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">cookieParser</span><span class="p">());</span>
+<span class="o">//</span> <span class="n">原本定义的public目录为静态资源目录</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;public&#39;</span><span class="p">)));</span>
+
+<span class="o">//</span> <span class="n">定义的image目录为静态图片资源目录</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;image&#39;</span><span class="p">)));</span>
+
+<span class="o">//</span> <span class="n">赋予别名</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/static&#39;</span><span class="p">,</span> <span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;public&#39;</span><span class="p">)))</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">indexRouter</span><span class="p">);</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/users&#39;</span><span class="p">,</span> <span class="n">usersRouter</span><span class="p">);</span>
+
+<span class="n">module</span><span class="o">.</span><span class="n">exports</span> <span class="o">=</span> <span class="n">app</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>（2）在public文件夹中放入图片，并且在项目中创建image文件夹，在其中也放入相同的图片。</p>
+<p>（3）运行该项目，可以通过如下地址访问添加的这张图片。</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://localhost:3000/1.png">http://localhost:3000/1.png</a></p></li>
+<li><p><a class="reference external" href="http://localhost:3000/images/1.png">http://localhost:3000/images/1.png</a></p></li>
+<li><p><a class="reference external" href="http://localhost:3000/static/images/1.png">http://localhost:3000/static/images/1.png</a></p></li>
+</ul>
+<blockquote>
+<div><p>注意：这里的路径采用path.join(__dirname,
+‘public’)的形式，是为了保证目录的可用性，如果不采用这样的路径形式，就必须采用相对路径的形式。</p>
+</div></blockquote>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id17"><span class="section-number">4.4. </span>4 Express和数据库交互</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<section id="node-jsmongodb">
+<h3><a class="toc-backref" href="#id18"><span class="section-number">4.4.1. </span>4.1 Node.js与MongoDB集成</a><a class="headerlink" href="#node-jsmongodb" title="Permalink to this headline">¶</a></h3>
+<p>（1）对于安装MongoDB数据库时用到的中间件，官方推荐的是mongodb包，执行如下命令进行安装</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span> <span class="n">mongodb</span> <span class="o">--</span><span class="n">save</span>
+</pre></div>
+</div>
+<p>（2）使用如下命令启动MongoDB</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@echo</span> <span class="n">off</span>
+
+<span class="n">CLS</span>
+<span class="nb">set</span> <span class="nb">str</span><span class="o">=%</span><span class="n">cd</span><span class="o">%</span>
+<span class="p">:</span><span class="n">echo</span> <span class="o">%</span><span class="nb">str</span><span class="o">%</span>
+
+<span class="p">:</span><span class="n">Start</span> <span class="n">mongodb</span>
+<span class="n">echo</span> <span class="s2">&quot;Start Mongodb .....&quot;</span>
+<span class="n">cd</span> <span class="o">%</span><span class="nb">str</span><span class="o">%</span>
+<span class="n">start</span> <span class="n">mongod</span> <span class="o">-</span><span class="n">dbpath</span> <span class="o">../</span><span class="n">data</span>
+<span class="p">:</span><span class="n">pause</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>注意：启动MongoDB时应当将mongodb包的存放路径更改为安装路径，并在-depath参数后指定生成的数据库的存储位置。</p>
+</div></blockquote>
+<p>（3）新建一个项目文件，安装其依赖包，安装成功后在app.js中更新代码，将连接数据库的代码加入其中，具体代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">express</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">path</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">cookieParser</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;cookie-parser&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;morgan&#39;</span><span class="p">);</span>
+
+<span class="n">var</span> <span class="n">indexRouter</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./routes/index&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">usersRouter</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./routes/users&#39;</span><span class="p">);</span>
+
+<span class="n">var</span> <span class="n">app</span> <span class="o">=</span> <span class="n">express</span><span class="p">();</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">logger</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">));</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">json</span><span class="p">());</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">urlencoded</span><span class="p">({</span><span class="n">extended</span><span class="p">:</span> <span class="n">false</span><span class="p">}));</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">cookieParser</span><span class="p">());</span>
+<span class="o">//</span> <span class="n">原本定义的public目录为静态资源目录</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;public&#39;</span><span class="p">)));</span>
+<span class="o">//</span> <span class="n">定义的image目录为静态图片资源目录</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;image&#39;</span><span class="p">)));</span>
+<span class="o">//</span> <span class="n">赋予别名</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/static&#39;</span><span class="p">,</span> <span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;public&#39;</span><span class="p">)))</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">indexRouter</span><span class="p">);</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/users&#39;</span><span class="p">,</span> <span class="n">usersRouter</span><span class="p">);</span>
+
+<span class="n">var</span> <span class="n">MongoClient</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;mongodb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">MongoClient</span>
+
+<span class="n">MongoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;mongodb://localhost:27017/animals&#39;</span><span class="p">,</span> <span class="n">function</span> <span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">client</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">client</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Connection Error &quot;</span><span class="p">)</span>
+        <span class="p">}</span><span class="k">else</span> <span class="p">{</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Connection success&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">})</span>
+
+<span class="n">module</span><span class="o">.</span><span class="n">exports</span> <span class="o">=</span> <span class="n">app</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>（4）使用命令行启动该项目，输出内容</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">myapp</span><span class="p">:</span><span class="n">server</span> <span class="n">Listening</span> <span class="n">on</span> <span class="n">port</span> <span class="mi">3000</span> <span class="o">+</span><span class="mi">0</span><span class="n">ms</span>
+<span class="n">Connection</span> <span class="n">success</span>
+</pre></div>
+</div>
+<section id="mongodb">
+<h4>4.1.1 使用对象模型驱动连接MongoDB<a class="headerlink" href="#mongodb" title="Permalink to this headline">¶</a></h4>
+<p>使用对象模型驱动连接MongoDB。这需要另一个相关的依赖包mongoose，该包提供了编写MongoDB验证和业务逻辑等功能，通过数据对象的形式处理数据。</p>
+<p>在Express中使用mongoose操作数据库。具体方法如下：</p>
+<p>（1）创建项目，安装相应的依赖项，然后执行如下命令安装mongoose包。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span> <span class="n">mongoose</span> <span class="o">-</span> <span class="n">save</span>
+</pre></div>
+</div>
+<p>（2）安装成功后，在代码中引用mongodb包，修改项目的app.js文件，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">express</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">path</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">cookieParser</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;cookie-parser&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;morgan&#39;</span><span class="p">);</span>
+
+<span class="n">var</span> <span class="n">indexRouter</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./routes/index&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">usersRouter</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./routes/users&#39;</span><span class="p">);</span>
+
+<span class="n">var</span> <span class="n">app</span> <span class="o">=</span> <span class="n">express</span><span class="p">();</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">logger</span><span class="p">(</span><span class="s1">&#39;dev&#39;</span><span class="p">));</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">json</span><span class="p">());</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">urlencoded</span><span class="p">({</span> <span class="n">extended</span><span class="p">:</span> <span class="n">false</span> <span class="p">}));</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">cookieParser</span><span class="p">());</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">express</span><span class="o">.</span><span class="n">static</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dirname</span><span class="p">,</span> <span class="s1">&#39;public&#39;</span><span class="p">)));</span>
+
+<span class="o">//</span> <span class="n">getting</span><span class="o">-</span><span class="n">started</span><span class="o">.</span><span class="n">js</span>
+<span class="n">var</span> <span class="n">mongoose</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;mongoose&#39;</span><span class="p">);</span>
+<span class="o">//</span> <span class="n">返回一个持续的链接状态</span>
+<span class="n">mongoose</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;mongodb://localhost:27017/animals&#39;</span><span class="p">);</span>
+
+<span class="n">var</span> <span class="n">db</span> <span class="o">=</span> <span class="n">mongoose</span><span class="o">.</span><span class="n">connection</span><span class="p">;</span>
+<span class="o">//</span> <span class="n">监控是否出现错误</span>
+<span class="n">db</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="n">console</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">console</span><span class="p">,</span> <span class="s1">&#39;connection error:&#39;</span><span class="p">));</span>
+<span class="o">//</span>
+<span class="n">db</span><span class="o">.</span><span class="n">once</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="n">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">we</span><span class="s1">&#39;re connected!</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;mongoose connect successful!&quot;</span><span class="p">)</span>
+<span class="p">});</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">indexRouter</span><span class="p">);</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/users&#39;</span><span class="p">,</span> <span class="n">usersRouter</span><span class="p">);</span>
+
+<span class="n">module</span><span class="o">.</span><span class="n">exports</span> <span class="o">=</span> <span class="n">app</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>（3）使用命令启动项目，在MongoDB开启状态下，连接成功的效果如下所示。</p>
+<p>此时便可以通过操作数据对象的形式对数据库进行插入和删除操作了。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>D:\nodejs\node.exe D:\Django_drf\myapp\bin\www
+  myapp:server Listening on port 3000 +0ms
+mongoose connect successful!
+</pre></div>
+</div>
+<blockquote>
+<div><p>总结：对象模型驱动就是将MongoDB这样的NoSQL数据库，以类似于MySQL的方式进行操作。下一节将介绍如何定义一个数据模型。</p>
+</div></blockquote>
+</section>
+<section id="id6">
+<h4>4.1.2 如何定义模型类<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p>数据模型（Model）在传统的MVC开发模式中是非常重要的一个组成部分，代表该数据本身的“模型”。对于MongoDB这样的NoSQL型数据库来说，本质上没有必要设计专用的数据模型，甚至使用数据模型可能会导致性能下降，但是数据模型化的真正作用是使开发过程更加工程化，同时还能减少开发者的工作量。</p>
+<blockquote>
+<div><p>注意：数据集定义方式可能会根据数据库或语言、框架的不同而不同，并不是一套固定的写法。</p>
+</div></blockquote>
+<p>mongoose也支持数据模型定义，但MongoDB中没有表的定义，而是采用Schema。mongoose中的所有数据操作都通过Schema实现，</p>
+<p>每一个Schema都会映射至一个MongoDB的collection（数据集）中，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">Schema</span> <span class="o">=</span> <span class="n">mongoose</span><span class="o">.</span><span class="n">Schema</span><span class="p">;</span>
+
+<span class="n">var</span> <span class="n">studentSchema</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Schema</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+        <span class="n">stuStaff</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span>
+        <span class="n">sex</span><span class="p">:</span> <span class="n">Number</span>
+    <span class="p">});</span>
+</pre></div>
+</div>
+<p>数据模型是通过Schema()编译的构造函数，通过Model的定义可以将数据库的所有操作生成document，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">Student</span> <span class="o">=</span> <span class="n">mongoose</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="s2">&quot;student&quot;</span><span class="p">,</span> <span class="n">studentSchema</span><span class="p">)</span>
+<span class="n">var</span> <span class="n">st1</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Student</span><span class="p">({</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;张三&quot;</span><span class="p">,</span>
+    <span class="n">stuStaff</span><span class="p">:</span> <span class="s2">&quot;1213232&quot;</span><span class="p">,</span>
+    <span class="n">sex</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">})</span>
+
+<span class="n">st1</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">function</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">return</span> <span class="n">e</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>上述代码完成的是对student的存储。</p>
+<p>mngodb中查询到存储的student表内容如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/*</span> <span class="mi">1</span> <span class="o">*/</span>
+<span class="p">{</span>
+    <span class="s2">&quot;_id&quot;</span> <span class="p">:</span> <span class="n">ObjectId</span><span class="p">(</span><span class="s2">&quot;61ab02430d9c9bf5534a4b27&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="s2">&quot;张三&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stuStaff&quot;</span> <span class="p">:</span> <span class="mi">1213232</span><span class="p">,</span>
+    <span class="s2">&quot;sex&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;__v&quot;</span> <span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="node-jsredis">
+<h3><a class="toc-backref" href="#id19"><span class="section-number">4.4.2. </span>4.2 Node.js与Redis集成</a><a class="headerlink" href="#node-jsredis" title="Permalink to this headline">¶</a></h3>
+<p>工程项目中使用Redis一般是为了提高系统的I/O吞吐量，优化性能。</p>
+<p>Redis是常驻内存的数据库，对于海量数据的存储并不合适，所以Redis的经典应用场景是一些数据量较少、查询频率较高的环境。</p>
+<p>使用Redis时需要安装Node.js，命令如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span> <span class="n">redis</span><span class="o">@</span><span class="mf">3.0</span><span class="o">.</span><span class="mi">2</span> <span class="o">--</span><span class="n">save</span>
+</pre></div>
+</div>
+<p>Redis不需要指定数据的格式，只要使用set()方法将键/值对存入数据库，使用get()方法通过键获取对应的值即可。</p>
+<p>示例</p>
+<p>连接本地的Redis数据库（密码设置为123.com），添加一个键为Hello、值为Hello
+Redis的键-值对。通过get()方法获取该值并打印到控制台中。get()方法需要传入一个回调函数，完整代码如下：</p>
+<p><code class="docutils literal notranslate"><span class="pre">index.js</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>var redis = require(&#39;redis&#39;);
+// 连接数据库，默认本地6379，无密码
+var client = redis.createClient(6379, &#39;127.0.0.1&#39;);
+//添加键值为hello=&gt;Hello Redis
+client.set(&#39;hello&#39;, &#39;Hello Redis&#39;);
+// 使用键进行值的获取
+client.get(&#39;hello&#39;, function (err, v) {
+    if (err) {
+        console.log(err)
+    } else {
+        console.log(v)
+    }
+    //关闭数据库连接
+    client.end(true);
+})
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">package.json</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;myredis&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.0.0&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;private&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+  <span class="s2">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;node ./bin/www&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;cookie-parser&quot;</span><span class="p">:</span> <span class="s2">&quot;~1.4.4&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="s2">&quot;~2.6.9&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;express&quot;</span><span class="p">:</span> <span class="s2">&quot;~4.16.1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;http-errors&quot;</span><span class="p">:</span> <span class="s2">&quot;~1.6.3&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;morgan&quot;</span><span class="p">:</span> <span class="s2">&quot;~1.9.1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pug&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0.0-beta11&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;redis&quot;</span><span class="p">:</span> <span class="s2">&quot;^3.0.2&quot;</span>           <span class="c1">#使用此版本的插件，使用高版本会有问题</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>执行效果如下所示</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">D</span><span class="p">:</span>\<span class="n">nodejs</span>\<span class="n">node</span><span class="o">.</span><span class="n">exe</span> <span class="n">D</span><span class="p">:</span>\<span class="n">Django_drf</span>\<span class="n">myredis</span>\<span class="nb">bin</span>\<span class="n">www</span>
+  <span class="n">myredis</span><span class="p">:</span><span class="n">server</span> <span class="n">Listening</span> <span class="n">on</span> <span class="n">port</span> <span class="mi">3000</span> <span class="o">+</span><span class="mi">0</span><span class="n">ms</span>
+<span class="n">Hello</span> <span class="n">Redis</span>
+</pre></div>
+</div>
+</section>
+<section id="node-jsmysql">
+<h3><a class="toc-backref" href="#id20"><span class="section-number">4.4.3. </span>4.3 Node.js与MySQL集成</a><a class="headerlink" href="#node-jsmysql" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>参考一下菜鸟教程即可</p>
+<p><a class="reference external" href="https://www.runoob.com/nodejs/nodejs-mysql.html">https://www.runoob.com/nodejs/nodejs-mysql.html</a></p>
+</div></blockquote>
+</section>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id21"><span class="section-number">4.5. </span>5 Express高级应用</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<section id="id8">
+<h3><a class="toc-backref" href="#id22"><span class="section-number">4.5.1. </span>5.1 Express中的中间件</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>在一些新的Web框架中，经常会出现“中间件”的概念。中间件是介于应用系统和系统软件之间的一类软件，它使用系统软件提供的基础服务（功能），衔接网络上应用系统的各个部分，达到资源共享、功能共享的目的。</p>
+<p>中间件可以做很多事情，例如对所有请求的日志进行记录，类似于记录日志，这种功能拥有一定的通用性，但又不是逻辑主程序的组成部分，这类通用且非业务逻辑的功能适合使用中间件进行处理。</p>
+<p>不仅如此，中间件也可以用于身份验证。例如传统的用户登录状态的判定，需要在服务器的Session中存放一些该用户的信息，用户在访问某些需要权限控制的路由时通过Session查看是否登录，该逻辑操作也可以使用中间件进行判断。中间件仅仅查询用户是否登录（Session是否存在且没有过期），如果登录，则执行主程序，如果没有登录，则阻止用户，这样就无须在所有的路由中判断用户的状态了</p>
+<p>编写一个简单的中间件，命名为checkUser，提供用户请求信息的控制台打印功能，最终完成的代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>var express = require(&#39;express&#39;);
+var app = express.Router();
+
+// 编写中间件，用于打印用户的头信息
+var checkUser = function (req, res, next) {
+  console.log(req.headers)
+  next()
+}
+//全局使用中间件
+app.use(checkUser)
+app.get(&#39;/&#39;, function (req, res) {
+  res.send(&#39;Hello World!&#39;)
+})
+
+module.exports = app;
+</pre></div>
+</div>
+<p>运行程序，当用户进行路由访问时，自动打印用户的头信息，效果如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">D</span><span class="p">:</span>\<span class="n">nodejs</span>\<span class="n">node</span><span class="o">.</span><span class="n">exe</span> <span class="n">D</span><span class="p">:</span>\<span class="n">Django_drf</span>\<span class="n">myredis</span>\<span class="nb">bin</span>\<span class="n">www</span>
+  <span class="n">myredis</span><span class="p">:</span><span class="n">server</span> <span class="n">Listening</span> <span class="n">on</span> <span class="n">port</span> <span class="mi">3000</span> <span class="o">+</span><span class="mi">0</span><span class="n">ms</span>
+<span class="p">{</span>
+  <span class="n">host</span><span class="p">:</span> <span class="s1">&#39;127.0.0.1:3000&#39;</span><span class="p">,</span>
+  <span class="n">connection</span><span class="p">:</span> <span class="s1">&#39;keep-alive&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;cache-control&#39;</span><span class="p">:</span> <span class="s1">&#39;max-age=0&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;sec-ch-ua&#39;</span><span class="p">:</span> <span class="s1">&#39;&quot; Not A;Brand&quot;;v=&quot;99&quot;, &quot;Chromium&quot;;v=&quot;96&quot;, &quot;Google Chrome&quot;;v=&quot;96&quot;&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;sec-ch-ua-mobile&#39;</span><span class="p">:</span> <span class="s1">&#39;?0&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;sec-ch-ua-platform&#39;</span><span class="p">:</span> <span class="s1">&#39;&quot;Windows&quot;&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;upgrade-insecure-requests&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;user-agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36&#39;</span><span class="p">,</span>
+  <span class="n">accept</span><span class="p">:</span> <span class="s1">&#39;text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;sec-fetch-site&#39;</span><span class="p">:</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;sec-fetch-mode&#39;</span><span class="p">:</span> <span class="s1">&#39;navigate&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;sec-fetch-user&#39;</span><span class="p">:</span> <span class="s1">&#39;?1&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;sec-fetch-dest&#39;</span><span class="p">:</span> <span class="s1">&#39;document&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;accept-encoding&#39;</span><span class="p">:</span> <span class="s1">&#39;gzip, deflate, br&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;accept-language&#39;</span><span class="p">:</span> <span class="s1">&#39;zh-CN,zh;q=0.9,en;q=0.8&#39;</span><span class="p">,</span>
+  <span class="n">cookie</span><span class="p">:</span> <span class="s1">&#39;csrftoken=DFGYRPlMPs1Xc4rjhafoSwbMNavOzQTMJ8xQQvPa7ITwf8BI81fHT61VMk5eilPv&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;if-none-match&#39;</span><span class="p">:</span> <span class="s1">&#39;W/&quot;c-Lve95gjOVATpfV8EL5X4nxwjKHE&quot;&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>针对上例，如果使用如下代码，则表示整个App中的所有路由均使用checkUser中间件。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span><span class="n">全局使用中间件</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">checkUser</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>局部使用中间件</em></p>
+<p>但是某些中间件并不需要所有的路由都使用，例如用户登录状态的检测，不是所有的页面都要进行检测，这类中间件可以通过路由指定。</p>
+<p>例如下面的代码，/user/:id路由中的所有请求URL均调用checkLogin中间件，而其他的路由则不调用</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">()</span>
+
+<span class="c1">// 编写中间件，用于打印用户的头信息</span>
+<span class="kd">var</span> <span class="nx">checkUser</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">)</span>
+    <span class="nx">next</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="c1">//全局使用中间件</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">checkUser</span><span class="p">)</span>
+<span class="c1">//新的中间件，用来检测用户的登录</span>
+<span class="kd">var</span> <span class="nx">checkLogin</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;用户登录成功&quot;</span><span class="p">)</span>
+        <span class="nx">next</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;用户未登录&quot;</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">//对于路由调用中间件</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;/user/:id&#39;</span><span class="p">,</span> <span class="nx">checkLogin</span><span class="p">)</span>
+
+<span class="c1">// 路由定义</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Hello World!&#39;</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="c1">// 新的路由定义</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/user/:id&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+<span class="p">})</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">app</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>上述代码定义了新的路由’/user/:id’，它通过GET方式传递一个id参数，该参数使用req.params.id来获取。在中间件中，如果id不是字符串1（这里使用了严格相等），则不将该请求发送至路由处理，而是直接返回error错误信息，并且在控制台打印用户登录失败提示。如果id参数是正确的，则执行next()将请求下发至路由处理，返回的信息是Hello字符串加上该参数。</p>
+<ul class="simple">
+<li><p>访问根目录“/”时打印用户的头信息，不执行checkLogin中间件</p></li>
+<li><p>如果访问http://localhost:3000/user/2，则返回用户请求头文件的同时打印登录失败的提示</p></li>
+<li><p>如果将上述连接中的id参数改为1即访问http://localhost:3000/user/1地址，则返回正常的内容，并且提示登录成功</p></li>
+</ul>
+</section>
+<section id="id9">
+<h3><a class="toc-backref" href="#id23"><span class="section-number">4.5.2. </span>5.2 Express错误处理</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>Node.js中出现的错误可以采用try…catch语句进行处理，格式如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">可能出现错误的操作</span>
+<span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">发送错误时的处理</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果对每一个特定的错误都进行处理，无疑会出现非常多的冗余代码，所以一般采用统一的方式处理错误。</p>
+<p>Express提供了非常方便的错误处理方式：中间件。Express会捕获所有可能出现的错误，<em>确保所有的错误都通过错误处理中间件来处理</em>。</p>
+<p>中间件不一定非要处于用户请求与逻辑处理的中间层，在所有的Express路由处理中包含第3个参数next，该参数用于调用执行完中间件的逻辑代码之后的下一个中间件。如果用于错误处理，自然也可以将产生的错误传递给错误处理中间件。</p>
+<p>Express提供了一个<strong>内置的方法</strong>用来处理可能出现的任何错误，其代码如下：</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">errorHandler</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">headersSent</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">status</span><span class="p">(</span><span class="mf">500</span><span class="p">)</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">error</span><span class="o">:</span> <span class="nx">err</span> <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在某些业务需求中，JavaScript可以自行实例化一个Error()抛出错误，这种方式多用于某些敏感且危险的操作，通过主动抛出错误的方式停止业务流程，宕机也是一种及时的止损。</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">()</span>
+
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 新建错误</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="c1">// 主动抛出错误，返回500错误</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;抛出一个错误&#39;</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">app</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>这样就可以调用默认的统一错误处理函数即errorHandler()函数，返回一个服务器错误，状态码为500</p>
+<p>Express中的错误处理可以依赖于自身的错误处理函数，下面的代码使用throw抛出一个错误：</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">()</span>
+
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 新建错误</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="c1">// 主动抛出错误，下面进行捕获,返回提示信息</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;抛出一个错误&#39;</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">next</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">((</span><span class="nx">err</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;Something broke!&#39;</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">app</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>上述代码并不返回状态码为500的服务器错误，只是返回一个简单的提示语句。</p>
+<blockquote>
+<div><p>需要注意的是，在错误处理中间件中，使用next()函数可以传递错误，这个错误会传递给默认的错误处理函数。</p>
+</div></blockquote>
+</section>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id24"><span class="section-number">4.6. </span>小结</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<p>介绍了Express中数据库的连接操作，主要涉及三种常用的数据库：MongoDB和Redis、Mysql。</p>
+<p>NoSQL型数据库提供了性能更优的扩展功能，开发者无须纠结于传统的数据库设计和各类范式。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html" class="btn btn-neutral float-left" title="3. 项目开发准备" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html" class="btn btn-neutral float-right" title="5. Vue.js开发基础" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.3. While循环 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="2.4. switch语句替代方案" href="04.switch%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88.html" />
+    <link rel="prev" title="2.2. for循环语句" href="02.for%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">2. Python流程控制语句</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E9%80%89%E6%8B%A9%E8%AF%AD%E5%8F%A5.html">2.1. 选择语句</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.for%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5.html">2.2. for循环语句</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.3. While循环</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">2.3.1. 1.代码示例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">2.3.2. 2.while代码演示</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">2.3.3. 3.遍历输出列表</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">2.3.4. 4.实现一个人机交互</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#return">2.3.5. 5.return语句</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">2.3.6. 6.循环控制语句</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="04.switch%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88.html">2.4. switch语句替代方案</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E8%B4%AD%E7%89%A9%E8%BD%A6%E7%9A%84%E4%BB%A3%E7%A0%81.html">2.5. 实现一个简单的购物车代码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E4%B8%89%E7%BA%A7%E8%8F%9C%E5%8D%95.html">2.6. 手写一个三级菜单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.%E4%BD%BF%E7%94%A8return%E7%BB%93%E6%9D%9F%E6%96%B9%E6%B3%95.html">2.7. 使用return结束方法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">2. </span>Python流程控制语句</a> &raquo;</li>
+      <li><span class="section-number">2.3. </span>While循环</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/02.Python流程控制语句/03.while循环.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#while" id="id7">While循环</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id8">1.代码示例</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id9">2.while代码演示</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id10">3.遍历输出列表</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id11">4.实现一个人机交互</a></p></li>
+<li><p><a class="reference internal" href="#return" id="id12">5.return语句</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id13">6.循环控制语句</a></p>
+<ul>
+<li><p><a class="reference internal" href="#break" id="id14">6.1 break</a></p></li>
+<li><p><a class="reference internal" href="#continue" id="id15">6.2 continue</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id16">6.3 中断嵌套循环的方式</a></p></li>
+<li><p><a class="reference internal" href="#whilefor-else" id="id17">6.4 while和for+else语句结构</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="while">
+<h1><a class="toc-backref" href="#id7"><span class="section-number">2.3. </span>While循环</a><a class="headerlink" href="#while" title="Permalink to this headline">¶</a></h1>
+<p>while循环不同于for循环，while循环是只要条件满足，那么就会一直运行代码块，否则就运行else代码块，语法如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="o">&lt;</span><span class="n">条件</span><span class="o">&gt;</span><span class="p">:</span>
+    <span class="o">&lt;</span><span class="n">代码块</span><span class="o">&gt;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="o">&lt;</span><span class="n">如果条件不成立执行这里的代码块</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<section id="id1">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">2.3.1. </span>1.代码示例</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">while 条件表达式：</span>
+<span class="sd">    循环体</span>
+<span class="sd">    不满足条件表达式时，自动跳出循环</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="n">number</span> <span class="o">=</span> <span class="mi">500</span>           <span class="c1">#定义范围</span>
+<span class="n">start_nu</span> <span class="o">=</span> <span class="mi">0</span>            <span class="c1">#计数器</span>
+
+<span class="k">while</span> <span class="n">start_nu</span> <span class="o">&lt;=</span> <span class="n">number</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">start_nu</span><span class="o">%</span><span class="mi">3</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">start_nu</span><span class="o">%</span><span class="mi">5</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">start_nu</span><span class="o">%</span><span class="mi">7</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;答曰 这个数值是:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start_nu</span><span class="p">))</span>
+    <span class="n">start_nu</span> <span class="o">+=</span><span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;循环结束！！&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">2.3.2. </span>2.while代码演示</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">myList</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;English&#39;</span><span class="p">,</span> <span class="s1">&#39;chiese&#39;</span><span class="p">,</span> <span class="s1">&#39;hujianli&#39;</span><span class="p">,</span> <span class="s2">&quot;hujianli2&quot;</span><span class="p">,</span> <span class="s2">&quot;hujianli3&quot;</span><span class="p">]</span>
+
+<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">myList</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pop element out:&quot;</span><span class="p">,</span> <span class="n">myList</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>     <span class="c1"># 出栈,list中一个个退出，退出完毕，循环结束</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id10"><span class="section-number">2.3.3. </span>3.遍历输出列表</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="n">alst</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">alst</span><span class="p">)</span>
+
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">total</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> 的平方是</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">alst</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">alst</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span><span class="mi">1</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;循环结束 ！！&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">2.3.4. </span>4.实现一个人机交互</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/12/22 12:29</span>
+<span class="c1"># filename: 验收人机对话流程控制.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">1.如果输入‘hello’，进入主程序，开启人机对话服务</span>
+<span class="sd">2.如果输入‘go away’或者是‘bye’退出程序</span>
+<span class="sd">3.如果输入‘pardon’，重新等待用户输入</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">init_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="s2">&quot;bye&quot;</span> <span class="o">!=</span> <span class="n">init_str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">init_str</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;hello Password!&quot;</span><span class="p">)</span>
+
+    <span class="n">init_str</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入你的选择：&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">init_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;hello&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;How are you today?&quot;</span><span class="p">)</span>
+        <span class="n">init_str</span> <span class="o">=</span> <span class="s2">&quot;start&quot;</span>
+    <span class="k">elif</span> <span class="n">init_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;go away&#39;</span> <span class="ow">or</span> <span class="n">init_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;bye&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sorry bye-bye&quot;</span><span class="p">)</span>
+        <span class="k">break</span>
+    <span class="k">elif</span> <span class="n">init_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;pardon&quot;</span><span class="p">:</span>
+        <span class="n">init_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">continue</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">init_str</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;........init diaolog-server ...........&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;........ one thing.....................&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;........ two thing ....................&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;...................................&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>代码示例</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/3/22 14:06</span>
+<span class="c1"># filename: while循环01.py</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;who are you ?&quot;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;hujianli&quot;</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello ,hujianli ,What is the password? (It is a fish.)&quot;</span><span class="p">)</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">password</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;admin#123&quot;</span><span class="p">:</span>
+        <span class="k">break</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Access granted&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="return">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">2.3.5. </span>5.return语句</a><a class="headerlink" href="#return" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/usr/bin/env python
+#-*- coding:utf8 -*-
+def test():
+    for i in range(10):
+        for j in range(10):
+            print(&quot;i的值是：%d,j的值是：%d&quot; % (i, j))
+            if j == 1:
+                return
+            print(&quot;return的输出语句&quot;)
+
+test()
+
+i的值是：0,j的值是：0
+return的输出语句
+i的值是：0,j的值是：1
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">2.3.6. </span>6.循环控制语句</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<section id="break">
+<h3><a class="toc-backref" href="#id14">6.1 break</a><a class="headerlink" href="#break" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="c1">#当循环到3的时候退出整个循环</span>
+    <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Count is:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="continue">
+<h3><a class="toc-backref" href="#id15">6.2 continue</a><a class="headerlink" href="#continue" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="c1">#当循环到3的时候，退出当前循环，进入下一次循环</span>
+    <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Count is :</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id16">6.3 中断嵌套循环的方式</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">print_first_world</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="n">prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    找到文件里第一个指定单词的前缀并打印</span>
+<span class="sd">    :param fp: 可读文件对象</span>
+<span class="sd">    :param prefix:  需要寻找的单词前缀</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">first_word</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+                <span class="n">first_word</span> <span class="o">=</span> <span class="n">word</span>
+                <span class="c1"># 此处跳出内层循环</span>
+                <span class="k">break</span>
+        <span class="c1"># 内层循环结束，跳出外层循环</span>
+        <span class="k">if</span> <span class="n">first_word</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">first_word</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found the first word startswith &quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">&quot;&quot; &quot;</span><span class="si">{</span><span class="n">first_word</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Word starts with &quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">&quot; was not found.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>我们可以把print_first_word()里的“寻找单词”部分拆分为一个独立函数</p>
+<p>改写优化后的代码如下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">find_first_world</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="n">prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    找到文件里第一个指定单词的前缀并打印</span>
+<span class="sd">    :param fp: 可读文件对象</span>
+<span class="sd">    :param prefix:  需要寻找的单词前缀</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">first_word</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">word</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">word</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">print_first_world2</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="n">prefix</span><span class="p">):</span>
+    <span class="n">first_word</span> <span class="o">=</span> <span class="n">find_first_world</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="n">prefix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">first_word</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found the first word startswith &quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">&quot;&quot; &quot;</span><span class="si">{</span><span class="n">first_word</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Word starts with &quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">&quot; was not found.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="whilefor-else">
+<h3><a class="toc-backref" href="#id17">6.4 while和for+else语句结构</a><a class="headerlink" href="#whilefor-else" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">while</span> <span class="n">i</span> <span class="o">*</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">*</span><span class="si">{0}</span><span class="s2">=</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">1</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;while Over!&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">))</span>
+
+
+<span class="c1"># 当for循环中条件满足break语句执行时，程序不会进入else语句，不会输出“for over”</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Count is :</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;for over!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02.for%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5.html" class="btn btn-neutral float-left" title="2.2. for循环语句" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04.switch%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88.html" class="btn btn-neutral float-right" title="2.4. switch语句替代方案" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

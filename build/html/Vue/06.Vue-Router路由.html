@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6. Vue-Router路由 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="7. Vuex状态管理" href="07.Vuex%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86.html" />
+    <link rel="prev" title="5. 深入了解Vue组件" href="05.%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Vue%E7%BB%84%E4%BB%B6.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js企业开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.Vue%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8.html">1. Vue基础入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Vue%E5%86%85%E7%BD%AE%E6%8C%87%E4%BB%A4.html">2. Vue内置指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.Vue%E5%AE%9E%E4%BE%8B%E6%A0%B8%E5%BF%83%E9%80%89%E9%A1%B9.html">3. Vue实例核心选项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.Vue%E5%B7%A5%E7%A8%8B%E5%8C%96%E9%A1%B9%E7%9B%AE.html">4. Vue工程化项目</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Vue%E7%BB%84%E4%BB%B6.html">5. 深入了解Vue组件</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6. Vue-Router路由</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">6.1. 1.什么是路由</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">6.1.1. 1.1 后端路由</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">6.1.2. 1.2 前端路由</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#vue">6.2. 2.在Vue中使用路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">6.3. 3.动态路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">6.4. 4.嵌套模式路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">6.5. 5.编程式导航</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#router-push">6.5.1. 5.1 router.push()方法参数规则</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">6.6. 6.命名路由</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">6.7. 7.命名视图</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">6.8. 8.重定向</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">6.9. 9.路由的模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">6.10. 10.导航守卫</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id12">6.10.1. 10.1 全局守卫</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">6.10.2. 10.2 组件内守卫</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vuex%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86.html">7. Vuex状态管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue%E7%9A%84%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82.html">8. Vue的异步请求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%B8%B2%E6%9F%93.html">9. 服务器端渲染</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue3%E6%96%B0%E7%89%B9%E6%80%A7%E8%AF%A6%E8%AE%B2.html">10. Vue3新特性详讲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.TypeScript%E5%85%A5%E9%97%A8.html">11. TypeScript入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.Vite.html">12. Vite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.Vue3%E5%AE%9E%E8%B7%B5.html">13. Vue3 实践</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js企业开发实战</a> &raquo;</li>
+      <li><span class="section-number">6. </span>Vue-Router路由</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue/06.Vue-Router路由.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vue-router" id="id18">Vue-Router路由</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id19">1.什么是路由</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id20">1.1 后端路由</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id21">1.2 前端路由</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vue" id="id22">2.在Vue中使用路由</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id23">3.动态路由</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id24">4.嵌套模式路由</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id25">5.编程式导航</a></p>
+<ul>
+<li><p><a class="reference internal" href="#router-push" id="id26">5.1 router.push()方法参数规则</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id7" id="id27">6.命名路由</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id28">7.命名视图</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id29">8.重定向</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id30">9.路由的模式</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id31">10.导航守卫</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id12" id="id32">10.1 全局守卫</a></p></li>
+<li><p><a class="reference internal" href="#id17" id="id33">10.2 组件内守卫</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="vue-router">
+<h1><a class="toc-backref" href="#id18"><span class="section-number">6. </span>Vue-Router路由</a><a class="headerlink" href="#vue-router" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id19"><span class="section-number">6.1. </span>1.什么是路由</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>用Vue.js创建的项目是单页面应用，如果想要在项目中模拟出类似于页面跳转的效果，就要使用路由。</p>
+<p>其实，我们不能只从字面的意思来理解路由，从字面上来看，很容易把路由联想成“路由器”。路由器是连接两个或多个网络的硬件设备，而此处我们所说的路由，是指在一个应用程序中连接多个页面（组件）的一种配置。</p>
+<p>在一个全栈项目中，路由分为前端路由和后端路由。</p>
+<section id="id2">
+<h3><a class="toc-backref" href="#id20"><span class="section-number">6.1.1. </span>1.1 后端路由</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>先来看一下后端路由，例如项目的服务器网址是http://192.168.1.10:8080，在这个站点中提供了3个界面，分别是：</p>
+<ul class="simple">
+<li><p>页面1，网址<code class="docutils literal notranslate"><span class="pre">http://192.168.1.10:8080/index.html</span></code></p></li>
+<li><p>页面2，网址<code class="docutils literal notranslate"><span class="pre">http://192.168.1.10:8080/about.html</span></code></p></li>
+<li><p>页面3，网址<code class="docutils literal notranslate"><span class="pre">http://192.168.1.10:8080/news.html</span></code></p></li>
+</ul>
+<p>当在浏览器中输入<code class="docutils literal notranslate"><span class="pre">http://192.168.1.10:8080/index.html</span></code>时，
+Web服务器接收到这个请求，然后把“/index.html”解析出来，再找到index.html文件并响应给浏览器，
+这就是服务器端的路由分发。</p>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id21"><span class="section-number">6.1.2. </span>1.2 前端路由</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>虽然前端路由和后端路由在实现技术上有些差别，但是实现的原理是一样的。在HTML5的history
+API发布之前，前端路由功能是通过哈希散列计算的，因为哈希算法可以兼容低版本的浏览器，例如：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">http://192.168.1.10:8080/#/index.html</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">http://192.168.1.10:8080/#/about.html</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">http://192.168.1.10:8080/#/news.html</span></code></p></li>
+</ul>
+<p>由于Web服务不会解析#后面的内容，而JavaScript可以获取#后面的内容，那么就可以使用window.location.hash来读取，通过这种方法来匹配到不同的功能上。使用哈希的方式还有一个很大的优点，当哈希的值改变后，不会导致浏览器的刷新。</p>
+</section>
+</section>
+<section id="vue">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">6.2. </span>2.在Vue中使用路由</a><a class="headerlink" href="#vue" title="Permalink to this headline">¶</a></h2>
+<p>用Vue.js+Vue
+Router创建单页应用非常简单。要在Vue.js应用程序中使用路由，需要先安装vue-router，在当前项目下启动命令行工具，命令如下：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ npm install vue-router
+</pre></div>
+</div>
+<p>如果在一个模块化工程中使用它，必须通过Vue.use()明确安装路由功能：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">createApp</span><span class="p">(</span><span class="n">App</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">router</span><span class="p">)</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>如果使用脚手架工具创建项目，则路由的配置在/src/router/index.js文件中。</p>
+<p>在脚手架工具创建的项目中使用路由，需要在/src/router/index.js路由配置文件创建路由对象，然后将路由配置文件引入main.js入口文件并注册到Vue实例上。</p>
+<p>上面的流程操作完成后，就可以在页面组件中使用路由的内置组件router-link和router-view进行页面跳转了。</p>
+<p><code class="docutils literal notranslate"><span class="pre">/router/index.js</span></code>文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createRouter</span><span class="p">,</span> <span class="n">createWebHistory</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vue-router&#39;</span>
+<span class="kn">import</span> <span class="nn">HomeView</span> <span class="kn">from</span> <span class="s1">&#39;@/views/HomeView&#39;</span>
+
+<span class="n">const</span> <span class="n">routes</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;home&#39;</span><span class="p">,</span>
+    <span class="n">component</span><span class="p">:</span> <span class="n">HomeView</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/about&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;about&#39;</span><span class="p">,</span>
+    <span class="o">//</span> <span class="n">route</span> <span class="n">level</span> <span class="n">code</span><span class="o">-</span><span class="n">splitting</span>
+    <span class="o">//</span> <span class="n">this</span> <span class="n">generates</span> <span class="n">a</span> <span class="n">separate</span> <span class="n">chunk</span> <span class="p">(</span><span class="n">about</span><span class="o">.</span><span class="p">[</span><span class="nb">hash</span><span class="p">]</span><span class="o">.</span><span class="n">js</span><span class="p">)</span> <span class="k">for</span> <span class="n">this</span> <span class="n">route</span>
+    <span class="o">//</span> <span class="n">which</span> <span class="ow">is</span> <span class="n">lazy</span><span class="o">-</span><span class="n">loaded</span> <span class="n">when</span> <span class="n">the</span> <span class="n">route</span> <span class="ow">is</span> <span class="n">visited</span><span class="o">.</span>
+    <span class="n">component</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="n">import</span><span class="p">(</span><span class="o">/*</span> <span class="n">webpackChunkName</span><span class="p">:</span> <span class="s2">&quot;about&quot;</span> <span class="o">*/</span> <span class="s1">&#39;../views/AboutView.vue&#39;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">const</span> <span class="n">router</span> <span class="o">=</span> <span class="n">createRouter</span><span class="p">({</span>
+  <span class="n">history</span><span class="p">:</span> <span class="n">createWebHistory</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">BASE_URL</span><span class="p">),</span>
+  <span class="n">routes</span>
+<span class="p">})</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="n">router</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">/main.js</span></code>文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createApp</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vue&#39;</span>
+<span class="kn">import</span> <span class="nn">App</span> <span class="kn">from</span> <span class="s1">&#39;./App.vue&#39;</span>
+<span class="kn">import</span> <span class="nn">router</span> <span class="kn">from</span> <span class="s1">&#39;./router&#39;</span>
+<span class="kn">import</span> <span class="nn">store</span> <span class="kn">from</span> <span class="s1">&#39;./store&#39;</span>
+<span class="kn">import</span> <span class="nn">ElementPlus</span> <span class="kn">from</span> <span class="s1">&#39;element-plus&#39;</span>
+<span class="kn">import</span> <span class="s1">&#39;element-plus/dist/index.css&#39;</span>
+
+<span class="n">createApp</span><span class="p">(</span><span class="n">App</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">store</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">router</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">ElementPlus</span><span class="p">)</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;#app&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">/App.vue</span></code>文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;nav&gt;
+&lt;!--    用于跳转路由的连接。to为跳转地址--&gt;
+    &lt;router-link to=&quot;/&quot;&gt;Home&lt;/router-link&gt; |
+    &lt;router-link to=&quot;/about&quot;&gt;About&lt;/router-link&gt; |
+    &lt;router-link to=&quot;/globzj&quot;&gt;全局组件&lt;/router-link&gt; |
+    &lt;router-link to=&quot;/cachao1&quot;&gt;插槽用法1&lt;/router-link&gt; |
+    &lt;router-link to=&quot;/jmcc&quot;&gt;插槽用法2-具名插槽&lt;/router-link&gt; |
+    &lt;router-link to=&quot;/zyychachao&quot;&gt;作用域插槽&lt;/router-link&gt; |
+
+  &lt;/nav&gt;
+    &lt;!-- 路由占位符 --&gt;
+    &lt;router-view&gt;&lt;/router-view&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {}
+&lt;/script&gt;
+
+&lt;style&gt;&lt;/style&gt;
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id23"><span class="section-number">6.3. </span>3.动态路由</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>很多时候，我们需要从一个页面跳转到另一个页面，并且携带参数，在这种应用场景下就可以使用动态路由。动态路由可以将某种模式匹配到所有路由，全部映射到同一个组件上。</p>
+<p>例如，我们需要访问一个商品页面的组件goods.vue文件，对于所有要访问这个页面组件的用户来说，都要使用这个组件进行视图渲染。那么就可以在vue-router的路由路径中使用“动态路径参数”来达到这个效果。</p>
+<p>一个“路径参数”使用冒号：标记。当匹配到一个路由时，参数值会被设置到<code class="docutils literal notranslate"><span class="pre">this.$</span> <span class="pre">route.params</span></code>，这样便可以在每个组件内使用。</p>
+<p><code class="docutils literal notranslate"><span class="pre">views/GoodsView.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+&lt;div&gt;
+  商品详情页面
+  &lt;p&gt;
+  商品 ID：{{ $route.params.gid }}
+  &lt;/p&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &#39;GoodsView&#39;
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">/router/index.js</span></code>文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">createRouter</span><span class="p">,</span> <span class="n">createWebHistory</span> <span class="p">}</span> <span class="kn">from</span> <span class="s1">&#39;vue-router&#39;</span>
+<span class="kn">import</span> <span class="nn">HomeView</span> <span class="kn">from</span> <span class="s1">&#39;@/views/HomeView&#39;</span>
+
+<span class="n">const</span> <span class="n">routes</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;home&#39;</span><span class="p">,</span>
+    <span class="n">component</span><span class="p">:</span> <span class="n">HomeView</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/about&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;about&#39;</span><span class="p">,</span>
+    <span class="o">//</span> <span class="n">route</span> <span class="n">level</span> <span class="n">code</span><span class="o">-</span><span class="n">splitting</span>
+    <span class="o">//</span> <span class="n">this</span> <span class="n">generates</span> <span class="n">a</span> <span class="n">separate</span> <span class="n">chunk</span> <span class="p">(</span><span class="n">about</span><span class="o">.</span><span class="p">[</span><span class="nb">hash</span><span class="p">]</span><span class="o">.</span><span class="n">js</span><span class="p">)</span> <span class="k">for</span> <span class="n">this</span> <span class="n">route</span>
+    <span class="o">//</span> <span class="n">which</span> <span class="ow">is</span> <span class="n">lazy</span><span class="o">-</span><span class="n">loaded</span> <span class="n">when</span> <span class="n">the</span> <span class="n">route</span> <span class="ow">is</span> <span class="n">visited</span><span class="o">.</span>
+    <span class="n">component</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="n">import</span><span class="p">(</span><span class="o">/*</span> <span class="n">webpackChunkName</span><span class="p">:</span> <span class="s2">&quot;about&quot;</span> <span class="o">*/</span> <span class="s1">&#39;../views/AboutView.vue&#39;</span><span class="p">)</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/goods/:gid&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;Goods&#39;</span><span class="p">,</span>
+    <span class="n">component</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="n">import</span><span class="p">(</span><span class="s1">&#39;../views/GoodsView&#39;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">const</span> <span class="n">router</span> <span class="o">=</span> <span class="n">createRouter</span><span class="p">({</span>
+  <span class="n">history</span><span class="p">:</span> <span class="n">createWebHistory</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">BASE_URL</span><span class="p">),</span>
+  <span class="n">routes</span>
+<span class="p">})</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="n">router</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">/App.vue</span></code>文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;nav&gt;
+&lt;!--    用于跳转路由的连接。to为跳转地址--&gt;
+    &lt;router-link to=&quot;/&quot;&gt;Home&lt;/router-link&gt; |
+    &lt;router-link to=&quot;/about&quot;&gt;About&lt;/router-link&gt; |
+    &lt;router-link to=&quot;/goods/1001&quot;&gt;动态路由-查看商品&lt;/router-link&gt; |
+
+  &lt;/nav&gt;
+&lt;!--  路由匹配的组合会渲染到router-view--&gt;
+  &lt;router-view/&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {}
+&lt;/script&gt;
+
+&lt;style&gt;&lt;/style&gt;
+</pre></div>
+</div>
+<p>在浏览器中运行，项目根目录下会显示“查看商品”的超链接，效果如图6.3所示。单击超链接，页面跳转到/goods商品详情路由下，并渲染Goods.vue视图，在商品详情页面中会显示传递过来的商品ID参数值。</p>
+<p>可以在一个路由中设置多段“路径参数”，对应的值都会设置到$ route.params中。</p>
+<p>除了$ route.params外，$
+route对象还提供了其他有用的信息，例如，<span class="math notranslate nohighlight">\(route.query（在URL中设置查询参数）、\)</span>
+route.hash等。</p>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id24"><span class="section-number">6.4. </span>4.嵌套模式路由</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>实际生活中的应用界面通常由多层嵌套的组件组合而成，在配置路由的过程中，需要对URL进行分层管理，使每个路由都能按照嵌套的顺序进行编写。</p>
+<p>我们还是以商城类应用为例，在商品分类页面，单击某一个类别，要跳转到商品的列表页面，那么该商品列表页面的路由就由商品分类+商品列表组成。</p>
+<p>路由嵌套示例</p>
+<p><code class="docutils literal notranslate"><span class="pre">/views/Classify.vue</span></code>文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+&lt;div&gt;
+  &lt;div&gt;
+    &lt;!--    用于跳转路由的连接。to为跳转地址--&gt;
+    &lt;router-link to=&quot;/classify/list/1&quot;&gt;男裝&lt;/router-link&gt; |
+    &lt;router-link to=&quot;/classify/list/2&quot;&gt;女装&lt;/router-link&gt; |
+    &lt;router-link to=&quot;/classify/list/3&quot;&gt;童装&lt;/router-link&gt; |
+  &lt;/div&gt;
+  &lt;router-view&gt;&lt;/router-view&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &#39;ClassifyView&#39;
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">/views/GoodsList.vue</span></code>文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+&lt;div&gt;
+  商品列表主页 --- 分类 id: {{ $route.params.tid }}
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &#39;GoodsList&#39;
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>要在嵌套的出口中渲染组件，需要在VueRouter的参数中使用children配置。</p>
+<p><code class="docutils literal notranslate"><span class="pre">/router/index.js</span></code>文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/classify&#39;</span><span class="p">,</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;Classify&#39;</span><span class="p">,</span>
+  <span class="n">component</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="n">import</span><span class="p">(</span><span class="s1">&#39;../views/ClassifyView&#39;</span><span class="p">),</span>
+  <span class="n">children</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/classify/list/:tid&#39;</span><span class="p">,</span>
+      <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;GoodList&#39;</span><span class="p">,</span>
+      <span class="n">component</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="n">import</span><span class="p">(</span><span class="s1">&#39;../views/GoodsList&#39;</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id25"><span class="section-number">6.5. </span>5.编程式导航</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>除了使用<code class="docutils literal notranslate"><span class="pre">&lt;router-link&gt;</span></code>创建a标签来定义导航链接，还可以借助router的实例方法通过编写代码实现导航。</p>
+<p>页面导航的两种方式</p>
+<blockquote>
+<div><p>A.声明式导航：通过点击链接的方式实现的导航
+B.编程式导航：调用js的api方法实现导航</p>
+</div></blockquote>
+<p>V-router常见的导航方式</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/*
+        Vue-Router中常见的导航方式：
+      this.$router.push(&quot;hash地址&quot;);
+      this.$router.push(&quot;/login&quot;);
+      this.$router.push({ name:&#39;user&#39; , params: {id:123} });
+      this.$router.push({ path:&quot;/login&quot; });
+      this.$router.push({ path:&quot;/login&quot;,query:{username:&quot;jack&quot;} });
+
+      this.$router.go( n );//n为数字，参考history.go
+      this.$router.go( -1 );
+*/
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Example</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Document&lt;/title&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;js/vue.js&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;js/vue-router_3.0.2.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;!-- 被 vm 实例所控制的区域 --&gt;
+&lt;div id=&quot;app&quot;&gt;
+    &lt;router-link to=&quot;/user/1&quot;&gt;User1&lt;/router-link&gt;
+    &lt;router-link to=&quot;/user/2&quot;&gt;User2&lt;/router-link&gt;
+    &lt;router-link :to=&quot;{ name: &#39;user&#39;, params: {id: 3} }&quot;&gt;User3&lt;/router-link&gt;
+    &lt;router-link to=&quot;/register&quot;&gt;Register&lt;/router-link&gt;
+
+    &lt;!-- 路由占位符 --&gt;
+    &lt;router-view&gt;&lt;/router-view&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    const User = {
+        props: [&#39;id&#39;, &#39;uname&#39;, &#39;age&#39;],
+        template: `&lt;div&gt;
+            &lt;h1&gt;User 组件  -- 用户id为: {{ id }}  -- 姓名为: {{ uname }} -- 年龄为: {{ age }}&lt;/h1&gt;
+            &lt;button @click=&quot;goRegister&quot;&gt;跳转到注册页面&lt;/button&gt;
+         &lt;/div&gt;`,
+        methods: {
+            goRegister() {
+                this.$router.push(&#39;/register&#39;)
+            }
+        },
+    }
+
+    const Register = {
+        template: `&lt;div&gt;
+            &lt;h1&gt;Register 组件&lt;/h1&gt;
+            &lt;button @click=&quot;goBack&quot;&gt;后退&lt;/button&gt;
+        &lt;/div&gt;`,
+        methods: {
+            goBack() {
+                this.$router.go(-1)
+            }
+        }
+    }
+
+    // 创建路由实例对象
+    const router = new VueRouter({
+        // 所有的路由规则
+        routes: [
+            {path: &#39;/&#39;, redirect: &#39;/user&#39;},
+            {
+                // 命名路由
+                name: &#39;user&#39;,
+                path: &#39;/user/:id&#39;,
+                component: User,
+                props: route =&gt; ({uname: &#39;zs&#39;, age: 20, id: route.params.id})
+            },
+            {path: &#39;/register&#39;, component: Register}
+        ]
+    })
+
+    // 创建 vm 实例对象
+    const vm = new Vue({
+        // 指定控制的区域
+        el: &#39;#app&#39;,
+        data: {},
+        // 挂载路由实例对象
+        // router: router
+        router
+    })
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div>
+</div>
+<section id="router-push">
+<h3><a class="toc-backref" href="#id26"><span class="section-number">6.5.1. </span>5.1 router.push()方法参数规则</a><a class="headerlink" href="#router-push" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/*
+        字符串(路径名称)
+            router.push(&#39;/home&#39;)
+
+        对象
+            router.push({path: &#39;/home&#39;})
+
+        命名的路由(传递参数)
+            router.push({name: &#39;/user&#39;,params: {userId: 123}})
+
+        带查询参数,变成 /register?uname=lisi
+            router.push({ path: &#39;/register&#39;, query: {uname: &#39;lisi&#39; }})
+*/
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id27"><span class="section-number">6.6. </span>6.命名路由</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>在开发过程中，如果每次使用路由跳转的过程都用path会比较麻烦，如果能通过一个名称来标识一个路由，则会更加方便。</p>
+<p>在vue-router中就有关于命名路由的配置项，创建Router实例的时候，在routes配置中可以给某个路由设置名称，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="o">//</span> <span class="n">命名路由</span>
+  <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/userrouter/:userId&#39;</span><span class="p">,</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;userrouter&#39;</span><span class="p">,</span>
+  <span class="n">component</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="n">import</span><span class="p">(</span><span class="s1">&#39;../views/mmRouterView&#39;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>要连接到一个命名路由，可以给router-link的to属性传一个对象，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">link</span> <span class="p">:</span><span class="n">to</span><span class="o">=</span><span class="s2">&quot;{ name: &#39;userrouter&#39;,params: </span><span class="si">{userId: 123}</span><span class="s2"> }&quot;</span><span class="o">&gt;</span><span class="n">命名router</span><span class="o">&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">link</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>使用代码调用router.push()的效果是一样的，代码如下：</p>
+<p><code class="docutils literal notranslate"><span class="pre">mmRouterView.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;h1&gt;我的参数是: {{ $route.params.userId }}&lt;/h1&gt;
+  &lt;button @click=&quot;gorouter&quot;&gt;跳转到命名router页面&lt;/button&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &#39;mmRouterView&#39;,
+  methods: {
+    gorouter () {
+      this.$router.push({ name: &#39;userrouter&#39;, params: { userId: 1234567 } })
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id28"><span class="section-number">6.7. </span>7.命名视图</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>有时候想同时 (同级) 展示多个视图，而不是嵌套展示，例如创建一个布局，有
+<code class="docutils literal notranslate"><span class="pre">sidebar</span></code> (侧导航) 和 <code class="docutils literal notranslate"><span class="pre">main</span></code> (主内容)
+两个视图，这个时候命名视图就派上用场了。你可以在界面中拥有多个单独命名的视图，而不是只有一个单独的出口。如果
+<code class="docutils literal notranslate"><span class="pre">router-view</span></code> 没有设置名字，那么默认为 <code class="docutils literal notranslate"><span class="pre">default</span></code>。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">view</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;view left-sidebar&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;LeftSidebar&quot;</span><span class="o">&gt;&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">view</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">view</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;view main-content&quot;</span><span class="o">&gt;&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">view</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">view</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;view right-sidebar&quot;</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;RightSidebar&quot;</span><span class="o">&gt;&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">view</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>一个视图使用一个组件渲染，因此对于同个路由，多个视图就需要多个组件。确保正确使用
+<code class="docutils literal notranslate"><span class="pre">components</span></code> 配置 (带上 <strong>s</strong>)：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>const router = createRouter({
+  history: createWebHashHistory(),
+  routes: [
+    {
+      path: &#39;/&#39;,
+      components: {
+        default: Home,
+        // LeftSidebar: LeftSidebar 的缩写
+        LeftSidebar,
+        // 它们与 `&lt;router-view&gt;` 上的 `name` 属性匹配
+        RightSidebar,
+      },
+    },
+  ],
+})
+</pre></div>
+</div>
+<p>以上案例相关的可运行代码请<a class="reference external" href="https://codesandbox.io/s/named-views-vue-router-4-examples-rd20l">移步这里</a>.</p>
+<p><a class="reference external" href="https://vueschool.io/lessons/vue-router-4-named-views?friend=vuerouter">在 Vue School
+上观看免费视频课程</a></p>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id29"><span class="section-number">6.8. </span>8.重定向</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>在实际开发中，当对一个页面的功能操作完成后，需要自动完成跳转，或者在访问某个路由链接时，需要自动访问另外一个链接，这就要用到路由的重定向配置。重定向可以通过routes配置来完成，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/routerViews&#39;</span><span class="p">,</span>
+  <span class="n">redirect</span><span class="p">:</span> <span class="s1">&#39;/user&#39;</span>
+<span class="p">},</span>
+</pre></div>
+</div>
+<p>重定向的目标也可以是一个命名的路由：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">routes</span> <span class="o">=</span> <span class="p">[{</span> <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/home&#39;</span><span class="p">,</span> <span class="n">redirect</span><span class="p">:</span> <span class="p">{</span> <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;homepage&#39;</span> <span class="p">}</span> <span class="p">}]</span>
+</pre></div>
+</div>
+<p>也可以重定向到相对位置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>const routes = [
+  {
+    // 将总是把/users/123/posts重定向到/users/123/profile。
+    path: &#39;/users/:id/posts&#39;,
+    redirect: to =&gt; {
+      // 该函数接收目标路由作为参数
+      // 相对位置不以`/`开头
+      // 或 { path: &#39;profile&#39;}
+      return &#39;profile&#39;
+    },
+  },
+]
+</pre></div>
+</div>
+<p>别名</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">routes</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/users&#39;</span><span class="p">,</span>
+    <span class="n">component</span><span class="p">:</span> <span class="n">UsersLayout</span><span class="p">,</span>
+    <span class="n">children</span><span class="p">:</span> <span class="p">[</span>
+      <span class="o">//</span> <span class="n">为这</span> <span class="mi">3</span> <span class="n">个</span> <span class="n">URL</span> <span class="n">呈现</span> <span class="n">UserList</span>
+      <span class="o">//</span> <span class="o">-</span> <span class="o">/</span><span class="n">users</span>
+      <span class="o">//</span> <span class="o">-</span> <span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="nb">list</span>
+      <span class="o">//</span> <span class="o">-</span> <span class="o">/</span><span class="n">people</span>
+      <span class="p">{</span> <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">component</span><span class="p">:</span> <span class="n">UserList</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;/people&#39;</span><span class="p">,</span> <span class="s1">&#39;list&#39;</span><span class="p">]</span> <span class="p">},</span>
+    <span class="p">],</span>
+  <span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>参考链接：</p>
+<p><a class="reference external" href="https://router.vuejs.org/zh/guide/essentials/redirect-and-alias.html">https://router.vuejs.org/zh/guide/essentials/redirect-and-alias.html</a></p>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id30"><span class="section-number">6.9. </span>9.路由的模式</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<p>在讲解vue-router的路由模式之前，首先要认识路由的组成。每个路由都是由多个URL组成，使用不同的URL可以导航到不同的位置。对于服务器端访问来说，HTTP请求是无状态的，所以当请求服务器不同的网址来切换页面时，都会重新进行请求。</p>
+<p>而在使用vue-router进行前端页面切换时，并没有让浏览器刷新，这是因为借助了浏览器的history
+API，使得页面跳转而浏览器不执行刷新操作，这样页面的状态就被维持在浏览器中了。</p>
+<p>vue-router中默认为哈希模式，URL网址的格式为<code class="docutils literal notranslate"><span class="pre">http://localhost:8080/#/</span></code>，在URL中带有#号。可以在router实例中修改路由的模式，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">router</span> <span class="o">=</span> <span class="n">createRouter</span><span class="p">({</span>
+  <span class="n">history</span><span class="p">:</span> <span class="n">createWebHistory</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">BASE_URL</span><span class="p">),</span>
+  <span class="n">routes</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>当路由的模式设置为history模式后，URL网址中的#就会被去除了。</p>
+</section>
+<section id="id11">
+<h2><a class="toc-backref" href="#id31"><span class="section-number">6.10. </span>10.导航守卫</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<p>导航守卫又称为路由守卫，用来实时监控路由跳转的过程，在路由跳转的各个过程中执行相应的钩子函数，这就类似于Vue的生命周期钩子，在实际开发中经常被使用。</p>
+<p>例如，当用户单击一个页面时，如果当前用户未登录，就自动跳转到登录页面；如果已经登录，就让用户正常进入。</p>
+<p>导航守卫分为全局守卫、路由独享守卫和组件内守卫，这3种方式应用的场景不同，都有自己的钩子函数，具体内容如下。</p>
+<section id="id12">
+<h3><a class="toc-backref" href="#id32"><span class="section-number">6.10.1. </span>10.1 全局守卫</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p>全局守卫的钩子函数有3个，分别是：</p>
+<ul class="simple">
+<li><p>router.beforeEach（全局前置守卫）</p></li>
+<li><p>router.beforeResolve（全局解析守卫）</p></li>
+<li><p>router.afterEach（全局后置守卫）</p></li>
+</ul>
+<section id="id13">
+<h4>1.全局前置守卫<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<p>可以使用router.beforeEach注册一个全局前置守卫，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">router</span> <span class="o">=</span> <span class="n">createRouter</span><span class="p">({</span> <span class="o">...</span> <span class="p">})</span>
+
+<span class="n">router</span><span class="o">.</span><span class="n">beforeEach</span><span class="p">((</span><span class="n">to</span><span class="p">,</span> <span class="n">from</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="o">...</span>
+  <span class="o">//</span> <span class="n">返回</span> <span class="n">false</span> <span class="n">以取消导航</span>
+  <span class="k">return</span> <span class="n">false</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>当一个导航触发时，全局前置守卫按照创建顺序调用。守卫是异步解析执行，此时导航在所有守卫
+resolve 完之前一直处于<strong>等待中</strong>。</p>
+<p>每个守卫方法接收两个参数：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code>: 即将要进入的目标
+<a class="reference external" href="https://router.vuejs.org/zh/api/#routelocationnormalized">用一种标准化的方式</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from</span></code>: 当前导航正要离开的路由
+<a class="reference external" href="https://router.vuejs.org/zh/api/#routelocationnormalized">用一种标准化的方式</a></p></li>
+</ul>
+<p>可以返回的值如下:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code>: 取消当前的导航。如果浏览器的 URL
+改变了(可能是用户手动或者浏览器后退按钮)，那么 URL 地址会重置到
+<code class="docutils literal notranslate"><span class="pre">from</span></code> 路由对应的地址。</p></li>
+<li><p>一个<a class="reference external" href="https://router.vuejs.org/zh/api/#routelocationraw">路由地址</a>:
+通过一个路由地址跳转到一个不同的地址，就像你调用
+<code class="docutils literal notranslate"><span class="pre">`router.push()</span></code> &lt;<a class="reference external" href="https://router.vuejs.org/zh/api/#push">https://router.vuejs.org/zh/api/#push</a>&gt;`__
+一样，你可以设置诸如 <code class="docutils literal notranslate"><span class="pre">replace:</span> <span class="pre">true</span></code> 或 <code class="docutils literal notranslate"><span class="pre">name:</span> <span class="pre">'home'</span></code>
+之类的配置。当前的导航被中断，然后进行一个新的导航，就和 <code class="docutils literal notranslate"><span class="pre">from</span></code>
+一样。</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>router.beforeEach(async (to, from) =&gt; {
+  if (
+    // 检查用户是否已登录
+    !isAuthenticated &amp;&amp;
+    // 避免无限重定向
+    to.name !== &#39;Login&#39;
+  ) {
+    // 将用户重定向到登录页面
+    return { name: &#39;Login&#39; }
+  }
+})
+</pre></div>
+</div>
+<p>如果遇到了意料之外的情况，可能会抛出一个
+<code class="docutils literal notranslate"><span class="pre">Error</span></code>。这会取消导航并且调用
+<code class="docutils literal notranslate"><span class="pre">`router.onError()</span></code> &lt;<a class="reference external" href="https://router.vuejs.org/zh/api/#onerror">https://router.vuejs.org/zh/api/#onerror</a>&gt;`__
+注册过的回调。</p>
+<p>如果什么都没有，<code class="docutils literal notranslate"><span class="pre">undefined</span></code> 或返回
+<code class="docutils literal notranslate"><span class="pre">true</span></code>，<strong>则导航是有效的</strong>，并调用下一个导航守卫</p>
+<p>以上所有都同 <strong>``async`` 函数</strong> 和 Promise 工作方式一样：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>router.beforeEach(async (to, from) =&gt; {
+  // canUserAccess() 返回 `true` 或 `false`
+  const canAccess = await canUserAccess(to)
+  if (!canAccess) return &#39;/login&#39;
+})
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h4>2.全局解析守卫<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<p>和全局前置守卫类似，其区别是在跳转被确认之前，同时在所有组件内守卫和异步路由组件都被解析之后，解析守卫才调用。</p>
+<p>你可以用 <code class="docutils literal notranslate"><span class="pre">router.beforeResolve</span></code> 注册一个全局守卫。</p>
+<p>这和 <code class="docutils literal notranslate"><span class="pre">router.beforeEach</span></code> 类似，因为它在
+<strong>每次导航</strong>时都会触发，但是确保在导航被确认之前，<strong>同时在所有组件内守卫和异步路由组件被解析之后，解析守卫就被正确调用</strong>。</p>
+</section>
+<section id="id15">
+<h4>3.全局后置钩子<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h4>
+<p>router.afterEach和全局前置守卫类似，其区别是在跳转被确认之前，同时在所有组件内守卫和异步路由组件都被解析之后，解析守卫才调用。</p>
+</section>
+<section id="id16">
+<h4>4.路由独享守卫<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h4>
+<p>独享守卫只有一种：beforeEnter。该守卫接收的参数与全局守卫是一样的，但是该守卫只在其他路由跳转至配置有beforeEnter路由表信息时才生效。</p>
+<p>router配置文件的配置如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">const</span> <span class="n">routes</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span>
+    <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/users/:id&#39;</span><span class="p">,</span>
+    <span class="n">component</span><span class="p">:</span> <span class="n">UserDetails</span><span class="p">,</span>
+    <span class="n">beforeEnter</span><span class="p">:</span> <span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">from</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="o">//</span> <span class="n">reject</span> <span class="n">the</span> <span class="n">navigation</span>
+      <span class="k">return</span> <span class="n">false</span>
+    <span class="p">},</span>
+  <span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">beforeEnter</span></code> 守卫 <strong>只在进入路由时触发</strong>，不会在
+<code class="docutils literal notranslate"><span class="pre">params</span></code>、<code class="docutils literal notranslate"><span class="pre">query</span></code> 或 <code class="docutils literal notranslate"><span class="pre">hash</span></code> 改变时触发。</p>
+<p>例如，从 <code class="docutils literal notranslate"><span class="pre">/users/2</span></code> 进入到 <code class="docutils literal notranslate"><span class="pre">/users/3</span></code> 或者从 <code class="docutils literal notranslate"><span class="pre">/users/2#info</span></code>
+进入到 <code class="docutils literal notranslate"><span class="pre">/users/2#projects</span></code>。</p>
+<p>它们只有在 <strong>从一个不同的</strong> 路由导航时，才会被触发。</p>
+</section>
+</section>
+<section id="id17">
+<h3><a class="toc-backref" href="#id33"><span class="section-number">6.10.2. </span>10.2 组件内守卫</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<p>组件内守卫是在组件内部直接定义的，有以下3个钩子函数。</p>
+<ol class="arabic simple">
+<li><p>beforeRouteEnter：进入该路由前执行。</p></li>
+<li><p>beforeRouteUpdate：该路由的动态参数值发生改变时执行。</p></li>
+<li><p>beforeRouteLeave：离开该路由时执行。</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>const UserDetails = {
+  template: `...`,
+  beforeRouteEnter(to, from) {
+    // 在渲染该组件的对应路由被验证前调用
+    // 不能获取组件实例 `this` ！
+    // 因为当守卫执行时，组件实例还没被创建！
+  },
+  beforeRouteUpdate(to, from) {
+    // 在当前路由改变，但是该组件被复用时调用
+    // 举例来说，对于一个带有动态参数的路径 `/users/:id`，在 `/users/1` 和 `/users/2` 之间跳转的时候，
+    // 由于会渲染同样的 `UserDetails` 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
+    // 因为在这种情况发生的时候，组件已经挂载好了，导航守卫可以访问组件实例 `this`
+  },
+  beforeRouteLeave(to, from) {
+    // 在导航离开渲染该组件的对应路由时调用
+    // 与 `beforeRouteUpdate` 一样，它可以访问组件实例 `this`
+  },
+}
+</pre></div>
+</div>
+<p>beforeRouteEnter守卫不能访问this，因为守卫在导航确认前被调用，因此即将登场的新组件还没被创建。</p>
+<p>不过，可以通过传一个回调给next访问组件实例。在导航被确认的时候执行回调，并且把组件实例作为回调方法的参数，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>beforeRouteEnter (to, from, next) {
+  next(vm =&gt; {
+    // 通过 `vm` 访问组件实例
+  })
+}
+</pre></div>
+</div>
+<blockquote>
+<div><p>注意　beforeRouteEnter是支持向next传递回调的唯一守卫。</p>
+<p>对于beforeRouteUpdate和beforeRouteLeave来说，this已经可用了，所以不支持传递回调，因为没有必要。</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Vue%E7%BB%84%E4%BB%B6.html" class="btn btn-neutral float-left" title="5. 深入了解Vue组件" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.Vuex%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86.html" class="btn btn-neutral float-right" title="7. Vuex状态管理" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

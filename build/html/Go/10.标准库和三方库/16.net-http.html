@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10.16. net/http &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10.17. error" href="17.error.html" />
+    <link rel="prev" title="10.15. sort" href="15.sort.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">10. 标准库和三方库</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.strings.html">10.1. strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.bytes.html">10.2. bytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.fmt.html">10.3. fmt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Json.html">10.4. Json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.strconv.html">10.5. strconv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.ioutil-bufio.html">10.6. ioutil/bufio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.time.html">10.7. time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.os-path-filepath.html">10.8. os/path/filepath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.regexp.html">10.9. regexp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.log.html">10.10. log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.reflect-unsafe.html">10.11. reflect/unsafe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.unicode.html">10.12. unicode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.flag%E5%92%8Cgo-flags.html">10.13. flag和go-flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.net-url.html">10.14. net/url</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.sort.html">10.15. sort</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">10.16. net/http</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">10.16.1. 1. 客户端</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">10.16.2. 2. 服务器端</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gohttp">10.16.3. 3.Go最简单的http服务器</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get">10.16.4. 4.GET请求示例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">10.16.5. 5. 带参数的GET请求示例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#post">10.16.6. 6. Post请求示例</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">10.16.7. 7. 静态站点</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">10.16.8. 8.小结</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">10.16.9. 9.参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="17.error.html">10.17. error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="18.template%E6%A8%A1%E6%9D%BF.html">10.18. template模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="19.%E6%93%8D%E4%BD%9Cmysql.html">10.19. 操作mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="20.Go%E8%AF%AD%E8%A8%80%E5%B8%B8%E7%94%A8%E8%B5%84%E6%96%99%E5%8F%8A%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%B1%87%E6%80%BB.html">10.20. Go语言常用资料及工具详细汇总</a></li>
+<li class="toctree-l3"><a class="reference internal" href="21.Socket%E7%BD%91%E7%BB%9C.html">10.21. Socket网络</a></li>
+<li class="toctree-l3"><a class="reference internal" href="22.go%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93.html">10.22. go标准库和三方库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="23.cobra.html">10.23. cobra</a></li>
+<li class="toctree-l3"><a class="reference internal" href="24.viper.html">10.24. viper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="25.math-rand.html">10.25. math-rand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="26.zap-%E6%97%A5%E5%BF%97%E6%A8%A1%E5%9D%97.html">10.26. zap-日志模块</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">10. </span>标准库和三方库</a> &raquo;</li>
+      <li><span class="section-number">10.16. </span>net/http</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/10.标准库和三方库/16.net-http.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#net-http" id="id10">net/http</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id11">1. 客户端</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id12">(1) 获取资源</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id13">(2) 创建资源</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id4" id="id14">2. 服务器端</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id15">（1）默认的形式</a></p></li>
+<li><p><a class="reference internal" href="#handler" id="id16">（2）实现Handler接口</a></p></li>
+<li><p><a class="reference internal" href="#http" id="id17">（3）自定义HTTP服务器配置</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#gohttp" id="id18">3.Go最简单的http服务器</a></p></li>
+<li><p><a class="reference internal" href="#get" id="id19">4.GET请求示例</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id20">5. 带参数的GET请求示例</a></p></li>
+<li><p><a class="reference internal" href="#post" id="id21">6. Post请求示例</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id22">7. 静态站点</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id23">8.小结</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id24">9.参考文献</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="net-http">
+<h1><a class="toc-backref" href="#id10"><span class="section-number">10.16. </span>net/http</a><a class="headerlink" href="#net-http" title="Permalink to this headline">¶</a></h1>
+<p>net/http是内置库中一个非常重要的核心库，其他的编程语言要实现Web服务往往需要编写很多代码，而在Go语言中，只需要简短的几行程序代码即可实现Web服务或者发起网络请求。</p>
+<p>关于网络请求，往往包含两个方向：</p>
+<p>（1）客户端，即向某服务器端发起网络请求，访问该服务器端的资源。</p>
+<p>（2）服务器端，即提供给各个客户端的资源，供各个客户端的访问。</p>
+<p>下面分别从客户端和服务器端两个方面讲解内置库net/http的使用。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">10.16.1. </span>1. 客户端</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>客户端是向服务器端发起网络请求，根据服务器端提供的不同请求方法或者路由的不同，访问到的资源也各不相同。</p>
+<p>为了便于访问，下面使用可以用来测试网络请求的一个开源网站http://httpbin.org，这是Python领域一个非常著名的开源库作者kennethreitz的作品。</p>
+<p>当然，如果读者熟悉Docker，可以以容器的形式来启动：<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">-p</span> <span class="pre">80:80</span> <span class="pre">kennethreitz/httpbin</span></code>，这样在读者的本地系统也可以启动这个服务，便于进行下面的访问测试。</p>
+<section id="id2">
+<h3><a class="toc-backref" href="#id12">(1) 获取资源</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Get</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">getHandle</span><span class="p">(</span><span class="nx">rawString</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">response</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">rawString</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="k">defer</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">content</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">content</span><span class="p">))</span>
+
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// get: 分别获取标头信息、IP地址、user-agent</span>
+    <span class="nx">getHandle</span><span class="p">(</span><span class="s">&quot;http://httpbin.org/headers&quot;</span><span class="p">)</span>
+    <span class="nx">getHandle</span><span class="p">(</span><span class="s">&quot;http://httpbin.org/ip&quot;</span><span class="p">)</span>
+    <span class="nx">getHandle</span><span class="p">(</span><span class="s">&quot;http://httpbin.org/user-agent&quot;</span><span class="p">)</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>客户端获取资源的方式非常简便，只需调用http.Get即可。通过查看源代码可以看到，其实是调用了内置默认的http.Client结构体的Get方法。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// DefaultClient.Do.</span>
+<span class="kd">func</span> <span class="nx">Get</span><span class="p">(</span><span class="nx">url</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">resp</span> <span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">DefaultClient</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<section id="url-1">
+<h4>并发获取多个URL-示例1<a class="headerlink" href="#url-1" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+    <span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span> <span class="kt">string</span><span class="p">,</span><span class="nx">ch</span> <span class="kd">chan</span> <span class="o">&lt;-</span><span class="kt">string</span><span class="p">)</span>  <span class="p">{</span>
+    <span class="nx">start</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">()</span>
+    <span class="nx">resp</span><span class="p">,</span><span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprint</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">nbytes</span><span class="p">,</span><span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Copy</span><span class="p">(</span><span class="nx">ioutil</span><span class="p">.</span><span class="nx">Discard</span><span class="p">,</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;while reading %s: %v&quot;</span><span class="p">,</span><span class="nx">url</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">secs</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Since</span><span class="p">(</span><span class="nx">start</span><span class="p">).</span><span class="nx">Seconds</span><span class="p">()</span>
+    <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%.2fs %7d %s&quot;</span><span class="p">,</span><span class="nx">secs</span><span class="p">,</span><span class="nx">nbytes</span><span class="p">,</span><span class="nx">url</span><span class="p">)</span>
+
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">start</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">()</span>
+    <span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">url</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="p">{</span>
+        <span class="k">go</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span><span class="nx">ch</span><span class="p">)</span>        <span class="c1">// 启动一个goroutine</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="k">range</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="o">&lt;-</span><span class="nx">ch</span><span class="p">)</span>       <span class="c1">// 从通道接受</span>
+    <span class="p">}</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%.2fs elapsed\n&quot;</span><span class="p">,</span><span class="nx">time</span><span class="p">.</span><span class="nx">Since</span><span class="p">(</span><span class="nx">start</span><span class="p">).</span><span class="nx">Seconds</span><span class="p">())</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="url-2">
+<h4>并发获取多个URL-示例2<a class="headerlink" href="#url-2" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;log&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Page</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">Url</span>  <span class="kt">string</span>
+    <span class="nx">Size</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">responseSize</span><span class="p">(</span><span class="nx">url</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">channel</span> <span class="kd">chan</span> <span class="nx">Page</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">response</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="nx">Body</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ReadCloser</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">err</span> <span class="o">:=</span> <span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+
+    <span class="nx">body</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">channel</span> <span class="o">&lt;-</span> <span class="nx">Page</span><span class="p">{</span><span class="nx">Url</span><span class="p">:</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">Size</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="nx">body</span><span class="p">)}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">pages</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="nx">Page</span><span class="p">)</span>
+    <span class="nx">urls</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span>
+        <span class="s">&quot;https://example.com/&quot;</span><span class="p">,</span>
+        <span class="s">&quot;https://baidu.com/&quot;</span><span class="p">,</span>
+        <span class="s">&quot;https://gitee.com/&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">url</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">urls</span> <span class="p">{</span>
+        <span class="k">go</span> <span class="nx">responseSize</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">pages</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">urls</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="nx">page</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">pages</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Url: %s  Size: %d\n&quot;</span><span class="p">,</span> <span class="nx">page</span><span class="p">.</span><span class="nx">Url</span><span class="p">,</span> <span class="nx">page</span><span class="p">.</span><span class="nx">Size</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id13">(2) 创建资源</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Post、PostForm</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;bytes&quot;</span>
+    <span class="s">&quot;encoding/json&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+    <span class="s">&quot;net/url&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">postHandle</span><span class="p">(</span><span class="nx">rawString</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">body</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">response</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Post</span><span class="p">(</span><span class="nx">rawString</span><span class="p">,</span> <span class="s">&quot;application/json&quot;</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">content</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">content</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">ClientUsage</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// post</span>
+    <span class="kd">var</span> <span class="nx">buf</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+    <span class="nx">buf</span><span class="p">.</span><span class="nx">WriteString</span><span class="p">(</span><span class="s">&quot;hello golang&quot;</span><span class="p">)</span>
+    <span class="nx">postHandle</span><span class="p">(</span><span class="s">&quot;http://localhost:80/anything&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">buf</span><span class="p">)</span>
+
+    <span class="nx">val</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="s">&quot;hello python&quot;</span><span class="p">)</span>
+    <span class="nx">postHandle</span><span class="p">(</span><span class="s">&quot;http://localhost:80/anything&quot;</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span>
+
+    <span class="nx">bytesNew</span> <span class="o">:=</span> <span class="kd">struct</span> <span class="p">{</span>
+        <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:&quot;name&quot;`</span>
+        <span class="nx">Age</span>  <span class="kt">int</span>    <span class="s">`json:&quot;age&quot;`</span>
+    <span class="p">}{</span>
+        <span class="nx">Name</span><span class="p">:</span> <span class="s">&quot;Golang&quot;</span><span class="p">,</span>
+        <span class="nx">Age</span><span class="p">:</span>  <span class="mi">10</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="nx">byt</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">bytesNew</span><span class="p">)</span>
+    <span class="nx">postHandle</span><span class="p">(</span><span class="s">&quot;http://localhost:80/anything&quot;</span><span class="p">,</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">byt</span><span class="p">))</span>
+    <span class="c1">// PostForm</span>
+    <span class="nx">response</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">PostForm</span><span class="p">(</span><span class="s">&quot;http://localhost:80/anything&quot;</span><span class="p">,</span> <span class="nx">url</span><span class="p">.</span><span class="nx">Values</span><span class="p">{</span>
+        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;Golang&quot;</span><span class="p">},</span>
+        <span class="s">&quot;age&quot;</span><span class="p">:</span>  <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;10&quot;</span><span class="p">},</span>
+    <span class="p">})</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">content</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">content</span><span class="p">))</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面的示例都是调用默认的客户端访问服务器端资源的方法，这种情况通常能够满足大部分的需求。如果想采用定制的方法，就需要实例化相应的结构体，并调用相应的方法。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;errors&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">redirectPolicyFunc</span><span class="p">(</span><span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span> <span class="nx">via</span> <span class="p">[]</span><span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Contains</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">Path</span><span class="p">,</span> <span class="s">&quot;header&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;header&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">UserClientUsage</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">request</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">NewRequest</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">MethodGet</span><span class="p">,</span> <span class="s">&quot;http://httpbin.org/ip&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+    <span class="nx">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">{</span>
+        <span class="nx">CheckRedirect</span><span class="p">:</span> <span class="nx">redirectPolicyFunc</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="nx">response</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nx">Do</span><span class="p">(</span><span class="nx">request</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">content</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">content</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">UserClientUsage</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上面的示例代码中实例化了http.Client结构体，再调用了http.Client的Do方法。</p>
+</section>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">10.16.2. </span>2. 服务器端</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>服务器端主要的角色是提供资源访问的服务，在Go语言中可以快速地启动Web服务，通常启动Web服务的方式有下面几种：</p>
+<section id="id5">
+<h3><a class="toc-backref" href="#id15">（1）默认的形式</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>【示例】</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;log&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="s">&quot;/hello_golang&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">writer</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">request</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">writer</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;Hello Golang&quot;</span><span class="p">))</span>
+    <span class="p">})</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">(</span><span class="s">&quot;:8080&quot;</span><span class="p">,</span><span class="kc">nil</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="handler">
+<h3><a class="toc-backref" href="#id16">（2）实现Handler接口</a><a class="headerlink" href="#handler" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;log&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">SelfHandler</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">SelfHandler</span><span class="p">)</span> <span class="nx">ServeHTTP</span><span class="p">(</span><span class="nx">writer</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">writer</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;Hello Python&quot;</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">self</span> <span class="nx">SelfHandler</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">Handle</span><span class="p">(</span><span class="s">&quot;/hello_python&quot;</span><span class="p">,</span><span class="nx">self</span><span class="p">)</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">(</span><span class="s">&quot;:8080&quot;</span><span class="p">,</span><span class="kc">nil</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>其实重要的是Handler接口和自定义结构体，实现ServeHTTP方法即可。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Handler</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">ServeHTTP</span><span class="p">(</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上文中关于服务端资源的获取可以使用如下命令调用：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ curl http://localhost:8080/hello_python
+Hello Python
+</pre></div>
+</div>
+</section>
+<section id="http">
+<h3><a class="toc-backref" href="#id17">（3）自定义HTTP服务器配置</a><a class="headerlink" href="#http" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;log&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">Self</span> <span class="kd">struct</span> <span class="p">{</span>
+
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">Self</span><span class="p">)</span> <span class="nx">ServeHTTP</span><span class="p">(</span><span class="nx">writer</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span><span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span>  <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintf</span><span class="p">(</span><span class="nx">writer</span><span class="p">,</span><span class="s">&quot;Hello Self Sever 1&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="nx">Self</span><span class="p">)</span> <span class="nx">Say</span><span class="p">(</span><span class="nx">writer</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span><span class="nx">req</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span>  <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintf</span><span class="p">(</span><span class="nx">writer</span><span class="p">,</span><span class="s">&quot;Hello Self Sever 1&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">selfServer</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Server</span>
+    <span class="kd">var</span> <span class="nx">selfHandler</span> <span class="nx">Self</span>
+    <span class="kd">var</span> <span class="nx">selfMux</span>  <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">ServeMux</span>
+    <span class="nx">selfMux</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">ServeMux</span><span class="p">{}</span>
+    <span class="nx">selfHandler</span> <span class="p">=</span> <span class="nx">Self</span><span class="p">{}</span>
+    <span class="nx">selfMux</span><span class="p">.</span><span class="nx">Handle</span><span class="p">(</span><span class="s">&quot;/say&quot;</span><span class="p">,</span><span class="nx">selfHandler</span><span class="p">)</span>
+
+    <span class="nx">selfServer</span> <span class="p">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Server</span><span class="p">{</span>
+        <span class="nx">Addr</span><span class="p">:</span>    <span class="s">&quot;localhost:9099&quot;</span><span class="p">,</span>
+        <span class="nx">Handler</span><span class="p">:</span> <span class="nx">selfHandler</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">selfServer</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">())</span>
+
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>自定义服务器配置代替了默认的服务器配置，自定义了Handler与服务器端口及地址。</p>
+<p>当然，还可以配置读写超时时间、请求标头的最大字节数等。上文中关于服务器端资源的调用可以使用如下方法：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ curl  http://localhost:9099/say
+</pre></div>
+</div>
+<p>以上是几种常见的启动Web服务的方式，可以看出启动Web服务主要包含如下步骤：</p>
+<ul class="simple">
+<li><p>设置路由：访问的地址（链接）。</p></li>
+<li><p>设置路由对应的控制器：决定访问路由后触发的操作，比如为什么上文访问对应的路由会返回不同的内容。</p></li>
+<li><p>启动相应的服务：确定端口等，即访问的主机的地址和端口。</p></li>
+</ul>
+</section>
+</section>
+<section id="gohttp">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">10.16.3. </span>3.Go最简单的http服务器</a><a class="headerlink" href="#gohttp" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">myfunc</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintf</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="s">&quot;&lt;h1&gt;hi&lt;h1&gt;&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="nx">myfunc</span><span class="p">)</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">(</span><span class="s">&quot;:8080&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>访问 <code class="docutils literal notranslate"><span class="pre">http://localhost:8080/</span></code> , 我们可以看到网页输出”hi”</p>
+</section>
+<section id="get">
+<h2><a class="toc-backref" href="#id19"><span class="section-number">10.16.4. </span>4.GET请求示例</a><a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
+<p>使用net/http包编写一个简单的发送HTTP请求的Client端，代码如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">resp</span><span class="p">,</span> <span class="nx">err1</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;https://www.liwenzhou.com/&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err1</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;get failed, err:&quot;</span><span class="p">,</span> <span class="nx">err1</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">body</span><span class="p">,</span> <span class="nx">err2</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err2</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;read from resp.Body failed,err:&quot;</span><span class="p">,</span> <span class="nx">err2</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">body</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>执行命令GET网页信息：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ go run main.go http://www.baidu.com
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">url</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="p">{</span>
+        <span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&quot;fetch:%v\n&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+            <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">b</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+        <span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="nx">fmt</span><span class="p">.</span><span class="nx">Fprintf</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">,</span> <span class="s">&quot;fetch: reading %s:%v\n&quot;</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+            <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id20"><span class="section-number">10.16.5. </span>5. 带参数的GET请求示例</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>关于GET请求的参数需要使用Go语言内置的net/url这个标准库来处理。</p>
+<p>本地server端HandlerFunc如下： <code class="docutils literal notranslate"><span class="pre">server01.go</span></code></p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+
+<span class="kd">func</span> <span class="nx">getHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">data</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">Query</span><span class="p">()</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">))</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">))</span>
+    <span class="nx">answer</span> <span class="o">:=</span> <span class="s">`{&quot;status&quot;: &quot;ok&quot;}`</span>
+    <span class="nx">w</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">answer</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="nx">getHandler</span><span class="p">)</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">(</span><span class="s">&quot;:9090&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">client01.go</span></code></p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+    <span class="s">&quot;net/url&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">apiUrl</span> <span class="o">:=</span> <span class="s">&quot;http://127.0.0.1:9090/get&quot;</span>
+    <span class="c1">// URL param</span>
+    <span class="nx">data</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">Values</span><span class="p">{}</span>
+    <span class="nx">data</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;小王子&quot;</span><span class="p">)</span>
+    <span class="nx">data</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">,</span> <span class="s">&quot;18&quot;</span><span class="p">)</span>
+    <span class="nx">u</span><span class="p">,</span> <span class="nx">err1</span> <span class="o">:=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">ParseRequestURI</span><span class="p">(</span><span class="nx">apiUrl</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err1</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;parse url requestUrl failed,err:%v\n&quot;</span><span class="p">,</span> <span class="nx">err1</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">u</span><span class="p">.</span><span class="nx">RawQuery</span> <span class="p">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">Encode</span><span class="p">()</span> <span class="c1">// URL encode</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">String</span><span class="p">())</span>
+    <span class="nx">resp</span><span class="p">,</span> <span class="nx">err2</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">String</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nx">err2</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;post failed, err:%v\n&quot;</span><span class="p">,</span> <span class="nx">err2</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">b</span><span class="p">,</span> <span class="nx">err3</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err3</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;get resp failed,err:%v\n&quot;</span><span class="p">,</span> <span class="nx">err3</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="post">
+<h2><a class="toc-backref" href="#id21"><span class="section-number">10.16.6. </span>6. Post请求示例</a><a class="headerlink" href="#post" title="Permalink to this headline">¶</a></h2>
+<p>上面演示了使用net/http包发送GET请求的示例，发送POST请求的示例代码如下：</p>
+<p><code class="docutils literal notranslate"><span class="pre">server02.go</span></code></p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">getHandler</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="c1">// 1. 请求类型是application/x-www-form-urlencoded时解析form数据</span>
+    <span class="nx">r</span><span class="p">.</span><span class="nx">ParseForm</span><span class="p">()</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">PostForm</span><span class="p">)</span> <span class="c1">//打印form数据</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">PostForm</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">),</span> <span class="nx">r</span><span class="p">.</span><span class="nx">PostForm</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">))</span>
+    <span class="c1">// 2. 请求类型是application/json时从r.Body读取数据</span>
+    <span class="nx">b</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;read request.Body fauled, err:%v\n&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">((</span><span class="nx">b</span><span class="p">)))</span>
+    <span class="nx">answer</span> <span class="o">:=</span> <span class="s">`{&quot;status&quot;: &quot;ok&quot;}`</span>
+    <span class="nx">w</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">answer</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="nx">getHandler</span><span class="p">)</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">(</span><span class="s">&quot;:9090&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">client02.go</span></code></p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;io/ioutil&quot;</span>
+    <span class="s">&quot;net/http&quot;</span>
+    <span class="s">&quot;strings&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">url</span> <span class="o">:=</span> <span class="s">&quot;http://127.0.0.1:9090/post&quot;</span>
+    <span class="c1">// 表单数据</span>
+    <span class="c1">//contentType := &quot;application/x-www-form-urlencoded&quot;</span>
+    <span class="c1">//data := &quot;name=小王子&amp;age=18&quot;</span>
+    <span class="c1">// json</span>
+    <span class="nx">contentType</span> <span class="o">:=</span> <span class="s">&quot;application/json&quot;</span>
+    <span class="nx">data</span> <span class="o">:=</span> <span class="s">`{&quot;name&quot;:&quot;小王子&quot;,&quot;age&quot;:18}`</span>
+    <span class="nx">resp</span><span class="p">,</span> <span class="nx">err1</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">Post</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">contentType</span><span class="p">,</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nx">err1</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;post failed, err:%v\n&quot;</span><span class="p">,</span> <span class="nx">err1</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="nx">b</span><span class="p">,</span> <span class="nx">err2</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nx">ReadAll</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">Body</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err2</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;get resp failed,err:%v\n&quot;</span><span class="p">,</span> <span class="nx">err2</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">10.16.7. </span>7. 静态站点</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>下面代码通过指定目录，作为静态站点</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;net/http&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">Handle</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="nx">http</span><span class="p">.</span><span class="nx">FileServer</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">Dir</span><span class="p">(</span><span class="s">&quot;D:\\my_blog\\build\\html&quot;</span><span class="p">)))</span>
+    <span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">(</span><span class="s">&quot;:8080&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id23"><span class="section-number">10.16.8. </span>8.小结</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>在Go语言中能够非常方便地执行客户端或者服务器端的操作，仅仅使用内置库就能很方便地实现诸如网络请求、启动网络服务。</p>
+<p>net/http库的核心包括两个方面：Client（客户端）和Server（服务器端），从事后端开发的程序员应该很熟悉这两个概念，尤其是从事Web开发的人员。</p>
+<p>客户端的角色是发起网络请求，服务器端的角色是提供网络资源的访问，再稍微扩充一下，就可以使用内置的net/http库打造性能更好的Web服务。</p>
+<p>当然，原生的在路由层面的设计并不完美，所以衍生了很多第三方基于net/http库的Web框架，诸如Gin、Beego、Echo、Iris等，第三方库提高了开发人员的开发效率，在企业中经常用于业务逻辑的开发，但所有的本质都是对内置库net/http的封装或者优化。</p>
+<img alt="../../_images/image-20220707135322150.png" src="../../_images/image-20220707135322150.png" />
+<p>net/http库提供的操作</p>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id24"><span class="section-number">10.16.9. </span>9.参考文献</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.bookstack.cn/read/topgoer/a4d91804c507fc2a.md">https://www.bookstack.cn/read/topgoer/a4d91804c507fc2a.md</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="15.sort.html" class="btn btn-neutral float-left" title="10.15. sort" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="17.error.html" class="btn btn-neutral float-right" title="10.17. error" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

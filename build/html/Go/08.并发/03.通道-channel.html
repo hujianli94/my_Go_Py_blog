@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8.3. 通道(channel)-在多个goroutine间通信的管道 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="8.4. 无缓冲的通道" href="04.%E6%97%A0%E7%BC%93%E5%86%B2%E7%9A%84%E9%80%9A%E9%81%93.html" />
+    <link rel="prev" title="8.2. goroutine和coroutine" href="02.goroutine%E5%92%8Ccoroutine.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.%E5%87%BD%E6%95%B0/index.html">4. 函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">8. 并发</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E8%BD%BB%E9%87%8F%E7%BA%A7%E7%BA%BF%E7%A8%8B-goroutine.html">8.1. 轻量级线程-goroutine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.goroutine%E5%92%8Ccoroutine.html">8.2. goroutine和coroutine</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">8.3. 通道(channel)-在多个goroutine间通信的管道</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">8.3.1. 1.通道的特性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">8.3.2. 2.声明通道类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">8.3.3. 3.创建通道</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">8.3.4. 4.使用通道发送数据</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9">8.3.5. 5.使用通道接收数据</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id17">8.3.6. 6.单向通道—通道中的单行道</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E6%97%A0%E7%BC%93%E5%86%B2%E7%9A%84%E9%80%9A%E9%81%93.html">8.4. 无缓冲的通道</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%B8%A6%E7%BC%93%E5%86%B2%E7%9A%84%E9%80%9A%E9%81%93.html">8.5. 带缓冲的通道</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.channel%E9%80%9A%E9%81%93%E8%B6%85%E6%97%B6%E6%9C%BA%E5%88%B6.html">8.6. channel通道超时机制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07.channel%E9%80%9A%E9%81%93%E7%9A%84%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.html">8.7. channel通道的多路复用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08.RPC-%E6%A8%A1%E6%8B%9F%E8%BF%9C%E7%A8%8B%E8%BF%87%E7%A8%8B%E8%B0%83%E7%94%A8.html">8.8. RPC-模拟远程过程调用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E5%85%B3%E9%97%ADchannel%E9%80%9A%E9%81%93%E5%90%8E%E7%BB%A7%E7%BB%AD%E4%BD%BF%E7%94%A8%E9%80%9A%E9%81%93.html">8.9. 关闭channel通道后继续使用通道</a></li>
+<li class="toctree-l3"><a class="reference internal" href="10.Go%E8%AF%AD%E8%A8%80%E5%A4%9A%E6%A0%B8%E5%B9%B6%E8%A1%8C%E5%8C%96.html">8.10. Go语言多核并行化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="11.Go%E8%AF%AD%E8%A8%80Telnet%E5%9B%9E%E9%9F%B3%E6%9C%8D%E5%8A%A1%E5%99%A8-TCP%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84.html">8.11. Go语言Telnet回音服务器-TCP服务器的基本结构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="12.%E5%90%8C%E6%AD%A5-%E4%BF%9D%E8%AF%81%E5%B9%B6%E5%8F%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7.html">8.12. 同步-保证并发环境下数据访问的正确性</a></li>
+<li class="toctree-l3"><a class="reference internal" href="13.%E4%BA%92%E6%96%A5%E9%94%81.html">8.13. 互斥锁</a></li>
+<li class="toctree-l3"><a class="reference internal" href="14.Go%E8%AF%AD%E8%A8%80%E7%AD%89%E5%BE%85%E7%BB%84.html">8.14. Go语言等待组</a></li>
+<li class="toctree-l3"><a class="reference internal" href="15.%E7%AE%A1%E9%81%93-Pipeline.html">8.15. 管道-Pipeline</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93/index.html">10. 标准库和三方库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">8. </span>并发</a> &raquo;</li>
+      <li><span class="section-number">8.3. </span>通道(channel)-在多个goroutine间通信的管道</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/08.并发/03.通道-channel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#channel-goroutine" id="id20">通道(channel)-在多个goroutine间通信的管道</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id21">1.通道的特性</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id22">2.声明通道类型</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id23">3.创建通道</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id24">3.1 例子</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id5" id="id25">4.使用通道发送数据</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id6" id="id26">1) 通道发送数据的格式</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id27">2) 通过通道发送数据的例子</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id28">3) 发送将持续阻塞，直到数据被接收</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id9" id="id29">5.使用通道接收数据</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id10" id="id30">5.1 通道的数据接收4种写法。</a></p></li>
+<li><p><a class="reference internal" href="#id15" id="id31">5.2示例-并发打印</a></p></li>
+<li><p><a class="reference internal" href="#id16" id="id32">5.4示例-同时发送和接收(不带缓冲的通道)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id17" id="id33">6.单向通道—通道中的单行道</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id18" id="id34">6.1 单向通道的声明格式</a></p></li>
+<li><p><a class="reference internal" href="#id19" id="id35">6.2 单向通道的使用例子</a></p></li>
+<li><p><a class="reference internal" href="#time" id="id36">6.3 time包中的单向通道</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="channel-goroutine">
+<h1><a class="toc-backref" href="#id20"><span class="section-number">8.3. </span>通道(channel)-在多个goroutine间通信的管道</a><a class="headerlink" href="#channel-goroutine" title="Permalink to this headline">¶</a></h1>
+<p>单纯地将函数并发执行是没有意义的。
+函数与函数间需要交换数据才能体现并发执行函数的意义。
+虽然可以使用共享内存进行数据交换，但是共享内存在不同的goroutine中容易发生竞态问题。
+为了保证数据交换的正确性，必须使用互斥量对内存进行加锁，这种做法势必造成性能问题。</p>
+<p>Go语言提倡使用通信的方法代替共享内存，这里通信的方法就是使用通道(channel).</p>
+<img alt="../../_images/go_channel00001.png" src="../../_images/go_channel00001.png" />
+<p><strong>提示：</strong></p>
+<p>在地铁站、食堂、洗手间等公共场所人很多的情况下，大家养成了排队的习惯，
+目的也是避免拥挤、插队导致的低效的资源使用和交换过程。</p>
+<p>代码与数据也是如此，多个goroutine为了争抢数据，势必造成执行的低效率，使用队列的方式是最高效的，channel
+就是一种队列一样的结构。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id21"><span class="section-number">8.3.1. </span>1.通道的特性</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Go语言中的通道（channel）是一种特殊的类型。在任何时候，同时只能有一个goroutine访问通道进行发送和获取数据。goroutine间通过通道就可以通信。</p>
+<p>通道像一个传送带或者队列，总是遵循先入先出（First In First
+Out）的规则，保证收发数据的顺序。</p>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">8.3.2. </span>2.声明通道类型</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>通道本身需要一个类型进行修饰，就像切片类型需要标识元素类型。通道的元素类型就是在其内部传输的数据类型，声明如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>var 通道变量 chan 通道类型
+
+·通道类型：通道内的数据类型。
+·通道变量：保存通道的变量。
+
+chan 类型的空值是 nil，声明后需要配合 make 后才能使用。
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id23"><span class="section-number">8.3.3. </span>3.创建通道</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>通道是引用类型，需要使用 make 进行创建，格式如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>通道实例 := make(chan 数据类型)
+
+· 数据类型：通道内传输的元素类型。
+· 通道实例：通过make创建的通道句柄。
+</pre></div>
+</div>
+<p>例如：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">ch1</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>                 <span class="c1">// 创建一个整型类型的通道</span>
+<span class="nx">ch2</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span>         <span class="c1">// 创建一个空接口类型的通道，可以存放任意格式</span>
+
+<span class="kd">type</span> <span class="nx">Equip</span> <span class="kd">struct</span><span class="p">{</span> <span class="cm">/* 一些字段 */</span> <span class="p">}</span>
+<span class="nx">ch2</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">Equip</span><span class="p">)</span>             <span class="c1">// 创建Equip指针类型的通道，可以存放*Equip</span>
+
+
+
+<span class="c1">// 无缓冲的整型通道</span>
+<span class="nx">unbuffered</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+
+<span class="c1">// 有缓冲的字符串通道</span>
+<span class="nx">buffered</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+
+
+<span class="nx">ch</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>    <span class="c1">// unbuffered channel</span>
+<span class="nx">ch</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">// unbuffered channel</span>
+<span class="nx">ch</span> <span class="p">=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c1">// buffered channel with capacity 3</span>
+</pre></div>
+</div>
+<p>向通道发送值</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 有缓冲的字符串通道</span>
+<span class="nx">buffered</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="c1">// 通过通道发送一个字符串</span>
+<span class="nx">buffered</span> <span class="o">&lt;-</span> <span class="s">&quot;Gopher&quot;</span>
+</pre></div>
+</div>
+<p>从通道里接收值</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 从通道接收一个字符串</span>
+<span class="nx">value</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">buffered</span>
+</pre></div>
+</div>
+<p>当从通道里接收一个值或者指针时，<code class="docutils literal notranslate"><span class="pre">&lt;-</span></code>
+运算符在要操作的通道变量的左侧。</p>
+<section id="id4">
+<h3><a class="toc-backref" href="#id24">3.1 例子</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">ch1</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+    <span class="nx">ch2</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span>
+
+    <span class="kd">type</span> <span class="nx">Equip</span> <span class="kd">struct</span><span class="p">{</span>
+        <span class="nx">name</span> <span class="kt">string</span>
+        <span class="nx">age</span> <span class="kt">int</span>
+    <span class="p">}</span>
+    <span class="nx">ch3</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="o">*</span><span class="nx">Equip</span><span class="p">)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v\n&quot;</span><span class="p">,</span><span class="nx">ch1</span><span class="p">)</span> <span class="c1">//(chan int)(0xc000012180)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v\n&quot;</span><span class="p">,</span><span class="nx">ch2</span><span class="p">)</span> <span class="c1">//(chan interface {})(0xc0000121e0)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v\n&quot;</span><span class="p">,</span><span class="nx">ch3</span><span class="p">)</span> <span class="c1">//(chan *main.Equip)(0xc000012240)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id25"><span class="section-number">8.3.4. </span>4.使用通道发送数据</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>通道创建后，就可以使用通道进行发送和接收操作。</p>
+<section id="id6">
+<h3><a class="toc-backref" href="#id26">1) 通道发送数据的格式</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>通道的发送使用特殊的操作符&lt;-，将数据通过通道发送的格式为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>通道变量 &lt;- 值
+
+· 通道变量：通过make创建好的通道实例。
+· 值：可以是变量、常量、表达式或者函数返回值等。值的类型必须与ch通道的元素类型一致。
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id27">2) 通过通道发送数据的例子</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>使用 make 创建一个通道后，就可以使用&lt;-向通道发送数据，代码如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 创建一个空接口通道</span>
+<span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">interface</span><span class="p">{})</span>
+
+<span class="c1">// 将0放入通道中</span>
+<span class="nx">ch</span> <span class="o">&lt;-</span> <span class="mi">0</span>
+<span class="c1">// 将hello字符串放入通道中</span>
+<span class="nx">ch</span> <span class="o">&lt;-</span> <span class="s">&quot;hello&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3><a class="toc-backref" href="#id28">3) 发送将持续阻塞，直到数据被接收</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>把数据往通道中发送时，如果接收方一直都没有接收，那么发送操作将持续阻塞。
+Go程序运行时能智能地发现一些永远无法发送成功的语句并做出提示，代码如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="c1">// 通过通道发送数据的例子</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 创建一个整型通道</span>
+    <span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+
+    <span class="c1">// 尝试将0通过通道发送</span>
+    <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="mi">0</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">fatal error: all goroutines are asleep - deadlock!</span>
+<span class="cm"> */</span>
+</pre></div>
+</div>
+<p>报错的意思是：运行时发现所有的goroutine（包括main）都处于等待goroutine。
+也就是说所有goroutine中的channel并没有形成发送和接收对应的代码。</p>
+</section>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id29"><span class="section-number">8.3.5. </span>5.使用通道接收数据</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>通道接收同样使用&lt;-操作符，通道接收有如下特性：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>① 通道的收发操作在不同的两个 goroutine 间进行。
+
+由于通道的数据在没有接收方处理时，数据发送方会持续阻塞，因此通道的接收必定在另外一个goroutine中进行。
+
+② 接收将持续阻塞直到发送方发送数据。
+
+如果接收方接收时，通道中没有发送方发送数据，接收方也会发生阻塞，直到发送方发送数据为止。
+
+③ 每次接收一个元素。
+通道一次只能接收一个数据元素。
+</pre></div>
+</div>
+<section id="id10">
+<h3><a class="toc-backref" href="#id30">5.1 通道的数据接收4种写法。</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<section id="id11">
+<h4>1.阻塞接收数据<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p>阻塞模式接收数据时，将接收变量作为“&lt;-”操作符的左值，格式如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">data</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">ch</span>
+</pre></div>
+</div>
+<p>执行该语句时将会阻塞，直到接收到数据并赋值给data变量。</p>
+</section>
+<section id="id12">
+<h4>2.非阻塞接收数据<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<p>使用非阻塞方式从通道接收数据时，语句不会发生阻塞，格式如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">data</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">ch</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>data：表示接收到的数据。未接收到数据时，data为通道类型的零值。</p></li>
+<li><p>ok：表示是否接收到数据。</p></li>
+</ul>
+<p>非阻塞的通道接收方法可能造成高的CPU占用，因此使用非常少。如果需要实现接收超时检测，可以配合select和计时器channel进行。</p>
+</section>
+<section id="id13">
+<h4>3.接收任意数据，忽略接收的数据<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<p>阻塞接收数据后，忽略从通道返回的数据，格式如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;-</span><span class="n">ch</span>
+</pre></div>
+</div>
+<p>执行该语句时将会发生阻塞，直到接收到数据，但接收到的数据会被忽略。
+这个方式实际上只是通过通道在goroutine间阻塞收发实现并发同步。</p>
+<p>使用通道做并发同步的写法，可以参考下面的例子：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// 构建一个通道</span>
+    <span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+
+    <span class="c1">// 开启一个并发匿名函数</span>
+    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;start goroutine&quot;</span><span class="p">)</span>
+
+        <span class="c1">// 通过通道通知main的goroutine</span>
+        <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="mi">0</span>
+
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;exit goroutine&quot;</span><span class="p">)</span>
+
+    <span class="p">}()</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;wait goroutine&quot;</span><span class="p">)</span>
+
+    <span class="c1">// 等待匿名goroutine</span>
+    <span class="o">&lt;-</span><span class="nx">ch</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;all done&quot;</span><span class="p">)</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>执行代码，输出如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wait</span> <span class="n">goroutine</span>
+<span class="n">start</span> <span class="n">goroutine</span>
+<span class="n">exit</span> <span class="n">goroutine</span>
+<span class="nb">all</span> <span class="n">done</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h4>4.循环接收<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<p>通道的数据接收可以借用for range语句进行多个元素的接收操作，格式如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">data</span> <span class="o">:=</span> <span class="nb">range</span> <span class="n">ch</span> <span class="p">{</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>通道ch是可以进行遍历的，遍历的结果就是接收到的数据。
+数据类型就是通道的数据类型。通过for遍历获得的变量只有一个，即上面例子中的data。</p>
+<p>遍历通道数据的例子</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 构建一个通道</span>
+    <span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+
+    <span class="c1">// 开启一个并发匿名函数</span>
+    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 从3循环到0</span>
+        <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">3</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span> <span class="p">{</span>
+            <span class="c1">// 发送3到0之间的数值</span>
+            <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">i</span>
+            <span class="c1">// 每次发送完时等待</span>
+            <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}()</span>
+
+    <span class="c1">// 遍历接收通道数据</span>
+    <span class="k">for</span> <span class="nx">data</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">ch</span> <span class="p">{</span>
+        <span class="c1">// 打印通道数据</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+        <span class="c1">// 当遇到数据0时，退出接收循环</span>
+        <span class="c1">// 当接收到数值0时，停止接收。如果继续发送，由于接收goroutine已经退出，没有goroutine发送到通道，因此运行时将会触发宕机报错。</span>
+        <span class="k">if</span> <span class="nx">data</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id15">
+<h3><a class="toc-backref" href="#id31">5.2示例-并发打印</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">printer</span><span class="p">(</span><span class="nx">c</span> <span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 开始无限循环等待数据</span>
+    <span class="k">for</span> <span class="p">{</span>
+        <span class="c1">// 从channel中获取一个数据</span>
+        <span class="nx">data</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">c</span>
+        <span class="c1">// 将0视为数据结束</span>
+        <span class="k">if</span> <span class="nx">data</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+            <span class="k">break</span>
+        <span class="p">}</span>
+        <span class="c1">// 打印数据</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">// 通知main已经结束循环 (我搞定了！)</span>
+    <span class="nx">c</span> <span class="o">&lt;-</span> <span class="mi">0</span>
+
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 创建一个channel</span>
+    <span class="nx">c</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+
+    <span class="c1">// 并发执行printer，传入channel</span>
+    <span class="k">go</span> <span class="nx">printer</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="c1">//将数据通过channel投送给printer</span>
+        <span class="nx">c</span> <span class="o">&lt;-</span> <span class="nx">i</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 通知并发的printer结束循环（没有数据啦！）</span>
+    <span class="nx">c</span> <span class="o">&lt;-</span> <span class="mi">0</span>
+    <span class="c1">//等待printer结束（搞定喊我！）</span>
+    <span class="o">&lt;-</span><span class="nx">c</span>
+
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">1</span>
+<span class="cm">2</span>
+<span class="cm">3</span>
+<span class="cm">4</span>
+<span class="cm">5</span>
+<span class="cm">6</span>
+<span class="cm">7</span>
+<span class="cm">8</span>
+<span class="cm">9</span>
+<span class="cm">10</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h3><a class="toc-backref" href="#id32">5.4示例-同时发送和接收(不带缓冲的通道)</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="cm">/*</span>
+<span class="cm">使用make来建立一个通道：</span>
+<span class="cm">var channel chan int = make(chan int)</span>
+<span class="cm"> // 或</span>
+<span class="cm">channel := make(chan int)</span>
+
+<span class="cm"> // 定义接收的channel</span>
+<span class="cm">receive_only := make (&lt;-chan int)</span>
+
+<span class="cm"> // 定义发送的channel</span>
+<span class="cm">send_only := make (chan&lt;- int)</span>
+
+<span class="cm">// 可同时发送接收</span>
+<span class="cm">send_receive := make (chan int)</span>
+
+
+<span class="cm">· chan&lt;- 表示数据进入通道，要把数据写进通道，对于调用者就是发送。</span>
+<span class="cm">· &lt;-chan 表示数据从通道出来，对于调用者就是得到通道的数据，当然就是接收。</span>
+
+<span class="cm">定义只发送或只接收的channel意义不大，一般用于在参数传递中：</span>
+<span class="cm">*/</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">c</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span> <span class="c1">// 不使用带缓冲区的channel</span>
+    <span class="k">go</span> <span class="nx">send</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+    <span class="k">go</span> <span class="nx">recv</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+    <span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+    <span class="nb">close</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 只能向chan里send数据</span>
+<span class="kd">func</span> <span class="nx">send</span><span class="p">(</span><span class="nx">c</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;send readey&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+        <span class="nx">c</span> <span class="o">&lt;-</span> <span class="nx">i</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;send&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 只能接收channel中的数据</span>
+<span class="kd">func</span> <span class="nx">recv</span><span class="p">(</span><span class="nx">c</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">c</span><span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;received&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">send readey 0</span>
+<span class="cm">send 0</span>
+<span class="cm">send readey 1</span>
+<span class="cm">received 0</span>
+<span class="cm">received 1</span>
+<span class="cm">send 1</span>
+<span class="cm">.....</span>
+<span class="cm">....</span>
+<span class="cm"> */</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id17">
+<h2><a class="toc-backref" href="#id33"><span class="section-number">8.3.6. </span>6.单向通道—通道中的单行道</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
+<p>Go的通道可以在声明时约束其操作方向，如只发送或是只接收。这种被约束方向的通道被称做单向通道。</p>
+<section id="id18">
+<h3><a class="toc-backref" href="#id34">6.1 单向通道的声明格式</a><a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<p>只能发送的通道类型为chan&lt;-，只能接收的通道类型为&lt;-chan，格式如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">通道实例</span> <span class="n">chan</span><span class="o">&lt;-</span> <span class="n">元素类型</span>
+<span class="n">var</span> <span class="n">通道实例</span> <span class="o">&lt;-</span><span class="n">chan</span> <span class="n">元素类型</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>元素类型：通道包含的元素类型。</p></li>
+<li><p>通道实例：声明的通道变量。</p></li>
+</ul>
+</section>
+<section id="id19">
+<h3><a class="toc-backref" href="#id35">6.2 单向通道的使用例子</a><a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<p>示例代码如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+
+<span class="c1">// 声明一个只能发送的通道类型，并赋值为ch</span>
+<span class="kd">var</span> <span class="nx">chSendOnly</span> <span class="kd">chan</span><span class="o">&lt;-</span> <span class="kt">int</span> <span class="p">=</span> <span class="nx">ch</span>
+
+
+<span class="c1">//声明一个只能接收的通道类型，并赋值为ch</span>
+<span class="kd">var</span> <span class="nx">chRecvOnly</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kt">int</span> <span class="p">=</span> <span class="nx">ch</span>
+</pre></div>
+</div>
+<p>上面的例子中，chSendOnly只能发送数据，如果尝试接收数据，将会出现如下报错：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">invalid</span> <span class="n">operation</span><span class="p">:</span> <span class="o">&lt;-</span><span class="n">chSendOnly</span> <span class="p">(</span><span class="n">receive</span> <span class="kn">from</span> <span class="nn">send</span><span class="o">-</span><span class="n">only</span> <span class="nb">type</span> <span class="n">chan</span><span class="o">&lt;-</span>
+</pre></div>
+</div>
+<p>同理，chRecvOnly也是不能发送的。</p>
+<p>当然，使用make创建通道时，也可以创建一个只发送或只读取的通道：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ch</span> <span class="o">:=</span> <span class="n">make</span><span class="p">(</span><span class="o">&lt;-</span><span class="n">chan</span> <span class="nb">int</span><span class="p">)</span>
+
+<span class="n">var</span> <span class="n">chReadOnly</span> <span class="o">&lt;-</span><span class="n">chan</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ch</span>
+
+<span class="o">&lt;-</span><span class="n">chReadOnly</span>
+</pre></div>
+</div>
+<p>上面代码编译正常，运行也是正确的。但是，一个不能填充数据（发送）只能读取的通道是毫无意义的。</p>
+</section>
+<section id="time">
+<h3><a class="toc-backref" href="#id36">6.3 time包中的单向通道</a><a class="headerlink" href="#time" title="Permalink to this headline">¶</a></h3>
+<p>time包中的计时器会返回一个timer实例，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">timer</span> <span class="o">:=</span> <span class="n">time</span><span class="o">.</span><span class="n">NewTimer</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Second</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>timer的Timer类型定义如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>type Timer struct {
+        // C通道的类型就是一种只能接收的单向通道。如果此处不进行通道方向约束，一旦外部向通道发送数据，将会造成其他使用到计时器的地方逻辑产生混乱。
+        C &lt;-chan Time
+        r runtimeTimer
+}
+</pre></div>
+</div>
+<p>因此，单向通道有利于代码接口的严谨性。</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02.goroutine%E5%92%8Ccoroutine.html" class="btn btn-neutral float-left" title="8.2. goroutine和coroutine" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04.%E6%97%A0%E7%BC%93%E5%86%B2%E7%9A%84%E9%80%9A%E9%81%93.html" class="btn btn-neutral float-right" title="8.4. 无缓冲的通道" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

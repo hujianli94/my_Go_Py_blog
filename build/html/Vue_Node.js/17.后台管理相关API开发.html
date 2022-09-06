@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>17. 后台管理相关API开发 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="18. 小结" href="18.%E5%B0%8F%E7%BB%93.html" />
+    <link rel="prev" title="16. 用户权限相关API开发" href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js+Node.js开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AA%E7%BD%91%E7%AB%99%E7%9A%84%E5%87%86%E5%A4%87.html">1. 开发一个网站的准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Nodejs_vue%E5%9F%BA%E7%A1%80.html">2. Nodejs+vue基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E5%87%86%E5%A4%87.html">3. 项目开发准备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.%E9%A1%B9%E7%9B%AE%E5%90%8E%E5%8F%B0%E6%8A%80%E6%9C%AFExpress.html">4. 项目后台技术Express</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05.Vue.js%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80.html">5. Vue.js开发基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue.js%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.html">6. Vue的生命周期</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vue.js%E7%9A%84%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95.html">7. Vue.js的模板语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue.js%E7%9A%84%E7%BB%84%E4%BB%B6%E5%8C%96.html">8. Vue.js的组件化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.Vue.js%E7%9A%84vue-router%E5%BA%93.html">9. Vue.js的vue-router库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue.js%E7%9A%84%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E5%BA%93Vuex%E5%92%8CPinia.html">10. Vue.js的状态管理库Vuex和Pinia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.Vue-UI%E5%BA%93.html">11. Vue-UI库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.%E9%A1%B9%E7%9B%AE%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E.html">12. 项目需求分析和功能说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.%E9%A1%B9%E7%9B%AE%E7%AD%96%E5%88%92%E5%92%8C%E5%8A%9F%E8%83%BD%E8%AE%BE%E8%AE%A1.html">13. 项目策划和功能设计</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14.%E9%A1%B9%E7%9B%AE%E5%90%8E%E7%AB%AFAPI%E5%BC%80%E5%8F%91.html">14. 项目后端API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15.%E9%80%9A%E7%94%A8API%E5%BC%80%E5%8F%91.html">15. 通用API开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html">16. 用户权限相关API开发</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">17. 后台管理相关API开发</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">17.1. 1.文章添加和修改</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">17.2. 2.文章发布和删除</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">17.3. 3.添加和修改分类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">17.4. 4.获取全部用户列表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">17.5. 5.封停用户</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">17.6. 6.修改首页轮播内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">17.7. 7.修改导航内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">17.8. 8.修改底部内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">17.9. 9.修改友情链接内容</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">17.10. 10.其他权限判定</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="18.%E5%B0%8F%E7%BB%93.html">18. 小结</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19.%E5%89%8D%E7%AB%AF%E9%A1%B5%E9%9D%A2%E5%BC%80%E5%8F%91.html">19. 前端页面开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="20.%E4%B8%BB%E8%A6%81%E9%A1%B5%E9%9D%A2%E7%9A%84%E5%BC%80%E5%8F%91.html">20. 主要页面的开发</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js+Node.js开发实战</a> &raquo;</li>
+      <li><span class="section-number">17. </span>后台管理相关API开发</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue_Node.js/17.后台管理相关API开发.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#api" id="id11">后台管理相关API开发</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id12">1.文章添加和修改</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id13">2.文章发布和删除</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id14">3.添加和修改分类</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id15">4.获取全部用户列表</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id16">5.封停用户</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id17">6.修改首页轮播内容</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id18">7.修改导航内容</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id19">8.修改底部内容</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id20">9.修改友情链接内容</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id21">10.其他权限判定</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="api">
+<h1><a class="toc-backref" href="#id11"><span class="section-number">17. </span>后台管理相关API开发</a><a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<p>本节开发与管理员相关的API，管理员比普通用户增加了文章管理和人员管理等权限。</p>
+<p>管理员通过与users相关的路由登录或获取某些内容，不同的是这里需要增加一个新的中间件，命名为checkAdmin，这里仅指定admin为唯一的管理员用户，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//检测是否是管理员</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">checkAdmin</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;检测管理员用户&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">username</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//如果是管理员，则在redis增加一个power</span>
+        <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:user:power:&quot;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">token</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span>
+        <span class="nx">next</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">403</span><span class="p">,</span> <span class="s2">&quot;权限不足&quot;</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在app.js文件中定义admin路由，引入路由文件和上述中间件，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">express</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">path</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">cookieParser</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;cookie-parser&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;morgan&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="p">{</span><span class="n">checkAPP</span><span class="p">,</span> <span class="n">checkUser</span><span class="p">,</span> <span class="n">checkAdmin</span><span class="p">}</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./util/middleware&#39;</span><span class="p">)</span>
+
+<span class="n">var</span> <span class="n">indexRouter</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./routes/index&#39;</span><span class="p">);</span>
+<span class="n">var</span> <span class="n">usersRouter</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./routes/users&#39;</span><span class="p">);</span>
+<span class="o">//</span><span class="n">增加管理员路由</span>
+<span class="n">var</span> <span class="n">adminRouter</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;./routes/admin&#39;</span><span class="p">);</span>
+<span class="o">.....</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">checkAPP</span><span class="p">,</span> <span class="n">indexRouter</span><span class="p">);</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/users&#39;</span><span class="p">,</span> <span class="n">checkAPP</span><span class="p">,</span> <span class="n">usersRouter</span><span class="p">);</span>
+<span class="n">app</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;/admin&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">checkAPP</span><span class="p">,</span> <span class="n">checkUser</span><span class="p">,</span> <span class="n">checkAdmin</span><span class="p">],</span> <span class="n">adminRouter</span><span class="p">);</span>
+<span class="n">module</span><span class="o">.</span><span class="n">exports</span> <span class="o">=</span> <span class="n">app</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>同之前的代码习惯一致，在controller文件夹中创建admin.js文件用于在其中编写逻辑代码，所有的路由都定义在router/admin.js文件中。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">17.1. </span>1.文章添加和修改</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>文章添加和修改接口，路由地址为：<a class="reference external" href="http://localhost:3000/admin/setArticle">http://localhost:3000/admin/setArticle</a></p>
+<p>该接口采用POST请求方式，需要发送文章的标题、作者、分类和小标签等内容，基本数据格式如下：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;article&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文字&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;writer&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;cesssssssssss&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;tag&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;js&quot;</span><span class="p">,</span> <span class="s2">&quot;node&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>为了方便查找，要优化文章存储的键值，笔者使用3个有序集合，分别存储文章的阅读量、文章的发布日期和文章的点赞量数据。</p>
+<p>每篇文章都有一个uid，这是文章唯一的标识符，上述有序集合存放的内容就是这些文章的uid。</p>
+<p>首先需要在admin.js文件中添加相应的路由，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">setArticle</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/admin&#39;</span><span class="p">)</span>
+
+<span class="c1">// 发布文章</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/setArticle&#39;</span><span class="p">,</span> <span class="nx">setArticle</span><span class="p">)</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/admin.js文件中编写相应的逻辑代码。</p>
+<p>需要注意的是，前端传递的JSON串并不包含某些需要用到的值，如新文章的时间戳、观看数0和点赞数0。</p>
+<p>这3个值需要在Redis中建立有序集合，只有通过有序集合才可以对数据排序。有序集合分别命名为</p>
+<p>book:a_time、book:a_view和book:a_like。</p>
+<p>此外还应当生成一个show字段，用来管理文章的上线（发布）和下线（删除）功能，初始化为0，不显示在主页上。</p>
+<p>本例的API还涉及文章的分类（book:a_type:type_id）和小标签（book:tag:md5加密后的标签名称）功能，读者可以仔细阅读代码。文章添加修改的完整代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//发布文章</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">setArticle</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// 获取到传递的值</span>
+    <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">article</span>
+    <span class="c1">//任何修改或者是新上线的文章都不能显示</span>
+    <span class="nx">data</span><span class="p">.</span><span class="nx">show</span> <span class="o">=</span> <span class="mf">0</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;a_id&#39;</span> <span class="k">in</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">article</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:article:&quot;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">article</span><span class="p">.</span><span class="nx">a_id</span>
+        <span class="c1">//储存</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;修改成功&#39;</span><span class="p">))</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">//新文章需要初始化点赞数0，观看数0以及时间戳</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">time</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span>
+        <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:article:&quot;</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">incr</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">id</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="c1">//方便取用</span>
+            <span class="nx">data</span><span class="p">.</span><span class="nx">a_id</span> <span class="o">=</span> <span class="nx">id</span>
+            <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">+</span> <span class="nx">id</span>
+            <span class="c1">//储存文章</span>
+            <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+            <span class="c1">//储存分类以及小标签</span>
+            <span class="kd">let</span> <span class="nx">a_type</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">type</span>
+            <span class="c1">//获取</span>
+            <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:a_type:&quot;</span> <span class="o">+</span> <span class="nx">a_type</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">data1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">data1</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="p">}</span>
+                <span class="c1">//数组对象</span>
+                <span class="nx">data1</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+                <span class="c1">//    再次储存</span>
+                <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:a_type:&quot;</span> <span class="o">+</span> <span class="nx">a_type</span><span class="p">,</span> <span class="nx">data1</span><span class="p">)</span>
+            <span class="p">})</span>
+            <span class="c1">//小标签需要循环操作</span>
+            <span class="kd">let</span> <span class="nx">tags</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">tag</span>
+            <span class="nx">tags</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="kd">let</span> <span class="nx">tKeyMd5</span> <span class="o">=</span> <span class="nx">crypto</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="s1">&#39;md5&#39;</span><span class="p">).</span><span class="nx">update</span><span class="p">(</span><span class="nx">item</span><span class="p">).</span><span class="nx">digest</span><span class="p">(</span><span class="s2">&quot;hex&quot;</span><span class="p">)</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">tKeyMd5</span><span class="p">)</span>
+                <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s1">&#39;:tag:&#39;</span> <span class="o">+</span> <span class="nx">tKeyMd5</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">data1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">data1</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="p">}</span>
+                    <span class="nx">data1</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+                    <span class="c1">//    再次存储</span>
+                    <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:tag:&quot;</span> <span class="o">+</span> <span class="nx">tKeyMd5</span><span class="p">,</span> <span class="nx">data1</span><span class="p">)</span>
+                <span class="p">})</span>
+            <span class="p">})</span>
+
+            <span class="c1">//新文章需要建立新的有序集合点赞数0，观看数0及时间戳</span>
+            <span class="nx">redis</span><span class="p">.</span><span class="nx">zadd</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s1">&#39;:a_time&#39;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">())</span>
+            <span class="nx">redis</span><span class="p">.</span><span class="nx">zadd</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s1">&#39;:a_view&#39;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+            <span class="nx">redis</span><span class="p">.</span><span class="nx">zadd</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s1">&#39;:a_like&#39;</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;新建文章成功&#39;</span><span class="p">))</span>
+        <span class="p">})</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>上述代码使用MD5算法生成小标签的key键，也可以使用Base64编码或文字编码等其他方式生成。</p>
+<p>使用Postman测试API。当发送一个不存在的a_id请求时，会返回“新建文章成功”；如果包含a_id则显示“修改成功”。</p>
+<p>文章的添加和修改</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;新建文章成功&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id13"><span class="section-number">17.2. </span>2.文章发布和删除</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为: <a class="reference external" href="http://localhost:3000/admin/showArticle">http://localhost:3000/admin/showArticle</a></p>
+<p>该接口只需要更改文章的show字段即可。为了统一请求方式，该接口使用POST方式请求数据，其实在RESTful风格的路由请求中，应当使用PUT方式。</p>
+<p>此时是在已知文章对应a_id的情况下，所以只需获取当前文章的状态，并将该状态转换为对应的状态即可。</p>
+<p>首先在admin.js文件中添加相应的路由，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">showArticle</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/admin&#39;</span><span class="p">)</span>
+
+
+<span class="c1">//文章的上线和下线</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/showArticle&#39;</span><span class="p">,</span> <span class="nx">showArticle</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>文章的发布和删除接口只需要把文章对应的JSON字符串更改后再保存即可，其中controller/admin.js文件中的代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//文章的上线和下线</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">showArticle</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// 获取到传递的值</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:article:&quot;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">a_id</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">data</span><span class="p">)</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">404</span><span class="p">,</span> <span class="s2">&quot;没有该文章&quot;</span><span class="p">))</span>
+        <span class="c1">// 修改显示</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">show</span> <span class="o">==</span> <span class="mf">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">data</span><span class="p">.</span><span class="nx">show</span> <span class="o">=</span> <span class="mf">0</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">data</span><span class="p">.</span><span class="nx">show</span> <span class="o">=</span> <span class="mf">1</span>
+        <span class="p">}</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+    <span class="p">})</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s2">&quot;文章修改成功&quot;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>通过Postman插件发送相关的a_id字段，可以发现，Redis中的数据会自动更改</p>
+<p>postman: <a class="reference external" href="http://localhost:3000/admin/showArticle">http://localhost:3000/admin/showArticle</a></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;a_id&quot;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>将a_id=3的文章下线.改变文章状态</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;文章暂未上线&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;文章暂未上线&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章2&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:54&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:37&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id14"><span class="section-number">17.3. </span>3.添加和修改分类</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>添加和修改分类的接口，路由地址为：
+<a class="reference external" href="http://localhost:3000/admin/setArticleType">http://localhost:3000/admin/setArticleType</a></p>
+<p>该接口使用POST方式传递参数，参数是JSON字符串，包含全部的分类和分类的唯一ID。每个唯一ID又包含一个JSON字符串对象，保存着符合该分类文章的唯一ID。添加文章时会修改该ID对应的内容，这样就保证了文章和分类对应。</p>
+<p>如下方结构所示，简化代码的同时考虑到分类不会很多，所以唯一ID不是自增形式，而是人工传入ID的形式。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;分类1&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;uid&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;分类2&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>首先在admin.js文件中添加相应的路由，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">setArticleType</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/admin&#39;</span><span class="p">)</span>
+
+<span class="c1">//分类的发布</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/setArticleType&#39;</span><span class="p">,</span> <span class="nx">setArticleType</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>文章的分类需要一个键-值对来存储所有的类型，通过循环判定指定的ID是否已存在于分类中。如果存在则不插入或不更新；如果不存在，则执行set命令。完整的代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//发布分类</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">setArticleType</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// 获取到传递的值</span>
+    <span class="c1">//应当确定的是type中对应的唯一key是不重复的</span>
+    <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">type</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s1">&#39;:a_type&#39;</span>
+<span class="c1">//    根据key直接更新内容</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+<span class="c1">//    循环整个传递的值，依次创建唯一id对应的键值</span>
+    <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">uid</span><span class="p">)</span>
+        <span class="kd">let</span> <span class="nx">tKey</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s1">&#39;:a_type:&#39;</span> <span class="o">+</span> <span class="nx">item</span><span class="p">.</span><span class="nx">uid</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">tKey</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="c1">//不存在则添加</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">data1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">tKey</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">})</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s2">&quot;创建分类成功&quot;</span><span class="p">))</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>通过传递POST请求创建了两个相关的分类，在Redis中创建了3个键-值对。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;创建分类成功&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id15"><span class="section-number">17.4. </span>4.获取全部用户列表</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为: <a class="reference external" href="http://localhost:3000/admin/getAllUser">http://localhost:3000/admin/getAllUser</a></p>
+<p>该接口采用GET请求方式获取所有用户信息的Key值。当然，在实际的生产环境中使用keys可能会导致一些严重后果，如Redis业务的挂起。也就是说，虽然keys命令非常快，但如果数据键值非常多，keys命令无法迅速完成，则执行该命令的同时其他命令不会执行。</p>
+<p>要解决这个问题，笔者推荐使用scan命令。scan命令除了和keys一样支持模式匹配以外，还采用游标的方式获取数据，同时它还能实现数据的分页。</p>
+<blockquote>
+<div><p>注意：scan命令有可能出现重复的键值，此时使用set()对象对获得的结果进行去重处理。</p>
+</div></blockquote>
+<p>首先编写路由文件admin.js，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">getAllUser</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/admin&#39;</span><span class="p">)</span>
+
+
+<span class="c1">//获得所有的用户</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/getAllUser&#39;</span><span class="p">,</span> <span class="nx">getAllUser</span><span class="p">)</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接下来编写具体的用户逻辑代码，使用scan()方法获取所有的用户键之后，为了方便显示，使用map循环获取该键值的详细资料，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//获得全部用户</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getAllUser</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// 获取到的用户key值的模式</span>
+    <span class="kd">let</span> <span class="nx">re</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s1">&#39;:user:info:*&#39;</span>
+    <span class="c1">//注意这里使用的scan方法,这里可以传入游标和个数</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">scan</span><span class="p">(</span><span class="nx">re</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="c1">//这里通过循环获得用户详细资料</span>
+        <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="mf">1</span><span class="p">].</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="c1">//获得每一个用户的username</span>
+            <span class="k">return</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">item</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">user</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;username&#39;</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">,</span> <span class="s1">&#39;login&#39;</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">login</span><span class="p">,</span> <span class="s1">&#39;ip&#39;</span><span class="o">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">ip</span><span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">})</span>
+        <span class="kd">let</span> <span class="nx">t_data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nx">t_data</span><span class="p">))</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这样，请求该接口就能获取所有用户的资料和是否被封停的状态。需要注意的是，本例因为数据较少，没有分页，获取分页的方法可以参考util.redis.js中scan()的定义。本例的效果如下</p>
+<p>获取所有用户</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;hujianli&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;login&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;::1&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;hujianli1&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;login&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;::1&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;login&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;hujianli2&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;login&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;::1&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">17.5. </span>5.封停用户</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为: <a class="reference external" href="http://localhost:3000/admin/stopLogin/:id">http://localhost:3000/admin/stopLogin/:id</a></p>
+<p>通过该接口可以改变用户的login属性，本项目定义如果该属性为0则是正常状态，可以登录；</p>
+<p>如果属性为1则是封停状态。该接口需要传递一个id参数（封停用户的username）。</p>
+<p>首先定义路由，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">stopLogin</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/admin&#39;</span><span class="p">)</span>
+
+<span class="c1">//用户封停操作</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;/stopLogin/:id&#39;</span><span class="p">,</span> <span class="nx">stopLogin</span><span class="p">)</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>在编写逻辑处理部分时，只需要获取用户的详细信息，修改其login状态即可，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//封停用户</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">stopLogin</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// 获取到传递的值</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s1">&#39;:user:info:&#39;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">params</span><span class="p">.</span><span class="nx">id</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">user</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">login</span> <span class="o">==</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">user</span><span class="p">.</span><span class="nx">login</span> <span class="o">=</span> <span class="mf">1</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">user</span><span class="p">.</span><span class="nx">login</span> <span class="o">=</span> <span class="mf">0</span>
+        <span class="p">}</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s2">&quot;用户修改成功&quot;</span><span class="p">))</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>以上程序请求封停用户接口并将参数指定为hujianli1，再通过获取全部用接口获取用户的详细信息使login属性发生了变化</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;用户修改成功&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="http://localhost:3000/admin">http://localhost:3000/admin</a>/getAllUser查看</p>
+<p>封停用户</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;hujianli&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;login&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;::1&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;hujianli1&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;login&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;::1&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;login&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;hujianli2&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;login&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;::1&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2><a class="toc-backref" href="#id17"><span class="section-number">17.6. </span>6.修改首页轮播内容</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址是: <a class="reference external" href="http://localhost:3000/admin/setIndexPic">http://localhost:3000/admin/setIndexPic</a></p>
+<p>该接口需要使用POST方式传递参数，其本身存储一个JSON字符串。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;title&quot;</span><span class="p">:</span>  <span class="s2">&quot;baidu&quot;</span><span class="p">,</span>
+
+    <span class="nt">&quot;src&quot;</span><span class="p">:</span>  <span class="s2">&quot;http://www.baidu.com&quot;</span><span class="p">,</span>
+
+    <span class="nt">&quot;img&quot;</span><span class="p">:</span>  <span class="s2">&quot;https://www.javaweb.shop/upload/image/20200526/1590456522669.jpeg&quot;</span>
+
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>首先在admin.js文件中添加相应的路由，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">setIndexPic</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/admin&#39;</span><span class="p">)</span>
+
+<span class="c1">// 修改主页轮播图片</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/setIndexPic&#39;</span><span class="p">,</span> <span class="nx">setIndexPic</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/admin.js文件中编写相应的逻辑处理代码，接口本身通过JSON对象传输数据，所以只要获取该对象并以book:indexPic作为键，将其存放在Redis中即可。完整的代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//设置主页轮播图</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">setIndexPic</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:indexPic&quot;</span>
+    <span class="c1">// 获取到传递的值</span>
+    <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">indexPic</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="c1">//储存</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;修改成功&#39;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最终的运行效果如下</p>
+<p>修改首页轮播</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;修改成功&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>有一点需要注意，首页中的图片只能通过输入地址的方式进行存储，这对于一个接口来说已经足够。</p>
+<p>通过与图片上传这类接口的联动，图片上传完成后会自动返回服务器中保存图片的地址。读者可以将图片上传至自己的服务器中，或使用CDN等地址。</p>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">17.7. </span>7.修改导航内容</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为： <a class="reference external" href="http://localhost:3000/admin/changeNav">http://localhost:3000/admin/changeNav</a></p>
+<p>json数据结构</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;nav_menu&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;主页&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://loaclhost&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;文章&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;/article/list&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;关于我&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;/article/listme&quot;</span>
+        <span class="p">}</span>
+<span class="p">]}</span>
+</pre></div>
+</div>
+<p>该接口需要使用POST方式传递参数。如果添加管理员首页的导航菜单，需要更改Redis中book:nav_menu键的值。在Router文件夹中的admin.js文件中创建新的路由，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">setNavMenu</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/admin&#39;</span><span class="p">)</span>
+
+
+<span class="c1">// 更改导航菜单</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/changeNav&#39;</span><span class="p">,</span> <span class="nx">setNavMenu</span><span class="p">);</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>前端发送的内容原本就是JSON字符串格式，可直接保存，完整的代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">redis</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../util/redisDB&quot;</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">crypto</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;crypto&#39;</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../util/common&#39;</span><span class="p">)</span>
+<span class="c1">// 更改导航菜单</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">setNavMenu</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:nav_menu&quot;</span>
+    <span class="c1">// 获取到传递的值</span>
+    <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">nav_menu</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="c1">//储存</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;修改成功&#39;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用Postman插件进行测试</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;修改成功&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>这样就成功修改了导航内容，修改后可以在redis-cli中查看。</p>
+</section>
+<section id="id8">
+<h2><a class="toc-backref" href="#id19"><span class="section-number">17.8. </span>8.修改底部内容</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为： <a class="reference external" href="http://localhost:3000/admin/setFooter">http://localhost:3000/admin/setFooter</a></p>
+<p>该接口需要使用POST方式传递参数，和之前修改导航内容的API一样，其本身存储一个JSON字符串。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+      <span class="nt">&quot;footer&quot;</span><span class="p">:</span>  <span class="p">[{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;版权所有&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://loaclhost&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Stiller&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;发送邮件&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;mailto:1879324764@qq.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Gmail&quot;</span>
+        <span class="p">}]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>首先在admin.js文件中添加相应的路由，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">setFooter</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/admin&#39;</span><span class="p">)</span>
+
+
+<span class="c1">// 底部内容修改</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/setFooter&#39;</span><span class="p">,</span> <span class="nx">setFooter</span><span class="p">);</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/admin.js文件中编写相应的逻辑处理代码，接口本身也通过JSON对象传输数据，只需要获取对象并以book:footer作为键存放在Redis中即可。完整的代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//更改底部内容</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">setFooter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:footer&quot;</span>
+    <span class="c1">// 获取到传递的值</span>
+    <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">footer</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="c1">//储存</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;修改成功&#39;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最终的运行效果如下</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;修改成功&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id20"><span class="section-number">17.9. </span>9.修改友情链接内容</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>接口路由地址为: <a class="reference external" href="http://localhost:3000/admin/setLinks">http://localhost:3000/admin/setLinks</a></p>
+<p>该接口需要使用POST方式传递参数，和之前修改导航内容的API一样，其本身存储一个JSON字符串。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="nt">&quot;links&quot;</span><span class="p">:</span>  <span class="p">[{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gitee&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;src&quot;</span><span class="p">:</span> <span class="s2">&quot;http://gitee.com&quot;</span>
+        <span class="p">}]</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>首先在admin.js文件中添加相应的路由，代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;express&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">express</span><span class="p">.</span><span class="nx">Router</span><span class="p">();</span>
+<span class="c1">//// 引入了逻辑处理的JavaScript文件（需要注意是否有其他路由使用到其他文件，均需要引入，本处已省略）</span>
+<span class="kd">var</span> <span class="p">{</span><span class="nx">setLinks</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../controller/admin&#39;</span><span class="p">)</span>
+
+
+<span class="c1">// 友情链接</span>
+<span class="nx">router</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;/setLinks&#39;</span><span class="p">,</span> <span class="nx">setLinks</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>接着在controller/admin.js文件中编写相应的逻辑处理代码，接口本身通过JSON对象来传输数据，只需要获取该对象并以book:footer作为键存放在Redis中即可。完整的代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//设置友情链接</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">setLinks</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:links&quot;</span>
+    <span class="c1">// 获取到传递的值</span>
+    <span class="kd">let</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">links</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="c1">//储存</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;修改成功&#39;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>最终的运行效果如下</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;修改成功&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id21"><span class="section-number">17.10. </span>10.其他权限判定</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<p>除了上述已经完成的基本接口以外，在管理员权限出现之后，应当修改一些内容。</p>
+<p>接口路由地址为: <a class="reference external" href="http://localhost:3000/admin">http://localhost:3000/admin</a></p>
+<p>例如，在获取所有文章列表的接口时应该进行权限判断，如果访问用户具有管理员权限时，不再显示没有上线的提示。修改后的getData.js文件代码如下：</p>
+<div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="c1">//获取最新的文章列表</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">getNewArticle</span> <span class="o">=</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">key</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:a_time&quot;</span>
+    <span class="kd">let</span> <span class="nx">isAdmin</span> <span class="o">=</span> <span class="kc">false</span>
+    <span class="c1">//获取数据</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+    <span class="c1">//获得集合</span>
+    <span class="c1">//登录用户才判断</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;token&#39;</span> <span class="k">in</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//如果是管理员，则在加一次查找</span>
+        <span class="kd">let</span> <span class="nx">pKey</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">fapp</span> <span class="o">+</span> <span class="s2">&quot;:user:power:&quot;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">token</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">pKey</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">power</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="c1">//管理员权限</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">power</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">redis</span><span class="p">.</span><span class="nx">zrevrange</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                        <span class="c1">//获得每一篇文章的题目和id以及日期</span>
+                        <span class="k">return</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">member</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data1</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">data1</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="nx">util</span><span class="p">.</span><span class="nx">getLocalDate</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">score</span><span class="p">),</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">a_id</span><span class="p">,</span><span class="s1">&#39;show&#39;</span><span class="o">:</span><span class="nx">data1</span><span class="p">.</span><span class="nx">show</span><span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">})</span>
+                    <span class="p">})</span>
+                    <span class="kd">let</span> <span class="nx">t_data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">t_data</span><span class="p">)</span>
+                    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">t_data</span><span class="p">))</span>
+                <span class="p">})</span>
+            <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+                <span class="c1">// res.json(util.getReturnData(1, &#39;其他权限&#39;))</span>
+                <span class="c1">//    其他权限暂时依旧执行普通未登录效果</span>
+                <span class="nx">redis</span><span class="p">.</span><span class="nx">zrevrange</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+                    <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                        <span class="c1">//获得每一篇文章的题目和id以及日期</span>
+                        <span class="k">return</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">member</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">data1</span> <span class="o">&amp;&amp;</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">show</span> <span class="o">!=</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="nx">util</span><span class="p">.</span><span class="nx">getLocalDate</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">score</span><span class="p">),</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">a_id</span><span class="p">}</span>
+                            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="s1">&#39;文章暂未上线&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="mf">0</span><span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">})</span>
+                    <span class="p">})</span>
+                    <span class="kd">let</span> <span class="nx">t_data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+                    <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">t_data</span><span class="p">))</span>
+                <span class="p">})</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">redis</span><span class="p">.</span><span class="nx">zrevrange</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="k">async</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+            <span class="kd">let</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="c1">//获得每一篇文章的题目和id以及日期</span>
+                <span class="k">return</span> <span class="nx">redis</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">member</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">data1</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">data1</span> <span class="o">&amp;&amp;</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">show</span> <span class="o">!=</span> <span class="mf">0</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="nx">util</span><span class="p">.</span><span class="nx">getLocalDate</span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">score</span><span class="p">),</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">data1</span><span class="p">.</span><span class="nx">a_id</span><span class="p">}</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="o">:</span> <span class="s1">&#39;文章暂未上线&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="mf">0</span><span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">})</span>
+            <span class="p">})</span>
+            <span class="kd">let</span> <span class="nx">t_data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">getReturnData</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">t_data</span><span class="p">))</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>再次请求该地址，如果使用的是管理员账号，将返回所有的文章，不论文章是否发布</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章4&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 14:22:29&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章3&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:30:5&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章2&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:54&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;测试文章1&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2022-7-20 9:29:37&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="nt">&quot;show&quot;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>注意：初次登录时必须请求admin的验证中间件才可以获取全部的文章。</p>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="16.%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%9B%B8%E5%85%B3API%E5%BC%80%E5%8F%91.html" class="btn btn-neutral float-left" title="16. 用户权限相关API开发" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="18.%E5%B0%8F%E7%BB%93.html" class="btn btn-neutral float-right" title="18. 小结" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

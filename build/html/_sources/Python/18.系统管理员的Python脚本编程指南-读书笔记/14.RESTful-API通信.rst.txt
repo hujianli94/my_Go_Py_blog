@@ -1,0 +1,186 @@
+.. contents::
+   :depth: 3
+..
+
+RESTful-API通信
+===============
+
+学习大纲
+
+-  什么是RESTful API。
+-  使用RESTful API的标准库。
+-  处理JSON数据。
+
+什么是RESTful API
+-----------------
+
+**REST** 即\ **表述性状态传递** **（Representational State Transfer）**
+，而RESTful
+API是一种用于Web服务开发的通信方式。作为互联网上不同系统之间的通信方式，它是一种Web服务的风格。它也是一个应用程序接口，用于在\ ``HTTP``
+上使用\ ``GET`` 、\ ``PUT`` 、\ ``POST`` 和\ ``DELETE`` 等方法请求数据。
+
+REST的优势在于它占用带宽较少，适合网络应用。RESTful
+API使用统一的接口，所有资源都由\ ``GET`` 、\ ``POST`` 、\ ``PUT``
+和\ ``DELETE`` 操作处理。其中，RESTful API使用\ ``GET``
+来获取资源，使用\ ``PUT`` 更新资源或更改资源状态，使用\ ``POST``
+创建资源，并使用\ ``DELETE`` 删除资源。使用RESTful
+API的系统具有快速和可靠等特点。
+
+RESTful
+API独立处理每个请求，从客户端发送到服务器的请求必须包含（让服务器）理解该请求所需的所有信息。
+
+使用RESTful API的标准库
+~~~~~~~~~~~~~~~~~~~~~~~
+
+本节我们将学习如何使用RESTful API。接下来将使用Python的\ ``requests``
+和JSON模块。现在我们来看一些示例程序，程序将使用\ ``requests``
+模块从API获取信息。这里会用到\ ``GET`` 和\ ``POST`` 请求。
+
+首先，我们按如下方式安装\ ``requests`` 库。
+
+.. code:: shell
+
+   $ pip3 install requests
+
+现在来看一个示例程序。创建一个脚本，命名为\ ``rest_get_example.py``
+，并在其中写入以下代码。
+
+.. code:: python
+
+   import requests
+
+   req_obj = requests.get('https://www.news.baidu.com')
+   print(req_obj)
+
+上面的示例程序导入了\ ``requests``
+模块以发送请求，接着创建了一个请求对象\ ``req_obj``
+，并指定了想要发送请求的链接地址，最后输出结果。这里得到的状态代码为\ ``200``
+，表示请求成功。
+
+现在，我们来看\ ``POST`` 请求的示例程序，\ ``POST``
+请求用于将数据发送到服务器。创建一个脚本，命名为\ ``rest_post_example.py``
+，并在其中写入以下代码。
+
+.. code:: python
+
+   import requests
+   import json
+
+   url_name = 'http://httpbin.org/post'
+   data = {"Name" : "John"}
+   data_json = json.dumps(data)
+
+   headers = {'Content-type': 'application/json'}
+   response = requests.post(url_name, data=data_json, headers=headers)
+   print(response)
+
+上面的示例程序使用了\ ``POST`` 请求。首先导入了必要的\ ``requests``
+模块和\ ``json``
+模块，接着给出了URL。然后制定了想要以字典格式发送到服务器的数据，并给出了请求头。接着使用\ ``POST``
+请求发送了数据。最后得到的状态代码为\ ``200`` ，表示请求成功。
+
+处理JSON数据
+~~~~~~~~~~~~
+
+处理JSON数据。\ **JSON** 即\ **对象简谱** **（JavaScript Object
+Notation）**
+。JSON是一种数据交换格式，我们可以将Python对象编码为JSON字符串，也可以将JSON字符串解码为Python对象。Python包含一个JSON模块，可以格式化JSON数据输出。它具有序列化和反序列化JSON的函数，如下所示。
+
+-  ``json.dump(obj, fileObj)``
+   ：此函数将Python对象序列化为JSON格式的流。
+-  ``json.dumps(obj)`` ：此函数将Python对象序列化为JSON格式的字符串。
+-  ``json.load(JSONfile)`` ：此函数将JSON文件反序列化为Python对象。
+-  ``json.loads(JSONfile)``
+   ：此函数将字符串类型的JSON文件反序列化为Python对象。
+
+它还有两个用于编码和解码的类。
+
+-  ``JSONEncoder`` ：用于将Python对象转换为JSON格式的文件。
+-  ``JSONDecoder`` ：用于将JSON格式的文件转换为Python对象。
+
+从JSON字符串到Python对象的转换。创建一个脚本，命名为\ ``json_to_python.py``
+
+.. code:: python
+
+   import json
+
+   j_obj =  '{ "Name":"Harry", "Age":26, "Department":"HR"}'
+   p_obj = json.loads(j_obj)
+   print(p_obj["Name"])
+   print(p_obj["Department"]
+
+上面的示例程序将JSON字符串转换为Python对象，\ ``json.loads()``
+函数用于将JSON字符串转换为Python对象。
+
+将Python对象转换为JSON字符串。创建一个脚本，命名为\ ``python_to_json.py``
+
+.. code:: python
+
+   import json
+
+   emp_dict1 =  '{ "Name":"Harry", "Age":26, "Department":"HR"}'
+   json_obj = json.dumps(emp_dict1)
+
+   print(json_obj)
+
+上面的示例程序将Python对象转换为JSON字符串，其中的\ ``json.dumps()``
+函数用于实现这种转换。
+
+现在我们来看如何将各种类型的Python对象转换为JSON字符串。创建一个脚本，命名为\ ``python_object_to_json.py``
+
+.. code:: python
+
+   import json
+
+   python_dict =  {"Name": "Harry", "Age": 26}
+   python_list =  ["Mumbai", "Pune"]
+   python_tuple =  ("Basketball", "Cricket")
+   python_str =  ("hello_world")
+   python_int =  (150)
+
+   python_float =  (59.66)
+   python_T =  (True)
+   python_F =  (False)
+   python_N =  (None)
+   json_obj = json.dumps(python_dict)
+   json_arr1 = json.dumps(python_list)
+   json_arr2 = json.dumps(python_tuple)
+   json_str = json.dumps(python_str)
+   json_num1 = json.dumps(python_int)
+   json_num2 = json.dumps(python_float)
+   json_t = json.dumps(python_T)
+   json_f = json.dumps(python_F)
+   json_n = json.dumps(python_N)
+   print("json object : ", json_obj)
+   print("json array1 : ", json_arr1)
+   print("json array2 : ", json_arr2)
+   print("json string : ", json_str)
+   print("json number1 : ", json_num1)
+   print("json number2 : ", json_num2)
+   print("json true", json_t)
+   print("json false", json_f)
+   print("json null", json_n)
+
+从Python对象到JSON字符串的转换关系如表
+
+​ **从Python对象到JSON字符串的转换关系**
+
+========== ========
+**Python** **JSON**
+========== ========
+``dict``   Object
+``list``   Array
+``tuple``  Array
+``str``    String
+``int``    Number
+``float``  Number
+``True``   true
+``False``  false
+``None``   null
+========== ========
+
+总结
+----
+
+我们学习了RESTful API的\ ``requests``
+库。还学习了处理JSON数据，将JSON字符串转换为Python对象以及将Python对象转换为JSON字符串。

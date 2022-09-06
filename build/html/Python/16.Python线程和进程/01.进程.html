@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>16.1. 进程 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="16.2. 线程" href="02.%E7%BA%BF%E7%A8%8B.html" />
+    <link rel="prev" title="16. Python 进程和线程" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">16. Python 进程和线程</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">16.1. 进程</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#multiprocessing">16.1.1. multiprocessing模块</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#process">16.1.2. Process子类创建进程</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">16.1.3. 进程同步</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pool">16.1.4. 使用进程池Pool创建进程</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">16.1.5. 进程间通信</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E7%BA%BF%E7%A8%8B.html">16.2. 线程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E5%8D%8F%E7%A8%8B%E4%B8%8E%E5%BE%AE%E7%BA%BF%E7%A8%8B.html">16.3. 协程与微线程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.Python%E7%A8%8B%E5%BA%8F%E4%B8%ADconcurrent%E6%A8%A1%E5%9D%97.html">16.4. Python程序中concurrent模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%8C%BA%E5%88%AB.html">16.5. 多线程和多进程的区别</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E5%88%86%E5%B8%83%E5%BC%8F%E8%BF%9B%E7%A8%8B.html">16.6. 分布式进程</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">16. </span>Python 进程和线程</a> &raquo;</li>
+      <li><span class="section-number">16.1. </span>进程</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/16.Python线程和进程/01.进程.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id8">进程</a></p>
+<ul>
+<li><p><a class="reference internal" href="#multiprocessing" id="id9">multiprocessing模块</a></p>
+<ul>
+<li><p><a class="reference internal" href="#join" id="id10">join()方法的使用</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#process" id="id11">Process子类创建进程</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id12">进程同步</a></p>
+<ul>
+<li><p><a class="reference internal" href="#multiprocess-lock" id="id13">1.multiprocess.Lock：锁</a></p></li>
+<li><p><a class="reference internal" href="#multiprocess-semaphore" id="id14">2. multiprocess.Semaphore：信号量</a></p></li>
+<li><p><a class="reference internal" href="#multiprocess-event" id="id15">3. multiprocess.Event</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pool" id="id16">使用进程池Pool创建进程</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id17">进程池扫描主机端口实例</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id4" id="id18">进程间通信</a></p>
+<ul>
+<li><p><a class="reference internal" href="#queue" id="id19">Queue多进程队列的使用</a></p></li>
+<li><p><a class="reference internal" href="#pipe" id="id20">Pipe常用来在两个进程间进行通信，</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id8"><span class="section-number">16.1. </span>进程</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>进程进程（Process，有时被称为重量级进程）是程序的一次执行。</p>
+<p>每个进程都有自己的地址空间、内存、数据栈以及记录运行轨迹的辅助数据，操作系统管理运行的所有进程，并为这些进程公平分配时间。进程可以通过fork和spawn操作完成其他任务。因为各个进程有自己的内存空间、数据栈等，所以只能使用进程间通信（InterProcess
+Communication, IPC），而不能直接共享信息。</p>
+<p>多线程是多个相互关联的线程的组合，多进程是多个互相独立的进程的组合。</p>
+<p>线程是最小的执行单元，进程至少由一个线程组成。</p>
+<section id="multiprocessing">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">16.1.1. </span>multiprocessing模块</a><a class="headerlink" href="#multiprocessing" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>multiprocessing模块是跨平台版本的多进程模块。Linux上支持os.fork()，windows上使用multiprocessing
+multiprocessing模块提供了一个Process类来代表一个进程对象
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/21 16:39</span>
+<span class="c1"># @filename: sample01.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程id:&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="s2">&quot;父进程id:&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getppid</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程id：&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>      <span class="c1"># 这里创建了5个子进程</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">i</span><span class="p">,))</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">创建子进程时，只需要传入一个执行函数和函数的参数，创建一个Process实例，用start()方法启动，这样创建进程比fork()还要简单。</span>
+
+<span class="sd">join()方法可以等待子进程结束后再继续往下运行，通常用于进程间的同步。</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="c1"># 子进程需要执行的代码</span>
+<span class="k">def</span> <span class="nf">run_proce</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Run child process </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parent process </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">run_proce</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Child process will start.&quot;</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Child process end.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+
+<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="c1"># 同样的参数传递方法</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;这里是 &quot;</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;模块名称:&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;父进程 id:&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getppid</span><span class="p">())</span>  <span class="c1"># 获取父进程id</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;当前子进程 id:&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>  <span class="c1"># 获取自己的进程id</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------------------------&#39;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">foo</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">i</span><span class="p">,))</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>说明</p>
+<ul class="simple">
+<li><p>创建子进程时，只需要传入一个执行函数和函数的参数，创建一个Process实例，用start()方法启动，这样创建进程比fork()还要简单。</p></li>
+<li><p>join()方法可以等待子进程结束后再继续往下运行，通常用于进程间的同步。</p></li>
+</ul>
+<section id="join">
+<h3><a class="toc-backref" href="#id10">join()方法的使用</a><a class="headerlink" href="#join" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">def</span> <span class="nf">child_1</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程(</span><span class="si">{}</span><span class="s2">)开始执行，它的父进程是(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span><span class="n">os</span><span class="o">.</span><span class="n">getppid</span><span class="p">()))</span>
+    <span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">t_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程（</span><span class="si">{}</span><span class="s2">）执行时间为</span><span class="si">%0.2f</span><span class="s2">秒&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">t_end</span><span class="o">-</span><span class="n">t_start</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">child_2</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程(</span><span class="si">{}</span><span class="s2">)开始执行，它的父进程是(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">getppid</span><span class="p">()))</span>
+    <span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">t_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程（</span><span class="si">{}</span><span class="s2">）执行时间为</span><span class="si">%0.2f</span><span class="s2">秒&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">t_end</span> <span class="o">-</span> <span class="n">t_start</span><span class="p">))</span>
+
+
+
+
+<span class="k">def</span> <span class="nf">main1</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程开始&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程的PID；</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">child_1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,))</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">child_2</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))</span>
+    <span class="n">p1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">p2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p1.is_alive=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p2.is_alive=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p1.name=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p1.id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">pid</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p2.name=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p2.id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">pid</span><span class="p">))</span>
+    <span class="c1">#使用join函数之后，主进程会等待子进程结束之后才继续往下执行</span>
+    <span class="n">p1</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">p2</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程结束..&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main1</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="process">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">16.1.2. </span>Process子类创建进程</a><a class="headerlink" href="#process" title="Permalink to this headline">¶</a></h2>
+<p>示例1</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">class</span> <span class="nc">SubProcess</span><span class="p">(</span><span class="n">Process</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">interval</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SubProcess</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">interval</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程(</span><span class="si">{}</span><span class="s2">)开始执行，它的父进程是(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">getppid</span><span class="p">()))</span>
+        <span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
+        <span class="n">t_end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程（</span><span class="si">{}</span><span class="s2">）执行时间为</span><span class="si">{:.2f}</span><span class="s2">秒&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">t_end</span> <span class="o">-</span> <span class="n">t_start</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">main1</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程开始&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程的PID；</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">SubProcess</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mrsoft&quot;</span><span class="p">)</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">SubProcess</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># 调用start()方法时会自动执行run()方法</span>
+    <span class="n">p1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">p2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p1.is_alive=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p2.is_alive=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p1.name=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p1.id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">pid</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p2.name=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p2.id=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p2</span><span class="o">.</span><span class="n">pid</span><span class="p">))</span>
+    <span class="c1">#使用join函数之后，主进程会等待子进程结束之后才继续往下执行</span>
+    <span class="n">p1</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">p2</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程结束..&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main1</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>示例2</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/21 16:39</span>
+<span class="c1"># @filename: sample01.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+
+
+<span class="k">class</span> <span class="nc">Download</span><span class="p">(</span><span class="n">Process</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+        <span class="n">Process</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">interval</span>
+
+    <span class="c1"># 重写Process类中的run()方法</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 开启这个进程所需执行的代码</span>
+        <span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="c1"># time.sleep(3)     # 模拟阻塞的一个实现方式</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;开启进程：</span><span class="si">%s</span><span class="s2">进行下载操作&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程（</span><span class="si">%s</span><span class="s2">）开始执行，父进程为（</span><span class="si">%s</span><span class="s2">）&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">getppid</span><span class="p">()))</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
+        <span class="n">t_stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程（</span><span class="si">%s</span><span class="s2">）执行完毕，耗时(</span><span class="si">%f</span><span class="s2">)秒&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="p">(</span><span class="n">t_stop</span> <span class="o">-</span> <span class="n">t_start</span><span class="p">)))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;当前进程（</span><span class="si">%s</span><span class="s2">）&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Download</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="c1"># p.join(10)        # join 父进程等待子进程执行完毕后立刻执行</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>      <span class="c1"># 模拟阻塞，保证子进程完毕后父进程在执行</span>
+    <span class="n">t_stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程（</span><span class="si">%s</span><span class="s2">）执行完毕，耗时(</span><span class="si">%f</span><span class="s2">)秒&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="p">(</span><span class="n">t_stop</span> <span class="o">-</span> <span class="n">t_start</span><span class="p">)))</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">16.1.3. </span>进程同步</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>multiprocessing模块提供了三种机制实现进程同步：</p>
+<p><code class="docutils literal notranslate"><span class="pre">multiprocess.Lock、multiprocess.Semaphore、multiprocess.Event。</span></code></p>
+<section id="multiprocess-lock">
+<h3><a class="toc-backref" href="#id13">1.multiprocess.Lock：锁</a><a class="headerlink" href="#multiprocess-lock" title="Permalink to this headline">¶</a></h3>
+<p>实现了顺序的执行，程序又重新变成串行了，这样确实会浪费时间，却保证了数据的安全。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/21 16:59</span>
+<span class="c1"># @filename: sample01.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Lock</span>
+
+
+<span class="k">def</span> <span class="nf">work</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>  <span class="c1"># 上锁</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> is running &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> is done &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>  <span class="c1"># 解锁</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>  <span class="c1"># 设置锁</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">work</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>哪个进程先抢到锁，其他进程只能等待前面进程解锁之后，再次进行抢锁。</p>
+</section>
+<section id="multiprocess-semaphore">
+<h3><a class="toc-backref" href="#id14">2. multiprocess.Semaphore：信号量</a><a class="headerlink" href="#multiprocess-semaphore" title="Permalink to this headline">¶</a></h3>
+<p>互斥锁同时只允许一个线程更改数据，而信号量Semaphore是同时允许一定数量的线程更改数据。信号量同步基于内部计数器，每调用一次acquire()，计数器减1；每调用一次release()，计数器加1；当计数器为0时，acquire()调用被阻塞。这是Dijkstra信号量概念P()和V()的Python实现。</p>
+<p><code class="docutils literal notranslate"><span class="pre">信号量与进程池的概念很像，但是要区分开，信号量涉及加锁的概念</span></code></p>
+<p>信号量同步机制适用于访问像服务器这样的有限资源。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/21 16:59</span>
+<span class="c1"># @filename: sample01.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Semaphore</span>
+
+
+<span class="k">def</span> <span class="nf">go_ktv</span><span class="p">(</span><span class="n">sem</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+    <span class="n">sem</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>  <span class="c1"># 上锁</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> 占坑&quot;</span> <span class="o">%</span> <span class="n">user</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>  <span class="c1"># 模拟每个人在ktv中待的时间不同</span>
+    <span class="c1"># time.sleep(2)</span>
+    <span class="n">sem</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>  <span class="c1"># 释放锁</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">sem</span> <span class="o">=</span> <span class="n">Semaphore</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># 设置4个信号量</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">go_ktv</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">sem</span><span class="p">,</span> <span class="s2">&quot;user</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,))</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">p1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;================================&gt;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="multiprocess-event">
+<h3><a class="toc-backref" href="#id15">3. multiprocess.Event</a><a class="headerlink" href="#multiprocess-event" title="Permalink to this headline">¶</a></h3>
+<p>事件Python线程的事件用于主线程控制其他线程的执行，事件主要提供了三个方法</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>set、wait、clear。事件处理的机制：
+</pre></div>
+</div>
+<p><strong>全局定义了一个“Flag”，如果“Flag”值为False，那么当程序执行event.wait方法时就会阻塞，如果“Flag”值为True，那么执行event.wait方法时便不再阻塞。</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>clear：将“Flag”设置为False。
+set：将“Flag”设置为True。
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/21 17:15</span>
+<span class="c1"># @filename: sample03.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Event</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">random</span>
+
+
+<span class="k">def</span> <span class="nf">car</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>  <span class="c1"># 进程刚开启，is_set()的值是False，模拟信号灯为红色</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m 红灯亮</span><span class="se">\033</span><span class="s2">[0m. car</span><span class="si">%s</span><span class="s2"> 等着&quot;</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>  <span class="c1"># 阻塞，等待is_set()的值变成True，模拟信号灯为绿色</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[32m 车</span><span class="si">%s</span><span class="s2"> 绿灯亮了</span><span class="se">\033</span><span class="s2">[0m&quot;</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>  <span class="c1"># 如果is_set()的值是False，也就是红灯，仍然回到while语句开始</span>
+                <span class="k">continue</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;飘过 --~~~~,car&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="k">break</span>
+
+
+<span class="k">def</span> <span class="nf">police_car</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>  <span class="c1"># 进程刚开启，is_set()的值是False，模拟信号灯为红色</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m 红灯亮</span><span class="se">\033</span><span class="s2">[0m. car</span><span class="si">%s</span><span class="s2"> 等着&quot;</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># 阻塞，等待设置等待时间，等待0.1s之后没有等到绿地就闯红灯走了</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[33m红灯，警车飞过</span><span class="se">\033</span><span class="s2">[0m,car </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[33m;46m绿灯，警车正常通过</span><span class="se">\033</span><span class="s2">[0m,car </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="k">break</span>
+
+
+<span class="k">def</span> <span class="nf">traffic_lights</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">inverval</span><span class="p">):</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">inverval</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">is_set</span><span class="p">())</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># 将is_set()的值设置为Fasle</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>  <span class="c1"># 将is_set()的值设置为True</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;######&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">is_set</span><span class="p">())</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">car</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,))</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">police_car</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,))</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">traffic_lights</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;========================================&gt;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="pool">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">16.1.4. </span>使用进程池Pool创建进程</a><a class="headerlink" href="#pool" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;子进程 (</span><span class="si">{}</span><span class="s2">)执行的任务是 (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span><span class="n">name</span><span class="p">))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;父进程 (</span><span class="si">{}</span><span class="s2">)开始执行&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">i</span><span class="p">,))</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;所有子进程结束.....&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id3">
+<h3><a class="toc-backref" href="#id17">进程池扫描主机端口实例</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># @auther:   18793</span>
+<span class="c1"># @Date：    2020/6/22 11:21</span>
+<span class="c1"># @filename: Process_Pool.py</span>
+<span class="c1"># @Email:    1879324764@qq.com</span>
+<span class="c1"># @Software: PyCharm</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">进程池扫描主机端口实例</span>
+<span class="sd">代码4-4利用单进程扫描主机端口，如果要扫描的端口范围比较大，则需要耗费比较长的时间。</span>
+<span class="sd">利用多个进程同时扫描不同的端口范围，可以缩短程序运行时间。</span>
+<span class="sd">进程池技术可以一次创建多个子进程，适合于子进程数量事先预知的情况。</span>
+<span class="sd">代码5-3利用进程池一次创建16个进程，然后利用这些进程扫描主机所有端口（0～65535），</span>
+<span class="sd">每个进程扫描4096个端口。</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+
+<span class="k">def</span> <span class="nf">scan_port</span><span class="p">(</span><span class="n">ports</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ports</span><span class="p">,</span> <span class="n">ports</span> <span class="o">+</span> <span class="mi">4096</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I am process </span><span class="si">%d</span><span class="s2">,port </span><span class="si">%d</span><span class="s2"> is openned!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">port</span><span class="p">))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="n">ip</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">scan_port</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="mi">4096</span><span class="p">,))</span>
+<span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All subprocesses had finished!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id4">
+<h2><a class="toc-backref" href="#id18"><span class="section-number">16.1.5. </span>进程间通信</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>· Python提供了多种进程间通信的方式，例如Queue、Pipe、Value+Array等</p>
+<p>Queue和Pipe的区别在于</p>
+<p>·Pipe常用来在两个进程间通信</p>
+<p>·Queue用来在多个进程间实现通信。</p>
+<section id="queue">
+<h3><a class="toc-backref" href="#id19">Queue多进程队列的使用</a><a class="headerlink" href="#queue" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Queue模块可以用来进行线程间的通信，让各个线程之间共享数据。</p></li>
+<li><p>Python的Queue模块提供了同步、线程安全的队列类，
+包括FIFO（先入先出）队列Queue、LIFO（后入先出）队列LifoQueue和优先级队列PriorityQueue。
+这些队列都实现了锁原语，能够在多线程中直接使用。可以使用队列实现线程间的同步。</p></li>
+</ul>
+<img alt="../../_images/queue.PNG" src="../../_images/queue.PNG" />
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">Queue模块可以用来进行线程间的通信，让各个线程之间共享数据。</span>
+<span class="sd">Python的Queue模块提供了同步、线程安全的队列类，</span>
+
+<span class="sd">包括FIFO（先入先出）队列Queue、LIFO（后入先出）队列LifoQueue和优先级队列PriorityQueue。</span>
+<span class="sd">这些队列都实现了锁原语，能够在多线程中直接使用。可以使用队列实现线程间的同步。</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Queue</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>    <span class="c1"># 设置队列的大小</span>
+    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;消息1&quot;</span><span class="p">)</span>
+    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;消息2&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;队列是否已满：</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">full</span><span class="p">()))</span>
+    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;消息3&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;队列是否已满：</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">full</span><span class="p">()))</span>
+
+    <span class="c1"># try:</span>
+    <span class="c1">#     q.put(&quot;消息4&quot;,block=True,timeout=2)     # 添加消息队列时候等待2s</span>
+    <span class="c1"># except:</span>
+    <span class="c1">#     print(&quot;消息队列已满，现有消息数量为{}&quot;.format(q.qsize()))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">put_nowait</span><span class="p">(</span><span class="s2">&quot;消息4&quot;</span><span class="p">)</span>     <span class="c1">#添加消息队列不需要等待</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;消息队列已满，现有消息数量为</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">qsize</span><span class="p">()))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;从队列中取消息&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">qsize</span><span class="p">()):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">full</span><span class="p">():</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;消息4&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">qsize</span><span class="p">())</span>
+</pre></div>
+</div>
+<section id="id5">
+<h4>代码示例1<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
+
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+    <span class="n">test</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;22&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>  <span class="c1"># 父进程</span>
+    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;11&quot;</span><span class="p">)</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,))</span>  <span class="c1"># 子进程</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;取到： &quot;</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;取到： &quot;</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h4>代码示例2<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/2/26 10:55</span>
+<span class="c1"># filename: 进程间通信01.py</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">random</span>
+
+
+<span class="c1"># 写数据进程执行的代码</span>
+<span class="k">def</span> <span class="nf">proc_write</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">urls</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Process(</span><span class="si">%s</span><span class="s1">) is writing...&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Put </span><span class="si">%s</span><span class="s1"> to queue...&#39;</span> <span class="o">%</span> <span class="n">url</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span>
+
+
+<span class="c1"># 读进程执行的代码</span>
+<span class="k">def</span> <span class="nf">proc_read</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Process(</span><span class="si">%s</span><span class="s1">) is reading...&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Get </span><span class="si">%s</span><span class="s1"> from queue.&#39;</span> <span class="o">%</span> <span class="n">url</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># 父进程创建Queue，并传给各个子进程</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+    <span class="n">proc_writer1</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">proc_write</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;url1&#39;</span><span class="p">,</span> <span class="s1">&#39;url2&#39;</span><span class="p">,</span> <span class="s1">&#39;url3&#39;</span><span class="p">]))</span>
+    <span class="n">proc_writer2</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">proc_write</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;url4&#39;</span><span class="p">,</span> <span class="s1">&#39;url5&#39;</span><span class="p">,</span> <span class="s1">&#39;url6&#39;</span><span class="p">]))</span>
+    <span class="n">proc_reader</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">proc_read</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,))</span>
+    <span class="c1"># 启动子进程proc_writeer 写入</span>
+    <span class="n">proc_writer1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">proc_writer2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="c1"># 启动子进程proc_reader,读取</span>
+    <span class="n">proc_reader</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="c1"># 等待子进程proc_writer结束</span>
+    <span class="n">proc_writer1</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">proc_writer2</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="c1"># proc_reader进程里是死循环，无法等待其结束，要强行终止</span>
+    <span class="n">proc_reader</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Process(10608) is writing...</span>
+<span class="sd">Put url1 to queue...</span>
+<span class="sd">Process(7808) is writing...</span>
+<span class="sd">Put url4 to queue...</span>
+<span class="sd">Process(13840) is reading...</span>
+<span class="sd">Get url1 from queue.</span>
+<span class="sd">Get url4 from queue.</span>
+<span class="sd">Put url5 to queue...</span>
+<span class="sd">Get url5 from queue.</span>
+<span class="sd">Put url2 to queue...</span>
+<span class="sd">Get url2 from queue.</span>
+<span class="sd">Put url6 to queue...</span>
+<span class="sd">Get url6 from queue.</span>
+<span class="sd">Put url3 to queue...</span>
+<span class="sd">Get url3 from queue.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h4>代码示例3<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span><span class="n">Queue</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">2个子进程在队列中进行写入和读取数据，实现进程之间的通信</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">full</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;消息&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;写入:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;读取:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span><span class="mi">2</span><span class="p">)))</span>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程开始&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="s2">&quot;*&quot;</span><span class="p">))</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+    <span class="n">pw</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">write</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,))</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">read</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">q</span><span class="p">,))</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">pr</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">pr</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;主进程结束&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="s2">&quot;*&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="pipe">
+<h3><a class="toc-backref" href="#id20">Pipe常用来在两个进程间进行通信，</a><a class="headerlink" href="#pipe" title="Permalink to this headline">¶</a></h3>
+<p>两个进程分别位于管道的两端。
+Pipe方法返回（conn1，conn2）代表一个管道的两个端。</p>
+<p>Pipe方法有duplex参数，如果duplex参数为True（默认值），那么这个管道是全双工模式，也就是说conn1和conn2均可收发。</p>
+<p>若duplex为False，conn1只负责接收消息，conn2只负责发送消息。
+<code class="docutils literal notranslate"><span class="pre">send</span></code>和<code class="docutils literal notranslate"><span class="pre">recv</span></code>方法分别是发送和接收消息的方法。
+例如，在全双工模式下，<code class="docutils literal notranslate"><span class="pre">可以调用conn1.send发送消息</span></code>，<code class="docutils literal notranslate"><span class="pre">conn1.recv接收消息</span></code>。</p>
+<p>如果没有消息可接收，recv方法会一直阻塞。如果管道已经被关闭，那么recv方法会抛出EOFError。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/2/26 11:08</span>
+<span class="c1"># filename: sample01.py</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">os</span>
+
+
+<span class="k">def</span> <span class="nf">proc_send</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">urls</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process(</span><span class="si">%s</span><span class="s2">) send :</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">url</span><span class="p">))</span>
+        <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">proc_recv</span><span class="p">(</span><span class="n">pipe</span><span class="p">):</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process(</span><span class="si">%s</span><span class="s2">) rev:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()))</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">pipe</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pipe</span><span class="p">()</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">proc_send</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">pipe</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;url_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]))</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">proc_recv</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">pipe</span><span class="p">[</span><span class="mi">1</span><span class="p">],))</span>
+    <span class="n">p1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">p2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">p1</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">p1</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="n">p2</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Process(17008) send :url_0</span>
+<span class="sd">Process(13264) rev:url_0</span>
+<span class="sd">Process(17008) send :url_1</span>
+<span class="sd">Process(17008) send :url_2</span>
+<span class="sd">Process(13264) rev:url_1</span>
+<span class="sd">Process(17008) send :url_3</span>
+<span class="sd">Process(17008) send :url_4</span>
+<span class="sd">Process(13264) rev:url_2</span>
+<span class="sd">Process(17008) send :url_5</span>
+<span class="sd">Process(13264) rev:url_3</span>
+<span class="sd">Process(17008) send :url_6</span>
+<span class="sd">Process(17008) send :url_7</span>
+<span class="sd">Process(13264) rev:url_4</span>
+<span class="sd">Process(13264) rev:url_5</span>
+<span class="sd">Process(17008) send :url_8</span>
+<span class="sd">Process(17008) send :url_9</span>
+<span class="sd">Process(13264) rev:url_6</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="16. Python 进程和线程" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02.%E7%BA%BF%E7%A8%8B.html" class="btn btn-neutral float-right" title="16.2. 线程" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

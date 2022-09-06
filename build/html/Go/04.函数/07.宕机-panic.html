@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.7. 宕机-panic &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4.8. 宕机恢复-recover" href="08.%E5%AE%95%E6%9C%BA%E6%81%A2%E5%A4%8D-recover.html" />
+    <link rel="prev" title="4.6. 处理运行时错误" href="06.%E5%A4%84%E7%90%86%E8%BF%90%E8%A1%8C%E6%97%B6%E9%94%99%E8%AF%AF.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Go语言学习</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Go%E8%AF%AD%E8%A8%80%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95/index.html">1. Go语言基本语法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.%E5%AE%B9%E5%99%A8-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">2. 容器-数据结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6/index.html">3. 流程控制</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">4. 函数</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01.%E5%A3%B0%E6%98%8E%E5%87%BD%E6%95%B0.html">4.1. 声明函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02.%E5%8C%BF%E5%90%8D%E5%87%BD%E6%95%B0.html">4.2. 匿名函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03.%E9%97%AD%E5%8C%85.html">4.3. 闭包</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04.%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0.html">4.4. 可变参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05.%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C%E8%AF%AD%E5%8F%A5-defer.html">4.5. 延迟执行语句-defer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06.%E5%A4%84%E7%90%86%E8%BF%90%E8%A1%8C%E6%97%B6%E9%94%99%E8%AF%AF.html">4.6. 处理运行时错误</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.7. 宕机-panic</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">4.7.1. 1.手动触发宕机</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">4.7.2. 2.在运行依赖的必备资源缺失时主动触发宕机</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">4.7.3. 3.在宕机时触发延迟执行语句</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="08.%E5%AE%95%E6%9C%BA%E6%81%A2%E5%A4%8D-recover.html">4.8. 宕机恢复-recover</a></li>
+<li class="toctree-l3"><a class="reference internal" href="09.%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95.html">4.9. 单元测试</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../05.%E7%BB%93%E6%9E%84%E4%BD%93/index.html">5. 结构体</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.%E6%8E%A5%E5%8F%A3/index.html">6. 接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.%E5%8C%85/index.html">7. 包</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08.%E5%B9%B6%E5%8F%91/index.html">8. 并发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09.%E5%8F%8D%E5%B0%84/index.html">9. 反射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.%E6%A0%87%E5%87%86%E5%BA%93%E5%92%8C%E4%B8%89%E6%96%B9%E5%BA%93/index.html">10. 标准库和三方库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81/index.html">11. 项目代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.%E9%81%BF%E5%9D%91%E4%B8%8E%E6%8A%80%E5%B7%A7/index.html">12. 避坑与技巧</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Go语言学习</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">4. </span>函数</a> &raquo;</li>
+      <li><span class="section-number">4.7. </span>宕机-panic</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Go/04.函数/07.宕机-panic.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#panic" id="id4">宕机-panic</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id5">1.手动触发宕机</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id6">2.在运行依赖的必备资源缺失时主动触发宕机</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id7">3.在宕机时触发延迟执行语句</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="panic">
+<h1><a class="toc-backref" href="#id4"><span class="section-number">4.7. </span>宕机-panic</a><a class="headerlink" href="#panic" title="Permalink to this headline">¶</a></h1>
+<p>Go语言可以在程序中手动触发宕机，让程序崩溃，这样开发者可以及时地发现错误，同时减少可能的损失。</p>
+<section id="id1">
+<h2><a class="toc-backref" href="#id5"><span class="section-number">4.7.1. </span>1.手动触发宕机</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nb">panic</span><span class="p">(</span><span class="s">&quot;crash&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*代码运行崩溃，并输出如下</span>
+<span class="cm">panic: crash</span>
+
+<span class="cm">goroutine 1 [running]:</span>
+<span class="cm">main.main()</span>
+<span class="cm">D:/go_studay/go_path/src/awesomeProject12/panic01.go:4 +0x40*/</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id6"><span class="section-number">4.7.2. </span>2.在运行依赖的必备资源缺失时主动触发宕机</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>regexp是Go语言的正则表达式包，正则表达式需要编译后才能使用，而且编译必须是成功的。
+表示正则表达式可用。</p>
+<p>编译正则表达式函数有两种，具体如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>func Compile(expr string) (*Regexp, error)
+
+编译正常表达式，发生错误时返回编译错误，Regexp为nil，该函数适用于在编译错误时获得编译错误进行处理，同时继续后续执行的环境
+
+
+func MustCompile(str string) *Regexp {
+    regexp, err := Compile(str)
+    if err != nil {
+        panic(`regexp: Compile(` + quote(str) + `): ` + err.Error())
+    }
+    return regexp
+}
+
+· 编译正则表达式函数入口，输入包含正则表达式的字符串，返回正则表达式对象
+· 调用Compile()是编译正则表达式的入口函数，返回编译好的正则表达式对象和错误
+· 如果出现错误，触发panic()宕机
+· 没有错误时返回正则表达式对象
+</pre></div>
+</div>
+<p>手动宕机进行报错的方式不是一种偷懒的方式，反而能迅速报错，终止程序继续运行，防止更大的错误产生。
+不过，任何错误都使用宕机处理，也不是一种良好的设计。因此根据需要来觉得十分使用宕机进行报错。</p>
+</section>
+<section id="id3">
+<h2><a class="toc-backref" href="#id7"><span class="section-number">4.7.3. </span>3.在宕机时触发延迟执行语句</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>当panic()触发的宕机发生时，panic()后面的代码将不会被运行，但是在panic()函数前面
+已经运行过的defer语句依然会在宕机发生时发生作用。参考如下代码：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;宕机前要做的事情1&quot;</span><span class="p">)</span>
+    <span class="k">defer</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;宕机前要做的事情2&quot;</span><span class="p">)</span>
+    <span class="nb">panic</span><span class="p">(</span><span class="s">&quot;宕机&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">宕机前要做的事情2</span>
+<span class="cm">宕机前要做的事情1</span>
+<span class="cm">panic: 宕机</span>
+
+<span class="cm">goroutine 1 [running]:</span>
+<span class="cm">main.main()</span>
+<span class="cm">D:/go_studay/go_path/src/awesomeProject12/panic02.go:8 +0x147</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>宕机前defer语句会优先被执行，这个特性可以在宕机前进行信息处理。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="06.%E5%A4%84%E7%90%86%E8%BF%90%E8%A1%8C%E6%97%B6%E9%94%99%E8%AF%AF.html" class="btn btn-neutral float-left" title="4.6. 处理运行时错误" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="08.%E5%AE%95%E6%9C%BA%E6%81%A2%E5%A4%8D-recover.html" class="btn btn-neutral float-right" title="4.8. 宕机恢复-recover" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

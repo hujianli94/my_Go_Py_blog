@@ -1,0 +1,65 @@
+.. contents::
+   :depth: 3
+..
+
+数据存储库
+==========
+
+1.records-轻量级DB框架
+----------------------
+
+records是由requests作者开发的一个DB访问库，与requests的宗旨一样，records也力图成为一个非常易用的DB库，它是基于SQLAlchemy库封装的一个上层库。其安装命令如下：
+
+::
+
+   pip install records
+
+records一共只有500多行代码，提供的都是简洁易用的API，所以上手非常容易。
+
+records除了在SQL查询方面提供了更加易用的封装接口，在SQL更新、删除操作上仅仅是SQL执行的操作入口，而在插入操作上records额外提供了一个批量操作的方法。其使用示例代码如下：
+
+.. code:: python
+
+   import records
+    
+   db = records.Database('sql://connect_string') 
+   data = [ 
+       {'name': 'python', 'age': 15}, 
+       {'name': 'java', 'age': 14} 
+   ] 
+   db.bulk_query("insert into tn(name, age) values(:name, :age)", data)
+
+最后，records还提供了支持事务的API。其使用示例代码如下：
+
+.. code:: python
+
+   import records
+    
+   db = records.Database('sql://connect_string') 
+   t = db.transaction()
+    
+   try: 
+       db.query('select * from user') 
+       t.commit() 
+   except: 
+       t.rollback()
+
+参考文献：
+
+https://www.cnblogs.com/xiao-apple36/p/13968213.html
+
+2.redis-读写Redis库
+-------------------
+
+Python操作Redis大全
+
+参考文献：
+
+https://www.yuque.com/fcant/python/essbnd
+
+3.pymongo-读写MongoDB库
+-----------------------
+
+参考文献：
+
+https://www.yuque.com/fcant/python/tym0gu

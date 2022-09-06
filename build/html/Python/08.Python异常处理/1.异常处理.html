@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8.1. 异常处理 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="8.2. 断言操作（抛出异常）" href="2.%E6%96%AD%E8%A8%80%E6%93%8D%E4%BD%9C%EF%BC%88%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8%EF%BC%89.html" />
+    <link rel="prev" title="8. Python异常处理" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">8. Python异常处理</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">8.1. 异常处理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">8.1.1. 1.异常处理规则</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="2.%E6%96%AD%E8%A8%80%E6%93%8D%E4%BD%9C%EF%BC%88%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8%EF%BC%89.html">8.2. 断言操作（抛出异常）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="3.%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BC%82%E5%B8%B8%E7%B1%BB.html">8.3. 自定义异常类</a></li>
+<li class="toctree-l3"><a class="reference internal" href="4.%E6%98%BE%E5%BC%8F%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8.html">8.4. 显式抛出异常</a></li>
+<li class="toctree-l3"><a class="reference internal" href="5.%E5%BC%82%E5%B8%B8%E8%B7%9F%E8%B8%AA.html">8.5. 异常跟踪 traceback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="6.%E5%B0%8F%E8%AF%95%E7%89%9B%E5%88%80.html">8.6. 小试牛刀</a></li>
+<li class="toctree-l3"><a class="reference internal" href="7.%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F.html">8.7. 测试程序</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../24.Python%E6%A1%86%E6%9E%B6/index.html">23. Python框架</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">8. </span>Python异常处理</a> &raquo;</li>
+      <li><span class="section-number">8.1. </span>异常处理</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Python/08.Python异常处理/1.异常处理.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id21">异常处理</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id22">1.异常处理规则</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id23">举例</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id24">举例</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id25">举例</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id26">举例</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id27">捕获多个异常</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id28">使用一个块捕捉多个异常</a></p></li>
+<li><p><a class="reference internal" href="#id12" id="id29">捕捉对象</a></p></li>
+<li><p><a class="reference internal" href="#else" id="id30">异常中的else</a></p></li>
+<li><p><a class="reference internal" href="#raise" id="id31">raise主动抛出异常</a></p></li>
+<li><p><a class="reference internal" href="#except-raise" id="id32">except+raise配合使用</a></p></li>
+<li><p><a class="reference internal" href="#expect-raise" id="id33">expect+raise代码异常</a></p></li>
+<li><p><a class="reference internal" href="#try-except-finally" id="id34">try+except+finally子句</a></p></li>
+<li><p><a class="reference internal" href="#id13" id="id35">raise不需要参数</a></p></li>
+<li><p><a class="reference internal" href="#id14" id="id36">举例</a></p></li>
+<li><p><a class="reference internal" href="#id16" id="id37">异常堆栈跟踪</a></p></li>
+<li><p><a class="reference internal" href="#id17" id="id38">异常嵌套</a></p></li>
+<li><p><a class="reference internal" href="#id18" id="id39">else代码块</a></p></li>
+<li><p><a class="reference internal" href="#with-as" id="id40">with as 自动资源管理</a></p></li>
+<li><p><a class="reference internal" href="#id19" id="id41">手工抛出异常</a></p></li>
+<li><p><a class="reference internal" href="#id20" id="id42">输出异常的详细信息</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id21"><span class="section-number">8.1. </span>异常处理</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>1.捕获单个异常</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>try:
+&lt;语句&gt;　　#运行别的代码
+except &lt;名字&gt;：
+&lt;语句&gt;　　#如果在try部分引发了异常
+</pre></div>
+</div>
+<p>2.捕获多个异常</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>try:
+&lt;语句&gt;　　#运行别的代码
+except &lt;名字1&gt;：
+&lt;语句&gt;　　#如果在try部分引发了name1异常
+except &lt;名字2&gt;，&lt;数据&gt;:
+&lt;语句&gt;　　#如果引发了name2异常，获得附加数据
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>try:
+&lt;语句&gt;　　#运行别的代码
+except &lt;名字&gt;：
+&lt;语句&gt;　　#如果在try部分引发了异常1
+except &lt;名字&gt;，&lt;数据&gt;:
+&lt;语句&gt;　　#如果引发了异常2，获得附加数据
+else:
+&lt;语句&gt;　　#如果没有发生异常
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+<span class="k">except</span>
+<span class="k">finally</span>
+<span class="n">语句</span>
+</pre></div>
+</div>
+<p>5.使用raise语句抛出异常</p>
+<section id="id2">
+<h2><a class="toc-backref" href="#id22"><span class="section-number">8.1.1. </span>1.异常处理规则</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>不要过度使用异常，不要使用异常代替流程控制，该要提示的就要给出提示和错误处理方法</p></li>
+<li><p>不要用过于庞大的try语句块，永远只捕获那些可能会抛出异常的语句块</p></li>
+<li><p>不要忽略捕获到的异常，要对异常采取相应措施</p></li>
+<li><p>尽量只捕获精确的异常类型，而不是模糊的Exception</p></li>
+<li><p>如果出现了预期外的异常，让程序早点儿崩溃也未必是件坏事</p></li>
+</ul>
+<section id="id3">
+<h3><a class="toc-backref" href="#id23">举例</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/8 20:46</span>
+<span class="c1"># filename: 01.一个简单的异常.py</span>
+
+<span class="k">def</span> <span class="nf">exp_exception</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;a=&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;程序出现异常，异常信息：被除数为0&quot;</span><span class="p">)</span>
+
+
+<span class="n">exp_exception</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># 程序出现异常，异常信息：被除数为0</span>
+<span class="n">exp_exception</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># a= 0.5</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<span id="id5"></span><h3><a class="toc-backref" href="#id24">举例</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/6 15:01</span>
+<span class="c1"># filename: test0001.py</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+
+<span class="k">def</span> <span class="nf">read_date</span><span class="p">(</span><span class="n">in_date</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">in_date</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">date</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;处理ValueError异常&quot;</span><span class="p">)</span>
+
+
+<span class="n">str_date</span> <span class="o">=</span> <span class="s2">&quot;2019-06-06&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;日期 = </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">read_date</span><span class="p">(</span><span class="n">str_date</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">日期</span> <span class="o">=</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">06</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+</pre></div>
+</div>
+<p>函数稍作修改</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">read_date</span><span class="p">(</span><span class="n">in_date</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">in_date</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">date</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;处理ValueError异常&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+<span class="n">str_date</span> <span class="o">=</span> <span class="s2">&quot;201B-06-06&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;日期 = </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">read_date</span><span class="p">(</span><span class="n">str_date</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>输出结果</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">处理ValueError异常</span>
+<span class="n">time</span> <span class="n">data</span> <span class="s1">&#39;201B-06-06&#39;</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">match</span> <span class="nb">format</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span>
+<span class="n">日期</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<span id="id7"></span><h3><a class="toc-backref" href="#id25">举例</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">division</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    功能:分苹果</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ==========================分苹果了=================&quot;</span><span class="p">)</span>
+    <span class="n">apple</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">&#39;请输入苹果的个数：&#39;</span><span class="p">))</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入小朋友的人数：&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">apple</span> <span class="o">&lt;</span> <span class="n">children</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;苹果太少，不够分&quot;</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">apple</span><span class="o">//</span><span class="n">children</span>
+    <span class="n">remain</span> <span class="o">=</span> <span class="n">apple</span><span class="o">-</span><span class="n">result</span><span class="o">*</span><span class="n">children</span>
+    <span class="k">if</span> <span class="n">remain</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">个苹果，平均分给</span><span class="si">{}</span><span class="s2">个小朋友，每个人分</span><span class="si">{}</span><span class="s2">个，剩下</span><span class="si">{}</span><span class="s2">个&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">apple</span><span class="p">,</span><span class="n">children</span><span class="p">,</span><span class="n">result</span><span class="p">,</span><span class="n">remain</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">个苹果，平均分给</span><span class="si">{}</span><span class="s2">个小朋友，每人分</span><span class="si">{}</span><span class="s2">个&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">apple</span><span class="p">,</span><span class="n">children</span><span class="p">,</span><span class="n">result</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">division</span><span class="p">()</span>      <span class="c1">#调用分苹果函数</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">,</span><span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;输入错误:&quot;</span><span class="p">,</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;分苹果顺利完成.....&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;进行了一次分苹果操作&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<span id="id9"></span><h3><a class="toc-backref" href="#id26">举例</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#-*- coding:utf8 -*-</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;tes.txt&quot;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span><span class="ne">IndexError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span> <span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;没有这个key&quot;</span><span class="p">,</span><span class="n">e</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">e</span> <span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;列表操作错误&quot;</span><span class="p">,</span><span class="n">e</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;未知错误&quot;</span><span class="p">,</span><span class="n">e</span><span class="p">)</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;一切正常&quot;</span><span class="p">)</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;不管有没有错，都执行&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id27">捕获多个异常</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/8 20:55</span>
+<span class="c1"># filename: 03.捕获多个异常.py</span>
+
+<span class="k">def</span> <span class="nf">mult_exception</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;this is ZeroDivisionError&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This is NameError&quot;</span><span class="p">)</span>
+
+
+<span class="n">mult_exception</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># this is ZeroDivisionError</span>
+<span class="n">mult_exception</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># This is NameError</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3><a class="toc-backref" href="#id28">使用一个块捕捉多个异常</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/8 20:59</span>
+<span class="c1"># filename: 04.使用一个块捕捉多个异常.py</span>
+
+<span class="k">def</span> <span class="nf">model_exception</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">,</span> <span class="ne">NameError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;one of ZeroDivisionError or NameError or TypeE&quot;</span><span class="p">)</span>
+
+
+<span class="n">model_exception</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1"># one of ZeroDivisionError or NameError or TypeE</span>
+</pre></div>
+</div>
+<p>举例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">35</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">57</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The value of c is: &quot;</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">b</span> <span class="o">/</span> <span class="mi">0</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The value of d is: &quot;</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+
+<span class="k">except</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Division by zero is not possible&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Out of try...except block&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># The value of c is:  92</span>
+<span class="c1"># Division by zero is not possible</span>
+<span class="c1"># Out of try...except block</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h3><a class="toc-backref" href="#id29">捕捉对象</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/8 21:01</span>
+<span class="c1"># filename: 05.捕捉对象.py</span>
+
+<span class="k">def</span> <span class="nf">model_exception</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">,</span> <span class="ne">NameError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+<span class="n">model_exception</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>       <span class="c1">#name &#39;name&#39; is not defined</span>
+
+<span class="c1"># 若a=x/y在前，则结果如下：</span>
+<span class="c1"># division by zero</span>
+</pre></div>
+</div>
+<p>eg</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/4/29 11:28</span>
+<span class="c1"># filename: 异常处理1.py</span>
+
+<span class="k">def</span> <span class="nf">yichang</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">studyname</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;hujianli&quot;</span><span class="p">,</span> <span class="s2">&quot;hujianli2&quot;</span><span class="p">,</span> <span class="s2">&quot;huajianli3&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">flag</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rst</span> <span class="o">=</span> <span class="n">studyname</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;index error.....&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Try test finishing...&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rst</span> <span class="o">=</span> <span class="n">studyname</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s2">&quot;No try test finishing&quot;</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Start Right params testing....&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">yichang</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">yichang</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error params test start.....&quot;</span><span class="p">)</span>
+    <span class="c1">#超出index范围，flag为True，进行自定义的异常</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">yichang</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+    <span class="c1">#超出index范围，且flag为Fasle，直接触发系统内部异常</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">yichang</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="else">
+<h3><a class="toc-backref" href="#id30">异常中的else</a><a class="headerlink" href="#else" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/8 21:05</span>
+<span class="c1"># filename: 06.异常中的else.py</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">如果在try子句执行时没有发生异常，就会执行else语句后的语句（如果</span>
+<span class="sd">有else）。使用else子句比把所有语句都放在try子句里面更好，这样可以避</span>
+<span class="sd">免一些意想不到而except又没有捕获的异常</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">model_exception</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error happened&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;It went as expected&quot;</span><span class="p">)</span>
+
+
+<span class="n">model_exception</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># It went as expected</span>
+</pre></div>
+</div>
+</section>
+<section id="raise">
+<h3><a class="toc-backref" href="#id31">raise主动抛出异常</a><a class="headerlink" href="#raise" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">抛出异常使用raise语句，</span>
+<span class="sd">· raise关键字</span>
+<span class="sd">· 对Exception函数的调用</span>
+<span class="sd">· 传递给Exception函数的字符串，包含有用的出错信息</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;This is the error message. &quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;抛出异常&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="except-raise">
+<h3><a class="toc-backref" href="#id32">except+raise配合使用</a><a class="headerlink" href="#except-raise" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/14 22:58</span>
+<span class="c1"># filename: auction_except_raise.py</span>
+<span class="k">class</span> <span class="nc">AuctionException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 自定义异常类&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">AuctionTest</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_price</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_price</span> <span class="o">=</span> <span class="n">init_price</span>
+
+    <span class="k">def</span> <span class="nf">bid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bid_price</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bid_price</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;转换出异常：&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">AuctionException</span><span class="p">(</span><span class="s2">&quot;竞拍价必须是数值，不能包含其他字符！&quot;</span><span class="p">)</span>
+            <span class="c1"># raise AuctionException(e)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_price</span> <span class="o">&gt;</span> <span class="n">d</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuctionException</span><span class="p">(</span><span class="s2">&quot;竞拍价比起拍价低，不允许竞拍！&quot;</span><span class="p">)</span>
+        <span class="n">initPrice</span> <span class="o">=</span> <span class="n">d</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">at</span> <span class="o">=</span> <span class="n">AuctionTest</span><span class="p">(</span><span class="mf">20.4</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">at</span><span class="o">.</span><span class="n">bid</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">AuctionException</span> <span class="k">as</span> <span class="n">ae</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;main函数捕获的异常:&quot;</span><span class="p">,</span> <span class="n">ae</span><span class="p">)</span>
+
+<span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>转换出异常： could not convert string to float: &#39;df&#39;
+main函数捕获的异常: 竞拍价必须是数值，不能包含其他字符！
+</pre></div>
+</div>
+</section>
+<section id="expect-raise">
+<h3><a class="toc-backref" href="#id33">expect+raise代码异常</a><a class="headerlink" href="#expect-raise" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+
+<span class="k">def</span> <span class="nf">boxPrint</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Symbol must be a single character string. &quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">width</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Width must be greater than 2. &quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">height</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Height must be greater than 2. &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">symbol</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">height</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">symbol</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="n">symbol</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">symbol</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">boxPrint</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="c1"># boxPrint(&quot;22&quot;, 9, 5)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">111111111</span>
+<span class="sd">1       1</span>
+<span class="sd">1       1</span>
+<span class="sd">1       1</span>
+<span class="sd">111111111</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="try-except-finally">
+<h3><a class="toc-backref" href="#id34">try+except+finally子句</a><a class="headerlink" href="#try-except-finally" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/8 21:12</span>
+<span class="c1"># filename: try+finally子句.py</span>
+
+<span class="k">def</span> <span class="nf">use_finally</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Some bad thing happened: division by zero&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No matter what happend, I will show in front of &quot;</span><span class="p">)</span>
+
+
+<span class="n">use_finally</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Some bad thing happened: division by zero</span>
+<span class="sd">No matter what happend, I will show in front of</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h3><a class="toc-backref" href="#id35">raise不需要参数</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/14 23:13</span>
+<span class="c1"># filename: raise不需要参数.py</span>
+<span class="k">class</span> <span class="nc">AuctionException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 自定义异常类&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">AuctionTest</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_price</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_price</span> <span class="o">=</span> <span class="n">init_price</span>
+
+    <span class="k">def</span> <span class="nf">bid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bid_price</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bid_price</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;转换出异常：&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="c1"># 再次引发当前激活的异常</span>
+            <span class="k">raise</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_price</span> <span class="o">&gt;</span> <span class="n">d</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuctionException</span><span class="p">(</span><span class="s2">&quot;竞拍价比起拍价低，不允许竞拍！&quot;</span><span class="p">)</span>
+        <span class="n">initPrice</span> <span class="o">=</span> <span class="n">d</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">at</span> <span class="o">=</span> <span class="n">AuctionTest</span><span class="p">(</span><span class="mf">20.4</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">at</span><span class="o">.</span><span class="n">bid</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ae</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;main函数捕获的异常&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">ae</span><span class="p">))</span>
+
+
+<span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>输出信息</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>转换出异常： could not convert string to float: &#39;df&#39;
+main函数捕获的异常 &lt;class &#39;ValueError&#39;&gt;
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<span id="id15"></span><h3><a class="toc-backref" href="#id36">举例</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/9/8 20:49</span>
+<span class="c1"># filename: 02.抛出异常.py</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s2">&quot;This is NameError&quot;</span><span class="p">)</span>  <span class="c1"># 抛出的异常将被下面捕获</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;An exception happend!&quot;</span><span class="p">)</span>  <span class="c1"># 捕获异常并输出，An exception happend!</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s2">&quot;This is NameError&quot;</span><span class="p">)</span>  <span class="c1"># 抛出的异常将被下面捕获</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;An exception happend!&quot;</span><span class="p">)</span>  <span class="c1"># 捕获异常并输出，An exception happend!</span>
+    <span class="k">raise</span>  <span class="c1"># NameError: This is NameError</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h3><a class="toc-backref" href="#id37">异常堆栈跟踪</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/5/18 8:40</span>
+<span class="c1"># filename: 异常堆栈跟踪.py</span>
+<span class="c1"># import datetime as dt</span>
+<span class="c1"># import traceback as tb</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># def read_date_from_file(filename):</span>
+<span class="c1">#     try:</span>
+<span class="c1">#         file = open(filename)</span>
+<span class="c1">#         in_date = file.read()</span>
+<span class="c1">#         in_date = in_date.strip()</span>
+<span class="c1">#         date = dt.datetime.strftime(in_date, &quot;%Y-%m-%d&quot;)</span>
+<span class="c1">#         return date</span>
+<span class="c1">#     except (ValueError,OSError) as e:</span>
+<span class="c1">#         print(&quot;调用方法method1处理.....&quot;)</span>
+<span class="c1">#         tb.print_exc()</span>
+<span class="c1">#</span>
+<span class="c1"># date = read_date_from_file(&quot;readme.txt&quot;)</span>
+<span class="c1"># print(&quot;日期 = {0}&quot;.format(date))</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+
+<span class="k">class</span> <span class="nc">SelfException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">firstMethod</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">firstMethod</span><span class="p">():</span>
+    <span class="n">SecondMethod</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">SecondMethod</span><span class="p">():</span>
+    <span class="n">thirdMethod</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">thirdMethod</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="n">SecondMethod</span><span class="p">(</span><span class="s2">&quot;自定义异常信息&quot;</span><span class="p">)</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="c1"># 捕获异常信息，并将异常信息输出到控制台</span>
+    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+    <span class="c1"># 捕获异常信息，并将异常信息输出到指定文件中</span>
+    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;log.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id17">
+<h3><a class="toc-backref" href="#id38">异常嵌套</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/6 15:10</span>
+<span class="c1"># filename: test+try嵌套.py</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+
+<span class="k">def</span> <span class="nf">read_date_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">in_date</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">in_date</span> <span class="o">=</span> <span class="n">in_date</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">in_date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">date</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;处理ValueError 异常&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;处理 FileNotFoundError异常&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;处理 OSError 异常&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<span class="n">date</span> <span class="o">=</span> <span class="n">read_date_from_file</span><span class="p">(</span><span class="s2">&quot;readme.txt&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;日期 =</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id18">
+<h3><a class="toc-backref" href="#id39">else代码块</a><a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/6 15:19</span>
+<span class="c1"># filename: 异常else语句.py</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+
+<span class="k">def</span> <span class="nf">read_date_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;打开文件失败&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;打开文件成功&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">in_date</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">in_date</span> <span class="o">=</span> <span class="n">in_date</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">in_date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">date</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;处理ValueError异常&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;处理OSError异常&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="n">date</span> <span class="o">=</span> <span class="n">read_date_file</span><span class="p">(</span><span class="s2">&quot;readme.txt&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;日期 =</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="with-as">
+<h3><a class="toc-backref" href="#id40">with as 自动资源管理</a><a class="headerlink" href="#with-as" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/6 15:19</span>
+<span class="c1"># filename: 异常else语句.py</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="k">def</span> <span class="nf">read_date_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">in_date</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">in_date</span> <span class="o">=</span> <span class="n">in_date</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">in_date</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">date</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;处理ValueError异常&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;处理OSError异常&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+
+<span class="n">date</span> <span class="o">=</span> <span class="n">read_date_file</span><span class="p">(</span><span class="s2">&quot;readme.txt&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;日期 =</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id19">
+<h3><a class="toc-backref" href="#id41">手工抛出异常</a><a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<p>eg</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/4/29 12:21</span>
+<span class="c1"># filename: 手工抛出异常.py</span>
+
+<span class="k">def</span> <span class="nf">testRaise2</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NameError</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Raise a NameErrot&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;end ......&quot;</span><span class="p">)</span>
+
+<span class="n">testRaise2</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>eg</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2019/6/29 10:27</span>
+<span class="c1"># filename: 异常处理0001.py</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="n">some_exceptions</span> <span class="o">=</span> <span class="p">[</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">some_exceptions</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;raising </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">choice</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">choice</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">choice</span><span class="p">(</span><span class="s2">&quot;An error&quot;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Caught a  ValueError&quot;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Caught a TypeError&quot;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Caught some other error :</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This code called if there is no exception&quot;</span><span class="p">)</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This code called is always called&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>每次输出信息都不一样，输出信息如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>raising &lt;class &#39;TypeError&#39;&gt;
+Caught a TypeError
+This code called is always called
+</pre></div>
+</div>
+<p>不管有没有异常发生，else和finally语句会执行。</p>
+</section>
+<section id="id20">
+<h3><a class="toc-backref" href="#id42">输出异常的详细信息</a><a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/1/8 22:18</span>
+<span class="c1"># filename: sample01.py</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入一个被除余数：&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;30除以&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s2">&quot;等于&quot;</span><span class="p">,</span> <span class="mi">30</span> <span class="o">/</span> <span class="n">x</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;其他异常&quot;</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">返回一个元祖，元祖包含3个元素：分别是type、value和traceback</span>
+<span class="sd">· type：异常类型的名称</span>
+<span class="sd">· value：捕获到的异常实例</span>
+<span class="sd">· traceback： 是一个traceback对象</span>
+
+
+<span class="sd">请输入一个被除余数：0</span>
+<span class="sd">(&lt;class &#39;ZeroDivisionError&#39;&gt;, ZeroDivisionError(&#39;division by zero&#39;,), &lt;traceback object at 0x00000299F728DCC8&gt;)</span>
+<span class="sd">其他异常</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>traceback对象的显示</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/1/8 22:24</span>
+<span class="c1"># filename: sample02.py</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入一个被除余数：&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;30除以&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s2">&quot;等于&quot;</span><span class="p">,</span> <span class="mi">30</span> <span class="o">/</span> <span class="n">x</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">traceback</span><span class="o">.</span><span class="n">print_tb</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># 打印traceback对象</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;其他异常&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;再见..&quot;</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">请输入一个被除余数：0</span>
+<span class="sd">其他异常</span>
+<span class="sd">  File &quot;D:/Python-code/9.异常程序调试/输出异常的详细信息/sample02.py&quot;, line 11, in &lt;module&gt;</span>
+<span class="sd">    print(&quot;30除以&quot;, x, &quot;等于&quot;, 30 / x)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>traceback.print_exc()方法可以直接将异常内容打印出来</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding:utf8 -*-</span>
+<span class="c1"># auther; 18793</span>
+<span class="c1"># Date：2020/1/8 22:24</span>
+<span class="c1"># filename: sample02.py</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;请输入一个被除余数：&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;30除以&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s2">&quot;等于&quot;</span><span class="p">,</span> <span class="mi">30</span> <span class="o">/</span> <span class="n">x</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;其他异常&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;再见..&quot;</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">请输入一个被除余数：0</span>
+<span class="sd">其他异常</span>
+<span class="sd">Traceback (most recent call last):</span>
+<span class="sd">  File &quot;D:/Python-code/9.异常程序调试/输出异常的详细信息/sample03.py&quot;, line 11, in &lt;module&gt;</span>
+<span class="sd">    print(&quot;30除以&quot;, x, &quot;等于&quot;, 30 / x)</span>
+<span class="sd">ZeroDivisionError: division by zero</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>还有一些常用的方法，都是打印异常的内容</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#traceback.print_exc()</span>
+<span class="n">等价于</span>
+<span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="8. Python异常处理" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2.%E6%96%AD%E8%A8%80%E6%93%8D%E4%BD%9C%EF%BC%88%E6%8A%9B%E5%87%BA%E5%BC%82%E5%B8%B8%EF%BC%89.html" class="btn btn-neutral float-right" title="8.2. 断言操作（抛出异常）" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

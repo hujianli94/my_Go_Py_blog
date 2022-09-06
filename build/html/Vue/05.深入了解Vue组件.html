@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5. 深入了解Vue组件 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6. Vue-Router路由" href="06.Vue-Router%E8%B7%AF%E7%94%B1.html" />
+    <link rel="prev" title="4. Vue工程化项目" href="04.Vue%E5%B7%A5%E7%A8%8B%E5%8C%96%E9%A1%B9%E7%9B%AE.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python/index.html">Python全栈系列</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Vue.js企业开发实战</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01.Vue%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8.html">1. Vue基础入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02.Vue%E5%86%85%E7%BD%AE%E6%8C%87%E4%BB%A4.html">2. Vue内置指令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03.Vue%E5%AE%9E%E4%BE%8B%E6%A0%B8%E5%BF%83%E9%80%89%E9%A1%B9.html">3. Vue实例核心选项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04.Vue%E5%B7%A5%E7%A8%8B%E5%8C%96%E9%A1%B9%E7%9B%AE.html">4. Vue工程化项目</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5. 深入了解Vue组件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">5.1. 1.什么是组件化开发</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">5.2. 2.Vue自定义组件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">5.2.1. 2.1 组件的封装</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">5.2.2. 2.2 自定义组件上的属性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">5.2.3. 2.3 自定义组件上的事件</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">5.2.4. 2.4 组件属性校验</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">5.2.5. 2.5 组件通信</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">5.2.6. 2.6 插槽</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="06.Vue-Router%E8%B7%AF%E7%94%B1.html">6. Vue-Router路由</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07.Vuex%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86.html">7. Vuex状态管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08.Vue%E7%9A%84%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82.html">8. Vue的异步请求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09.%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%B8%B2%E6%9F%93.html">9. 服务器端渲染</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10.Vue3%E6%96%B0%E7%89%B9%E6%80%A7%E8%AF%A6%E8%AE%B2.html">10. Vue3新特性详讲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11.TypeScript%E5%85%A5%E9%97%A8.html">11. TypeScript入门</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12.Vite.html">12. Vite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13.Vue3%E5%AE%9E%E8%B7%B5.html">13. Vue3 实践</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Vue.js企业开发实战</a> &raquo;</li>
+      <li><span class="section-number">5. </span>深入了解Vue组件</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/Vue/05.深入了解Vue组件.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#vue" id="id14">深入了解Vue组件</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id15">1.什么是组件化开发</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id16">2.Vue自定义组件</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id17">2.1 组件的封装</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id18">2.2 自定义组件上的属性</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id19">2.3 自定义组件上的事件</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id20">2.4 组件属性校验</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id21">2.5 组件通信</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id22">2.6 插槽</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="vue">
+<h1><a class="toc-backref" href="#id14"><span class="section-number">5. </span>深入了解Vue组件</a><a class="headerlink" href="#vue" title="Permalink to this headline">¶</a></h1>
+<section id="id1">
+<h2><a class="toc-backref" href="#id15"><span class="section-number">5.1. </span>1.什么是组件化开发</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>组件化开发是Vue.js框架的核心特性之一，也是目前前端技术框架中最常见的一种开发模式。</p>
+<p>在Vue.js中，组件就是一个可以复用的Vue实例，拥有独一无二的组件名称，可以扩展HTML元素，使用组件名称作为自定义的HTML标签。</p>
+<p>在Vue.js项目中，每个组件都是一个Vue实例，所以组件内的属性选项都是相同的，例如data、computed、watch、methods及生命周期钩子等。</p>
+<p>仅有的例外是像el这样实例特有的选项。在很多场景下，网页中的某些部分是可以复用的，例如头部导航、猜你喜欢、热点信息等。我们可以将网站中能够重复使用的部分设计成一个个组件，当需要的时候，直接引用这个组件即可。Vue组件化开发有别于前端传统的模块化开发。模块化是为了实现每个模块、方法的单一功能，一般通过代码逻辑进行划分，而组件化开发，更多的是实现前端UI的重复使用。</p>
+</section>
+<section id="id2">
+<h2><a class="toc-backref" href="#id16"><span class="section-number">5.2. </span>2.Vue自定义组件</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>在使用Vue
+CLI工具创建的项目中，src目录是用来存放项目源码的，在src目录下会自动创建两个子目录，一个是src/views目录，另一个是src/components目录。</p>
+<p>这两个子目录都是用来创建组件的，但是为了区分组件的功能，一般在src/views目录下创建的是视图组件，而在src/components目录下创建的是公共UI组件。</p>
+<section id="id3">
+<h3><a class="toc-backref" href="#id17"><span class="section-number">5.2.1. </span>2.1 组件的封装</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>在src/components目录下新建一个Button.vue文件，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">el</span><span class="o">-</span><span class="n">row</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;mb-4&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">el</span><span class="o">-</span><span class="n">button</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="o">&gt;</span><span class="n">Primary</span><span class="o">&lt;/</span><span class="n">el</span><span class="o">-</span><span class="n">button</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">el</span><span class="o">-</span><span class="n">row</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>自定义Button.vue组件创建成功后，在App.vue根组件中引入，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">nav</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">link</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="o">&gt;</span><span class="n">Home</span><span class="o">&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">link</span><span class="o">&gt;</span> <span class="o">|</span>
+    <span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">link</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;/about&quot;</span><span class="o">&gt;</span><span class="n">About</span><span class="o">&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">link</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">nav</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">ButtonView</span><span class="o">/&gt;</span>
+  <span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">view</span><span class="o">/&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">ButtonView</span> <span class="kn">from</span> <span class="s1">&#39;./components/ButtonView&#39;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">注册组件</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span> <span class="n">ButtonView</span> <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>在上面的代码中，components选项内使用自定义组件</p>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id18"><span class="section-number">5.2.2. </span>2.2 自定义组件上的属性</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">el</span><span class="o">-</span><span class="n">row</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;mb-4&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">el</span><span class="o">-</span><span class="n">button</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="o">&gt;</span><span class="p">{{</span><span class="n">text</span><span class="p">}}</span><span class="o">&lt;/</span><span class="n">el</span><span class="o">-</span><span class="n">button</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">el</span><span class="o">-</span><span class="n">row</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">props</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">text</span><span class="p">:</span> <span class="n">String</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">nav</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">link</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="o">&gt;</span><span class="n">Home</span><span class="o">&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">link</span><span class="o">&gt;</span> <span class="o">|</span>
+    <span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">link</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;/about&quot;</span><span class="o">&gt;</span><span class="n">About</span><span class="o">&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">link</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">nav</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">ButtonView</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;提交&quot;</span><span class="o">/&gt;</span>
+  <span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">view</span><span class="o">/&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">ButtonView</span> <span class="kn">from</span> <span class="s1">&#39;./components/ButtonView&#39;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">注册组件</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span> <span class="n">ButtonView</span> <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>在上面的示例代码中，通过为ButtonView标签设置text属性的方式设置按钮显示的文本内容。</p>
+</section>
+<section id="id5">
+<h3><a class="toc-backref" href="#id19"><span class="section-number">5.2.3. </span>2.3 自定义组件上的事件</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;button @click=&quot;handleClick&quot;&gt;{{text}}&lt;/button&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  props: {
+    text: String
+  },
+  methods: {
+    handleClick () {
+      this.$emit(&#39;click&#39;)
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style&gt;
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>上面的示例代码为原生的&lt;button&gt;标签添加了单击事件，并在单击事件的触发函数中调用了$
+emit（）方法，触发该自定义组件定义的名为click的事件。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">nav</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">link</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="o">&gt;</span><span class="n">Home</span><span class="o">&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">link</span><span class="o">&gt;</span> <span class="o">|</span>
+    <span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">link</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;/about&quot;</span><span class="o">&gt;</span><span class="n">About</span><span class="o">&lt;/</span><span class="n">router</span><span class="o">-</span><span class="n">link</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">nav</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">ButtonView</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;提交&quot;</span> <span class="nd">@click</span><span class="o">=</span><span class="s2">&quot;submit&quot;</span><span class="o">/&gt;</span>
+  <span class="o">&lt;</span><span class="n">router</span><span class="o">-</span><span class="n">view</span><span class="o">/&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">ButtonView</span> <span class="kn">from</span> <span class="s1">&#39;./components/ButtonView&#39;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">注册组件</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span> <span class="n">ButtonView</span> <span class="p">},</span>
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">submit</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;提交的按钮被单击&#39;</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id20"><span class="section-number">5.2.4. </span>2.4 组件属性校验</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>我们可以为组件的 prop
+指定验证要求，例如你知道的这些类型。如果有一个要求没有被满足，则 Vue
+会在浏览器控制台中警告你。这在开发一个会被别人用到的组件时尤其有帮助。</p>
+<p>为了定制 prop 的验证方式，你可以为 <code class="docutils literal notranslate"><span class="pre">props</span></code>
+中的值提供一个带有验证要求的对象，而不是一个字符串数组。例如：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>app.component(&#39;my-component&#39;, {
+  props: {
+    // 基础的类型检查 (`null` 和 `undefined` 值会通过任何类型验证)
+    propA: Number,
+    // 多个可能的类型
+    propB: [String, Number],
+    // 必填的字符串
+    propC: {
+      type: String,
+      required: true
+    },
+    // 带有默认值的数字
+    propD: {
+      type: Number,
+      default: 100
+    },
+    // 带有默认值的对象
+    propE: {
+      type: Object,
+      // 对象或数组的默认值必须从一个工厂函数返回
+      default() {
+        return { message: &#39;hello&#39; }
+      }
+    },
+    // 自定义验证函数
+    propF: {
+      validator(value) {
+        // 这个值必须与下列字符串中的其中一个相匹配
+        return [&#39;success&#39;, &#39;warning&#39;, &#39;danger&#39;].includes(value)
+      }
+    },
+    // 具有默认值的函数
+    propG: {
+      type: Function,
+      // 与对象或数组的默认值不同，这不是一个工厂函数——这是一个用作默认值的函数
+      default() {
+        return &#39;Default function&#39;
+      }
+    }
+  }
+})
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id21"><span class="section-number">5.2.5. </span>2.5 组件通信</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p>组件化开发是Vue中的核心概念之一，通过设计具有各自状态的UI组件，然后由这些组件拼成更加复杂的UI页面，使代码更加简洁、容易维护。创建自定义组件在Vue开发中是非常常见的，在这种开发场景下必定会涉及组件之间的通信。在本节中将要学习的是如何实现组件之间的数据交互。</p>
+<section id="id8">
+<h4>1.父组件向子组件通信<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SonView.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="n">子组件接受父组件传值</span><span class="p">:</span> <span class="p">{{</span><span class="n">text</span><span class="p">}}</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;SonView&#39;</span><span class="p">,</span>
+  <span class="n">props</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">text</span><span class="p">:</span> <span class="n">String</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">FatherView.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">h3</span><span class="o">&gt;</span><span class="n">父组件向子组件传值</span><span class="o">&lt;/</span><span class="n">h3</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">son</span> <span class="n">v</span><span class="o">-</span><span class="n">bind</span><span class="p">:</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;msg&quot;</span><span class="o">&gt;&lt;/</span><span class="n">son</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">SonView</span> <span class="kn">from</span> <span class="s1">&#39;@/components/SonView&#39;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;FatherView&#39;</span><span class="p">,</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">son</span><span class="p">:</span> <span class="n">SonView</span>
+  <span class="p">},</span>
+  <span class="n">data</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="n">msg</span><span class="p">:</span> <span class="s1">&#39;hello world!&#39;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">App.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">ButtonView</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;提交&quot;</span> <span class="nd">@click</span><span class="o">=</span><span class="s2">&quot;submit&quot;</span><span class="o">/&gt;</span>
+  <span class="o">&lt;</span><span class="n">FatherView</span><span class="o">/&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">ButtonView</span> <span class="kn">from</span> <span class="s1">&#39;./components/ButtonView&#39;</span>
+<span class="kn">import</span> <span class="nn">FatherView</span> <span class="kn">from</span> <span class="s1">&#39;@/components/FatherView&#39;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">注册组件</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span> <span class="n">ButtonView</span><span class="p">,</span> <span class="n">FatherView</span> <span class="p">},</span>
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">submit</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;提交的按钮被单击&#39;</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="../_images/image-20220722151445692.png" src="../_images/image-20220722151445692.png" />
+</section>
+<section id="id9">
+<h4>2.子组件向父组件通信<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<p>单向数据流决定了父组件可以影响子组件的数据，但是反之不行。子组件内数据发生更新后，在父组件中无法直接获取更新后的数据。要想实现子组件向父组件传递数据，可以在子组件数据发生变化后，触发一个事件方法，然后由这个事件方法告诉父组件数据更新了。</p>
+<p>在父组件中只需对这个事件进行监听，当捕获到这个事件运行后，再对父组件的数据进行同步更新。</p>
+<p>子组件SonView.vue文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+&lt;div&gt;
+  子组件输入新值：
+  &lt;input type=&quot;text&quot; v-model=&quot;value&quot;&gt;
+  &lt;button @click=&quot;submit&quot;&gt;提交&lt;/button&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: &#39;SonView&#39;,
+  data () {
+    return {
+      value: &#39;&#39;
+    }
+  },
+  methods: {
+    submit () {
+      this.$emit(&#39;show&#39;, this.value)
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>父组件FatherView.vue文件代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+&lt;div&gt;
+  &lt;h3&gt;父组件监听了子组件的更新： {{msg}}&lt;/h3&gt;
+  &lt;vv-son v-on:show=&quot;showMsg&quot;&gt;&lt;/vv-son&gt;
+&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import SonView from &#39;@/views/SonView&#39;
+export default {
+  name: &#39;FatherView&#39;,
+  components: {
+    &#39;vv-son&#39;: SonView
+  },
+  data () {
+    return {
+      msg: &#39;&#39;
+    }
+  },
+  methods: {
+    showMsg (msg) {
+      this.msg = msg
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>父组件中使用v-on事件监听器来监听子组件的事件，在子组件中使用$
+emit（）触发当前实例上的事件。</p>
+</section>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id22"><span class="section-number">5.2.6. </span>2.6 插槽</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<section id="id11">
+<h4>1.什么是插槽<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p>Vue为了实现组件的内容分发，在组件的相关内容中提供了一套用于组件内容分发的API，也就是插槽。这套API使用&lt;slot&gt;内置组件作为承载分发内容的出口，代码如下：</p>
+<p>创建父组件DemoView.vue，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">h3</span><span class="o">&gt;</span><span class="n">在父组件中使用插槽</span><span class="o">&lt;/</span><span class="n">h3</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">my</span><span class="o">-</span><span class="n">slot</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">这是父组件中添加的元素</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">my</span><span class="o">-</span><span class="n">slot</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">MyslotView</span> <span class="kn">from</span> <span class="s1">&#39;@/views/MyslotView&#39;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;DemoView&#39;</span><span class="p">,</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;my-slot&#39;</span><span class="p">:</span> <span class="n">MyslotView</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>创建子组件MyslotView.vue，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">这是子组件内容</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">slot</span><span class="o">&gt;&lt;/</span><span class="n">slot</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;MyslotView&#39;</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>2.具名插槽<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<p>在实际的开发过程中，组件中的插槽不止一个，有时需要多个插槽，代码如下：</p>
+<p><code class="docutils literal notranslate"><span class="pre">HeaderView.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">slot</span><span class="o">&gt;&lt;/</span><span class="n">slot</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;HeaderView&#39;</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">FooterView.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">slot</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;one&quot;</span><span class="o">&gt;&lt;/</span><span class="n">slot</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">hr</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">slot</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;two&quot;</span><span class="o">&gt;&lt;/</span><span class="n">slot</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;FooterView&#39;</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">MainView.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div&gt;
+    &lt;!-- 插槽 --&gt;
+    &lt;myheader&gt;
+      &lt;div&gt;这是头部&lt;/div&gt;
+    &lt;/myheader&gt;
+
+    &lt;!-- 具名插槽 --&gt;
+    &lt;myfooter&gt;
+      &lt;template v-slot:one&gt;
+        &lt;div&gt;这是第一部分&lt;/div&gt;
+      &lt;/template&gt;
+      &lt;template v-slot:two&gt;
+        &lt;div&gt;这是第二部分&lt;/div&gt;
+      &lt;/template&gt;
+    &lt;/myfooter&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import HeaderView from &#39;@/views/HeaderView&#39;
+import FooterView from &#39;@/views/FooterView&#39;
+export default {
+  name: &#39;MainView&#39;,
+  components: {
+    myheader: HeaderView,
+    myfooter: FooterView
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>v-slot指令与v-on、v-bind类似，也有自己的缩写形式，把v-slot替换为字符#即可，代码如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- 具名插槽 --&gt;
+&lt;myfooter&gt;
+  &lt;template #one&gt;
+    &lt;div&gt;这是第一部分&lt;/div&gt;
+  &lt;/template&gt;
+  &lt;template #two&gt;
+    &lt;div&gt;这是第二部分&lt;/div&gt;
+  &lt;/template&gt;
+&lt;/myfooter&gt;
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h4>3.作用域插槽<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<p><strong>应用场景: 父组件对子组件的内容进行加工处理</strong></p>
+<p>大白话解释作用域插槽：父组件可以通过插槽读到子组件对应插槽所带的数据</p>
+<p>子组件<code class="docutils literal notranslate"><span class="pre">fruitList.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">li</span> <span class="p">:</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;item.id&#39;</span> <span class="n">v</span><span class="o">-</span><span class="k">for</span><span class="o">=</span><span class="s1">&#39;item in list&#39;</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">slot</span> <span class="p">:</span><span class="n">info</span><span class="o">=</span><span class="s1">&#39;item&#39;</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">slot</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;fruitList&#39;</span><span class="p">,</span>
+  <span class="n">props</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;</span>
+
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>父组件<code class="docutils literal notranslate"><span class="pre">FatherFruitList.vue</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">fruit</span><span class="o">-</span><span class="nb">list</span> <span class="p">:</span><span class="nb">list</span><span class="o">=</span><span class="s1">&#39;list&#39;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">template</span> <span class="n">v</span><span class="o">-</span><span class="n">slot</span><span class="o">=</span><span class="s2">&quot;slotProps&quot;</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">strong</span> <span class="n">v</span><span class="o">-</span><span class="k">if</span><span class="o">=</span><span class="s1">&#39;slotProps.info.id==3&#39;</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;current&quot;</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">slotProps</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">name</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">span</span> <span class="n">v</span><span class="o">-</span><span class="k">else</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">slotProps</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">name</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">span</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">fruit</span><span class="o">-</span><span class="nb">list</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">fruitList</span> <span class="kn">from</span> <span class="s1">&#39;@/components/fruitList&#39;</span>
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;FatherFruitList&#39;</span><span class="p">,</span>
+  <span class="n">components</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;fruit-list&#39;</span><span class="p">:</span> <span class="n">fruitList</span>
+  <span class="p">},</span>
+  <span class="n">data</span><span class="p">:</span> <span class="n">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="nb">list</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;apple&#39;</span>
+      <span class="p">},</span> <span class="p">{</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;orange&#39;</span>
+      <span class="p">},</span> <span class="p">{</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;banana&#39;</span>
+      <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">style</span> <span class="n">scoped</span><span class="o">&gt;</span>
+<span class="o">.</span><span class="n">current</span><span class="p">{</span>
+  <span class="n">color</span><span class="p">:</span> <span class="n">orange</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="04.Vue%E5%B7%A5%E7%A8%8B%E5%8C%96%E9%A1%B9%E7%9B%AE.html" class="btn btn-neutral float-left" title="4. Vue工程化项目" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="06.Vue-Router%E8%B7%AF%E7%94%B1.html" class="btn btn-neutral float-right" title="6. Vue-Router路由" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

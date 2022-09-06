@@ -1,0 +1,1365 @@
+.. contents::
+   :depth: 3
+..
+
+TypeScript入门
+==============
+
+1.Typescript是什么
+------------------
+
+   引用其官网上的话：
+
+TypeScript是JavaScript的超集，可以编译成纯JavaScript。TypeScript可以在任何浏览器、任何计算机和任何操作系统上运行，并且是开源的。
+
+2.为什么要用Typescript
+----------------------
+
+**优点**\ ：
+
+1. 提供了类型系统和对ES6的支持
+2. TypeScript增加了代码的可读性和可维护性
+3. TypeScript非常包容
+4. TypeScript拥有活跃的社区
+
+**缺点**\ ：
+
+1. 有一定的学习成本，有一些新的概念，如：接口（Interface）、泛型（Generics）、类（Classes）、枚举类型（Enums）等
+2. 短期可能增加一些开发成本，需要编写类型的定义，能减少长期维护的成本
+3. 需要集成到构建工具
+4. 可能和一些库的结合不是很完美
+
+相对于优点来说，这些缺点都是可以克服的，要拥抱变化，面向未来。
+
+3.JavaScript VS TypeScript
+--------------------------
+
+2021年编程语言流行度统计上，发生了有趣的事情，常年霸榜的 JavaScript 被
+PHP（拍黄片😳） 取代了，除了 PHP 的强势之外，有一部分人从 JavaScript
+转到了 TypeScript！因此 TypesScript 的占用率在逐年提升。
+
+虽然本质上他们都是实现了 ECMAScript 标准的语言，但 TS
+引入了类型检测并且丰富了 JS，相当于是 JS 的超集，就连 Vue3 也是用 TS
+写的。TS 不知不觉在前端领域中成了标配的存在。
+
+使用 TS
+能对我们的代码起到约束作用，同时减少我们的失误率，让更多非受迫性的问题在程序运行之前得以解决。同时配合
+IDE 智能识别，为我们代码自动补全，减少开发的心智负担。
+
+🏷️\ **结论**\ ：选用 TypeScript 作为未来前端的标配。
+
+4.TS安装
+--------
+
+::
+
+   $ npm install -g typescript
+   $ tsc -V
+   Version 4.1.5
+
+..
+
+   typescript演练场
+
+https://www.typescriptlang.org/zh/play
+
+5.手动编译代码
+--------------
+
+我们使用了 .ts 扩展名，但是这段代码仅仅是
+TypeScript，并不能在浏览器直接运行，需要将TypeScript转为JavaScript。
+
+在命令行上，运行 TypeScript 编译器：
+
+::
+
+   tsc helloworld.ts
+
+输出结果为一个 ``helloworld.js`` 文件，它包含了和输入文件中相同的
+JavaScript 代码。
+
+6.TS基础类型
+------------
+
+**注意点**
+
+1. 变量定义格式为 let 变量名:变量类型 = 变量值
+2. 变量开始定义的类型，后期不能把其他类型的值赋值给它
+
+6.1 布尔值(boolean)
+~~~~~~~~~~~~~~~~~~~
+
+.. code:: typescript
+
+   (() => {
+       let flag:boolean = true
+       console.log(flag)
+       flag = false
+       console.log(flag)
+   })()
+
+   // 输出结果
+   // true
+   // false
+
+6.2 数字(number)
+~~~~~~~~~~~~~~~~
+
+.. code:: typescript
+
+   (() => {
+       let a1: number = 10
+       let a2: number = 0b1010 //二进制
+       let a3: number = 0o12  //八进制
+       let a4: number = 0xa  //十六进制
+       console.log(a1, a2, a3, a4)
+   })()
+   // 输出结果
+   // 10 10 10 10
+
+6.3 字符串(string)
+~~~~~~~~~~~~~~~~~~
+
+.. code:: typescript
+
+   (() => {
+       let str1:string = '好好学习'
+       console.log(str1)
+       let str2:string = str1 + '天天考'
+       console.log(str2)
+       let num:number = 100
+       console.log(str2+num)
+   })()
+   // 输出结果
+   // 好好学习
+   // 好好学习天天考
+   // 好好学习天天考100
+
+6.4 undefined和null
+~~~~~~~~~~~~~~~~~~~
+
+.. code:: typescript
+
+   (() => {
+       let undef: undefined = undefined
+       console.log(undef)
+       let nll: null = null
+       console.log(nll)
+       // undefined和null都可以作为其他类型的子类型（把undefined和null赋值给其他类型）
+       let num: number = undefined
+       console.log(num)
+       let str: string = null
+       console.log(str)
+   })()
+   // 输出结果
+   // undefined
+   // null
+   // undefined
+   // null
+
+6.5 数组
+~~~~~~~~
+
+   列表中元素的数据类型必须和定义的数据类型一致，否则报错
+
+.. code:: typescript
+
+   (() => {
+       // 普通定义
+       let arr1: number[] = [1, 2, 3]
+       console.log(arr1)
+       // 泛型定义
+       let arr2: Array<number> = [10, 20, 30]
+       console.log(arr2)
+       console.log(arr2[0])
+   })()
+
+   // [1, 2, 3] 
+   // [10, 20, 30] 
+   // 10 
+
+6.6 元组
+~~~~~~~~
+
+   如果想存储不同类型的值到一个列表中，使用元组。在定义元组的时候，类型和个数就已经限定了，赋值时，数据类型和个数与定义的一致
+
+.. code:: typescript
+
+   (() => {
+       let tup1: [number,string,boolean] = [1, '111', true]
+       console.log(tup1)
+       console.log(tup1[0].toFixed(2))
+       console.log(tup1[1].split(''))
+   })()
+
+   // [1, "111", true] 
+   // "1.00" 
+   // ["1", "1", "1"] 
+
+6.7 枚举
+~~~~~~~~
+
+   存储的值在确定的情况下使用，比如男女。默认情况下，枚举里面的每个元素都有自己的编号值，默认从0开始递增，也可以指定编号值
+
+.. code:: typescript
+
+   (() => {
+       enum Level1 {
+           good,
+           general,
+           bad
+       }
+
+       console.log(Level1.good, Level1.general, Level1.bad)
+
+       enum Level2 {
+           good = 10,
+           general = 20,
+           bad = 30
+       }
+
+       console.log(Level2.good, Level2.general, Level2.bad)
+   })()
+   // 输出结果
+   // 0 1 2
+   // 10 20 30
+
+6.8 any
+~~~~~~~
+
+-  当一个数组中存储数据的类型和数量不确定时，可以使用any来定义数组
+-  但是在调用数组元素时，不会对类型进行检测（开发提示）
+
+::
+
+   (() => {
+       let arr1 = 100
+       console.log(arr1)
+       let arr2: any[] = [123, 'qwer', true]
+       console.log(arr2)
+       console.log(arr2[0].split(''))
+   })()
+
+6.9 void
+~~~~~~~~
+
+   在声明函数的时候，小括号后面使用:void，代表这个函数没有任何返回值
+
+.. code:: typescript
+
+   (() => {
+       function say():void{
+           console.log('hello')
+       }
+       console.log(say())
+   })()
+   // 输出结果
+   // hello
+   // undefined
+
+6.10 object
+~~~~~~~~~~~
+
+   和js对象用法类似，多了类型检测
+
+.. code:: typescript
+
+   (() => {
+       function getObj(obj:object):object{
+           console.log(obj)
+           return {
+               name:'李四',
+               age:20
+           }
+       }
+       console.log(getObj({name:'张三',age:18}))
+   })()
+
+6.11 联合类型
+~~~~~~~~~~~~~
+
+   值的类型不确定时，可以使用|将多个可能的类型写到一起，表示取值可以为多种其中一种类型
+
+-  例如：定义一个函数，参数类型为数字或字符串
+
+.. code:: typescript
+
+   (() => {
+       function getValue(value:number|string):string{
+           return value.toString()
+       }
+       console.log(getValue(123))
+       console.log(getValue('abc'))
+   })()
+   // 输出结果
+   // 123
+   // abc
+
+6.12 类型断言
+~~~~~~~~~~~~~
+
+   使用联合类型时，编译器并不知道值具体是什么类型，调用相关类型的方法时会报错，此时通过类型断言这种方式可以告诉编译器，“相信我，我知道自己在干什么”。
+
+-  语法
+
+方式一: 值
+
+方式二: 值 as 类型 tsx中只能用这种方式
+
+-  需求: 定义一个函数得到一个字符串或者数值数据的长度
+
+.. code:: typescript
+
+   (() => {
+       function getLength(x: number | string) {
+           if ((<string>x).length) {
+               // 是否存在length方法，如果是string类型，条件为true
+               return (x as string).length
+           } else {
+               return x.toString().length
+           }
+       }
+       console.log(getLength('abcd'))
+       console.log(getLength(1234))
+   })()
+   // 输出结果
+   // 4
+   // 4
+
+6.13 类型推断
+~~~~~~~~~~~~~
+
+   TS会在没有明确的指定类型的时候推测出一个类型
+
+-  有下面2种情况
+
+1. 定义变量时赋值了, 推断为对应的类型.
+2. 定义变量时没有赋值, 推断为any类型
+
+.. code:: typescript
+
+   /* 定义变量时赋值了, 推断为对应的类型 */
+   let b9 = 123 // number
+   // b9 = 'abc' // error
+
+   /* 定义变量时没有赋值, 推断为any类型 */
+   let b10  // any类型
+   b10 = 123
+   b10 = 'abc'
+
+7. 接口
+-------
+
+   TypeScript
+   的核心原则之一是对值所具有的结构进行类型检查。我们使用接口（Interfaces）来定义对象的类型。
+
+   接口是对象的状态(属性)和行为(方法)的抽象(描述)
+
+7.1 接口定义与使用
+~~~~~~~~~~~~~~~~~~
+
+-  接口类型的对象
+
+多了或者少了属性是不允许的
+
+可选属性: ?
+
+只读属性: readonly
+
+-  需求: 创建人的对象, 需要对人的属性进行一定的约束
+
+id是number类型, 必须有, 只读的
+
+name是string类型, 必须有
+
+age是number类型, 必须有
+
+sex是string类型, 可以没有
+
+.. code:: typescript
+
+   (() => {
+     // 定义人的接口，改接口作为person对象的类型使用，限定该对象中的属性数据
+     interface IPerson {
+       // id是只读属性
+       readonly id: number
+       name: string
+       age: number
+       // sex可以不存在
+       sex?: string
+     }
+     // 定义一个对象，类型为前面定义的接口IPerson
+     const person1: IPerson = {
+       id: 1,
+       name: 'tom',
+       age: 20,
+       sex: '男'
+     }
+     console.log(person1)
+   })()
+   // 执行结果
+   // {id: 1, name: "tom", age: 20, sex: "男"}
+
+7.2 函数类型
+~~~~~~~~~~~~
+
+   为了使用接口表示函数类型，需要给接口定义一个调用签名
+
+   它就像是一个只有参数列表和返回值类型的函数定义，参数列表中的每个参数都需要名字和类型
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个接口，作为函数的类型使用
+     interface SearchFunc {
+       (source: string, subString: string): boolean
+     }
+     // 定义一个函数，类型为前面定义的接口IPerson
+     const mySearch: SearchFunc = function (source: string, sub: string): boolean {
+       // 在source字符串中查找是否存在sub字符串
+       return source.search(sub) > -1
+     }
+     // 调用函数
+     console.log(mySearch('abcd', 'bc'))
+   })()
+   // 输出结果
+   // true
+
+7.3 类类型
+~~~~~~~~~~
+
+   与 C# 或 Java 里接口的基本作用一样，TypeScript
+   也能够用它来明确的强制一个类去符合某种契约。
+
+   接口中定义的方法，在类中都要实现
+
+类实现接口
+^^^^^^^^^^
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个接口，作为类的类型使用
+     interface IFly {
+       // 该方法没有任何的实现（方法中什么都没有）
+       fly()
+     }
+
+     // 定义一个类，这个类的类型就是上面定义的接口（IFly接口约束了当前这个类）
+     class Person implements IFly {
+       // 实现接口中的方法
+       fly() {
+         console.log('起飞了')
+       }
+     }
+
+     // 实例化对象
+     const person = new Person()
+     person.fly()
+   })()
+   // 输出结果
+   // 起飞了
+
+一个类可以实现多个接口
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个接口，作为类的类型使用
+     interface IFly {
+       // 该方法没有任何的实现（方法中什么都没有）
+       fly()
+     }
+
+   // 定义另一个接口，作为类的类型使用
+     interface ISay {
+       // 该方法没有任何的实现（方法中什么都没有）
+       say()
+     }
+
+     // 定义一个类，这个类的类型就是上面定义的接口（IFly接口约束了当前这个类）
+     class Person implements IFly, ISay {
+       // 实现接口中的方法
+       fly() {
+         console.log('起飞了')
+       }
+
+       say() {
+         console.log('说话了')
+       }
+     }
+
+     // 实例化对象
+     const person = new Person()
+     person.fly()
+     person.say()
+   })()
+   // 输出结果
+   // 起飞了
+   // 说话了
+
+接口继承接口
+^^^^^^^^^^^^
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个接口，作为类的类型使用
+     interface IFly {
+       // 该方法没有任何的实现（方法中什么都没有）
+       fly()
+     }
+
+     // 定义另一个接口，作为类的类型使用
+     interface ISay {
+       // 该方法没有任何的实现（方法中什么都没有）
+       say()
+     }
+
+     // 定义一个接口，它继承了前面两个接口
+     interface IFlyAndISay extends IFly, ISay {
+     }
+
+     // 定义一个类，这个类的类型就是上面定义的继承接口
+     class Person implements IFlyAndISay {
+       // 实现接口中的方法
+       fly() {
+         console.log('起飞了')
+       }
+
+       say() {
+         console.log('说话了')
+       }
+     }
+
+     // 实例化对象
+     const person = new Person()
+     person.fly()
+     person.say()
+   })()
+   // 输出结果
+   // 起飞了
+   // 说话了
+
+8.类
+----
+
+基本使用
+~~~~~~~~
+
+.. code:: typescript
+
+   (() => {
+     class Person {
+       // 定义属性
+       name: string
+       age: number
+
+       // 构造方法，实例化对象的时候，直接对属性的值进行初始化
+       constructor(name: string = '张三', age: number = 18) {
+         // 更新对象中的属性数据
+         this.name = name
+         this.age = age
+       }
+
+       // 实例方法
+       sayHi(message: string): string {
+         return '大家好，我叫' + this.name + '我今年' + this.age + '岁了，我对大家说：' + message
+       }
+     }
+
+     // 创建类的实例，使用默认属性
+     const person1 = new Person()
+     // 调用实例的方法
+     console.log(person1.sayHi('你好啊'))
+     // 创建类的实例，使用自定义属性
+     const person2 = new Person('李四', 20)
+     // 调用实例的方法
+     console.log(person2.sayHi('hello'))
+   })()
+   // 输出结果
+   // 大家好，我叫张三我今年18岁了，我对大家说：你好啊
+   // 大家好，我叫李四我今年20岁了，我对大家说：hello
+
+继承
+~~~~
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个父类（超类）
+     class Person {
+       // 定义属性
+       name: string
+       age: number
+
+       // 构造方法，实例化对象的时候，直接对属性的值进行初始化
+       constructor(name: string, age: number) {
+         // 更新对象中的属性数据
+         this.name = name
+         this.age = age
+       }
+
+       // 实例方法
+       sayHi(message: string): string {
+         return '大家好，我叫' + this.name + '我今年' + this.age + '岁了，我对大家说：' + message
+       }
+     }
+
+     // 定义一个子类（派生类）
+     class Student extends Person {
+       // 调用父类中的构造函数
+       constructor(name: string, age: number) {
+         super(name,age);
+       }
+
+       // 继承父类中的方法
+       sayHi(message: string): string {
+         return super.sayHi(message);
+       }
+     }
+     // 创建类的实例，使用自定义属性
+     const student = new Student('李四', 20)
+     // 调用实例的方法
+     console.log(student.sayHi('hello'))
+   })()
+   // 输出结果
+   // 大家好，我叫李四我今年20岁了，我对大家说：hello
+
+多态
+~~~~
+
+   父类型的引用指向了子类型的对象，不同类型的对象针对相同的方法产生了不同的行为
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个父类（超类）
+     class Person {
+       // 定义属性
+       name: string
+
+       // 构造方法，实例化对象的时候，直接对属性的值进行初始化
+       constructor(name: string) {
+         // 跟鞋对象中的属性数据
+         this.name = name
+       }
+
+       // 实例方法
+       run(num: number = 0): string {
+         return '大家好，我叫' + this.name + '我跑了' + num + '米'
+       }
+     }
+
+     // 定义第一个子类（派生类）
+     class Student extends Person {
+       // 调用父类中的构造函数
+       constructor(name: string) {
+         super(name);
+       }
+
+       // 重写父类中的方法
+       run(num: number = 5): string {
+         return '大家好，我叫' + this.name + '我跑了' + num + '米'
+       }
+     }
+
+     // 定义第二个子类（派生类）
+     class Teacher extends Person {
+       // 调用父类中的构造函数
+       constructor(name: string) {
+         super(name);
+       }
+
+       // 重写父类中的方法
+       run(num: number = 10): string {
+         return '大家好，我叫' + this.name + '我跑了' + num + '米'
+       }
+     }
+
+     // 创建父类的实例
+     const person1: Person = new Person('张三')
+     // 调用实例的方法
+     console.log(person1.run())
+     // 创建子类1的对象
+     const student1 = new Student('李四')
+     console.log(student1.run())
+     // 创建子类2的对象
+     const teacher1 = new Teacher('王五')
+     console.log(teacher1.run())
+     // 创建父类的实例
+     const person2: Person = new Person('张三')
+     // 调用实例的方法
+     console.log(person2.run())
+     // 使用父类型创建子类1的对象
+     const student2: Person = new Student('李四')
+     console.log(student2.run())
+     // 创建使用父类型创建子类2的对象
+     const teacher2: Person = new Teacher('王五')
+     console.log(teacher2.run())
+
+     // 定义函数，该函数需要传入参数是Person类型的
+     function showRun(per: Person):void{
+       console.log(per.run())
+     }
+     showRun(person2)
+     showRun(student2)
+     showRun(teacher2)
+   })()
+   // 输出结果
+   // 大家好，我叫张三我跑了0米
+   // 大家好，我叫李四我跑了5米
+   // 大家好，我叫王五我跑了10米
+   // 大家好，我叫张三我跑了0米
+   // 大家好，我叫李四我跑了5米
+   // 大家好，我叫王五我跑了10米
+   // 大家好，我叫张三我跑了0米
+   // 大家好，我叫李四我跑了5米
+   // 大家好，我叫王五我跑了10米
+
+修饰符
+~~~~~~
+
+   主要用于描述类中的成员（属性，构造函数，方法）的可访问性，默认是pubile，公共的，任何位置都可以访问类中的成员
+
+public (默认值, 公开的外部也可以访问)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个父类（超类）
+     class Person {
+       // 定义属性
+       public name: string
+
+       // 构造方法，实例化对象的时候，直接对属性的值进行初始化
+       public constructor(name: string) {
+         // 更新对象中的属性数据
+         this.name = name
+       }
+
+       // 实例方法
+       public run(num: number = 0): string {
+         return '大家好，我叫' + this.name + '我跑了' + num + '米'
+       }
+     }
+   })()
+   // 创建父类的实例
+   const person1: Person = new Person('张三')
+   // 类的外部访问类中的成员属性
+   console.log(person1.name)
+   // 类的外部访问类中的成员方法
+   console.log(person1.run())
+   // 执行结果
+   // 张三
+   // 大家好，我叫张三我跑了0米
+
+private（只能类内部可以访问,子类也无法访问）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个父类（超类）
+     class Person {
+       // 定义属性
+       private name: string
+
+       // 构造方法，实例化对象的时候，直接对属性的值进行初始化
+       private constructor(name: string) {
+         // 更新对象中的属性数据
+         this.name = name
+       }
+
+       // 实例方法
+       private run(num: number = 0): string {
+         return '大家好，我叫' + this.name + '我跑了' + num + '米'
+       }
+     }
+
+     // 定义第一个子类（派生类）
+     class Student extends Person {
+       // 调用父类中的构造函数
+       constructor(name: string) {
+         super(name);
+       }
+
+       // 重写父类中的方法
+       run(num: number = 5): string {
+         return '大家好，我叫' + this.name + '我跑了' + num + '米'
+       }
+     }
+     // 创建父类的实例
+     const person1: Person = new Person('张三')
+     // 类的外部访问类中的成员属性
+     console.log(person1.name)
+     // 类的外部访问类中的成员方法
+     console.log(person1.run())
+     // 创建子类1的对象
+     const student = new Student('李四')
+     console.log(student.run())
+   })()
+   one.ts(20,9): error TS2415: Class 'Student' incorrectly extends base class 'Person'.
+     Property 'run' is private in type 'Person' but not in type 'Student'.
+   one.ts(20,25): error TS2675: Cannot extend a class 'Person'. Class constructor is marked as private.
+   one.ts(28,30): error TS2341: Property 'name' is private and only accessible within class 'Person'.
+   one.ts(32,27): error TS2673: Constructor of class 'Person' is private and only accessible within the class declaration.
+   one.ts(34,23): error TS2341: Property 'name' is private and only accessible within class 'Person'.
+   one.ts(36,23): error TS2341: Property 'run' is private and only accessible within class 'Person'.
+
+-  外部和子类访问均报错
+
+protected（类内部和子类可以访问）
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个父类（超类）
+     class Person {
+       // 定义属性
+       protected name: string
+
+       // 构造方法，实例化对象的时候，直接对属性的值进行初始化
+       protected constructor(name: string) {
+         // 更新对象中的属性数据
+         this.name = name
+       }
+
+       // 实例方法
+       protected run(num: number = 0): string {
+         return '大家好，我叫' + this.name + '我跑了' + num + '米'
+       }
+     }
+
+     // 定义第一个子类（派生类）
+     class Student extends Person {
+       // 调用父类中的构造函数
+       constructor(name: string) {
+         super(name);
+       }
+
+       // 重写父类中的方法
+       run(num: number = 5): string {
+         return '大家好，我叫' + this.name + '我跑了' + num + '米'
+       }
+     }
+     // 创建父类的实例
+     const person1: Person = new Person('张三')
+     // 类的外部访问类中的成员属性
+     console.log(person1.name)
+     // 类的外部访问类中的成员方法
+     console.log(person1.run())
+     // 创建子类的对象
+     const student = new Student('李四')
+     console.log(student.run())
+   })()
+   // 输出结果
+   // one.ts(32,27): error TS2674: Constructor of class 'Person' is protected and only accessible within the class declaration.
+   // one.ts(34,23): error TS2445: Property 'name' is protected and only accessible within class 'Person' and its subclasses.
+   // one.ts(36,23): error TS2445: Property 'run' is protected and only accessible within class 'Person' and its subclasses.
+
+-  子类使用正常，外部使用报错
+
+readonly
+~~~~~~~~
+
+   readonly关键字将属性设置为只读的。
+   只读属性必须在声明时或构造函数里被初始化。外部不能修改属性值，内部普通方法也不能修改，只能在创建对象初始化时，指定属性的值
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个父类（超类）
+     class Person {
+       // 定义属性
+       readonly name: string
+       // 构造方法，实例化对象的时候，直接对属性的值进行初始化
+       constructor(name: string) {
+         // 更新对象中的属性数据
+         this.name = name
+       }
+
+       // 实例方法
+       run(): string {
+         // 类内部方法修改成员属性
+         return this.name = 'abc'
+       }
+     }
+     // 创建父类的实例
+     const person1: Person = new Person('张三')
+     // 类的外部访问类中的成员属性
+     console.log(person1.name)
+     // 修改实例的属性
+     person1.name = '李四'
+     console.log(person1.name)
+   })()
+   // 输出结果
+   // one.ts(14,19): error TS2540: Cannot assign to 'name' because it is a read-only property.
+   // one.ts(22,11): error TS2540: Cannot assign to 'name' because it is a read-only property.
+
+存取器
+~~~~~~
+
+   通过 ``getters/setters``
+   来截取对对象成员的访问。用于控制对对象成员的访问。
+
+.. code:: typescript
+
+   (() => {
+     // 外部可以传入姓氏和名字，使用set和get控制姓名数据，外部可以访问和修改
+     class Person{
+       firstName:string // 姓
+       lastName:string // 名
+       constructor(firstName:string,lastName:string) {
+         this.firstName = firstName
+         this.lastName = lastName
+       }
+       // 读取器——负责数据读取
+       get fullName(){
+         return this.firstName + '-' + this.lastName
+       }
+       // 设置器——负责数据的修改
+       set fullName(val){
+         let names = val.split('-')
+         this.firstName = names[0]
+         this.lastName = names[1]
+       }
+     }
+     // 实例化对象
+     const person:Person = new Person('东方','不败')
+     // 获取对象的成员属性
+     console.log(person.fullName)
+     // 设置属性的数据
+     person.fullName = '诸葛-孔明'
+     console.log(person.fullName)
+   })()
+   // 输出结果
+   // 东方-不败
+   // 诸葛-孔明 
+
+静态属性与方法
+~~~~~~~~~~~~~~
+
+   通过static修饰的属性和方法，在使用时直接通过类名.的方式调用
+
+.. code:: typescript
+
+   /* 
+   静态属性, 是类对象的属性
+   非静态属性, 是类的实例对象的属性
+   */
+   (() => {
+     // 定义一个类
+     class Person{
+       // 定义一个静态属性。类中默认有一个内置的name静态属性，不能冲突
+       static names:string = '张三'
+       // 定义一个静态方法
+       static sayHi(){
+         console.log('Hi')
+       }
+     }
+     // 调用类的静态属性
+     console.log(Person.names)
+     // 设置类的静态属性值
+     Person.names = '李四'
+     console.log(Person.names)
+     // 调用类的静态方法
+     Person.sayHi()
+   })()
+   // 输出结果
+   // 张三
+   // 李四
+   // Hi
+
+抽象类
+~~~~~~
+
+   抽象类做为其它派生类的基类使用。
+   它们不能被实例化。不同于接口，抽象类可以包含成员的实现细节。
+   ``abstract`` 关键字是用于定义抽象类和在抽象类内部定义抽象方法
+
+.. code:: typescript
+
+   /* 
+   抽象类
+     不能创建实例对象, 只有实现类才能创建实例
+     可以包含未实现的抽象方法
+   */
+   (() => {
+     // 定义一个抽象父类
+     abstract class Person{
+       // 定义一个抽象方法(抽象类中只定义，不能有具体的实现)
+       abstract run()
+       // 定义一个实例方法
+       sayHi(){
+         console.log('Hi')
+       }
+     }
+     // 定义一个子类（派生类）
+     class Student extends Person{
+       // 重新实现抽象类中的方法，此时这个方法就是当前Person类的实例方法
+       run(){
+         console.log('整齐的跑')
+       }
+     }
+     // 实例化student对象
+     const student:Student = new Student()
+     student.sayHi()
+     // 调用抽象类中的实例方法
+     student.run()
+   })()
+   // 输出结果
+   // Hi
+   // 整齐的跑
+
+9. 函数
+-------
+
+   函数是 JavaScript
+   应用程序的基础，将程序中重复的代码通过函数封装起来，提高代码复用。
+
+基本示例
+~~~~~~~~
+
+   和 JavaScript 一样，TypeScript 函数可以创建有名字的函数和匿名函数。
+
+   TypeScript支持原生的JavaScript函数格式
+
+.. code:: typescript
+
+   (() => {
+     // 命名函数(函数声明)
+     function add(x, y) {
+       return x + y
+     }
+
+     // 匿名函数(函数表达式)
+     let myAdd = function (x, y) {
+       return x + y;
+     }
+     // 调用命名函数
+     console.log(add(1,2))
+     // 调用匿名函数
+     console.log(myAdd(2,3))
+   })()
+   // 输出结果
+   // 3
+   // 5
+
+.. _函数类型-1:
+
+函数类型
+~~~~~~~~
+
+   TypeScript是一门强类型语言，推荐在使用函数时，给函数的参数和返回值指定类型
+
+.. code:: typescript
+
+   (() => {
+     // 命名函数(函数声明)
+     function add(x:string, y:string):string {
+       return x + y
+     }
+
+     // 匿名函数(函数表达式)
+     let myAdd = function (x:number, y:number):number {
+       return x + y;
+     }
+     // 调用命名函数
+     console.log(add('1','2'))
+     // 调用匿名函数
+     console.log(myAdd(2,3))
+   })()
+   // 输出结果
+   // 12
+   // 5
+
+完整写法
+~~~~~~~~
+
+.. code:: typescript
+
+   (() => {
+     // myAdd——变量名
+     // (x: number, y: number) => number——当前这个myAdd函数的类型
+     // function (x: number, y: number): number { return x + y }——符合上面这个函数类型的值
+     let myAdd: (x: number, y: number) => number = function (x: number, y: number): number {
+       return x + y
+     }
+     // 调用函数
+     console.log(myAdd(2, 3))
+   })()
+   // 输出结果
+   // 5
+
+可选参数和默认参数
+~~~~~~~~~~~~~~~~~~
+
+   默认参数：函数在声明的时候，内部的参数用=指定一个默认值，表示该参数是默认参数
+
+   可选参数：函数在声明的时候，内部的参数用？修饰，表示该参数可有可无
+
+示例：定义一个函数，传入姓氏和名字，得到姓名
+
+-  需求：如果不传入任何内容，返回默认的姓氏（姓氏默认参数）
+-  需求：如果只传入姓氏，就返回姓氏（名字可选参数）
+-  需求：如果传入姓氏和名字，就返回姓名
+
+.. code:: typescript
+
+   (() => {
+     let fullName = function (firstName: string = '诸葛', lastName?: string): string {
+       // 判断是否传入了名字
+       if (lastName) {
+         return firstName + '-' + lastName
+       } else {
+         return firstName
+       }
+     }
+     // 什么也不传入
+     console.log(fullName())
+     // 传入姓氏
+     console.log(fullName('欧阳'))
+     // 传入姓氏和名字
+     console.log(fullName('欧阳', '峰'))
+   })()
+   // 输出结果
+   // 诸葛
+   // 欧阳
+   // 欧阳-峰
+
+剩余参数
+~~~~~~~~
+
+   有时，你想同时操作多个参数，或者你并不知道会有多少参数传递进来。 在
+   TypeScript 里，你可以把所有参数收集到一个变量里：
+
+   剩余参数会被当做个数不限的可选参数。 可以一个都没有，同样也可以
+   有任意个。
+
+.. code:: typescript
+
+   (() => {
+     function showMsg(str1: string, str2: string, ...other: string[]): void {
+       console.log(str1)
+       console.log(str2)
+       console.log(other)
+     }
+     showMsg('欧', '杨', '峰', '是', '好', '人', '吗')
+   })()
+   // 输出结果
+   // 欧
+   // 杨
+   // (5) ["峰", "是", "好", "人", "吗"]
+
+函数重载
+~~~~~~~~
+
+   函数名字相同，但函数的参数和个数不同
+
+需求：定义一个函数，当传入两个string时，进行拼接。当传入两个number时，进行相加。
+
+.. code:: typescript
+
+   (() => {
+     // 函数重载声明
+     function add(x:string,y:string):string
+     function add(x:number,y:number):number
+     function add(x: string|number, y: string|number): string|number {
+       if (typeof x==='string' && typeof y==='string'){
+         return x+y //字符串拼接
+       }else if (typeof x==='number' && typeof y==='number'){
+         return x+y //数字相加
+       }
+     }
+     console.log(add('1','2'))
+     console.log(add(1,2))
+     // 如果传入数据非法，ts编译直接报错
+     console.log(add('1',2))
+   })()
+   // 输出结果
+   // 12
+   // 3
+   //   Overload 1 of 2, '(x: string, y: string): string', gave the following error.
+   //     Argument of type 'number' is not assignable to parameter of type 'string'.
+   //   Overload 2 of 2, '(x: number, y: number): number', gave the following error.
+   //     Argument of type 'string' is not assignable to parameter of type 'number'.
+
+10.泛型
+-------
+
+   在定义函数、接口或类的时候，不预先指定具体的类型，而在使用的时候再指定具体类型。
+
+函数泛型
+~~~~~~~~
+
+需求：定义一个函数，接收两个参数，第一个是数据，第二个是数量，生成一个数据*数量的数组
+
+.. code:: typescript
+
+   (() => {
+     // 根据传入的数据和数量，生成一个数据*数量的数组
+     function getArr(value:any,count:number):any[]{
+       const arr:any[]=[]
+       for (let i=0;i<count;i++){
+         arr.push(value)
+       }
+       return arr
+     }
+     console.log(getArr(1,3))
+     console.log(getArr('1',3))
+   })()
+   // 输出结果
+   // (3) [1, 1, 1]
+   // (3) ["1", "1", "1"]
+
+多个泛型参数的函数
+~~~~~~~~~~~~~~~~~~
+
+一个函数中可以有多个泛型参数
+
+.. code:: typescript
+
+   (() => {
+     // 使用k和v表示不同的值类型，所有引用了K的变量类型一致，V也是
+     function swap<K, V>(a: K, b: V): [K, V] {
+       return [a, b]
+     }
+       // 调用的时候指定参数的类型
+     const result = swap<string, number>('abc', 123)
+     // ts编译器识别出变量的类型，并提供相关的方法提示
+     console.log(result[0].length, result[1].toFixed())
+   })()
+   // 输出结果
+   // 3 "123"
+
+泛型接口
+~~~~~~~~
+
+   在定义接口时, 为接口中的属性或方法定义泛型类型
+
+   在使用接口时, 再指定具体的泛型类型
+
+.. code:: typescript
+
+   (() => {
+     // 在定义接口时, 为接口中的属性或方法定义泛型类型
+     interface IbaseCRUD <T> {
+       data: T[]
+       add: (t: T) => void
+     }
+     // 在使用接口时, 再指定具体的泛型类型
+     // 定义一个类，并指定成员属性的值类型
+     class User {
+       id?: number; //id主键自增
+       name: string; //姓名
+       age: number; //年龄
+       // 构造方法，更新属性数据
+       constructor (name, age) {
+         this.name = name
+         this.age = age
+       }
+     }
+     // 定义一个类，这个类的类型就是上面定义的接口，传入上面定义的类
+     class UserCRUD implements IbaseCRUD <User> {
+       data: User[] = []
+
+       add(user: User): void {
+         user = {...user, id: Date.now()}
+         this.data.push(user)
+         console.log('保存user', user.id)
+       }
+     }
+
+     // 实例化对象
+     const userCRUD = new UserCRUD()
+     // 调用add方法添加用户到user列表
+     userCRUD.add(new User('tom', 12))
+     userCRUD.add(new User('tom2', 13))
+     console.log(userCRUD.data)
+   })()
+   // 输出结果
+   // 保存user 1614172477494
+   // 保存user 1614172477495
+   //
+   // (2) [{…}, {…}]
+   // 0: {name: "tom", age: 12, id: 1614172477494}
+   // 1: {name: "tom2", age: 13, id: 1614172477495}
+   // length: 2
+
+泛型类
+~~~~~~
+
+   在定义类时, 为类中的属性或方法定义泛型类型 在创建类的实例时,
+   再指定特定的泛型类型
+
+.. code:: typescript
+
+   (() => {
+     // 定义一个类, 类中的属性和方法定义泛型类型（T表示同种类型）
+     class GenericNumber<T> {
+       zeroValue: T
+       add: (x: T, y: T) => T
+     }
+     // 实例化对象，指定类型为number
+     let myGenericNumber = new GenericNumber<number>()
+     myGenericNumber.zeroValue = 0
+     myGenericNumber.add = function (x, y) {
+       return x + y
+     }
+     // 调用对象的方法，传入number参数
+     console.log(myGenericNumber.add(myGenericNumber.zeroValue, 12))
+     // 实例化对象，指定类型为string
+     let myGenericString = new GenericNumber<string>()
+     myGenericString.zeroValue = 'abc'
+     myGenericString.add = function (x, y) {
+       return x + y
+     }
+     // 调用对象的方法，传传入string参数
+     console.log(myGenericString.add(myGenericString.zeroValue, '-def'))
+   })()
+   // 输出结果
+   // 12
+   // abc-def
+
+泛型约束
+~~~~~~~~
+
+**没有泛型约束**
+
+.. code:: typescript
+
+   (() => {
+     function fn <T>(x: T): void {
+       // 对一个泛型参数取 length 属性, 会报错, 因为这个泛型根本就不知道它有这个属性
+       console.log(x.length)
+     }
+   })()
+   // 输出结果
+   error TS2339: Property 'length' does not exist on type 'T'.
+
+**使用泛型约束**
+
+.. code:: typescript
+
+   (() => {
+   // 定义一个泛型约束
+     interface Lengthwise {
+       length: number;
+     }
+
+   // 指定泛型约束
+     function fn2<T extends Lengthwise>(x: T): void {
+       console.log(x.length)
+     }
+
+     fn2('abc')
+   // 当传入值不符合约束类型时，会报错：
+     fn2(123) // error  number没有length属性
+   })()
+   // 输出结果
+   // 3
+   // error TS2345: Argument of type 'number' is not assignable to parameter of type 'Lengthwise'.

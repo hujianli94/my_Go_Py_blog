@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23.7.6. 违禁词自审查功能 &mdash; 运维开发修炼之路</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="23.7.7. 分析吾爱破解论坛反爬虫机制" href="07.%E5%88%86%E6%9E%90%E5%90%BE%E7%88%B1%E7%A0%B4%E8%A7%A3%E8%AE%BA%E5%9D%9B%E5%8F%8D%E7%88%AC%E8%99%AB%E6%9C%BA%E5%88%B6.html" />
+    <link rel="prev" title="23.7.5. 实现优酷和爱奇艺会员的VIP模式" href="05.%E5%AE%9E%E7%8E%B0%E4%BC%98%E9%85%B7%E5%92%8C%E7%88%B1%E5%A5%87%E8%89%BA%E4%BC%9A%E5%91%98%E7%9A%84VIP%E6%A8%A1%E5%BC%8F.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> 小健_Python_go_Devops
+            <img src="../../../_static/python_go.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                2.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../Go/index.html">Go语言学习</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Go_vs_Python/index.html">Go vs Python</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Python全栈系列</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../01.Python%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/index.html">1. Python数据类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../02.Python%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/index.html">2. Python流程控制语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../03.Python%E5%87%BD%E6%95%B0/index.html">3. Python函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../04.Python%E5%86%85%E5%BB%BA%E5%87%BD%E6%95%B0/index.html">4. Python内建函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../05.Python%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%AD%A6%E4%B9%A0/index.html">5. Python推导式学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../06.Python%E8%BF%AD%E4%BB%A3%E5%99%A8_%E7%94%9F%E6%88%90%E5%99%A8_%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">6. Python生成器、迭代器、装饰器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../07.Python%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E8%AE%BE%E8%AE%A1_OOP/index.html">7. Python面对对象设计_OOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../08.Python%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/index.html">8. Python异常处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../09.Python%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C/index.html">9. Python文件操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../10.Python%E4%B8%AD%E7%9A%84%E5%8C%85%E5%92%8C%E6%A8%A1%E5%9D%97/index.html">10. Python中包和模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../11.Python%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">11. Python正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../12.Python%E6%A0%87%E5%87%86%E5%BA%93/index.html">12. Python 标准库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../13.Python%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E5%BA%93/index.html">13. Python对数据库的操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../14.Python%E4%B8%89%E6%96%B9%E5%BA%93/index.html">14. Python 三方库学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../15.Python%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/index.html">15. Python 网络编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../16.Python%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B/index.html">16. Python 进程和线程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../17.Python%E8%AF%AD%E8%A8%80%E7%9A%84%E6%89%A9%E5%B1%95%E4%B8%8E%E5%B5%8C%E5%85%A5/index.html">17. Python与C语言扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../18.%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84Python%E8%84%9A%E6%9C%AC%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.html">18. 系统管理员的Python脚本编程指南-读书笔记</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../20.Python%E8%87%AA%E5%8A%A8%E5%8C%96%E8%BF%90%E7%BB%B4%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">19. Python自动化运维最佳实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../21.Python%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0/index.html">20. Python进阶学习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../22.Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB/index.html">21. Python网络爬虫</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../23.%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/index.html">22. 前端基础知识</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">23. Python框架</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../01.%E5%B8%B8%E7%94%A8%E7%9A%84GUI%E6%A1%86%E6%9E%B6/index.html">23.1. 常用的GUI框架</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../02.Flask/index.html">23.2. Flask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../03.Scrapy/index.html">23.3. Scrapy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../04.Django/index.html">23.4. Django</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05.Tornado/index.html">23.5. Tornado</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../06.Python%E9%AB%98%E6%95%88%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98-Django-Flask/index.html">23.6. Python高效开发实战-Django、Flask</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">23.7. Python-Django-Web典型模块开发实战</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="01.Django-RESTful-API%E5%9F%BA%E7%A1%80.html">23.7.1. Django-RESTful-API基础</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02.%E7%94%A8Django-REST-framework%E5%AE%9E%E7%8E%B0%E8%B1%86%E7%93%A3API%E5%BA%94%E7%94%A8.html">23.7.2. 用Django REST framework实现豆瓣API应用</a></li>
+<li class="toctree-l4"><a class="reference internal" href="03.%E7%94%A8Django%E5%AE%9E%E7%8E%B0%E7%99%BE%E5%BA%A6%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A4%E8%AF%81%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9E%8B.html">23.7.3. 用Django实现百度开发者认证业务模型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="04.%E5%8C%BA%E5%9D%97%E9%93%BE%E6%97%B6%E4%BB%A3%E4%B8%8EToken%E7%99%BB%E5%BD%95.html">23.7.4. 区块链时代与Token登录</a></li>
+<li class="toctree-l4"><a class="reference internal" href="05.%E5%AE%9E%E7%8E%B0%E4%BC%98%E9%85%B7%E5%92%8C%E7%88%B1%E5%A5%87%E8%89%BA%E4%BC%9A%E5%91%98%E7%9A%84VIP%E6%A8%A1%E5%BC%8F.html">23.7.5. 实现优酷和爱奇艺会员的VIP模式</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">23.7.6. 违禁词自审查功能</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07.%E5%88%86%E6%9E%90%E5%90%BE%E7%88%B1%E7%A0%B4%E8%A7%A3%E8%AE%BA%E5%9D%9B%E5%8F%8D%E7%88%AC%E8%99%AB%E6%9C%BA%E5%88%B6.html">23.7.7. 分析吾爱破解论坛反爬虫机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08.%E5%85%B3%E4%BA%8E%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html">23.7.8. 关于跨域问题的解决办法</a></li>
+<li class="toctree-l4"><a class="reference internal" href="09.Django%E5%AE%9E%E7%8E%B0%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6.html">23.7.9. Django实现缓存机制</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%841.Vue%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE.html">23.7.10. 附1.Vue前端项目</a></li>
+<li class="toctree-l4"><a class="reference internal" href="%E9%99%842.%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB%E9%A1%B9%E7%9B%AE%E4%B8%8A%E7%BA%BF%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8.html">23.7.11. 附2.前后端分离项目上线部署到云服务器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../25.Python%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/index.html">24. Python开发环境部署</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../26.%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E6%9C%AC%E7%AE%97%E6%B3%95%E4%B9%A6/index.html">25. 我的第一本算法书</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../27.Python3%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/index.html">26. Python3网络爬虫开发实战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../28.Python%E8%AE%A9%E7%B9%81%E7%90%90%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%87%AA%E5%8A%A8%E5%8C%96/index.html">27. Python让繁琐的工作自动化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../29.%E7%96%AF%E7%8B%82%E7%9A%84Python%E8%AE%B2%E4%B9%89/index.html">28. 疯狂的Python讲义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../30.Django_Vue/index.html">29. Django_Vue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../31.%E7%BC%96%E5%86%99Python%E7%9A%8490%E4%B8%AA%E6%9C%89%E6%95%88%E6%96%B9%E6%B3%95/index.html">30. 编写Python的90个有效方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../32.Vue3.0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">31. Vue3.0管理系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Python%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">Python测试开发入门与实践</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue/index.html">Vue.js企业开发实战</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../Vue_Node.js/index.html">Vue.js+Node.js开发实战</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">小健_Python_go_Devops</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Python全栈系列</a> &raquo;</li>
+          <li><a href="../index.html"><span class="section-number">23. </span>Python框架</a> &raquo;</li>
+          <li><a href="index.html"><span class="section-number">23.7. </span>Python-Django-Web典型模块开发实战</a> &raquo;</li>
+      <li><span class="section-number">23.7.6. </span>违禁词自审查功能</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/Python/24.Python框架/07.Python-Django-Web典型模块开发实战/06.违禁词自审查功能.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id12">违禁词自审查功能</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id13">1. 违禁词自审查功能的重要性</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id14">1.1 违禁词的影响</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id15">1.2 可以避免法律风险</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#django-rest-framework" id="id16">2. Django REST framework实现模糊搜索功能</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id17">2.1 演示实现模糊搜索的后端逻辑</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id18">2.2 演示实现模糊搜索的前端逻辑</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#id7" id="id19">3.Django REST framework开发违禁词自审查功能</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id8" id="id20">3.1 开发违禁词自审查功能后端逻辑</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id21">3.2 创建新用户</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id22">3.3 开发违禁词自审查功能前端逻辑</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id23">3.4 违禁词自审查功能开发</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h1><a class="toc-backref" href="#id12"><span class="section-number">23.7.6. </span>违禁词自审查功能</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>常见的违禁词自审查功能分为两种：</p>
+<ul class="simple">
+<li><p>一种是用户提交发表的内容，在经过网站的违禁词自审查检验时，发现内容中包含了一些违禁词之后，提示用户发表失败，并且提示用户内容中有哪些违禁词，要求用户修改内容，或者放弃发表。这种违禁词自审查功能大多用于长篇博客、影评、网络小说等篇幅较大的内容审查中。</p></li>
+<li><p>另外一种则是比较适合评论、发帖子、公屏交流等内容篇幅比较小的应用场景，这种违禁词自审查功能会将检测到的违禁词自动替换为*号。</p></li>
+</ul>
+<section id="id2">
+<h2><a class="toc-backref" href="#id13">1. 违禁词自审查功能的重要性</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<section id="id3">
+<h3><a class="toc-backref" href="#id14">1.1 违禁词的影响</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>从产品角度上看，一个互联网平台一旦没有违禁词自审查功能，用户之间很容易因为一点口角，演变成性质非常恶劣的骂战，从而令整个平台的内容质量下降。内容质量降低，必将导致大批用户的流失。</p>
+<p>而违禁词自审查功能，将用户之间因为口角而发出的一些过激词汇隐藏，可以有效地减弱用户的负面情绪，也消除了个别用户之间的矛盾对其他用户的影响。</p>
+</section>
+<section id="id4">
+<h3><a class="toc-backref" href="#id15">1.2 可以避免法律风险</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>众所周知，《广告法》是为了保护广大消费者不被黑心商家蒙骗的一部法律，而且《广告法》不但保护消费者，也保护守法商家不被恶意竞争所攻击。《广告法》规定，广告中不得出现有可能对消费者产生误导的词汇。互联网本身也具有媒体属性，很多文章看起来是一篇博客，其实是一篇软文广告，如果没有违禁词自审查功能，经过辛苦经营获取大量用户的网络，可就要成为某些商家打广告的地方。而广告的内容泛滥，质量参差不齐，身为平台的搭建方，如果不做好内容审查的工作，将面临巨大的法律风险。</p>
+</section>
+</section>
+<section id="django-rest-framework">
+<h2><a class="toc-backref" href="#id16">2. Django REST framework实现模糊搜索功能</a><a class="headerlink" href="#django-rest-framework" title="Permalink to this headline">¶</a></h2>
+<p>模糊搜索，顾名思义是用于网站内部的搜索。</p>
+<section id="id5">
+<h3><a class="toc-backref" href="#id17">2.1 演示实现模糊搜索的后端逻辑</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>我们先建立一个Django项目负责实现模糊搜索功能的后端逻辑。新建Django项目，并且安装相关依赖包，编写相关基础代码，步骤如下所述。</p>
+<p>（1）新建Django项目，命名为demo7，新建App并命名为app01。</p>
+<p>（2）安装Django REST framework及其依赖包markdown和Django-filter。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">djangorestframework</span> <span class="n">markdown</span> <span class="n">Django</span><span class="o">-</span><span class="nb">filter</span>
+</pre></div>
+</div>
+<p>（3）在settings.py中添加注册代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（4）执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<p>（5）在app01/models.py内新建表类代码</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">AbstractUser</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<span class="c1"># Create your models here.</span>
+
+<span class="k">class</span> <span class="nc">UserProfile</span><span class="p">(</span><span class="n">AbstractUser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">user_type_chioces</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;普通用户&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;版主&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;管理员&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">level</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">user_type_chioces</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;用户&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+        <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span>
+
+
+<span class="k">class</span> <span class="nc">Article</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    文章表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;标题&#39;</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;文章内容&#39;</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">UserProfile</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;文章&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+</pre></div>
+</div>
+<p>（6）在settings中配置用户表的继承代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AUTH_USER_MODEL</span><span class="o">=</span><span class="s1">&#39;app01.UserProfile&#39;</span>
+</pre></div>
+</div>
+<p>（7）再次执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<p>（8）建立一个超级用户，用户名：root，密码：root1234</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">createsuperuser</span>
+</pre></div>
+</div>
+<p>（9）在app01/admin.py中注册表：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">UserProfile</span><span class="p">,</span> <span class="n">Article</span>
+
+<span class="c1"># Register your models here.</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">UserProfile</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>（10）运行demo7项目，然后通过浏览器访问：
+<a class="reference external" href="http://127.0.0.1:8080/admin/">http://127.0.0.1:8080/admin/</a>，输入用户名root，密码root1234，然后单击登录按钮，进入demo7的后台管理页面，</p>
+<p>（11）在后台管理页面添加文章数据。在此处可多添加几篇文章记录如图</p>
+<img alt="../../../_images/django_weijingci001.png" src="../../../_images/django_weijingci001.png" />
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id18">2.2 演示实现模糊搜索的前端逻辑</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>接下来建立demo7_1来负责演示实现模糊搜索项目的前端部分。这部分同样需要安装一些依赖库，我们使用基于Vue前端框架来新建demo7_1，具体的步骤如下所述。</p>
+<p>（1） 安装淘宝镜像：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>npm install –g cnpm –registry=HTTPS://registry.npm.taobao.org
+</pre></div>
+</div>
+<blockquote>
+<div><p>注意：
+在这里我们默认电脑中已经安装了Node.js。淘宝镜像是为了让下载依赖包的速度更快一些，如果网络状况好，可以忽略这一步。</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>使用cnpm搭建Vue框架，安装Vue的脚手架工具：</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cnpm install –-global vue-cli
+</pre></div>
+</div>
+<p>（3）创建项目demo7_1，并安装依赖</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vue</span> <span class="n">init</span> <span class="n">webpack</span><span class="o">-</span><span class="n">simple</span> <span class="n">demo7_1</span>
+<span class="n">cd</span> <span class="n">demo7_1</span>
+<span class="n">cnpm</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>（4）在demo7_1/src/App.vue内修改原本的代码，进行初始化</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">template</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;search&quot;</span><span class="o">&gt;</span>
+      <span class="n">关键词</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">input</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span> <span class="n">v</span><span class="o">-</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;keyword&quot;</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">button</span> <span class="nd">@click</span><span class="o">=</span><span class="s2">&quot;GetList()&quot;</span><span class="o">&gt;</span><span class="n">搜索</span><span class="o">&lt;/</span><span class="n">button</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;article&quot;</span> <span class="n">v</span><span class="o">-</span><span class="k">for</span><span class="o">=</span><span class="s2">&quot;(item,index) in article&quot;</span> <span class="p">:</span><span class="n">key</span><span class="o">=</span><span class="n">index</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;title&quot;</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">item</span><span class="o">.</span><span class="n">title</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="n">div</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;content&quot;</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">item</span><span class="o">.</span><span class="n">content</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">template</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="kn">import</span> <span class="nn">axios</span> <span class="kn">from</span> <span class="s1">&#39;axios&#39;</span><span class="p">;</span>
+
+<span class="n">export</span> <span class="n">default</span> <span class="p">{</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s1">&#39;app&#39;</span><span class="p">,</span>
+  <span class="n">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="n">keyword</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+      <span class="n">article</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="n">methods</span><span class="p">:</span> <span class="p">{</span>
+    <span class="o">//</span><span class="n">向后端提交关键词</span>
+    <span class="n">GetList</span><span class="p">()</span> <span class="p">{</span>
+      <span class="n">var</span> <span class="n">api</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:8080/getlist/?keyword=&#39;</span> <span class="o">+</span> <span class="n">this</span><span class="o">.</span><span class="n">keyword</span>
+      <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">api</span><span class="p">)</span>
+      <span class="n">axios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">api</span><span class="p">)</span>
+          <span class="o">.</span><span class="n">then</span><span class="p">((</span><span class="n">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">response</span><span class="p">);</span>
+            <span class="n">this</span><span class="o">.</span><span class="n">article</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">data</span>
+          <span class="p">})</span>
+          <span class="o">.</span><span class="n">catch</span><span class="p">((</span><span class="n">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+          <span class="p">})</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">style</span><span class="o">&gt;</span>
+<span class="o">*</span> <span class="p">{</span>
+  <span class="n">box</span><span class="o">-</span><span class="n">sizing</span><span class="p">:</span> <span class="n">border</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">.</span><span class="n">search</span> <span class="p">{</span>
+  <span class="n">margin</span><span class="p">:</span> <span class="mi">0</span> <span class="n">auto</span><span class="p">;</span>
+  <span class="n">margin</span><span class="o">-</span><span class="n">top</span><span class="p">:</span> <span class="mi">100</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">width</span><span class="p">:</span> <span class="mi">300</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">.</span><span class="n">article</span> <span class="p">{</span>
+  <span class="n">width</span><span class="p">:</span> <span class="mi">300</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">margin</span><span class="p">:</span> <span class="mi">0</span> <span class="n">auto</span><span class="p">;</span>
+  <span class="n">margin</span><span class="o">-</span><span class="n">top</span><span class="p">:</span> <span class="mi">20</span><span class="n">px</span><span class="p">;</span>
+  <span class="n">border</span><span class="p">:</span> <span class="mi">2</span><span class="n">px</span> <span class="n">solid</span><span class="p">;</span>
+  <span class="n">padding</span><span class="p">:</span> <span class="mi">5</span><span class="n">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="o">.</span><span class="n">title</span> <span class="p">{</span>
+  <span class="n">border</span><span class="o">-</span><span class="n">bottom</span><span class="p">:</span> <span class="mi">2</span><span class="n">px</span> <span class="n">dashed</span> <span class="n">royalblue</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">style</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>（8）运行demo7_1，然后浏览器访问：
+<a class="reference external" href="http://localhost:8080">http://localhost:8080</a>/网页初始页面只有搜索关键词的输入框。</p>
+<img alt="../../../_images/drf_vue2021112301.png" src="../../../_images/drf_vue2021112301.png" />
+<ul class="simple">
+<li><p>此时关键词输入框内容为空，单击“搜索”按钮，返回了所有文章</p></li>
+<li><p>搜索关键词“冰棍”，返回了文章中包含关键词“冰棍”的文章。</p></li>
+</ul>
+<img alt="../../../_images/drf_vue2021112302.png" src="../../../_images/drf_vue2021112302.png" />
+</section>
+</section>
+<section id="id7">
+<h2><a class="toc-backref" href="#id19">3.Django REST framework开发违禁词自审查功能</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<section id="id8">
+<h3><a class="toc-backref" href="#id20">3.1 开发违禁词自审查功能后端逻辑</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>(1）新建Django项目demo7_2，新建App，命名为app01。</p>
+<p>注意： 这里新建demo7_2的流程与上一节中新建demo7的流程是一样的。</p>
+<p>(2）安装Django REST framework及其依赖包markdown和Django-filter。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">djangorestframework</span> <span class="n">markdown</span> <span class="n">Django</span><span class="o">-</span><span class="nb">filter</span>
+</pre></div>
+</div>
+<p>（3）在settings.py中添加注册代码</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.contrib.admin&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;app01.apps.App01Config&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+<p>（4）在demo7_2/app01/models.py中新建表类：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">AbstractUser</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<span class="c1"># Create your models here.</span>
+<span class="k">class</span> <span class="nc">UserProfile</span><span class="p">(</span><span class="n">AbstractUser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">user_type_chioces</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;普通用户&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;版主&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;管理员&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">level</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">user_type_chioces</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">is_frozen</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;是否被冻结&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;用户&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span>
+
+
+<span class="k">class</span> <span class="nc">Article</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    文章表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;标题&#39;</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;文章内容&#39;</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">UserProfile</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s1">&#39;文章&#39;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+
+<span class="k">class</span> <span class="nc">Comment</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    评论表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">UserProfile</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Article</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;评论内容&#39;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39; 添加时间&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;评论&quot;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+
+
+<span class="k">class</span> <span class="nc">Card</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    违禁词库</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">word</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;违禁词&quot;</span><span class="p">)</span>
+    <span class="n">add_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;添加时间&quot;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;违禁词&quot;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">word</span>
+</pre></div>
+</div>
+<p>（5）在settings中配置用户表的继承代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 配置用户表的继承</span>
+<span class="n">AUTH_USER_MODEL</span> <span class="o">=</span> <span class="s1">&#39;app01.UserProfile&#39;</span>
+</pre></div>
+</div>
+<p>（6）再次执行数据更新命令：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">makemigrations</span>
+<span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">migrate</span>
+</pre></div>
+</div>
+<p>（7）建立一个超级用户，用户名：root，密码：root1234。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">createsuperuser</span>
+
+<span class="n">Username</span><span class="p">:</span> <span class="n">root</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>（8）在app01/admin.py中注册表：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">UserProfile</span><span class="p">,</span> <span class="n">Article</span><span class="p">,</span> <span class="n">Comment</span><span class="p">,</span> <span class="n">Card</span>
+
+<span class="c1"># Register your models here.</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">UserProfile</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Comment</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Card</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3><a class="toc-backref" href="#id21">3.2 创建新用户</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>我们在上一节创建了超级用户root，下面运行demo7_2项目，然后使用浏览器访问http://127.0.0.1:8080/admin，在登录页面输入用户名root，密码root1234</p>
+<p>新建超级用户，用户名：admin，密码：root4321。</p>
+<p>这时，重启demo7_2项目，在浏览器端访问：
+<a class="reference external" href="http://127.0.0.1:8080/admin">http://127.0.0.1:8080/admin</a>,使用我们新注册的用户名和密码进行登录。显示登录成功</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">createsuperuser</span>
+<span class="n">Username</span><span class="p">:</span> <span class="n">admin</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id22">3.3 开发违禁词自审查功能前端逻辑</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>接下来新建一个前端项目demo7_3，负责违禁词自审查功能的前端逻辑部分。使用Vue框架作为前端项目的开发环境，并且开发从前端向后端提交文章和提交文章评论两个功能，步骤如下所述。</p>
+<p>（1）搭建Vue开发环境，安装Vue的脚手架工具：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 安装淘宝npm</span>
+<span class="n">npm</span> <span class="n">install</span> <span class="o">-</span><span class="n">g</span> <span class="n">cnpm</span> <span class="o">--</span><span class="n">registry</span><span class="o">=</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">registry</span><span class="o">.</span><span class="n">npm</span><span class="o">.</span><span class="n">taobao</span><span class="o">.</span><span class="n">org</span>
+<span class="c1"># vue-cli 安装依赖包</span>
+<span class="n">cnpm</span> <span class="n">install</span> <span class="o">--</span><span class="n">g</span> <span class="n">vue</span><span class="o">-</span><span class="n">cli</span>
+</pre></div>
+</div>
+<p>（2）创建项目demo7_3：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vue</span> <span class="n">init</span> <span class="n">webpack</span><span class="o">-</span><span class="n">simple</span> <span class="n">demo7_3cd</span> <span class="n">demo7_3cnpm</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>（3）在demo7_3/src/App.vue中初始化代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;div class=&quot;userinfo&quot;&gt;
+      用户名：{{ username }}
+    &lt;/div&gt;
+    &lt;div class=&quot;login&quot; v-if=&quot;flag&quot;&gt;
+      &lt;input type=&quot;text&quot; v-model.lazy=&quot;username&quot;&gt;
+      &lt;button @click=&quot;Login()&quot;&gt;登录&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;article&quot; v-for=&quot;(item,index) in article&quot; :key=index&gt;
+      &lt;div class=&quot;title&quot;&gt;{{ item.title }}&lt;/div&gt;
+      &lt;div class=&quot;content&quot;&gt;{{ item.content }}&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;commentlist&quot; v-for=&quot;item in comment&quot; :key=item.content&gt;
+      &lt;div class=&quot;commentcontent&quot;&gt;{{ item.content }}&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;makecomment&quot;&gt;
+      评论内容:&lt;input type=&quot;text&quot; v-model=&quot;pushcommet&quot;&gt;
+      &lt;button @click=&quot;PushComment()&quot;&gt;提交评论&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;makearticle&quot;&gt;
+      &lt;div class=&quot;title&quot;&gt;文章标题 &lt;input type=&quot;text&quot; v-model=&quot;title&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;content&quot;&gt;文章内容 &lt;input type=&quot;text&quot; v-model=&quot;content&quot;&gt;&lt;/div&gt;
+      &lt;button @click=&quot;PushArticle()&quot;&gt;提交文章&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import Axios from &#39;axios&#39;;
+
+export default {
+  name: &#39;app&#39;,
+  data() {
+    return {
+      username: &#39;&#39;,
+      id: &#39;&#39;,
+      flag: true,
+      article: [],
+      title: &#39;&#39;,
+      content: &#39;&#39;,
+      comment: [],
+      pushcommet: &#39;&#39;
+    }
+  },
+  methods: {
+//登录方法
+    Login() {
+      var api = &#39;http://127.0.0.1:8080/login/?username=&#39; + this.username
+      Axios.get(api)
+          .then((response) =&gt; {
+            // console.log(response.data.username);
+            this.username = response.data.username
+            this.id = response.data.id
+            if (this.id) {
+              this.flag = false
+            }
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    },
+//获取文章列表的方法
+    GetArticle() {
+      var api = &#39;http://127.0.0.1:8080/getarticle/&#39;
+      Axios.get(api)
+          .then((response) =&gt; {
+            console.log(response.data);
+            this.article = response.data
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    },
+//获取评论的方法
+    GetComment() {
+      var api = &#39;http://127.0.0.1:8080/getcomment/&#39;
+      Axios.get(api)
+          .then((response) =&gt; {
+            console.log(response.data);
+            this.comment = response.data
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    },
+//发表文章的方法
+    PushArticle() {
+      var api = &#39;http://127.0.0.1:8080/pusharticle/&#39;
+      var params = new URLSearchParams();
+      params.append(&quot;title&quot;, this.title);
+      params.append(&quot;content&quot;, this.content);
+      params.append(&quot;id&quot;, this.id);
+      console.log(params)
+      Axios.post(api, params)
+          .then((response) =&gt; {
+            console.log(3333, response);
+            if (response.data !== 200) {
+              alert(&#39;存在违禁词&#39;)
+            }
+            this.GetArticle()
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    },
+//发表评论的方法
+    PushComment() {
+      var api = &#39;http://127.0.0.1:8080/pushcomment/&#39;
+      let data = {&quot;title&quot;: this.title, &quot;comment&quot;: this.pushcommet, &quot;id&quot;: this.id};
+      var params = new URLSearchParams();
+      params.append(&quot;comment&quot;, this.pushcommet);
+      params.append(&quot;id&quot;, this.id);
+      console.log(params)
+      Axios.post(api, params)
+          .then((response) =&gt; {
+            console.log(response);
+            this.GetComment()
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    }
+  },
+  mounted() {
+    this.GetArticle();
+    this.GetComment()
+  }
+}
+&lt;/script&gt;
+&lt;style&gt;
+* {
+  box-sizing: border-box;
+}
+
+.userinfo {
+  width: 300px;
+  margin: 0 auto;
+}
+
+.login {
+  width: 300px;
+  margin: 0 auto;
+}
+
+.login input {
+  width: 200px;
+  margin: 0 auto;
+}
+
+.article {
+  width: 300px;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border: 2px solid;
+  padding: 5px;
+}
+
+.article .title {
+  border-bottom: 1px solid;
+}
+
+.makecomment {
+  width: 300px;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.makecomment input {
+  width: 150px;
+}
+
+.commentlist {
+  width: 300px;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid;
+  padding: 5px;
+}
+
+.makearticle {
+  width: 300px;
+  margin: 0 auto;
+}
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>（4）运行demo7_3：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">run</span> <span class="n">dev</span>
+</pre></div>
+</div>
+<p>然后用浏览器访问 <a class="reference external" href="http://localhost:8081">http://localhost:8081</a></p>
+</section>
+<section id="id11">
+<h3><a class="toc-backref" href="#id23">3.4 违禁词自审查功能开发</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>（1）我们先在文章表内填入两条文章记录。</p>
+<p>（2）在demo7_2/app01/下新建序列化模块文件serializers.py</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">serializers</span>
+<span class="c1"># 引入用户表、文章表、评论表、关键词表</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">UserProfile</span><span class="p">,</span> <span class="n">Article</span><span class="p">,</span> <span class="n">Comment</span><span class="p">,</span> <span class="n">Card</span>
+
+
+<span class="k">class</span> <span class="nc">UserProfileSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    序列化用户表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">UserProfile</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;__all__&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">CommentSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    序列化评论表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Comment</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;__all__&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">ArticleSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    序列化文章表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Article</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;__all__&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">CardSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    序列化违禁词表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Card</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;__all__&quot;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>在demo7_2/app01/views.py内编写视图逻辑</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">UserProfile</span><span class="p">,</span> <span class="n">Article</span><span class="p">,</span> <span class="n">Comment</span><span class="p">,</span> <span class="n">Card</span>
+<span class="kn">from</span> <span class="nn">.serializers</span> <span class="kn">import</span> <span class="n">UserProfileSerializer</span><span class="p">,</span> <span class="n">ArticleSerializer</span><span class="p">,</span> <span class="n">CommentSerializer</span><span class="p">,</span> <span class="n">CardSerializer</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework.renderers</span> <span class="kn">import</span> <span class="n">JSONRenderer</span><span class="p">,</span> <span class="n">BrowsableAPIRenderer</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="k">class</span> <span class="nc">GetArticleView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取所有文章</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renderer_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSONRenderer</span><span class="p">]</span>  <span class="c1"># 渲染器</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">article_list</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">re</span> <span class="o">=</span> <span class="n">ArticleSerializer</span><span class="p">(</span><span class="n">article_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">GetCommentView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取所有评论</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renderer_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSONRenderer</span><span class="p">]</span>  <span class="c1"># 渲染器</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">Comment_list</span> <span class="o">=</span> <span class="n">Comment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">re</span> <span class="o">=</span> <span class="n">CommentSerializer</span><span class="p">(</span><span class="n">Comment_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="c1"># 只是演示登录视图，并非实项目中可以使用的登录逻辑</span>
+<span class="k">class</span> <span class="nc">LoginView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    演示登录</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renderer_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSONRenderer</span><span class="p">]</span>  <span class="c1"># 渲染器</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">username</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+                <span class="n">re</span> <span class="o">=</span> <span class="n">UserProfileSerializer</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;404&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s1">&#39;404&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">PushArticleView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    发表文章类</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renderer_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSONRenderer</span><span class="p">]</span>  <span class="c1"># 渲染器</span>
+
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">)</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+        <span class="c1"># print(title,content)</span>
+        <span class="k">if</span> <span class="n">title</span> <span class="ow">and</span> <span class="n">content</span> <span class="ow">and</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">all_card</span> <span class="o">=</span> <span class="n">Card</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_card</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">word</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">err</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">word</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="n">err</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">re</span> <span class="o">=</span> <span class="n">CardSerializer</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">()</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+            <span class="n">article</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">PushCommentView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    发表评论</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">renderer_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">JSONRenderer</span><span class="p">]</span>  <span class="c1"># 渲染器</span>
+
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">comment</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">)</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+        <span class="c1"># print(comment,user_id)</span>
+        <span class="k">if</span> <span class="n">comment</span> <span class="ow">and</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">all_card</span> <span class="o">=</span> <span class="n">Card</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_card</span><span class="p">:</span>
+                <span class="n">comment</span> <span class="o">=</span> <span class="n">comment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">word</span><span class="p">,</span> <span class="s2">&quot;***&quot;</span><span class="p">)</span>
+            <span class="n">newcomment</span> <span class="o">=</span> <span class="n">Comment</span><span class="p">()</span>
+            <span class="n">newcomment</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">comment</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">newcomment</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+            <span class="c1"># 为了简化与本节知识点无关的内容，给评论的文章一个默认值</span>
+            <span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">newcomment</span><span class="o">.</span><span class="n">article</span> <span class="o">=</span> <span class="n">article</span>
+            <span class="n">newcomment</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>在demo7_2/urls.py中配置路由代码：</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="c1"># 引入获取文章列表视图类，获取评论视图类</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">GetArticleView</span><span class="p">,</span> <span class="n">GetCommentView</span>
+<span class="c1"># 引入获取登录视图类，获取发表文章视图类，发表评论视图类</span>
+<span class="kn">from</span> <span class="nn">app01.views</span> <span class="kn">import</span> <span class="n">LoginView</span><span class="p">,</span> <span class="n">PushArticleView</span><span class="p">,</span> <span class="n">PushCommentView</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;login/&#39;</span><span class="p">,</span> <span class="n">LoginView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;login&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;getarticle/&#39;</span><span class="p">,</span> <span class="n">GetArticleView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;getarticle&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;getcomment/&#39;</span><span class="p">,</span> <span class="n">GetCommentView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;getcomment&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;pusharticle/&#39;</span><span class="p">,</span> <span class="n">PushArticleView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;pusharticle&#39;</span><span class="p">),</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;pushcomment/&#39;</span><span class="p">,</span> <span class="n">PushCommentView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;pushcomment&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>简单处理一下跨域，安装跨域模块：</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">Django</span><span class="o">-</span><span class="n">cors</span><span class="o">-</span><span class="n">headers</span>
+</pre></div>
+</div>
+<p>在settings.py中的INSTALLED_APPS中追加注册代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+<span class="o">........</span>
+    <span class="s1">&#39;rest_framework&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;corsheaders&#39;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>在settings.py中的MIDDLEWARE_CLASSES添加中间件代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MIDDLEWARE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># 引入跨域中间件，并放到首位</span>
+    <span class="s1">&#39;corsheaders.middleware.CorsMiddleware&#39;</span><span class="p">,</span>
+    <span class="o">......</span>
+ <span class="p">]</span>
+</pre></div>
+</div>
+<p>在settings.py中新增配置项，即可解决本项目中的跨域问题。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CORS_ORIGIN_ALLOW_ALL</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>( 6）因为涉及post提交，将settings.py中验证csrf_token的中间件关掉：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MIDDLEWARE</span> <span class="o">=</span> <span class="p">[</span>
+     <span class="o">........</span>
+    <span class="c1"># 注释掉验证csrf_token的中间件</span>
+    <span class="c1"># &#39;django.middleware.csrf.CsrfViewMiddleware&#39;,</span>
+    <span class="s1">&#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>（7）在demo7_3内安装axios：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cnpm install axios –save
+</pre></div>
+</div>
+<p>（8）编写demo7_3/src/App.vue逻辑代码：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;template&gt;
+  &lt;div id=&quot;app&quot;&gt;
+    &lt;div class=&quot;userinfo&quot;&gt;
+      用户名：{{ username }}
+    &lt;/div&gt;
+    &lt;div class=&quot;login&quot; v-if=&quot;flag&quot;&gt;
+      &lt;input type=&quot;text&quot; v-model.lazy=&quot;username&quot;&gt;
+      &lt;button @click=&quot;Login()&quot;&gt;登录&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;article&quot; v-for=&quot;(item,index) in article&quot; :key=index&gt;
+      &lt;div class=&quot;title&quot;&gt;{{ item.title }}&lt;/div&gt;
+      &lt;div class=&quot;content&quot;&gt;{{ item.content }}&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;commentlist&quot; v-for=&quot;item in comment&quot; :key=item.content&gt;
+      &lt;div class=&quot;commentcontent&quot;&gt;{{ item.content }}&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;makecomment&quot;&gt;
+      评论内容:&lt;input type=&quot;text&quot; v-model=&quot;pushcommet&quot;&gt;
+      &lt;button @click=&quot;PushComment()&quot;&gt;提交评论&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;makearticle&quot;&gt;
+      &lt;div class=&quot;title&quot;&gt;文章标题 &lt;input type=&quot;text&quot; v-model=&quot;title&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;content&quot;&gt;文章内容 &lt;input type=&quot;text&quot; v-model=&quot;content&quot;&gt;&lt;/div&gt;
+      &lt;button @click=&quot;PushArticle()&quot;&gt;提交文章&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import Axios from &#39;axios&#39;;
+
+export default {
+  name: &#39;app&#39;,
+  data() {
+    return {
+      username: &#39;&#39;,
+      id: &#39;&#39;,
+      flag: true,
+      article: [],
+      title: &#39;&#39;,
+      content: &#39;&#39;,
+      comment: [],
+      pushcommet: &#39;&#39;
+    }
+  },
+  methods: {
+//登录方法
+    Login() {
+      var api = &#39;http://127.0.0.1:8080/login/?username=&#39; + this.username
+      Axios.get(api)
+          .then((response) =&gt; {
+            // console.log(response.data.username);
+            this.username = response.data.username
+            this.id = response.data.id
+            if (this.id) {
+              this.flag = false
+            }
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    },
+//获取文章列表的方法
+    GetArticle() {
+      var api = &#39;http://127.0.0.1:8080/getarticle/&#39;
+      Axios.get(api)
+          .then((response) =&gt; {
+            console.log(response.data);
+            this.article = response.data
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    },
+//获取评论的方法
+    GetComment() {
+      var api = &#39;http://127.0.0.1:8080/getcomment/&#39;
+      Axios.get(api)
+          .then((response) =&gt; {
+            console.log(response.data);
+            this.comment = response.data
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    },
+//发表文章的方法
+    PushArticle() {
+      var api = &#39;http://127.0.0.1:8080/pusharticle/&#39;
+      var params = new URLSearchParams();
+      params.append(&quot;title&quot;, this.title);
+      params.append(&quot;content&quot;, this.content);
+      params.append(&quot;id&quot;, this.id);
+      console.log(params)
+      Axios.post(api, params)
+          .then((response) =&gt; {
+            console.log(3333, response);
+            if (response.data !== 200) {
+              alert(&#39;存在违禁词&#39;)
+            }
+            this.GetArticle()
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    },
+//发表评论的方法
+    PushComment() {
+      var api = &#39;http://127.0.0.1:8080/pushcomment/&#39;
+      let data = {&quot;title&quot;: this.title, &quot;comment&quot;: this.pushcommet, &quot;id&quot;: this.id};
+      var params = new URLSearchParams();
+      params.append(&quot;comment&quot;, this.pushcommet);
+      params.append(&quot;id&quot;, this.id);
+      console.log(params)
+      Axios.post(api, params)
+          .then((response) =&gt; {
+            console.log(response);
+            this.GetComment()
+          })
+          .catch((error) =&gt; {
+                console.log(error)
+              }
+          )
+    }
+  },
+  mounted() {
+    this.GetArticle();
+    this.GetComment()
+  }
+}
+&lt;/script&gt;
+&lt;style&gt;
+* {
+  box-sizing: border-box;
+}
+
+.userinfo {
+  width: 300px;
+  margin: 0 auto;
+}
+
+.login {
+  width: 300px;
+  margin: 0 auto;
+}
+
+.login input {
+  width: 200px;
+  margin: 0 auto;
+}
+
+.article {
+  width: 300px;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border: 2px solid;
+  padding: 5px;
+}
+
+.article .title {
+  border-bottom: 1px solid;
+}
+
+.makecomment {
+  width: 300px;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.makecomment input {
+  width: 150px;
+}
+
+.commentlist {
+  width: 300px;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid;
+  padding: 5px;
+}
+
+.makearticle {
+  width: 300px;
+  margin: 0 auto;
+}
+&lt;/style&gt;
+</pre></div>
+</div>
+<p>（9）运行demo7_3</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">run</span> <span class="n">dev</span>
+</pre></div>
+</div>
+<p>然后用浏览器访问：
+<a class="reference external" href="http://localhost:8081/">http://localhost:8081/</a>，显示如图所示的页面，是未登录的状态。</p>
+<p>输入用户名root，然后单击“登录”按钮，在页面上方即显示用户名为root，此时提醒登录的相关标签消失，</p>
+<img alt="../../../_images/drf_vue2021112303.png" src="../../../_images/drf_vue2021112303.png" />
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05.%E5%AE%9E%E7%8E%B0%E4%BC%98%E9%85%B7%E5%92%8C%E7%88%B1%E5%A5%87%E8%89%BA%E4%BC%9A%E5%91%98%E7%9A%84VIP%E6%A8%A1%E5%BC%8F.html" class="btn btn-neutral float-left" title="23.7.5. 实现优酷和爱奇艺会员的VIP模式" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07.%E5%88%86%E6%9E%90%E5%90%BE%E7%88%B1%E7%A0%B4%E8%A7%A3%E8%AE%BA%E5%9D%9B%E5%8F%8D%E7%88%AC%E8%99%AB%E6%9C%BA%E5%88%B6.html" class="btn btn-neutral float-right" title="23.7.7. 分析吾爱破解论坛反爬虫机制" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, huxiaojian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

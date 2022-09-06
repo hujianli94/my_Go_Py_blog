@@ -1,0 +1,233 @@
+.. contents::
+   :depth: 3
+..
+
+使用python定时执行任务
+======================
+
+方式一 ``使用time模块的sleep休眠功能``
+--------------------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/20 16:27
+   # filename: 使用time的sleep来实现.py
+   import time
+   import os
+
+
+   def main(cmd, inc=60):
+       while True:
+           os.system(cmd)
+           time.sleep(inc)
+
+
+   if __name__ == '__main__':
+       main("netstat -an", 10)
+
+方式二 ``使用sched模块来定时执行任务``
+--------------------------------------
+
+``sched模块``
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/7/20 16:35
+   # filename: 使用sched模块来定时执行任务.py
+   import time, os
+   import sched
+
+   # 定义一个schedule实例，定时任务的参数一般使用 time.time, time.sleep这两个值
+   schedule = sched.scheduler(time.time, time.sleep)
+
+
+
+   def execute_command(cmd, inc):
+       os.system(cmd)
+       schedule.enter(inc, 0, execute_command, (cmd, inc))
+
+
+   def main(cmd, inc):
+       schedule.enter(0, 0, execute_command, (cmd, inc))
+       schedule.run()
+
+
+   if __name__ == '__main__':
+       main("netstat -an", 60)
+
+execute_command函数首先执行了指定的命令，然后调用schedule的enter方法继续进入下一个定时周期
+
+``main函数中，将execute_command函数放入需要定时执行的队列中，并调用run方法来启动调度机制``
+
+sched模块实现定时器方法
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   # 定时执行器.间隔10s执行程序
+   class MonitorSchedule:
+
+       def __init__(self, monitor_time):
+           self.schedule = sched.scheduler(time.time, time.sleep)
+           self.monitor_time = monitor_time
+
+       def func(self):
+           # 执行的程序
+           os.system("netstat -tunpl")
+           self.schedule.enter(monitor_time, 0, self.func, ())
+
+       def start(self):
+           self.schedule.enter(0, 0, self.func, ())
+           self.schedule.run()
+           
+   if __name__ == '__main__':
+       server = MonitorSchedule(10)
+       server.start()
+
+暂停直至特定日期
+----------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+
+   """
+   下面的代码会继续循环，直到 2020年万圣节
+   """
+   halloween2016 = datetime.datetime(2020, 10, 31, 0, 0, 0)
+   while datetime.datetime.now() < halloween2016:
+       time.sleep(1)
+       print("程序一直后台运行中.........")
+
+APScheduler实现秒级定时任务
+---------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/1 12:55
+   # filename: APScheduler实现秒级定时任务.py
+   from datetime import datetime
+   import os
+   from apscheduler.schedulers.blocking import BlockingScheduler
+
+   def tick():
+       print('Tick! The time is: %s' % datetime.now())
+
+   if __name__ == '__main__':
+       scheduler = BlockingScheduler()
+       scheduler.add_job(tick, 'interval', seconds=3)
+       print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C    '))
+
+       try:
+           scheduler.start()
+       except (KeyboardInterrupt, SystemExit):
+           pass
+
+使用APScheduler实现cron计划任务
+-------------------------------
+
+::
+
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/1 13:09
+   # filename: 使用APScheduler实现cron计划任务.py
+   from datetime import datetime
+   import os
+   from apscheduler.schedulers.blocking import BlockingScheduler
+
+
+   def tick():
+       print('Tick! The time is: %s' % datetime.now())
+
+
+   if __name__ == '__main__':
+       scheduler = BlockingScheduler()
+       """
+       # hour = 19, minute = 23 这里表示每天的19：23分执行任务。
+       hour =19 , minute =23
+       hour ='19', minute ='23'
+       minute = '*/3' 表示每 5 分钟执行一次
+       hour ='19-21', minute= '23' 表示 19:23、 20:23、 21:23 各执行一次任务
+       """
+       scheduler.add_job(tick, 'cron', hour=19, minute=23)
+       print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C    '))
+
+       try:
+           scheduler.start()
+       except (KeyboardInterrupt, SystemExit):
+           pass
+
+schedule三方库实现定时任务
+--------------------------
+
+``pip install schedule``
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/12 12:39
+   # filename: schedule实现定时任务.py
+
+   import schedule
+   import time
+   import datetime
+
+
+   def job():
+       print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+       print("I'm working...")
+
+
+   schedule.every().second.do(job)         #每s执行
+   schedule.every(20).minutes.do(job)      #分钟级别执行
+   schedule.every().hour.do(job)           # 小时级别执行
+   schedule.every().day.at("10:30").do(job)    #定时任务
+   schedule.every().monday.do(job)
+   schedule.every().wednesday.at("13:15").do(job)
+   schedule.every().minute.at(":17").do(job)
+
+   while True:
+       schedule.run_pending()
+       time.sleep(1)
+
+输出内容
+
+::
+
+   2019-09-12 12:53:22
+   I'm working...
+   2019-09-12 12:53:23
+   I'm working...
+   2019-09-12 12:53:24
+   I'm working...
+
+使用Python管理Cron作业
+----------------------
+
+https://zhuanlan.zhihu.com/p/33717874
+
+参考文献
+
+https://pypi.org/project/schedule/
+
+https://www.ctolib.com/chenxinqun-conciseSchedules.html#articleHeader0
+
+参考文献
+
+·兼容crontab语法的定时器工具
+https://www.cnblogs.com/Neeo/p/10435059.html

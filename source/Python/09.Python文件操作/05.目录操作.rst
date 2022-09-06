@@ -1,0 +1,255 @@
+.. contents::
+   :depth: 3
+..
+
+目录操作
+========
+
+初探os和os.path模块
+-------------------
+
+::
+
+   os模块是python 内置与操作系统功能和文件系统相关的模块，
+   该模块中的语句的执行结果通常与操作系统有关
+   os.path模块
+
+   import os
+   print(os.name)      #获取操作系统信息
+   print(os.linesep)      #获取操作系统操作符
+   print(os.path.abspath("D:\GitHub\\21天python\python IO"))
+   print(os.path.join(r'D:\GitHub',r'demo\test.txt'))
+
+创建目录
+--------
+
+代码示例
+~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   import os
+   #os.mkdir(path=None,mode=None)
+   #os.mkdir("D:\\deam")        #创建目录，如果目录存在，会抛出异常
+
+   '''
+   if not os.path.exists("D:\\deam"):
+       os.mkdir("D:\\deam")
+   else:
+       print("该目录已经存在！！！！")
+   '''
+
+
+   #创建一个递归函数，用于创建目录
+   def mkdir(path):    #创建一个递归函数用于创建目录
+       if not os.path.isdir(path):  #判断是否为路径
+           mkdir(os.path.split(path)[0])
+       else:
+           return
+       os.mkdir(path)      #创建目录
+
+   mkdir('D:\\deam\\test\\aaa')
+
+
+   #创建多级目录的函数
+   #os.makedirs()
+   """makedirs(name [, mode=0o777][, exist_ok=False])"""
+   os.makedirs("D:\\deam\\test\\bbb")
+
+删除目录
+--------
+
+代码示例
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   #删除目录
+   import os,shutil
+   '''
+   if os.path.exists("D:\deam\\test\\aaa"):
+       os.rmdir("D:\deam\\test\\aaa")
+   else:
+       print("目录不存在！！！")
+
+   if os.path.exists("D:\deam\\test\\bbb"):
+       os.rmdir("D:\deam\\test\\bbb")
+   else:
+       print("目录不存在！！！")
+
+   if os.path.exists("D:\deam"):
+       os.rmdir("D:\\deam")
+   else:
+       print("目录不存在！！！")
+   '''
+   path = "D:\deam"
+   aaa_path = "D:\deam\\test\\aaa"
+   bbb_path = "D:\deam\\test\\bbb"
+   if os.path.exists(aaa_path):
+       shutil.rmtree("D:\deam\\test\\aaa")
+   else:
+       print("目录不存在！！！")
+
+   shutil.rmtree(path)
+
+遍历目录
+--------
+
+代码示例
+
+::
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   import os
+   #os.walk(top, topdown=True, onerror=None, followlinks=False)
+   '''
+      dirpath, dirnames, filenames
+
+       dirpath is a string, the path to the directory.
+       dirnames is a list of the names of the subdirectories in dirpath (excluding '.' and '..').
+       filenames is a list of the names of the non-directory files in dirpath.
+   '''
+   path = r"D:\Cisco_iso"
+   print("【", path, "】目录下包含的文件和目录：")
+
+   for root,dirs,files in os.walk(path,topdown=True):  #遍历指定目录
+       for name in dirs:
+           print(os.path.join(root, name))      #输出遍历到的目录
+       for name in files:
+           print('\t', os.path.join(root, name))      #输出遍历到的文件
+
+eg
+
+::
+
+   # -*- coding: utf-8 -*-
+
+   import os
+   CF=os.getcwd()
+
+   CF_listdir=os.listdir( CF )
+
+   os.mkdir(CF+"/newFolder")       #创建文件夹
+   os.mkdir(CF+"/newFolder1")  #创建文件夹
+
+   os.rename(CF+"/newFolder1",CF+"/renewFolder") #更名
+
+   print("当前文件夹："+CF)
+   print("文件夹中的文件与文件夹：{}".format(CF_listdir))
+
+使用fnmatch找到指定的文件
+-------------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/19 20:46
+   # filename: fnmatch模块.py
+   import os
+   import fnmatch
+
+   fnmatch1 = [name for name in os.listdir('.') if fnmatch.fnmatch(name, "*.txt")]
+   print(fnmatch1)
+
+   fnmatch2 = [name for name in os.listdir(".") if fnmatch.fnmatch(name, '[a-z]*')]
+   print(fnmatch2)
+
+   fnmatch3 = [name for name in os.listdir(".") if fnmatch.fnmatch(name, '[a-z]?.txt')]
+   print(fnmatch3)
+
+   fnmatch4 = [name for name in os.listdir(".") if fnmatch.fnmatch(name, '[!a-z]*')]
+   print(fnmatch4)
+
+使用glob找到指定的文件
+----------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/19 20:57
+   # filename: glob模块.py
+   """
+   使用glob以后，不需要调用os.listdir获取文件列表，直接通过模式匹配即可。
+   """
+   import glob
+
+   print(glob.glob("*.txt"))
+   print(glob.glob("[a-z]?.txt"))
+   print(glob.glob("[!a-z]?.txt"))
+
+操作文件目录的函数案例
+----------------------
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/3/19 21:16
+   # filename: main.py
+   import os
+   import fnmatch
+   import time
+
+
+   def is_file_match(filename, patterns):
+       for pattern in patterns:
+           if fnmatch.fnmatch(filename, pattern):
+               return True
+       return False
+
+
+   def find_specific_files(root, patterns=['*'], exclude_dirs=[]):
+       for root, dirnames, filenames in os.walk(root):
+           for filename in filenames:
+               if is_file_match(filename, patterns):
+                   yield os.path.join(root, filename)
+           for d in exclude_dirs:
+               if d in dirnames:
+                   dirnames.remove(d)
+
+
+   if __name__ == '__main__':
+       # 查到目录下的所有文件
+       for item in find_specific_files("../"):
+           print(item)
+
+       # 查找目录下的所有py和txt文件
+       patterns = ['*.txt', '*.py']
+       for item in find_specific_files("../", patterns):
+           print(item)
+
+       # 查找目录下除了dir目录以外其他目录下的所有文件
+       patterns = ['*.txt', '*.py']
+       exclude_dirs = ['dir']
+       for item in find_specific_files("../", patterns, exclude_dirs):
+           print(item)
+
+       # 找到某个目录及子目录下最老的十个文件
+       files = {name: os.path.getmtime(name) for name in find_specific_files("../")}
+       result = sorted(files.items(), key=lambda d: d[1])[:10]
+       for i, t in enumerate(result, 1):
+           print(i, t[0], time.ctime(t[1]))
+
+       # 找到某个目录及子目录下，所有文件名包含“python”的文件
+       file2 = [name for name in find_specific_files("../", patterns=['*python*'])]
+       for i, name in enumerate(file2, 1):
+           print(i, name)
+
+       # 找到某个目录及子目录下，排除.git子目录以后所有的Python文件
+       file3 = [name for name in find_specific_files("../", patterns=['*.py'], exclude_dirs=['.git'])]
+       for i, name in enumerate(file3, 1):
+           print(i, name)
+
+       # 删除某个目录及子目录下的所有pyc文件
+       file4 = [name for name in find_specific_files("../", patterns=['*.pyc'])]
+       for name in file4:
+           os.remove(name)    

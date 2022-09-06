@@ -1,0 +1,35 @@
+.. contents::
+   :depth: 3
+..
+
+03.多线程的使用小示例
+=====================
+
+创建并启动线程
+--------------
+
+::
+
+   ......
+   --snip--
+   # Create and start the Thread objects.
+   downloadThreads = [] # a list of all the Thread objects
+   for i in range(0, 1400, 100): # loops 14 times, creates 14 threads
+       downloadThread = threading.Thread(target=downloadXkcd, args=(i, i + 99))
+       downloadThreads.append(downloadThread)
+       downloadThread.start()
+
+等待所有线程结束
+----------------
+
+::
+
+   .....
+   --snip--
+   # Wait for all threads to end.
+   for downloadThread in downloadThreads:
+       downloadThread.join()
+       print('Done.')
+
+所有的join()调用返回后，’Done.’字符串才会打印，如果一个Thread
+对象已经完成， 那么调用它的 join()方法时，该方法就会立即返回。

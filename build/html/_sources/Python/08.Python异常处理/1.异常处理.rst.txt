@@ -1,0 +1,880 @@
+.. contents::
+   :depth: 3
+..
+
+异常处理
+========
+
+1.捕获单个异常
+
+::
+
+   try:
+   <语句>　　#运行别的代码
+   except <名字>：
+   <语句>　　#如果在try部分引发了异常
+
+2.捕获多个异常
+
+::
+
+   try:
+   <语句>　　#运行别的代码
+   except <名字1>：
+   <语句>　　#如果在try部分引发了name1异常
+   except <名字2>，<数据>:
+   <语句>　　#如果引发了name2异常，获得附加数据
+
+3. 
+
+::
+
+   try:
+   <语句>　　#运行别的代码
+   except <名字>：
+   <语句>　　#如果在try部分引发了异常1
+   except <名字>，<数据>:
+   <语句>　　#如果引发了异常2，获得附加数据
+   else:
+   <语句>　　#如果没有发生异常
+
+4. 
+
+::
+
+   try:
+   except
+   finally
+   语句
+
+5.使用raise语句抛出异常
+
+1.异常处理规则
+--------------
+
+-  不要过度使用异常，不要使用异常代替流程控制，该要提示的就要给出提示和错误处理方法
+-  不要用过于庞大的try语句块，永远只捕获那些可能会抛出异常的语句块
+-  不要忽略捕获到的异常，要对异常采取相应措施
+-  尽量只捕获精确的异常类型，而不是模糊的Exception
+-  如果出现了预期外的异常，让程序早点儿崩溃也未必是件坏事
+
+举例
+~~~~
+
+.. code:: python
+
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/8 20:46
+   # filename: 01.一个简单的异常.py
+
+   def exp_exception(x, y):
+       try:
+           a = x / y
+           print("a=", a)
+       except Exception:
+           print("程序出现异常，异常信息：被除数为0")
+
+
+   exp_exception(2, 0)  # 程序出现异常，异常信息：被除数为0
+   exp_exception(1, 2)  # a= 0.5
+
+.. _举例-1:
+
+举例
+~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/6 15:01
+   # filename: test0001.py
+   import datetime as dt
+
+
+   def read_date(in_date):
+       try:
+           date = dt.datetime.strptime(in_date, '%Y-%m-%d')
+           return date
+       except ValueError:
+           print("处理ValueError异常")
+
+
+   str_date = "2019-06-06"
+   print("日期 = {0}".format(read_date(str_date)))
+
+输出信息
+
+::
+
+   日期 = 2019-06-06 00:00:00
+
+函数稍作修改
+
+::
+
+   def read_date(in_date):
+       try:
+           date = dt.datetime.strptime(in_date, '%Y-%m-%d')
+           return date
+       except ValueError as e:
+           print("处理ValueError异常")
+           print(e)
+
+
+   str_date = "201B-06-06"
+   print("日期 = {0}".format(read_date(str_date)))
+
+输出结果
+
+::
+
+   处理ValueError异常
+   time data '201B-06-06' does not match format '%Y-%m-%d'
+   日期 = None
+
+.. _举例-2:
+
+举例
+~~~~
+
+.. code:: python
+
+   def division():
+       '''
+       功能:分苹果
+       :return:
+       '''
+       print("\n ==========================分苹果了=================")
+       apple = int(input('请输入苹果的个数：'))
+       children = int(input("请输入小朋友的人数："))
+       if apple < children:
+           raise ValueError("苹果太少，不够分")
+
+       result = apple//children
+       remain = apple-result*children
+       if remain>0:
+           print("{}个苹果，平均分给{}个小朋友，每个人分{}个，剩下{}个".format(apple,children,result,remain))
+       else:
+           print("{}个苹果，平均分给{}个小朋友，每人分{}个".format(apple,children,result))
+
+   if __name__ == '__main__':
+       try:
+           division()      #调用分苹果函数
+       except (ZeroDivisionError,ValueError) as e:
+           print("输入错误:",e)
+       else:
+           print("分苹果顺利完成.....")
+       finally:
+           print("进行了一次分苹果操作")
+
+.. _举例-3:
+
+举例
+~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   #-*- coding:utf8 -*-
+   try:
+       open("tes.txt")
+
+   except (KeyError,IndexError) as e :
+       print("没有这个key",e)
+
+   except IndexError as e :
+       print("列表操作错误",e)
+
+   except Exception as e:
+       print("未知错误",e)
+
+   else:
+       print("一切正常")
+
+   finally:
+       print("不管有没有错，都执行")
+
+捕获多个异常
+~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/8 20:55
+   # filename: 03.捕获多个异常.py
+
+   def mult_exception(x, y):
+       try:
+           a = x / y
+           b = name
+       except ZeroDivisionError:
+           print("this is ZeroDivisionError")
+
+       except NameError:
+           print("This is NameError")
+
+
+   mult_exception(2, 0)  # this is ZeroDivisionError
+   mult_exception(2, 3)  # This is NameError
+
+使用一个块捕捉多个异常
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/8 20:59
+   # filename: 04.使用一个块捕捉多个异常.py
+
+   def model_exception(x, y):
+       try:
+           b = name
+           a = x / y
+       except (ZeroDivisionError, NameError, TypeError):
+           print("one of ZeroDivisionError or NameError or TypeE")  
+
+
+   model_exception(2, 0)   # one of ZeroDivisionError or NameError or TypeE
+
+举例：
+
+::
+
+   a = 35
+   b = 57
+   try:
+       c = a + b
+       print("The value of c is: ", c)
+       d = b / 0
+       print("The value of d is: ", d)
+
+   except:
+       print("Division by zero is not possible")
+
+   print("Out of try...except block")
+
+
+   # The value of c is:  92
+   # Division by zero is not possible
+   # Out of try...except block
+
+捕捉对象
+~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/8 21:01
+   # filename: 05.捕捉对象.py
+
+   def model_exception(x, y):
+       try:
+           b = name
+           a = x / y
+       except (ZeroDivisionError, NameError, TypeError) as e:
+           print(e)
+
+
+   model_exception(2, 0)       #name 'name' is not defined
+
+   # 若a=x/y在前，则结果如下：
+   # division by zero
+
+eg
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/4/29 11:28
+   # filename: 异常处理1.py
+
+   def yichang(index, flag=False):
+       studyname = ["hujianli", "hujianli2", "huajianli3"]
+
+       if flag:
+           try:
+               rst = studyname[index]
+           except:
+               print("index error.....")
+           return "Try test finishing..."
+       else:
+           rst = studyname[index]
+           return "No try test finishing"
+
+
+   if __name__ == '__main__':
+       print("Start Right params testing....")
+       print(yichang(1, True))
+       print(yichang(1, False))
+       print("Error params test start.....")
+       #超出index范围，flag为True，进行自定义的异常
+       print(yichang(4, True))
+       #超出index范围，且flag为Fasle，直接触发系统内部异常
+       print(yichang(4, False))
+
+异常中的else
+~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/8 21:05
+   # filename: 06.异常中的else.py
+   '''
+   如果在try子句执行时没有发生异常，就会执行else语句后的语句（如果
+   有else）。使用else子句比把所有语句都放在try子句里面更好，这样可以避
+   免一些意想不到而except又没有捕获的异常
+   '''
+
+
+   def model_exception(x, y):
+       try:
+           a = x / y
+       except:
+           print("Error happened")
+       else:
+           print("It went as expected")
+
+
+   model_exception(2, 1)  # It went as expected
+
+raise主动抛出异常
+~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+
+   """
+   抛出异常使用raise语句，
+   · raise关键字
+   · 对Exception函数的调用
+   · 传递给Exception函数的字符串，包含有用的出错信息
+   """
+   try:
+       raise Exception("This is the error message. ")
+   except Exception as e:
+       print("抛出异常", e)
+
+except+raise配合使用
+~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/14 22:58
+   # filename: auction_except_raise.py
+   class AuctionException(Exception):
+       """ 自定义异常类"""
+       pass
+
+
+   class AuctionTest:
+       def __init__(self, init_price):
+           self.init_price = init_price
+
+       def bid(self, bid_price):
+           d = 0.0
+           try:
+               d = float(bid_price)
+           except Exception as e:
+               print("转换出异常：", e)
+               raise AuctionException("竞拍价必须是数值，不能包含其他字符！")
+               # raise AuctionException(e)
+           if self.init_price > d:
+               raise AuctionException("竞拍价比起拍价低，不允许竞拍！")
+           initPrice = d
+
+
+   def main():
+       at = AuctionTest(20.4)
+       try:
+           at.bid("df")
+       except AuctionException as ae:
+           print("main函数捕获的异常:", ae)
+
+   main()
+
+输出信息
+
+::
+
+   转换出异常： could not convert string to float: 'df'
+   main函数捕获的异常: 竞拍价必须是数值，不能包含其他字符！
+
+expect+raise代码异常
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+
+   def boxPrint(symbol, width, height):
+       if len(symbol) != 1:
+           raise Exception("Symbol must be a single character string. ")
+       if width <= 2:
+           raise Exception("Width must be greater than 2. ")
+       if height <= 2:
+           raise Exception("Height must be greater than 2. ")
+       print(symbol * width)
+       for i in range(height - 2):
+           print(symbol + (' ' * (width - 2)) + symbol)
+       print(symbol * width)
+
+
+   try:
+       boxPrint("1", 9, 5)
+       # boxPrint("22", 9, 5)
+   except Exception as e:
+       print(e)
+
+   """
+   111111111
+   1       1
+   1       1
+   1       1
+   111111111
+   """
+
+try+except+finally子句
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/8 21:12
+   # filename: try+finally子句.py
+
+   def use_finally(x, y):
+       try:
+           a = x / y
+       except ZeroDivisionError:
+           print("Some bad thing happened: division by zero")
+       finally:
+           print("No matter what happend, I will show in front of ")
+
+
+   use_finally(2, 0)
+
+   """
+   Some bad thing happened: division by zero
+   No matter what happend, I will show in front of 
+   """
+
+raise不需要参数
+~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/14 23:13
+   # filename: raise不需要参数.py
+   class AuctionException(Exception):
+       """ 自定义异常类"""
+       pass
+
+
+   class AuctionTest:
+       def __init__(self, init_price):
+           self.init_price = init_price
+
+       def bid(self, bid_price):
+           d = 0.0
+           try:
+               d = float(bid_price)
+           except Exception as e:
+               print("转换出异常：", e)
+               # 再次引发当前激活的异常
+               raise
+           if self.init_price > d:
+               raise AuctionException("竞拍价比起拍价低，不允许竞拍！")
+           initPrice = d
+
+
+   def main():
+       at = AuctionTest(20.4)
+       try:
+           at.bid("df")
+       except Exception as ae:
+           print("main函数捕获的异常", type(ae))
+
+
+   main()
+
+输出信息
+
+::
+
+   转换出异常： could not convert string to float: 'df'
+   main函数捕获的异常 <class 'ValueError'>
+
+.. _举例-4:
+
+举例
+~~~~
+
+.. code:: python
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/9/8 20:49
+   # filename: 02.抛出异常.py
+
+   try:
+       raise NameError("This is NameError")  # 抛出的异常将被下面捕获
+   except NameError:
+       print("An exception happend!")  # 捕获异常并输出，An exception happend!
+
+   try:
+       raise NameError("This is NameError")  # 抛出的异常将被下面捕获
+   except NameError:
+       print("An exception happend!")  # 捕获异常并输出，An exception happend!
+       raise  # NameError: This is NameError
+
+异常堆栈跟踪
+~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/5/18 8:40
+   # filename: 异常堆栈跟踪.py
+   # import datetime as dt
+   # import traceback as tb
+   #
+   #
+   # def read_date_from_file(filename):
+   #     try:
+   #         file = open(filename)
+   #         in_date = file.read()
+   #         in_date = in_date.strip()
+   #         date = dt.datetime.strftime(in_date, "%Y-%m-%d")
+   #         return date
+   #     except (ValueError,OSError) as e:
+   #         print("调用方法method1处理.....")
+   #         tb.print_exc()
+   #
+   # date = read_date_from_file("readme.txt")
+   # print("日期 = {0}".format(date))
+   import traceback
+
+
+   class SelfException(Exception):
+       pass
+
+
+   def main():
+       firstMethod()
+
+
+   def firstMethod():
+       SecondMethod()
+
+
+   def SecondMethod():
+       thirdMethod()
+
+
+   def thirdMethod():
+       raise SecondMethod("自定义异常信息")
+
+
+   try:
+       main()
+   except:
+       # 捕获异常信息，并将异常信息输出到控制台
+       traceback.print_exc()
+       # 捕获异常信息，并将异常信息输出到指定文件中
+       traceback.print_exc(file=open("log.txt", "a", encoding="utf-8"))
+
+异常嵌套
+~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/6 15:10
+   # filename: test+try嵌套.py
+   import datetime as dt
+
+
+   def read_date_from_file(filename):
+       try:
+           file = open(filename)
+           try:
+               in_date = file.read()
+               in_date = in_date.strip()
+               date = dt.datetime.strptime(in_date, "%Y-%m-%d")
+               return date
+           except ValueError as e:
+               print("处理ValueError 异常")
+               print(e)
+
+       except FileNotFoundError as e:
+           print("处理 FileNotFoundError异常")
+           print(e)
+
+       except OSError as e:
+           print("处理 OSError 异常")
+           print(e)
+
+   date = read_date_from_file("readme.txt")
+   print("日期 ={0}".format(date))
+
+else代码块
+~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/6 15:19
+   # filename: 异常else语句.py
+   import datetime as dt
+
+
+   def read_date_file(filename):
+       try:
+           file = open(filename)
+       except OSError as e:
+           print("打开文件失败")
+
+       else:
+           print("打开文件成功")
+           try:
+               in_date = file.read()
+               in_date = in_date.strip()
+               date = dt.datetime.strptime(in_date, "%Y-%m-%d")
+               return date
+           except ValueError as e:
+               print("处理ValueError异常", e)
+           except OSError as e:
+               print("处理OSError异常", e)
+           finally:
+               file.close()
+
+   date = read_date_file("readme.txt")
+   print("日期 ={0}".format(date))
+
+with as 自动资源管理
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/6 15:19
+   # filename: 异常else语句.py
+   import datetime as dt
+
+   def read_date_file(filename):
+       try:
+           with open(filename) as file:
+               in_date = file.read()
+               in_date = in_date.strip()
+               date = dt.datetime.strptime(in_date, "%Y-%m-%d")
+               return date
+       except ValueError as e:
+           print("处理ValueError异常", e)
+       except OSError as e:
+           print("处理OSError异常", e)
+
+
+   date = read_date_file("readme.txt")
+   print("日期 ={0}".format(date))
+
+手工抛出异常
+~~~~~~~~~~~~
+
+eg
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/4/29 12:21
+   # filename: 手工抛出异常.py
+
+   def testRaise2(number):
+       for i in range(number):
+           try:
+               if i == 2:
+                   raise NameError
+           except NameError:
+               print("Raise a NameErrot")
+           print(i)
+       print("end ......")
+
+   testRaise2(10)
+
+eg
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2019/6/29 10:27
+   # filename: 异常处理0001.py
+   import random
+
+   some_exceptions = [ValueError, TypeError, IndexError, None]
+
+   try:
+       choice = random.choice(some_exceptions)
+       print("raising {}".format(choice))
+       if choice:
+           raise choice("An error")
+
+   except ValueError:
+       print("Caught a  ValueError")
+
+   except TypeError:
+       print("Caught a TypeError")
+
+   except Exception as e:
+       print("Caught some other error :%s" % (e.__class__.__name__))
+
+   else:
+       print("This code called if there is no exception")
+
+   finally:
+       print("This code called is always called")
+
+每次输出信息都不一样，输出信息如下：
+
+::
+
+   raising <class 'TypeError'>
+   Caught a TypeError
+   This code called is always called
+
+不管有没有异常发生，else和finally语句会执行。
+
+输出异常的详细信息
+~~~~~~~~~~~~~~~~~~
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/1/8 22:18
+   # filename: sample01.py
+   import sys
+
+   try:
+       x = int(input("请输入一个被除余数："))
+       print("30除以", x, "等于", 30 / x)
+   except:
+       print(sys.exc_info())
+       print("其他异常")
+
+   """
+   返回一个元祖，元祖包含3个元素：分别是type、value和traceback
+   · type：异常类型的名称
+   · value：捕获到的异常实例
+   · traceback： 是一个traceback对象
+
+
+   请输入一个被除余数：0
+   (<class 'ZeroDivisionError'>, ZeroDivisionError('division by zero',), <traceback object at 0x00000299F728DCC8>)
+   其他异常
+   """
+
+traceback对象的显示
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/1/8 22:24
+   # filename: sample02.py
+   import traceback
+   import sys
+
+   try:
+       x = int(input("请输入一个被除余数："))
+       print("30除以", x, "等于", 30 / x)
+   except:
+       traceback.print_tb(sys.exc_info()[2])  # 打印traceback对象
+       print("其他异常")
+   else:
+       print("再见..")
+
+   """
+   请输入一个被除余数：0
+   其他异常
+     File "D:/Python-code/9.异常程序调试/输出异常的详细信息/sample02.py", line 11, in <module>
+       print("30除以", x, "等于", 30 / x)
+   """
+
+traceback.print_exc()方法可以直接将异常内容打印出来
+
+::
+
+   #!/usr/bin/env python
+   # -*- coding:utf8 -*-
+   # auther; 18793
+   # Date：2020/1/8 22:24
+   # filename: sample02.py
+   import traceback
+   import sys
+
+   try:
+       x = int(input("请输入一个被除余数："))
+       print("30除以", x, "等于", 30 / x)
+   except:
+       traceback.print_exc()
+       print("其他异常")
+   else:
+       print("再见..")
+
+   """
+   请输入一个被除余数：0
+   其他异常
+   Traceback (most recent call last):
+     File "D:/Python-code/9.异常程序调试/输出异常的详细信息/sample03.py", line 11, in <module>
+       print("30除以", x, "等于", 30 / x)
+   ZeroDivisionError: division by zero
+   """
+
+还有一些常用的方法，都是打印异常的内容
+
+::
+
+       #traceback.print_exc()
+       等价于
+       traceback.print_exception(*sys.exc_info())
