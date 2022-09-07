@@ -23,8 +23,8 @@ Flask
 2.实战演练:开发Flask API视图
 ----------------------------
 
-1.Hello World程序
-~~~~~~~~~~~~~~~~~
+2.1 Hello World程序
+~~~~~~~~~~~~~~~~~~~
 
 现在可以开始写第1个Flask程序了，一个最简单的Flask程序应该包括如下内容：
 
@@ -49,8 +49,8 @@ Flask
 
    app.run(host='0.0.0.0', port=5000, debug=True)
 
-2.模板渲染
-~~~~~~~~~~
+2.2 模板渲染
+~~~~~~~~~~~~
 
 1.用render_template实现模板渲染
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -106,7 +106,7 @@ Flask
 
 如果这些字符应该被解释成特殊含义，则将这些参数直接传给render_template即可；如果这些字符仅应该被解释成字符串，则应该通过Markup()函数将这些字符串做转义处理，然后传给render_template()函数。
 
-::
+.. code:: python
 
    @app.route('/hello')
    @app.route('/hello/<name>')
@@ -188,13 +188,42 @@ HTTP 定义了标准的返回码错误代码表，其中大于等于400的代码
 
 本例中用Flask的errorhandler装饰器添加了自定义的错误处理器。当程序中返回400错误时，系统会执行bad_request()函数。在该函数中向客户端返回400错误的同时，还传送了自定义的错误页面bad_request.html。
 
-4. FBV与CBV
-~~~~~~~~~~~
+2.3 Flask视图高级技术
+~~~~~~~~~~~~~~~~~~~~~
 
-1.FBV
-^^^^^
+视图绑定
+^^^^^^^^
 
-FBV的定义、路由映射方法、装饰器添加方法，Flask中通常会用FBV；Flask框架中不常用CBV；更多的是用FBV
+使用@app.route装饰器
+
+.. code:: python
+
+   @app.route('/',endpoint='index')
+   #底层其实是使用add_url_rule实现的
+   def hello_world():
+       return 'Hello World!'
+
+使用add_url_rule来绑定视图函数
+
+.. code:: python
+
+   def my_test():
+     return '这是测试页面!'
+
+   app.add_url_rule(rule='/test/',endpoint='test',view_func=my_test)
+
+   with app.test_request_context():
+       print(url_for('test'))
+
+FBV与CBV
+^^^^^^^^
+
+FBV
+'''
+
+FBV的定义、路由映射方法、装饰器添加方法，Flask中通常会用FBV；
+
+Flask框架中不常用CBV；更多的是用FBV
 
 .. code:: python
 
@@ -208,6 +237,7 @@ FBV的定义、路由映射方法、装饰器添加方法，Flask中通常会用
            ret = func(*args,**kwargs)
            return ret
        return inner
+
    # FBV
    @app.route('/index1',methods=['GET','POST'])
    @wrapper
@@ -217,8 +247,55 @@ FBV的定义、路由映射方法、装饰器添加方法，Flask中通常会用
    if __name__ == '__main__':
        app.run()
 
-2.CBV
-^^^^^
+CBV
+'''
+
+标准类视图
+          
+
+标准类视图的特点：
+
+-  必须继承flask.views.View。
+-  必须实现dispatch_request方法，以后请求过来后，都会执行这个方法，这个方法的返回值相当于之前的视图函数，也必须返回Response或者子类的对象，或者是字符串、元祖。
+-  必须通过app.add_url_rule(rule,endpoint,view_func)来做URL与视图的映射，view_func参数需要使用as_view类方法转换。
+-  如果指定了endpoint，那么在使用url_for反转时就必须使用endpoint指定的那个值。如果没有指定endpoint，那么就可以使用as_view(视图名称)中指定的视图名称来作为反转。
+
+如果一个网站有首页、注册页和登录页面，每个页面要求放置一个同样的对联广告，使用类视图函数如何实现呢？
+
+.. code:: python
+
+   from flask import Flask,render_template,views
+   app = Flask(__name__)
+   class Ads(views.View):
+       def __init__(self):
+           super().__init__()
+           self.context = {
+               'ads': '这是对联广告！'
+           }
+   class Index(Ads):
+       def dispatch_request(self):
+           return render_template('index.html', **self.context)
+   class Login(Ads):
+       def dispatch_request(self):
+           return render_template('login.html', **self.context)
+   class Register(Ads):
+       def dispatch_request(self):
+           return render_template('register.html', **self.context)
+           
+   app.add_url_rule(rule='/', endpoint='index', view_func=Index.as_view('Index'))
+   app.add_url_rule(rule='/login/', endpoint='login', view_func=Login.as_view('login'))
+   app.add_url_rule(rule='/register/', endpoint='register', view_func=Register.as_view('register'))
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+基于方法的类视图
+                
+
+利用视图函数实现不同的请求执行不同的逻辑时比较复杂，需要在视图函数中进行判断，如果利用方法视图实现就比较简单。
+
+Flask提供了另外一种类视图flask.views.MethodView，
+
+对每个HTTP方法执行不同的函数（映射到对应方法的小写的同名方法上）。
 
 在CBV中，路由信息只能通过\ ``add_url_rule()``\ 方法添加
 
@@ -243,17 +320,204 @@ FBV的定义、路由映射方法、装饰器添加方法，Flask中通常会用
    if __name__ == "__main__":
        app.run(debug=True)
 
-3.路由详解
-~~~~~~~~~~
+基于方法视图的用户登录
 
-1.在路径中添加变量
-^^^^^^^^^^^^^^^^^^
+.. code:: python
+
+   from flask import Flask,render_template,request,views#导入相应模块
+   app = Flask(__name__)#Flask初始化
+   @app.route('/')#定义路由
+   def hello_world():#定义视图函数
+          return render_template('index.html')#渲染模板
+       
+   class LoginView(views.MethodView):#定义LoginView类
+          # 当用户通过get方法进行访问的时候执行get方法
+          def get(self):#定义get函数
+              return render_template("index.html")#渲染模板
+          # 当用户通过post方法进行访问的时候执行post方法
+          def post(self):#定义post 函数
+              username = request.form.get("username")#接收表单中传递过来的用户名
+              password = request.form.get("pwd")#接收表单中传递过来的密码
+              if username == 'admin' and password == 'admin':#如果用户名和密码是否为admin
+                  return "用户名正确，可以登录！"#i f语句为真的话，返回可以登录信息
+              else:
+                  return "用户名或密码错误,不可以登录！"#否则，返回不可以登录信息
+      # 通过add_url_rule添加类视图和url的映射关系
+   app.add_url_rule('/login',view_func=LoginView.as_view('loginview'))
+
+   if __name__ == '__main__': #当模块被直接运行时，代码将被运行，当模块是被导入时，代码不被执行
+          app.run(debug=True)#开启调试模式
+
+2.4 Flask装饰器
+~~~~~~~~~~~~~~~
+
+装饰器本质上是一个Python函数，它可以让其他函数在不需要做任何代码变动的前提下增加额外的功能，装饰器的返回值也是一个函数对象。
+
+装饰器经常用于有切面需求的场景，
+
+比如插入日志、性能测试、事务处理、缓存和权限校验等场景。
+
+装饰器是解决这类问题的绝佳设计，有了装饰器，可以抽离出大量与函数功能无关的雷同代码并继续重用。
+
+1.装饰器的定义和基本使用
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+在视图函数news()之前直接加@user_login，就实现了装饰器的使用。
+
+.. code:: python
+
+   from flask import Flask  # 导入Flask模块
+   app = Flask(__name__)  # Flask初始化
+
+
+   @app.route('/')  # 定义路由
+   def hello_world():  # 定义函数
+       return 'Hello World!'  # 返回值
+
+
+   def user_login(func):  # 定义函数，使用func接收函数作为参数
+       def inner():  # 定义inner()函数
+           print('登录操作')  # 打印输出
+           func()  # 执行func函数
+       return inner  # 返回inner函数，不是返回函数的结果
+
+
+   @user_login  # 使用了装饰器
+   def news():  # 定义函数news
+       print('这是新闻详情页')  # 打印输出
+
+
+   news()  # 调用news来执行
+
+   if __name__ == '__main__':
+       app.run()
+
+2.对带参数的函数使用装饰器
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1.函数的可变参数
 
 ::
 
+   def func(*args,**kwargs):
+       - *：代指元组，长度不限；
+       - **：代表键值对，个数不限。
+       
+       - *args：代表元祖，长度不限制。
+       - **kwargs：代表按键值对，个数不限。
+
+2.对带参数的函数使用装饰器
+
+.. code:: python
+
+   from flask import Flask  # 导入Flask模块
+   app = Flask(__name__)  # Flask初始化
+
+
+   @app.route('/')  # 定义路由
+   def hello_world():  # 定义视图函数
+       return 'Hello World!'  # 返回值
+
+
+   def user_login(func):  # 定义函数user_login
+       def inner(*args, **kwargs):  # 定义内部函数inner
+           print('登录操作!')  # 打印输出
+           func(*args, **kwargs)
+       return inner  # 返回inner
+
+
+   @user_login  # 使用装饰器
+   def news():  # 定义函数news()
+       print(news.__name__)  # 打印输出此时的函数名称
+       print('这是新闻详情页!')  # 打印输出
+
+
+   news()
+
+
+   @user_login  # 使用装饰器
+   def news_list(*args):  # 定义函数news_list
+       page = args[0]  # 元祖args[0]赋值给page
+       print(news_list.__name__)  # 打印输出函数名
+       print('这是新闻列表页的第'+str(page)+'页！')  # 打印输出
+
+
+   news_list(5)  # 调用函数news_list
+
+
+   if __name__ == '__main__':  # 当模块被直接运行时，代码将被运行，当模块是被导入时，代码不被执行
+       app.run()
+
+输出结果如下：
+
+::
+
+   登录操作!
+   inner
+   这是新闻详情页!
+   登录操作!
+   inner
+   这是新闻列表页的第5页！
+
+以上代码还存在一点问题，在调用过程中会改变原来的名称，不管是news()函数还是news_list()函数，最终执行时被替换成了inner()函数。
+
+为避免出现此种情况，可以使用functools.wraps在装饰器的函数上对传进来的函数进行包裹，这样就不会丢失原始函数了。
+
+   注意：导入包wraps，使用命令为from functools import wraps。
+
+带参数的函数使用装饰器优化实例：app.py
+
+.. code:: python
+
+   from flask import Flask  # 导入Flask模块
+   from functools import wraps  # 导入相应模块
+   app = Flask(__name__)  # Flask初始化
+
+
+   @app.route('/')  # 定义路由
+   def hello_world():  # 定义视图函数
+       return 'Hello World!'  # 返回值
+
+
+   def user_login(func):  # 定义函数user_login
+       @wraps(func)  # 使用functools.wraps在装饰器的函数上，把传进来的函数进行包裹
+       def inner(*args, **kwargs):  # 定义内部函数inner
+           print('登录操作!')  # 打印输出
+           func(*args, **kwargs)
+       return inner  # 返回inner
+
+
+   @user_login  # 使用装饰器
+   def news():  # 定义函数news()
+       print(news.__name__)  # 打印输出此时的函数名称
+       print('这是新闻详情页!')  # 打印输出
+
+
+   news()
+
+
+   @user_login  # 使用装饰器
+   def news_list(*args):  # 定义函数news_list
+       page = args[0]  # 元祖args[0]赋值给page
+       print(news_list.__name__)  # 打印输出函数名
+       print('这是新闻列表页的第'+str(page)+'页！')  # 打印输出
+
+
+   news_list(5)  # 调用函数news_list
+   if __name__ == '__main__':  # 当模块被直接运行时，代码将被运行，当模块是被导入时，代码不被执行
+       app.run()
+
+3.路由详解
+----------
+
+3.1在路径中添加变量
+~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
    @app.route('/login/<username>')
    def show_welcome(username):
-       return f'Hi {username}'  # show welcome
+       return f'Hi {username}' 
 
 被添加的参数需要两次被声明：第1次是在route()装饰器的参数中，在需要使用变量的URL部分用方式声明变量；第2次是在所映射的函数（本例中为show_welcome）的参数中声明变量名，这样被声明的变量就可以在映射函数内使用了。
 
@@ -261,12 +525,12 @@ FBV的定义、路由映射方法、装饰器添加方法，Flask中通常会用
 
    注意： 两次变量声明的变量名一定要一致。
 
-2.为变量指定类型
-^^^^^^^^^^^^^^^^
+3.2为变量指定类型
+~~~~~~~~~~~~~~~~~
 
 可以在声明变量时指定变量被映射的类型，比如：
 
-::
+.. code:: python
 
    @app.route('/add/<int:number>')
    def add_one(number):
@@ -292,7 +556,7 @@ Path     默认方式，接受路径字符串
 
 通过下面的例子可以理解斜杠分隔符被写在路径最后时的作用。
 
-::
+.. code:: python
 
    @app.route('/school/')
    def schools():
@@ -307,8 +571,8 @@ Path     默认方式，接受路径字符串
 
 .. image:: ../../../_static/image-20220905114643362.png
 
-3.HTTP方法绑定
-^^^^^^^^^^^^^^
+3.3HTTP方法绑定
+~~~~~~~~~~~~~~~
 
 网站通过HTTP与浏览器或其他客户端进行交互，而HTTP访问一个URL时可以使用几种不同的访问方式，包括GET、POST、HEAD、DELETE等。在Flask中，路由默认设置使用GET方式进行路径访问。
 
@@ -316,7 +580,7 @@ Path     默认方式，接受路径字符串
 
 通过修改route中的参数，可以配置其他访问方式。举例说明：
 
-::
+.. code:: python
 
    @app.route('/SendMessage', methods=['GET', 'POST'])
    def Messaging():
@@ -337,7 +601,7 @@ Flask都会定位到Messaging（）函数并执行。可以在函数中通过req
 
 【示例8-8】比如：
 
-::
+.. code:: python
 
    @app.route('/Message', methods=[ 'POST'])
    def do_send():
@@ -347,12 +611,12 @@ Flask都会定位到Messaging（）函数并执行。可以在函数中通过req
    def show_the_send_form():
        return "This is for GET methods"
 
-4.路由地址反向生成
-^^^^^^^^^^^^^^^^^^
+3.4路由地址反向生成
+~~~~~~~~~~~~~~~~~~~
 
 通过前面的学习，读者已经掌握了将URL绑定到映射函数的方法。但有时，程序中需要通过函数名称获得与其绑定的URL地址。Flask通过url_for（）函数实现了这个功能。在使用前，需要先从Flask包中导入对url_for（）函数的引用。函数的第1个参数是需要获取URL的函数名，URL中如果有变量，则可以在url_for（）中添加参数来实现对变量的赋值。
 
-::
+.. code:: python
 
    from flask import Flask, url_for
    app = Flask(__name__)
@@ -366,23 +630,37 @@ Flask都会定位到Messaging（）函数并执行。可以在函数中通过req
    def f_book(book_name):pass
 
    with app.test_request_context():
-     print url_for('f_root')                               #例1，输出：/
-     print url_for('f_industry')                           #例2，输出：/industry
-     print url_for('f_industry', name='web')               #例3，输出：/industry? name=web
-     print url_for('f_book', book_name='Python Book')      #例4，输出：/book/Python%20Book
+     print(url_for('f_root'))                               #例1，输出：/
+     print(url_for('f_industry'))                          #例2，输出：/industry
+     print(url_for('f_industry', name='web'))               #例3，输出：/industry? name=web
+     print(url_for('f_book', book_name='Python Book'))      #例4，输出：/book/Python%20Book
 
 ..
 
    技巧：
    Flask中test_request_context（）方法用于告诉解释器为在其作用域中的代码模拟一个HTTP请求上下文，使其好像被一个HTTP请求所调用。HTTP请求上下文是调用url_for所必需的环境。
 
-在程序中需要使用url_for（）函数的原因如下。
+我们可以给这个装饰器再加上endpoint参数（给这个URL命名）
+
+.. code:: python
+
+   @app.route('/',endpoint='index')
+   def hello_world():    
+       return 'hello world'
+
+一旦我们使用了endpoint参数，在使用url_for()反转时就不能使用视图函数名了，而是要用我们定义的URL名。
+
+::
+
+   url_for('index')
+
+在程序中需要使用url_for()函数的原因如下。
 
 -  反向解析比硬编码有更好的可读性和可维护性。比如，当需要更换路由函数中URL的地址时，无须再更改和调用url_for处的代码。
 -  url_for会自动处理必需的特殊字符转换和Unicode编码转换。本节代码段中例4的空格就被自动解析为%20。
 
-5.路由系统
-^^^^^^^^^^
+3.5路由系统
+~~~~~~~~~~~
 
 -  @app.route(‘/user/’)
 -  @app.route(‘/post/’)
@@ -405,7 +683,7 @@ Flask都会定位到Messaging（）函数并执行。可以在函数中通过req
    }
 
 4.静态文件
-~~~~~~~~~~
+----------
 
 静态文件，顾名思义，就是那些不会被改变的文件，比如图片，CSS 文件和
 JavaScript 源码文件。默认情况下，Flask 在程序根目录中名为 static
@@ -460,8 +738,8 @@ app：
            logo.svg
            favicon.ico
 
-1. 提供一个 favicon 图标
-^^^^^^^^^^^^^^^^^^^^^^^^
+1.提供一个favicon 图标
+~~~~~~~~~~~~~~~~~~~~~~
 
 favicon 是 favorites icon 的缩写，也被称为 website
 icon（网页图标）、page icon（页面图标）等。通常而言，定义一个 favicon
@@ -482,8 +760,8 @@ link 组件，比如我们可以在 template/base.html 中定义 favicon 图标�
 来保留基模板中定义的块的原始内容，并添加了两个 link
 组件声明图标位置，这两个 link 组件声明会插入到 head 块的末尾。
 
-5.使用 Jinja2 模板引擎
-~~~~~~~~~~~~~~~~~~~~~~
+5. Jinja2 模板引擎
+------------------
 
 了解即可，不用深入
 
@@ -492,13 +770,13 @@ link 组件，比如我们可以在 template/base.html 中定义 favicon 图标�
 https://www.bookstack.cn/read/head-first-flask/chapter02-section2.04.md
 
 6.请求、重定向及会话
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 Web 开发中经常需要处理 HTTP 请求、重定向和会话等诸多事务，相应地，Flask
 也内建了一些常见的对象如 request, session, redirect 等对它们进行处理。
 
 1.请求对象 request
-^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~
 
 HTTP 请求方法有 GET、POST、PUT 等，request 对象也相应地提供了支持。
 
@@ -519,7 +797,7 @@ POST，我们就注册该用户，如果是 GET
            return 'hello', user
 
 2.重定向对象 redirect
-^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~
 
 当用户访问某些网页时，如果他还没登录，我们往往会把网页\ **重定向**\ 到登录页面，Flask
 提供了 redirect
@@ -542,8 +820,8 @@ POST，我们就注册该用户，如果是 GET
            user = request.form['user']
            return redirect('/home')
 
-3.会话对象session
-^^^^^^^^^^^^^^^^^
+3.会话对象 session
+~~~~~~~~~~~~~~~~~~
 
 程序可以把数据存储在\ **用户会话**\ 中，用户会话是一种私有存储，默认情况下，它会保存在客户端
 cookie 中。Flask 提供了 session 对象来操作用户会话，下面看一个示例：
@@ -585,7 +863,7 @@ cookie 中。Flask 提供了 session 对象来操作用户会话，下面看一�
 还有一点，使用\ ``session`` 时要设置一个密钥 ``app.secret_key``\ 。
 
 4.附录
-^^^^^^
+~~~~~~
 
 本节完整的代码如下：
 
@@ -643,28 +921,1830 @@ cookie 中。Flask 提供了 session 对象来操作用户会话，下面看一�
    {% endblock %}
 
 7.蓝图
-~~~~~~
+------
 
-了解即可，不用深入
+一个程序执行文件中，如果功能代码过多，是不方便后期维护的。如何实现程序代码模块化，根据具体不同功能模块的实现，划分成不同的分类，降低各功能模块之间的耦合度呢？这时flask.Blueprint（蓝图）就派上用场了。
+
+   注意：蓝图可以极大地简化大型应用，并为扩展提供集中的注册入口。
+
+   Blueprint对象与Flask应用对象的工作方式类似，但不是一个真正的应用。
+
+在PyCharm中新建工程，新建\ ``app.py``\ 、\ ``news.py``\ 、\ ``produt.py``\ 三个文件。
+
+app.py文件内容如下：
+
+蓝图使用实例：主路由视图函数app.py
+
+.. code:: python
+
+   # -*- coding:utf-8 -*-
+   from flask import Flask  # 导入Flask模块
+   import news, products  # 导入相应模块
+
+   app = Flask(__name__)  # 创建 Flask()对象： app
+
+
+   @app.route('/')  # 使用了蓝图，app.route() 这种模式就仍可以使用，注意路由重复的问题
+   def hello_world():  # 定义函数
+       return 'hello my world !'  # 返回值
+
+
+   app.register_blueprint(news.new_list)  # 将news模块里的蓝图对象new_list注册到app
+   app.register_blueprint(products.product_list)  # 将products模块里的蓝图对象product_list注册到app
+
+   if __name__ == '__main__':
+       app.run(debug=True)  # 调试模式开 启动服务器 运行在默认的5000端口
+
+news.py文件内容如下：
+
+蓝图使用实例：分路由视图函数news.py
+
+.. code:: python
+
+   # -*- coding:utf-8 -*-
+   from flask import Blueprint  # 导入Blueprint模块
+
+   new_list = Blueprint('news', __name__)  # 创建一个blueprint对象。第一个参数可看做该blueprint对象的姓名
+
+
+   # 在一个app里，姓名不能与其余的Blueprint对象姓名重复
+   # 第二个参数__name__用作初始化
+   @new_list.route("/news")  # 将蓝图对象当做‘app’那样使用
+   def new():  # 定义函数news()
+       return '这是新闻模块！'
+
+products.py文件内容如下：
+
+蓝图使用实例：分路由视图函数products.py
+
+.. code:: python
+
+   # -*- coding:utf-8 -*-
+   from flask import Blueprint  # 导入Blueprint模块
+
+   product_list = Blueprint('products', __name__)  # 创建一个blueprint对象。第一个参数可看做该blueprint对象的名字
+
+
+   # 在一个app里，对象名不能与其余的Blueprint对象名重复
+   # 第二个参数__name__用作初始化
+   @product_list.route("/products")  # 将蓝图对象当做‘app’那样使用
+   def product():
+       return '这是产品模块！'
+
+查看蓝图设置是否生效:
+
+::
+
+   $ curl http://127.0.0.1:5000/
+   hello my world !
+
+   $ curl http://127.0.0.1:5000/news
+   这是新闻模块！
+
+   $ curl http://127.0.0.1:5000/products
+   这是产品模块！
+
+蓝图的目的是实现各个模块的视图函数写在不同的py文件中。
+
+在主视图中导入分路由视图的模块，并且注册蓝图对象。
+
+   **注意：视图函数的名称不能和蓝图对称的名称一样。**
 
 https://www.bookstack.cn/read/head-first-flask/chapter02-section2.06.md
 
-8.cookie
-~~~~~~~~
+8.Flask数据交互
+---------------
 
-了解即可，不用深入
+8.1 使用Flask处理表单
+~~~~~~~~~~~~~~~~~~~~~
 
-https://www.yuque.com/keep_running/python/uoq7e4
+Form表单是Web应用中最基础的一部分。为了能处理Form表单，Flask-WTF扩展提供了良好的支持。
 
-9.session
-~~~~~~~~~
+1.使用Flask处理通用表单
+^^^^^^^^^^^^^^^^^^^^^^^
 
-了解即可，不用深入
+Flask请求对象包含客户端发出的所有请求信息。其中，request.form能获取POST请求中提交的表单数据。
 
-https://www.yuque.com/keep_running/python/ziysy6
+尽管Flask的请求对象提供的信息足够用于处理Web表单，但有些任务很单调，而且需要重复操作。
 
-3.使用Python和 Flask设计RESTful APIs
-------------------------------------
+使用Flask处理普通表单：app.py
+
+.. code:: python
+
+   # encoding:utf-8#指定编码
+   from flask import Flask, render_template, request  # 导入相应模块
+   app = Flask(__name__)  # Flask初始化
+
+
+   @app.route('/')  # 定义路由
+   def hello_world():  # 定义视图函数
+       return render_template('index.html')  # 使用render_template函数渲染模板
+
+
+   @app.route('/login', methods=['GET', 'POST'])  # 定义路由，指定访问方法
+   def login():  # 定义视图函数
+       if request.method == 'GET':  # 如果访问方法为GET方法
+           return '这是get请求'  # 返回应答信息
+       else:
+           return '这是POST请求'  # 返回应答信息
+
+
+   if __name__ == '__main__':  # 当模块被直接运行时，代码将被运行，当模块是被导入时，代码不被运行。
+       app.run(debug=True)  # 开启调试模式
+
+使用Flask处理普通表单：index.html
+
+.. code:: html
+
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8"><!--指定网页编码-->
+          <title>Title</title><!--指定网页标题-->
+      <style type="text/css">
+       .div1 {
+          height:180px;
+          width:380px;
+           border:1px solid #8A8989;
+           margin:0 auto;
+              }
+      .input{
+          display: block;
+       width: 350px;
+       height: 40px;
+       margin: 10px auto;
+      }
+       .button
+       {
+           background: #2066C5;
+       color: white;
+       font-size: 18px;
+       font-weight: bold;
+       height: 50px;
+       border-radius: 4px;
+       }
+          </style>
+      </head><!--head区域完毕-->
+      <body><!--body区域开始-->
+      <div class="div1"><form action="login" method = "post"><!--定义表单开始-->
+          <input type="text" class="input" placeholder="请输入用户名"><!--输入文本框-->
+       <input type="password" class="input" placeholder="请输入密码"><!--输入文本框-->
+          <input type="submit" value="登录"  class="input button"><!--定义登陆用button-->
+      </form></div> <!--form表单结束-->
+      </body><!--body区域完毕-->
+      </html>
+
+在上面的工程中，对表单没有进行必要的保护措施，很容易被人利用，控制用户在当前已登录的Web应用程序上执行非本意的操作。
+
+因此，在实际部署服务器上的代码时，不建议使用这个方式处理表单，推荐使用Flask-WTF方式进行表单处理。
+
+2.使用Flask-WTF处理表单
+^^^^^^^^^^^^^^^^^^^^^^^
+
+1．Flask-WIF的安装
+
+.. code:: bash
+
+   $ pip install flask-wtf
+
+2．启用CSRF保护
+
+Flask-WTF提供了对所有Form表单免受跨站请求伪造（Cross-Site Request
+Forgery，CSRF）攻击的技术支持（通过添加动态token令牌的方式）。
+
+我们在Flask根目录下新增config.py配置文件，要启用CSRF保护，可以在config.py中定义两个变量：
+
+::
+
+   CSRF_ENABLED= True
+   SECRET_KEY= 'x1x2x3x4x5x6'
+
+其中，SECRET_KEY用来建立加密的令牌，用于验证Form表单提交，在自己编写应用程序时，可以尽可能设置得复杂一些，这样恶意攻击者将很难猜到密钥值。
+
+在app.py文件中添加如下代码：
+
+.. code:: python
+
+   #导入相应模块
+   from flask import Flask,flash
+
+   #导入相应模块
+   from flask import url_for,render_template  
+                 
+   #导入CSRFProtect模块 
+   from flask_wtf.csrf import CSRFProtect    
+                  
+
+   #导入定义的BaseLogin
+   #导入BaseLogin模块  
+   from forms import BaseLogin  
+                               
+   #导入配置文件
+   import config     
+                                          
+   #Flask初始化
+   app= Flask(__name__)                                    
+   #配置文件初始化
+   app.config.from_object(config)                           
+   #CSRFProtect模块初始化
+   CSRFProtect(app)        
+
+也可以直接在config.py文件中启动CSRF模块。
+
+::
+
+   CSRF_ENABLED= True
+
+最后，我们需要在响应的html模板的Form表单中加上如下语句：
+
+::
+
+   {{form.csrf_token}}
+
+或者：
+
+::
+
+   {{form.hidden_tag()}}
+
+其中的form是views.py中对应处理函数传递过来的Form对象名称，根据具体情况会有所变化。
+
+通过上面的配置，我们就启动了CSRF保护。
+
+3.WTF表单登录实例
+^^^^^^^^^^^^^^^^^
+
+使用Flask-WTF进行表单验证：config.py
+
+::
+
+   import os
+   SECRET_KEY = os.urandom(24)
+   CSRF_ENABLED = True
+
+使用Flask-WTF进行表单验证：form.py
+
+.. code:: python
+
+   # -*- coding:utf-8 -*-
+   # 引入Form基类
+   from flask_wtf import FlaskForm
+   # 引入Form元素父类
+   from wtforms import StringField, PasswordField, validators
+   # 引入Form验证父类
+   from wtforms.validators import DataRequired, Length
+   # 登录表单类,继承与Form类
+
+
+   class BaseLogin(FlaskForm):
+       # 用户名
+       name = StringField('name', validators=[DataRequired(message="用户名不能为空"), Length(
+           6, 16, message='长度位于6~16之间')], render_kw={'placeholder': '输入用户名'})
+       # 密码
+       password = PasswordField('password', validators=[DataRequired(message="密码不能为空"), Length(
+           6, 16, message='长度位于6~16之间')], render_kw={'placeholder': '输入密码'})
+
+使用Flask-WTF进行表单验证：app.py
+
+.. code:: python
+
+   from flask import Flask, flash
+   from flask import url_for, render_template
+   # from flask_wtf.csrf import CSRFProtect
+   # 导入定义的BaseLogin
+   from forms import BaseLogin
+   import config
+   app = Flask(__name__)
+   app.config.from_object(config)
+   # CSRFProtect(app)
+   # 定义处理函数和路由规则，接收GET和POST请求
+
+
+   @app.route('/login', methods=('POST', 'GET'))
+   def baselogin():
+       form = BaseLogin()
+       # 判断是否是验证提交
+       if form.validate_on_submit():
+           # 跳转
+           flash(form.name.data+'|'+form.password.data)
+           return '表单数据提交成功！'
+       else:
+           # 渲染
+           return render_template('login.html', form=form)
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+使用Flask-WTF进行表单验证：login.html
+
+.. code:: html
+
+     <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+         <title>Flask_WTF</title>
+      <style type="text/css">
+     .div1 {
+           height:180px;
+           width:380px;
+          border:1px solid #8A8989;
+           margin:0 auto;
+             }
+    .input{
+         display: block;
+       width: 350px;
+       height: 40px;
+       margin: 10px auto;
+      }
+      .button
+       {
+          background: #2066C5;
+       color: white;
+       font-size: 18px;
+       font-weight: bold;
+       height: 50px;
+       border-radius: 4px;
+       }
+          </style>
+      </head>
+      <body>
+      <div class="div1"><form action="login" method = "post">
+      <!--启动CSRF-->
+               {{form.hidden_tag()}}
+          {{form.name(size=16,id='name',class='input' )}}
+          {%for e in form.name.errors%}
+                   <span style="color: red">{{e}}</span>
+                   {%endfor%}
+       {{form.password(size=16,id='password',class='input')}}
+      {%for e in form.password.errors%}
+                   <span style="color: red">{{e}}</span>
+                   {%endfor%}
+          <input type="submit" value="登录"  class="input button">
+      </form></div>
+
+      </body>
+     </html>
+
+8.2 使用Flask上传文件
+~~~~~~~~~~~~~~~~~~~~~
+
+1.使用Flask上传文件的简单实现
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Flask文件上传比较简单，需要注意以下3点要求：
+
+-  一个\ ``<form>``\ 标签被标记有\ ``enctype=multipart/form-data``\ ，并且在里面包含一个\ ``<input type=file>``\ 标签。
+-  服务端应用通过请求对象上的files字典访问文件。
+-  使用文件的save()方法将文件永久地保存在文件系统上的某处。
+
+..
+
+   注意：表单中必须要有enctype=“multipart/form-data”，否则上传文件无效。
+
+   一般可以写成
+
+   .. raw:: html
+
+      <form action=""method="post"enctype="multipart/form-data">
+
+   这种形式。
+
+给出一个Flask框架下实现文件上传的范例：
+
+Flask文件上传：app.py
+
+.. code:: python
+
+   from flask import Flask, render_template, request
+   import os
+   from werkzeug.utils import secure_filename
+   app = Flask(__name__)
+
+
+   @app.route('/', methods=['POST', 'GET'])
+   def hello_world():
+       if request.method == 'GET':
+           return render_template('upload.html')
+       else:
+           f = request.files['file']
+           basepath = os.path.join(os.path.dirname(__file__))  # 当前文件所在路径
+           upload_path = os.path.join(
+               basepath, 'static', 'uploads', secure_filename(f.filename))
+           # upload_path = os.path.join(basepath,,secure_filename(f.filename))
+           f.save(upload_path)
+           return "上传文件成功！！"
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+Flask文件上传：upload.html
+
+.. code:: html
+
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <title>文件上传</title>
+       <style type="text/css">
+           .div1{
+               height:180px;
+           width:380px;
+               border:1px solid #8A8989;
+               margin:0 auto;
+           }
+           .a-upload {
+               padding: 4px 10px;
+               height: 20px;
+               line-height: 20px;
+               position: relative;
+               cursor: pointer;
+               color: #888;
+               background: #fafafa;
+               border: 1px solid #ddd;
+               border-radius: 4px;
+               overflow: hidden;
+               display: inline-block;
+               *display: inline;
+               *zoom: 1
+           }
+           .input{
+         display: block;
+       width: 250px;
+       height: 30px;
+       margin: 10px auto;
+      }
+      .button
+       {
+          background: #2066C5;
+       color: white;
+       font-size: 18px;
+       font-weight: bold;
+       height: 30px;
+       border-radius: 4px;
+       }
+       </style>
+   </head>
+   <body>
+   <div class="div1">
+
+
+       <form action="" method = "post" enctype='multipart/form-data'>
+
+           <input type="file" name="file" class="input">
+
+            <input type="submit" value="上传" class="input button">
+       </form>
+
+   </div>
+   </body>
+   </html>
+
+运行上面的程序之前，请先确保根目录下的static目录下已经创建好uploads目录，然后就可以运行本工程代码了。
+
+本工程可以实现任意文件的上传，但是以中文命名的文件上传时，会出现中文名的丢失。
+
+2.改进上传功能
+^^^^^^^^^^^^^^
+
+之前实现了基本的文件上传功能，但是存在一些问题：
+
+-  文件没有进行重新命名，多个用户可能可能会存在上传同名文件的问题；
+-  没有实现文件目录的自动创建，如果网站部署时忘记创建文件保存目录，则会出现文件保存失败问题，影响用户体验；
+-  文件上传时，没有进行必要的文件格式检验，用户可以直接将可执行文件上传到服务器上，影响到服务器的数据安全性。
+
+Flask文件上传功能改进1：app.py
+
+.. code:: python
+
+   from flask import Flask, render_template, request, send_from_directory
+   import time
+   import os
+   from os import path
+   from werkzeug.utils import secure_filename
+   import platform
+   from form import UploadForm
+   from werkzeug.datastructures import CombinedMultiDict
+   app = Flask(__name__)
+   if platform.system() == "Windows":
+       slash = '\\'
+   else:
+       platform.system() == "Linux"
+       slash = '/'
+   # UPLOAD_PATH = os.path.curdir + os.path.sep + 'uploads' + os.path.sep
+   UPLOAD_PATH = os.path.curdir + slash + 'uploads' + slash
+
+
+   @app.route('/', methods=['POST', 'GET'])
+   def hello_world():
+       if request.method == 'GET':
+           return render_template('upload.html')
+       else:
+           if not os.path.exists(UPLOAD_PATH):
+               os.makedirs(UPLOAD_PATH)  # 没有目录则创建目录
+           form = UploadForm(CombinedMultiDict([request.form, request.files]))
+           if form.validate():
+               f = request.files['file']
+               filename = secure_filename(f.filename)  # 取得文件名字
+               ext = filename.rsplit('.', 1)[1]  # 获取文件后缀
+               unix_time = int(time.time())
+               new_filename = str(unix_time) + '.' + ext  # 对文件进行重新命名
+               file_url = UPLOAD_PATH+new_filename
+               print(new_filename)
+               print(UPLOAD_PATH)
+               print(file_url)
+               f.save(path.join(UPLOAD_PATH, new_filename))
+               return "上传文件成功！！"
+           else:
+               return "只支持jpg、png以及gif格式的文件！"
+   # 访问上传的文件
+   # 浏览器访问：http://127.0.0.1:5000/images/xxx.jpg/  就可以查看文件了
+
+
+   @app.route('/images/<filename>/', methods=['GET', 'POST'])
+   def get_image(filename):
+       # 得到绝对路径，比如J:\python project\例5-3-2\uploads
+       dirpath = os.path.join(app.root_path, 'uploads')
+       print(dirpath)
+       print(filename)
+       # return send_from_directory(dirpath,filename,as_attachment=True)#为下载方式
+       return send_from_directory(dirpath, filename)  # 为在线浏览方式
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+8.3 Cookie的使用
+~~~~~~~~~~~~~~~~
+
+Cookie有时也记作Cookies，它现在经常被大家提到，那么到底什么是Cookies？它有什么作用呢？
+
+Cookies是一种能够让网站服务器把少量数据储存到客户端的硬盘或内存，或是从客户端的硬盘读取数据的一种技术。当你再次浏览某网站时，浏览器将存放于本地的用户身份信息递交给服务器，服务器就可以识别用户的身份了。
+
+1.Cookie的基本使用
+^^^^^^^^^^^^^^^^^^
+
+下面通过一个综合的例子，说明Cookie的上述操作。
+
+Cookie的基本操作：app.py
+
+.. code:: python
+
+   from flask import Flask, request, Response
+   app = Flask(__name__)
+
+
+   @app.route('/')
+   def set_cookie():
+       # 先创建响应对象
+       resp = Response("设置Cookie!")
+       # 设置cookie名为username,cookie名字为zhangsan,默认关闭浏览器失效
+       # Cookie的作用时间7200秒
+       resp.set_cookie("username", "zhangsan", max_age=7200)
+       return resp
+
+
+   @app.route('/get_cookie')
+   def get_cookie():
+       if request.cookies.get('username'):
+           username = request.cookies.get('username')
+       else:
+           username = "Cookie不存在!"
+       return username
+
+
+   @app.route("/del_cookie")
+   def delete_cookie():
+       resp = Response("删除Cookie!")
+       resp.delete_cookie("username")
+       return resp
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+通过浏览器访问进行验证
+
+设置cookie
+
+http://127.0.0.1:5000/
+
+获取cookie
+
+http://127.0.0.1:5000/get_cookie
+
+删除cookie
+
+http://127.0.0.1:5000/del_cookie
+
+再次验证cookie
+
+http://127.0.0.1:5000/get_cookie
+
+2.设置Cookie的作用域
+^^^^^^^^^^^^^^^^^^^^
+
+Cookie默认只能在主域名下使用，如果想要在子域名下使用Cookie，该怎么办呢？
+
+我们要在子域名下调用主域名的Cookie，首先需要创建一个子域名，如何创建子域名？
+
+Cookie在子域名有效：app.py
+
+.. code:: python
+
+   from flask import Flask, Response
+   from blue_admin import bp
+
+   app = Flask(__name__)
+   # 注册蓝图
+   app.register_blueprint(bp)
+   # SERVER_NAME设置为网站的域名
+   app.config['SERVER_NAME'] = 'baidu.com:5000'
+
+
+   @app.route('/')
+   def set_cookie():
+       # 先创建响应对象
+       resp = Response("设置Cookie!")
+       # 设置cookie名为username,cookie名字为zhangsan,cookie作用域名
+       resp.set_cookie("username", "zhangsan", domain=".baidu.com")
+       return resp
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+blue_admin.py
+
+.. code:: python
+
+   # -*- coding:utf-8 -*-
+   from flask import Blueprint, request
+   # 在注册蓝图的时候，还需要添加一个名称为subdomain的参数
+   bp = Blueprint("admin_bp", __name__, subdomain="admin")
+
+
+   @bp.route("/")
+   def get_cookie():
+       username = request.cookies.get("username")
+       # 如果有username这个key，则返回username对应的值，否则返回没有获取到username值
+       return username or "没有获取到name值"
+
+使用子域名，需要在配置文件中配置SERVER_NAME，
+
+比如：app.config[‘SERVER_NAME’]=‘baidu.com:5000’，在app.config[‘SERVER_NAME’]=‘baidu.com:5000’，在注册蓝图的时候，还需要添加一个名称为subdomain的参数。
+
+8.4 Session的使用
+~~~~~~~~~~~~~~~~~
+
+Session是基于Cookie实现的，保存在服务端的键值对（session[‘name’]=‘value’）中。
+
+同时，在浏览器的Cookie中也对应一个相同的随机字符串，用来再次请求的时验证。
+
+   注意：Session是储存在服务器中的，Cookies是储存在浏览器本地中，而Flask的Session是基于Cookies，Session是经过加密保存在Cookies中。
+
+1.Session的基本配置
+^^^^^^^^^^^^^^^^^^^
+
+因为Flask的Session是通过加密之后放到了Cookie中。有加密就有密钥用于解密，所以，用到了Flask的Session模块就一定要配置SECRET_KEY这个全局宏。一般将SECRET_KEY设置为24位的字符。我们可以自己设定一个随机字符串，例如：
+
+::
+
+   app.config['SECRET_KEY']= 'XXXXX'
+
+我们也可以引入OS模块中，自动产生一个24位的随机字符串函数。
+
+这种方法有个不足之处，就是服务器每次启动之后这个SECRET_KEY的值是不一样的，会造成Session验证失效，用户只有重新登录。
+
+Session的基本操作：app.py
+
+.. code:: python
+
+   from flask import Flask, session
+   from datetime import timedelta
+   import os
+   app = Flask(__name__)
+   # 设置session
+   app.config['SECRET_KEY'] = os.urandom(24)
+   app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # 配置7天有效
+
+
+   @app.route('/')
+   def set_session():
+       session['username'] = 'zhangsan'
+       session.permanent = True
+       return 'Session设置成功!'
+   # 获取session
+
+
+   @app.route('/get_session')
+   def get_session():
+       username = session.get('username')
+       return username or 'Session为空！'
+   # 清除sessin
+
+
+   @app.route('/del_session')
+   def del_session():
+       session.pop('username')
+       # session.clear #清空Session
+       return 'Session被删除！'
+
+
+   if __name__ == '__main__':
+       app.run()
+
+通过浏览器访问进行验证
+
+设置session
+
+http://127.0.0.1:5000/
+
+获取session
+
+http://127.0.0.1:5000/get_session
+
+删除session
+
+http://127.0.0.1:5000/del_session
+
+再次验证session
+
+http://127.0.0.1:5000/get_session
+
+8.5 钩子函数的使用
+~~~~~~~~~~~~~~~~~~
+
+根据需要，有时候需要在正常执行代码的前、中、后时期，强行执行一段我们想要执行的功能代码，实现这种功能的函数，就称为钩子函数。钩子函数的实质就是用特定装饰器装饰的函数。下面对常用的几种钩子函数进行介绍。
+
+请求钩子通过装饰器实现。Flask 支持以下 4 种钩子。
+
+-  before_first_request：注册一个函数，在处理第一个请求之前运行
+-  before_request：注册一个函数，在处理每一个请求的时候运行
+-  after_request：注册一个函数，如果没有未处理的异常抛出，在每次请求之后运行
+-  teardown_request：注册一个函数，即使有未处理的异常抛出，也在每次请求之后运行
+
+在请求钩子函数和视图函数之间共享数据一般使用上下文全局变量g。例如，before_request
+处理程序可以从数据库中加载已登录用户，并将其保存到g.user
+中。随后调用视图函数时，视图函数再使用g.user 获取用户。
+
+钩子函数的基本使用：app.py
+
+.. code:: python
+
+   from flask import Flask
+   import time
+   app = Flask(__name__)
+   # before_first_request函数一般用来作一次初始化工作
+
+
+   @app.before_first_request
+   def before_first_request():
+       print("这是before_first_request钩子函数")
+
+
+   @app.before_request
+   def before_request():
+       print("这是before_request钩子函数")
+
+
+   @app.after_request
+   def after_request(response):
+       print("这是after_request钩子函数")
+       response.headers["Content-Type"] = "application/json"
+       return response
+
+
+   @app.teardown_request
+   def teardown_request(e):
+       print("这是teardown_request钩子函数")
+
+
+   @app.route('/')
+   def hello_world():
+       print("您访问了首页！")
+       time.sleep(5)
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run()
+
+上面的代码定义并使用了4个钩子函数，其中，
+
+before_first_request()钩子函数会在第一次请求之前被执行，
+
+before_reques()钩子函数对每次请求都会执行，
+
+after_request()和teardown_request()会在每次请求之后执行。
+
+在地址栏中输入如下地址：http://127.0.0.1:5000/然后回车，运行结果如下：
+
+::
+
+   Press CTRL+C to quit
+   这是before_first_request钩子函数
+   这是before_request钩子函数
+   您访问了首页！
+   这是after_request钩子函数
+   这是teardown_request钩子函数
+
+   127.0.0.1 - - [07/Sep/2022 16:54:42] "GET / HTTP/1.1" 200 -
+   这是before_request钩子函数
+   您访问了首页！
+   这是after_request钩子函数
+   这是teardown_request钩子函数
+
+9.访问数据库
+------------
+
+9.1 MySQL数据库安装
+~~~~~~~~~~~~~~~~~~~
+
+软件自行安装,可参考
+
+https://www.runoob.com/mysql/mysql-install.html
+
+docker部署MySQL 5.7 数据库
+
+.. code:: bash
+
+   $ docker run --name mysql -d -e MYSQL_RANDOM_ROOT_PASSWORD=yes \
+   -e MYSQL_DATABASE=flasky -e MYSQL_USER=flasky \
+   -e MYSQL_PASSWORD=<database-password> \
+   mysql/mysql-server:5.7
+
+Docker Compose部署Mysql 5.7
+
+::
+
+   version: "3"
+   services:
+     mysql:
+       image: mysql:5.7
+       restart: always
+       hostname: mysql-master
+       container_name: "mysql57-giteeci"
+       ports:
+         - 33006:3306
+       environment:
+         TZ: Asia/Shanghai
+         MYSQL_ROOT_PASSWORD: oschina123
+         MYSQL_DATABASE: gitlabhq_production
+         MYSQL_USER: giteeci
+         MYSQL_PASSWORD: 123456
+         MYSQL_HOST: "%"
+       volumes:
+         - /data/mysql57:/var/lib/mysql
+         - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+       command:
+         --server_id=100
+         --log-bin=mysql-bin
+         --sync_binlog=1
+         --binlog-ignore-db=mysql
+         --binlog_format=mixed
+         --expire_logs_days=7
+         --default-authentication-plugin=mysql_native_password
+         --character-set-server=utf8mb4
+         --collation-server=utf8mb4_general_ci
+         --explicit_defaults_for_timestamp=true
+         --lower_case_table_names=1
+         --sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+         #--sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+
+9.2 Python数据库框架MySQL-Python
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+注意：Python 2.x用MySQL-Python，从Python 3.x起，不再支持MySQL-Python。
+
+在Python 3.x中要使用MySQLdb,可以使用PyMySQL，在Python
+3.x中PyMySQL替代了MySQLdb。
+
+安装PyMySQL可以使用下面命令：
+
+.. code:: bash
+
+   （venv）$ pip install pyMySQL
+
+此外，在数据库初始化代码中，需要配置编写下面代码：
+
+.. code:: python
+
+   import pyMySQL
+   #手动指定将MySQLdb转给PyMySQL处理
+   pyMySQL.install_as_MySQLdb()                
+
+1.通过Python操作数据库对象
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+利用PyMySQL框架访问数据库：app.py
+
+.. code:: python
+
+   from flask import Flask
+   import pymysql
+   pymysql.install_as_MySQLdb()  # 手动指定将MySQLdb转给pymysql处理
+
+   app = Flask(__name__)
+   conn = pymysql.Connect(  # 配置数据库连接
+       host='127.0.0.1',
+       port=3306,
+       user='root',
+       passwd='root',
+       db='demo_01',
+       charset='utf8'
+   )
+   cursor = conn.cursor()
+   sql = "select * from user"
+   cursor.execute(sql)
+   results = cursor.fetchall()
+   for row in results:
+       username = row[0]
+       email = row[1]
+      # 打印结果
+       print(username)
+   cursor.close()  # 关闭游标
+   conn.close()  # 关闭连接
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run()
+
+2.通过PyMySQL进行更新数据操作
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**增加数据**
+
+利用PyMySQL框架向数据库中添加数据：app.py
+
+.. code:: python
+
+   # -*- coding: UTF-8 -*-
+   from flask import Flask
+   import pymysql  # 引入mysql库：
+   pymysql.install_as_MySQLdb()
+   app = Flask(__name__)
+   conn = pymysql.Connect(  # 建立数据库连接
+       host='127.0.0.1',
+       port=3306,
+       user='root',
+       passwd='root',
+       db='demo_01',
+       charset='utf8'
+   )
+   cursor = conn.cursor()  # 使用cursor()方法获取操作游标
+   # 使用try---except进行异常处理
+   try:
+       sql_insert = "insert into user(username,email) values ('yanghong1','22222@qq.com')"
+       sql_insert1 = "insert into user(username,email) values ('caoxiao1','33333@qq.com')"
+       cursor.execute(sql_insert)
+       cursor.execute(sql_insert1)
+       conn.commit()
+   except Exception as e:
+       # print e
+       print(e)
+       conn.rollback()
+       
+   cursor.close()
+   conn.close()  # 关闭数据库连接
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run()
+
+conn.commit()语句放在两条插入语句执行之后，并放在try语句块内，如果产生异常，可以使用：
+
+::
+
+   conn.rollback()
+
+该语句可以使事务回滚，退回到没有执行数据插入之前。
+
+cursor.execute(“sql语句”)表示使用execute方法执行SQL语句。
+
+所用的SQL操作都放在cursor.execute()方法中来执行。
+
+**修改数据**
+
+修改数据库中某条记录，同样是先建立数据库连接，然后获取游标对象，通过cursor.execute()来执行SQL语句，使用conn.commit()方法来提交事务，让修改数据操作真正生效。
+
+**删除数据**
+
+要删除数据库中的某条记录，同样是先建立数据库连接，然后获取游标对象，通过cursor.execute()来执行SQL语句，使用conn.commit()方法来提交事务，让删除数据操作真正生效。
+
+9.3 初识Flask-SQLAlchemy
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+SQLAlchemy是一个基于Python实现的ORM（Object Relational
+Mapping，对象关系映射）框架。该框架建立在DB
+API之上，使用关系对象映射进行数据库操作。
+
+简言之便是将类和对象转换成SQL，然后使用数据API执行SQL并获取执行结果。
+
+它的核心思想于在于将关系数据库表中的记录映射成为对象，以对象的形式展现，程序员可以把对数据库的操作转化为对对象的操作。
+
+   注意：Flask-SQLAlchemy框架的实质在于以操作对象的方式对数据库操作。
+
+1.SQLAlchemy的安装
+^^^^^^^^^^^^^^^^^^
+
+.. code:: bash
+
+   （venv）$ pip install flask-sqlalchemy
+
+..
+
+   注意：Python 2版本中需要安装MySQLdb，可以使用pip install
+   flask-MySQLdb命令来完成安装。 Python
+   3中不再支持MySQLdb，推荐使用PyMySQL。
+
+2.为什么使用ORM
+^^^^^^^^^^^^^^^
+
+当需要实现一个应用程序时（不使用O/R
+Mapping），我们可能会写特别多的数据访问层的代码，从数据库保存、删除、读取对象信息，而这些代码都是重复的。
+
+而使用ORM则会大大减少重复性代码。
+
+对象关系映射（Object Relational
+Mapping，ORM），主要实现程序对象到关系数据库数据的映射。
+
+-  简单：ORM以最基本的形式建模数据。比如ORM会将MySQL的一张表映射成一个类（模型），表的字段就是这个类的成员变量。
+-  精确：ORM使所有的MySQL数据表都按照统一的标准精确地映射成一个类，使系统在代码层面保持准确统一。
+-  易懂：ORM使数据库结构文档化，程序员可以把大部分精力用在Web功能的开发和实现上，而不需要花费时间和精力在底层数据库驱动上。
+-  易用：ORM包含对持久类对象进行CRUD操作的API，例如create()、update()、save()、load()、find()、find_all()和where()等，也就是将SQL查询全部封装成了编程语言中的函数，通过函数的链式组合生成最终的SQL语句。通过这种封装避免了不规范、冗余、风格不统一的SQL语句，可以避免很多人为Bug，方便编码风格的统一和后期维护。
+
+综上所述，使用ORM框架的最大优点是解决了重复读取数据库的问题，使程序员高效开发成为可能。
+
+最大的不足之处在于会牺牲程序的执行效率，特别是处理多表联查、where条件复杂之类的查询时，ORM的语法会变得复杂。
+
+3.Flask-SQLAlchemy初始化
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+使用Flask-SQLAlchemy框架初始化实例：config.py
+
+.. code:: python
+
+   USERNAME = 'root'
+   PASSWORD = 'root'
+   HOST = '127.0.0.1'
+   PORT = '3306'
+   DATABASE = 'db_demo1'
+   DB_URI = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8'.format(
+       USERNAME, PASSWORD, HOST, PORT, DATABASE)
+   SQLALCHEMY_DATABASE_URI = DB_URI
+   # 动态追踪修改设置，如未设置只会提示警告
+   SQLALCHEMY_TRACK_MODIFICATIONS = False
+   # 查询时会显示原始SQL语句
+   SQLALCHEMY_ECHO = True
+
+-  注意：SQLALCHEMY_TRACK_MODIFICATIONS=False必须设置，可以为Flase或者True，表示动态追踪修改设置。如果没有设置，会给出警告信息。
+
+使用Flask-SQLAlchemy框架初始化实例：db_demo1.py
+
+.. code:: python
+
+   # encoding:utf8
+   from flask import Flask
+   from flask_sqlalchemy import SQLAlchemy
+   import config  # 导入配置文件
+   app = Flask(__name__)
+   app.config.from_object(config)  # 配置文件实例化
+   # 初始化一个对象
+   db = SQLAlchemy(app)
+   # 测试数据库链接是否成功
+   db.create_all()
+
+
+   @app.route('/')
+   def index():
+       return "index"
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+运行上述代码，如果没有报错，则说明配置成功。可以将DATABASE=’db_demo1’的内容修改为一个不存在的数据库，则可以看到有报错信息输出。
+
+4.模型与表映射方法1
+^^^^^^^^^^^^^^^^^^^
+
+使用Flask-SQLAlchemy框架创建数据库表：app.py
+
+.. code:: python
+
+   # encoding:utf8
+   from flask import Flask  # 导入Flask模块
+   from flask_sqlalchemy import SQLAlchemy  # 导入SQLAlchemy模块
+   import config  # 导入配置文件
+   from datetime import datetime  # 导入datetime模块
+   app = Flask(__name__)  # Falsk初始化
+   app.config.from_object(config)  # 配置文件实例化
+   # 初始化一个数据库连接对象
+   db = SQLAlchemy(app)
+   # 测试数据库链接是否成功
+   # 建立表
+
+
+   class Book(db.Model):
+       __tablename__ = 'book'  # 表的别名
+       id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # id号
+       title = db.Column(db.String(50), nullable=False)  # 书名
+       publishing_office = db.Column(db.String(100), nullable=False)  # 出版社
+       isbn = db.Column(db.String(100), nullable=False)  # isbn号
+       storage_time = db.Column(db.DateTime, default=datetime.now)  # 入库时间
+
+   db.create_all()  # 对象映射
+
+
+   @app.route('/')
+   def index():
+       return "index"
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+使用Flask-SQLAlchemy框架创建数据库表：config.py
+
+.. code:: python
+
+   # encoding:utf8
+   USERNAME = 'root'
+   PASSWORD = 'root'
+   HOST = '127.0.0.1'
+   PORT = '3306'
+   DATABASE = 'db_demo1'
+   DB_URI = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8'.format(
+       USERNAME, PASSWORD, HOST, PORT, DATABASE)
+   SQLALCHEMY_DATABASE_URI = DB_URI
+   # 动态追踪修改设置，如未设置只会提示警告
+   SQLALCHEMY_TRACK_MODIFICATIONS = False
+   # 查询时会显示原始SQL语句
+   SQLALCHEMY_ECHO = True
+
+Python语言的3.x完全不向前兼容，导致在Python
+2.x中可以正常使用的库到了Python 3中就不支持MySQLdb数据库驱动了。
+
+给出的解决方法是，使用PyMySQL作为Python
+3环境下MySQLdb的替代数据库驱动，可以进入命令行，使用pip安装PyMySQL。
+
+安装完毕后，如果你继续要使用MySQLdb，那么请加上一句pyMySQL.install_as_MySQLdb()即可。
+
+-  注意：添加pyMySQL.install_as_MySQLdb();一般是主app对应的文件中。
+
+**最常用的SQLAlchemy列类型**
+
++--------------+--------------------+--------------------------------+
+| 类型名       | Python类型         | 说明                           |
++==============+====================+================================+
+| Integer      | int                | 普通整数，通常是 32 位         |
++--------------+--------------------+--------------------------------+
+| SmallInteger | int                | 取值范围小的整数，通常是 16 位 |
++--------------+--------------------+--------------------------------+
+| BigInteger   | int 或 long        | 不限制精度的整数               |
++--------------+--------------------+--------------------------------+
+| Float        | float              | 浮点数                         |
++--------------+--------------------+--------------------------------+
+| Numeric      | decimal.Decimal    | 定点数                         |
++--------------+--------------------+--------------------------------+
+| String       | str                | 变长字符串                     |
++--------------+--------------------+--------------------------------+
+| Text         | str                | 变长字符串，对                 |
+|              |                    | 较长或不限长度的字符串做了优化 |
++--------------+--------------------+--------------------------------+
+| Unicode      | unicode            | 变长 Unicode 字符串            |
++--------------+--------------------+--------------------------------+
+| UnicodeText  | unicode            | 变长 Unicode                   |
+|              |                    | 字符串，对                     |
+|              |                    | 较长或不限长度的字符串做了优化 |
++--------------+--------------------+--------------------------------+
+| Boolean      | bool               | 布尔值                         |
++--------------+--------------------+--------------------------------+
+| Date         | datetime.date      | 日期                           |
++--------------+--------------------+--------------------------------+
+| Time         | datetime.time      | 时间                           |
++--------------+--------------------+--------------------------------+
+| DateTime     | datetime.datetime  | 日期和时间                     |
++--------------+--------------------+--------------------------------+
+| Interval     | datetime.timedelta | 时间间隔                       |
++--------------+--------------------+--------------------------------+
+| Enum         | str                | 一组字符串                     |
++--------------+--------------------+--------------------------------+
+| PickleType   | 任何 Python 对象   | 自动使用 Pickle 序列化         |
++--------------+--------------------+--------------------------------+
+| LargeBinary  | str                | 二进制 blob                    |
++--------------+--------------------+--------------------------------+
+
+**最常用的SQLAlchemy列选项**
+
++-------------+-------------------------------------------------------+
+| 选项名      | 说明                                                  |
++=============+=======================================================+
+| primary_key | 如果设为 True，列为表的主键                           |
++-------------+-------------------------------------------------------+
+| unique      | 如果设为 True，列不允许出现重复的值                   |
++-------------+-------------------------------------------------------+
+| index       | 如果设为 True，为列创建索引，提升查询效率             |
++-------------+-------------------------------------------------------+
+| nullable    | 如果设为 True，列允许使用空值；如果设为               |
+|             | False，列不允许使用空值                               |
++-------------+-------------------------------------------------------+
+| default     | 为列定义默认值                                        |
++-------------+-------------------------------------------------------+
+
+新增一条记录，可以使用下面的方法。在执行下面的方法之前先把db.create_all()这行注释掉。注释以后变为：
+
+.. code:: python
+
+   # db.create_all()  # 对象映射
+   book1 = Book(id='001', title='人工智慧', publishing_office='高等教育', isbn='123333')
+
+   # 通过db.session.add(book1)把对象添加到会话中
+   db.session.add(book1)
+
+   # 通过db.session.commit()完成事务的提交。
+   db.session.commit()
+
+使用Flask-SQLAlchemy框架添加数据实例：app.py
+
+.. code:: python
+
+   from flask import Flask  # 导入Flask模块
+   from datetime import datetime  # 导入datetime模块
+   import config  # 导入配置文件
+   from flask_sqlalchemy import SQLAlchemy  # 导入SQLAlchemy模块
+   import pymysql  # 导入pymysql
+   pymysql.install_as_MySQLdb()  # pymysql替代MySQLdb
+   app = Flask(__name__)
+   app.config.from_object(config)
+   db = SQLAlchemy(app)  # 读取配置参数，将和数据库相关的配置加载到SQLAlchemy对象中
+   db.init_app(app)  # 初始化数据库连接文件
+
+
+   # 建立表
+   class Book(db.Model):
+       __tablename__ = 'book'  # 表的别名
+       id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+       title = db.Column(db.String(50), nullable=False)  # 书名
+       publishing_office = db.Column(db.String(100), nullable=False)  # 出版社
+       isbn = db.Column(db.String(100), nullable=False)  # isbn号
+       storage_time = db.Column(db.DateTime, default=datetime.now)  # 入库时间
+
+
+   db.create_all()  # 对象映射
+   # 以上代码同样创建了一个表，下面试着增加一条记录，再增加下面代码：
+   book1 = Book(id='005', title='人工智能导论',
+                publishing_office='高等教育出版社', isbn='9787040479843')
+   db.session.add(book1)  # 把对象添加到会话中
+   db.session.commit()  # 提交事务
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run()
+
+运行app.py文件，会在数据库中创建一条记录。
+
+5. 模型与表映射方法2
+^^^^^^^^^^^^^^^^^^^^
+
+这里底层驱动使用了PyMySQL，使用Flask-SQLAlchemy创建数据库，并成功地向数据库中增加了数据。
+
+使用Flask-SQLAlchemy框架添加数据实例：app.py
+
+.. code:: python
+
+   from flask import Flask
+   from flask_sqlalchemy import SQLAlchemy
+   from datetime import datetime
+   import config
+   app = Flask(__name__)
+   app.config.from_object(config)
+   db = SQLAlchemy(app)
+
+
+   class Book(db.Model):
+       __tablename__ = 'book'
+       id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+       title = db.Column(db.String(50), nullable=False)
+       publishing_office = db.Column(db.String(100), nullable=False)
+       price = db.Column(db.String(30), nullable=False)
+       isbn = db.Column(db.String(50), nullable=False)
+       storage_time = db.Column(db.DateTime, default=datetime.now)  # 入库时间
+   # db.create_all()#如果没有创建表，请先执行db.create_all（）方法创建表
+   # 添加数据的路由
+
+
+   @app.route('/add')
+   def add():
+       book1 = Book(title='Python基础教程1（第3版）', publishing_office='人民邮电出版社',
+                    price='68.30', isbn='9787115474889')
+       # book2 = Book(title='Python游戏编程快速上手 第4版', publishing_office='人民邮电出版社', price='54.50', isbn='9787115466419')
+       # book3 = Book(title='JSP+Servlet+Tomcat应用开发从零开始学', publishing_office='清华大学出版社', price='68.30',isbn='9787302384496')
+       db.session.add(book1)
+       # db.session.add(book2)
+       # db.session.add(book3)
+       db.session.commit()
+       return '添加数据成功！'
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+保存并执行app.py文件，然后进入数据库查看数据是否插入成功。
+
+6.数据的增、删、改、查
+^^^^^^^^^^^^^^^^^^^^^^
+
+数据的增、删、改、查等操作，必须确保数据库已经实现建立好，然后使用db.session.add(对象名称)方法，就可以实现数据的插入操作。
+
+使用Flask-SQLAlchemy框架添加多条数据实例：app.py
+
+.. code:: python
+
+   from flask import Flask
+   from flask_sqlalchemy import SQLAlchemy
+   from datetime import datetime
+   import config
+   app = Flask(__name__)
+   app.config.from_object(config)
+   db = SQLAlchemy(app)
+
+
+   class Book(db.Model):
+       __tablename__ = 'book'
+       id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+       title = db.Column(db.String(50), nullable=False)
+       publishing_office = db.Column(db.String(100), nullable=False)
+       price = db.Column(db.String(30), nullable=False)
+       isbn = db.Column(db.String(50), nullable=False)
+       storage_time = db.Column(db.DateTime, default=datetime.now)  # 入库时间
+
+
+   db.create_all()
+
+
+   @app.route('/add')
+   def add():
+       book1 = Book(title='Python基础教程（第3版）', publishing_office='人民邮电出版社',
+                    price='68.30', isbn='9787115474889')
+       book2 = Book(title='Python游戏编程快速上手 第4版', publishing_office='人民邮电出版社',
+                    price='54.50', isbn='9787115466419')
+       book3 = Book(title='JSP+Servlet+Tomcat应用开发从零开始学',
+                    publishing_office='清华大学出版社', price='68.30', isbn='9787302384496')
+       db.session.add(book1)
+       db.session.add(book2)
+       db.session.add(book3)
+       db.session.commit()
+       return '添加数据成功！'
+
+
+   @app.route('/select')
+   def select():
+       # result=Book.query.filter(Book.id=='1').first()
+       result = Book.query.filter(Book.publishing_office == '人民邮电出版社').all()
+       for books in result:
+           print(books.title, books.publishing_office)
+       return "查询数据成功！"
+
+
+   @app.route('/edit')
+   def edit():
+       book1 = Book.query.filter(Book.id == '2').first()  # 查询出id=2的记录
+       book1.price = 168  # 修改价格
+       db.session.commit()
+       return "修改数据成功！"
+
+
+   @app.route('/delete')
+   def delete():
+       book1 = Book.query.filter(Book.id == '9').first()
+       db.session.delete(book1)
+       db.session.commit()
+       return '删除数据成功'
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+创建cofing.py文件，该文件为数据库连接配置文件
+
+.. code:: python
+
+   #encoding:utf-8
+   HOST = '127.0.0.1'
+   PORT = '3306'
+   USERNAME = 'root'
+   PASSWORD = 'root'
+   DATABASE = 'books_01'
+   DB_URI = 'mysql+pymysql://{username}:{password}@{host}:{port}/{db}?charset-utf8'.format(username=USERNAME,
+                                                                                           password=PASSWORD,
+                                                                                           host=HOST,
+                                                                                           port=PORT,
+                                                                                           db=DATABASE)
+   SQLALCHEMY_DATABASE_URI = DB_URI
+   SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+9.4 创建一对一的关系表
+~~~~~~~~~~~~~~~~~~~~~~
+
+数据库实体间有3种关联关系：一对一、一对多，以及多对多。
+
+-  一个学生只有一个身份证号码，构成了一对一关系；
+
+-  一个班级有多名学生，构成了一对多的关系；
+
+-  课程和学生的关系就构成了多对多关系，一个学生可以选修多门课程，一门课程对应多个学生。
+
+比如人和身份证的一对一关系，图书管理系统中的学生和借书证的一对一关系、学生和具体借到的某一本书也是一对一关系等。
+
+一对一关系主要在relationship方法中，使用uselist=False来约束，如果查询得到的是一个列表，那么就使用uselist=False禁用列表，这样最终查询到的结果就是唯一的，就构成了一对一关系。
+
+   注意：uselist=False表示不使用列表，使用标量值。
+
+下面主要图书管理系统中的用户和借书证构成了一对一关系为例进行讲解。
+
+主要文件为：
+
+::
+
+   config.py
+   app.py
+
+使用Flask-SQLAlchemy创建一对一关系实例：app.py
+
+.. code:: python
+
+   from flask import Flask
+   from flask_sqlalchemy import SQLAlchemy
+   from datetime import datetime
+   import config
+   app = Flask(__name__)
+   app.config.from_object(config)
+   db = SQLAlchemy(app)
+   # 定义用户表
+
+
+   class User(db.Model):
+       __tablename__ = 'user'
+       id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+       username = db.Column(db.String(50), nullable=False)  # 用户名
+       password = db.Column(db.String(50), nullable=False)  # 密码
+       phone = db.Column(db.String(11), nullable=False)  # 电话
+       email = db.Column(db.String(30), nullable=False)  # 邮箱
+       reg_time = db.Column(db.DateTime, default=datetime.now)  # 注册时间
+
+   # 定义借书证表
+
+
+   class Lib_card(db.Model):
+       __tablename__ = 'lib_card'
+       id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+       card_id = db.Column(db.Integer, nullable=False)  # 借书证id
+       papers_type = db.Column(db.String(50), nullable=False)  # 何种证件办理
+       borrow_reg_time = db.Column(db.DateTime, default=datetime.now)  # 证件办理时间
+       user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+       users = db.relationship('User', backref=db.backref('cards'), uselist=False)
+
+
+   db.create_all()
+
+
+   @app.route('/add')
+   def add():
+       # 添加两条用户数据
+       user1 = User(username="张三", password="111111",
+                    phone="13888888888", email="10086@qq.com")
+       user2 = User(username="李四", password="123456",
+                    phone="13777777777", email="10000@qq.com")
+       db.session.add(user1)
+       db.session.add(user2)
+       # 添加两条借书证信息
+       card1 = Lib_card(card_id='18001', user_id='1', papers_type='身份证')
+       card2 = Lib_card(card_id='18002', user_id='2', papers_type='身份证')
+       db.session.add(card1)
+       db.session.add(card2)
+       db.session.commit()
+       return '添加数据成功！'
+
+
+   @app.route('/select')
+   def select():
+       user = User.query.filter(User.username == '张三').first()
+       art = user.cards
+       for k in art:
+           print(k)
+           print(k.card_id)
+       card = Lib_card.query.filter(Lib_card.card_id == '18001').first()
+       user = card.users
+       print(user.username)
+       return "查询数据成功！"
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+config.py
+
+.. code:: python
+
+   # encoding:utf-8
+   HOST = '127.0.0.1'
+   PORT = '3306'
+   USERNAME = 'root'
+   PASSWORD = '123456'
+   DATABASE = 'library'
+   DB_URI = 'mysql+pymysql://{username}:{password}@{host}:{port}/{db}?charset-utf8'.format(username=USERNAME,
+                                                                                           password=PASSWORD,
+                                                                                           host=HOST,
+                                                                                           port=PORT,
+                                                                                           db=DATABASE)
+   SQLALCHEMY_DATABASE_URI = DB_URI
+   SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+-  注意：一个表（模型）的定义必须要定义一个主键，这个主键一般为id。
+
+在定义了Lib_card类后，申明了一个外键，并且在relationship方法中使用uselist=False来约束其关系。
+
+user_id=db.Column(db.Integer,db.ForeignKey(‘user.id’))表示创建一个外键，类型要跟主表一样，通过db.ForeignKey(“user.id”)与主表绑定users=db.relationship(‘User’，backref=db.backref(‘cards’)；
+
+uselist=False表示user可以根据Lib_card中的借书证查找到用户表中的信息
+
+backref=“cards”表示用户表可以直接通过cards查找到该用户下的借书证号码。
+
+9.5 创建一对多的关系表
+~~~~~~~~~~~~~~~~~~~~~~
+
+生活中典型的一对多关系有哪些？一个年级对应多个平行班级，一个网购用户对应多个订单，一个家庭对应多个家庭成员等，这些是典型的一对多关系。
+
+下面以一个典型的一对多关系为例，即一个作者可以编著多本图书的一对多关系为例，来揭晓用flask-sqlalchemy是如何实现一对多关系的。
+
+使用Flask-SQLAlchemy创建一对多关系实例：app.py
+
+.. code:: python
+
+   from flask import Flask
+   from flask_sqlalchemy import SQLAlchemy
+   import config
+   app = Flask(__name__)
+   app.config.from_object(config)
+   db = SQLAlchemy(app)
+
+
+   # 定义用户表
+   # 定义模型类-作者类
+   class Writer(db.Model):
+       __tablename__ = 'writer'
+       id = db.Column(db.Integer, primary_key=True)
+       name = db.Column(db.String(50), nullable=False)
+       # 设置relationship属性方法，建立模型关系，第一个参数为多方模型的类名，添加backref可以实现多对一的反向查询
+       books = db.relationship('Book', backref='writers')
+
+
+   # 定义模型类-图书类
+   class Book(db.Model):
+       __tablename__ = 'books'
+       id = db.Column(db.Integer, primary_key=True)
+       title = db.Column(db.String(50), nullable=False)
+       publishing_office = db.Column(db.String(100), nullable=False)
+       isbn = db.Column(db.String(50), nullable=False)
+       # 设置外键指向一方的主键，建立关联关系
+       writer_id = db.Column(db.Integer, db.ForeignKey('writer.id'))
+
+
+   db.create_all()
+
+
+   @app.route('/add')
+   def add():
+       # 添加两条作者数据
+       user1 = Writer(name="李兴华")
+       user2 = Writer(name="Sweigart")
+       db.session.add(user1)
+       db.session.add(user2)
+       # 添加两条图书信息
+       book1 = Book(title='名师讲坛——Java开发实战经典（第2版）',
+                    publishing_office='清华大学出版社', isbn='9787302483663', writer_id='1')
+       book2 = Book(title='android开发实战', publishing_office='清华大学出版社',
+                    isbn='9787302281559', writer_id='1')
+       book3 = Book(title='Python游戏编程快速上手', publishing_office='人民邮电大学出版社',
+                    isbn='9787115466419', writer_id='2')
+       db.session.add(book1)
+       db.session.add(book2)
+       db.session.add(book3)
+       db.session.commit()
+       return '添加数据成功！'
+
+
+   @app.route('/select')
+   def select():
+       writer = Writer.query.filter(Writer.id == '1').first()
+       book = writer.books
+       for k in book:
+           print(k)
+           print(k.title)
+       book = Book.query.filter(Book.id == '1').first()
+       writer = book.writers
+       print(writer.name)
+       return "查询数据成功！"
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run()
+
+主要是通过设置外键指向一方的主键，让作者和图书建立关联关系。
+
+通过创建一个外键，类型要与想要关联的表的数据类型一样，这里通过db.ForeignKey(‘writer.id’)来实现。
+
+9.6 创建多对多的关系表
+~~~~~~~~~~~~~~~~~~~~~~
+
+生活中典型的多对多关系比较多，一个班级对应多个老师，一个老师对应多个班级。
+
+又比如，一个学生对应多门课程，一门课程对应多个学生等，这些是典型的多对多关系。
+
+下面以一个典型的多对多关系为例讲解，即图书和图书标签（上架建议标签）的数据库。
+
+很显然，图书可能对应着多个标签，不能再使用外键来描述其关系了。
+
+同样，也不能在标签表中加入一个指向图书的外键，因为一个标签可以对应着多本图书，两侧都需要一组外键。
+
+处理多对多表问题时，解决方法是添加第3张表，这个表称为关联表或中间表。
+
+数据库中的多对多关联关系一般需采用中间表的方式处理，将多对多转化为两个一对多。
+
+   注意：关联表或中间表不要定义成类，不要使用class，在使用db.Table()方法定义时，应该使用两个以上的外键。
+
+使用Flask-SQLAlchemy创建多对多关系实例：app.py
+
+.. code:: python
+
+   from flask import Flask
+   from flask_sqlalchemy import SQLAlchemy
+   import config
+
+   app = Flask(__name__)
+   app.config.from_object(config)
+   db = SQLAlchemy(app)
+   book_tag = db.Table('book_tag',
+                       db.Column('book_id', db.Integer, db.ForeignKey(
+                           'book.id'), primary_key=True),
+                       db.Column('tag_id', db.Integer, db.ForeignKey(
+                           'shelfing.id'), primary_key=True)
+                       )
+
+
+   # 定义模型类-图书类
+   class Book(db.Model):
+       __tablename__ = 'book'
+       id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+       name = db.Column(db.String(50), nullable=False)
+       # 设置relationship属性方法，建立模型关系，第一个参数为多方模型的类名，secondary代表中间表
+       # 第三个参数表示反向引用
+       tags = db.relationship('Shelfing', secondary=book_tag,
+                              backref=db.backref('books'))
+
+
+   # 定义模型类-图书上架建议（标签）类
+   class Shelfing(db.Model):
+       __tablename__ = 'shelfing'
+       id = db.Column(db.Integer, primary_key=True, nullable=False)
+       tag = db.Column(db.String(50), nullable=False)
+
+
+   db.create_all()
+
+
+   @app.route('/add')
+   def add():
+       book1 = Book(name='Java开发')
+       book2 = Book(name='Python游戏编程快速上手')
+       book3 = Book(name='文艺范')
+       tag1 = Shelfing(tag='文艺')
+       tag2 = Shelfing(tag='计算机')
+       tag3 = Shelfing(tag='技术')
+       book1.tags.append(tag2)
+       book1.tags.append(tag3)
+       book2.tags.append(tag3)
+       book3.tags.append(tag1)
+       db.session.add_all([book1, book2, book3, tag1, tag2, tag3])
+       db.session.commit()
+       return '数据添加成功！'
+
+
+   @app.route('/select')
+   def select():
+       # 查询Java开发这本书的上架标签
+       book = Book.query.filter(Book.name == 'Java开发').first()
+       tag = book.tags
+       for k in tag:
+           print(k.tag)
+       # 查询标签=技术的所有图书
+       tag = Shelfing.query.filter(Shelfing.tag == '技术').first()
+       book = tag.books
+       for k in book:
+           print(k.name)
+       return '查询成功！'
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run()
+
+使用http://127.0.0.1:5000/地址访问，
+
+在数据中新增表，使用http://127.0.0.1:5000/add新增测试数据，
+
+使用http://127.0.0.1:5000/selcet进行测试数据的查询。
+
+db.session.add_all()表示批量作insert操作，在插入单条数据的时候使用db.session.add()，
+
+在插入多条数据的时候使用db.session.add_all()。
+
+   注意：使用http://127.0.0.1:5000/add新增测试数据时，刷新一次网页，会增加一次数据。
+
+多对多关系仍使用定义一对多关系的db.relationship()方法进行定义。
+
+在Book类中，我们使用了tags=db.relationship(‘Shelfing’,secondary=book_tag,backref=db.backref(‘books’))来定义。db.relationship()一共给出了3个参数；
+
+-  第1个参数Shelfing为多方模型的类名；
+-  第2个参数secondary表示在多对多关系中；必须把secondary参数设为关联表book_tag；
+-  第3个参数backref表示反向引用的名称。
+
+假如拿到了一个标签tag，怎么拿到标签下的所有图书呢？这时用books，表示反向引用。多对多关系可以在任何一个类中定义，backref参数会处理好关系的另一侧。
+
+关联表就是一个简单的表，不是模型，不要定义为类，SQLAlchemy会自动接管这个表。
+
+10.Flask-Script工具的使用
+-------------------------
+
+Flask-Script的作用是可以通过命令行的形式来操作Flask。例如，通过命令跑一个开发版本的服务器、设置数据库，定时任务等。
+
+10.1 安装Flask-Script并初始化
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: bash
+
+   （venv）$ pip install Flask-Script
+
+首先，创建一个Python模板运行命令脚本，可起名为manager.py。
+
+在该文件中必须有一个Manager实例，Manager类追踪所有在命令行中调用的命令和处理过程的调用与运行情况；Manager只有一个参数——Flask实例，也可以是一个函数或其他的返回Flask实例；
+
+创建Manager实例时需要用到Flask对象。
+
+11. Flask-Migrate实现数据迁移
+-----------------------------
+
+12.使用Python和 Flask设计RESTful APIs
+-------------------------------------
 
 近些年来 REST (REpresentational State Transfer) 已经变成了 web services
 和 web APIs 的标配。
@@ -688,8 +2768,8 @@ RESTful 的 web service。
 -  **按需编码**:
    服务器可以提供可执行代码或脚本，为客户端在它们的环境中执行。这个约束是唯一一个是可选的。
 
-1.什么是一个 RESTful 的 web service？
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+12.1 什么是一个 RESTful 的 web service？
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 REST 架构的最初目的是适应万维网的 HTTP 协议。
 
@@ -716,8 +2796,8 @@ REST 设计不需要特定的数据格式。在请求中数据可以以
 `JSON <http://en.wikipedia.org/wiki/JSON>`__ 形式, 或者有时候作为 url
 中查询参数项。
 
-2.设计一个简单的 web service
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+12.2 设计一个简单的 web service
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 坚持 REST 的准则设计一个 web service 或者 API
 的任务就变成一个标识资源被展示出来以及它们是怎样受不同的请求方法影响的练习。
@@ -808,8 +2888,8 @@ app.py 的文件中:
 
 简单吧？现在我们将这个应用程序转换成我们的 RESTful service！
 
-3.使用Python和 Flask实现RESTful services
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+12.3 使用Python和 Flask实现RESTful services
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 在 Flask 中有许多扩展来帮助我们构建 RESTful
 services，但是在我看来这个任务十分简单，没有必要使用 Flask 扩展。
@@ -1420,15 +3500,15 @@ http://www.pythondoc.com/flask-restful/first.html
 
 https://www.bookstack.cn/read/flask-restful/spilt.8.3b3bb30c584b4b80.md
 
-4.使用Flask-RESTful设计RESTful API
-----------------------------------
+13.使用Flask-RESTful设计RESTful API
+-----------------------------------
 
 前面我已经用 Flask 实现了一个 RESTful 服务器。今天我们将会使用
 Flask-RESTful 来实现同一个 RESTful 服务器，Flask-RESTful 是一个可以简化
 APIs 的构建的 Flask 扩展。
 
-1.RESTful 服务器
-~~~~~~~~~~~~~~~~
+13.1 RESTful 服务器
+~~~~~~~~~~~~~~~~~~~
 
 作为一个提醒， 这里就是待完成事项列表 web service 所提供的方法的定义:
 
@@ -1464,8 +3544,8 @@ APIs 的构建的 Flask 扩展。
 
    from flask_restful import Api, Resource, reqparse, abort
 
-2.路由
-~~~~~~
+13.2 路由
+~~~~~~~~~
 
 在上一遍文章中，我使用了 Flask 的视图函数来定义所有的路由。
 
@@ -1541,8 +3621,8 @@ endpoint，因此我会明确给 endpoint 赋值。
    api.add_resource(TaskListAPI, '/todo/api/v1.0/tasks', endpoint='tasks')
    api.add_resource(TaskAPI, '/todo/api/v1.0/tasks/<int:id>', endpoint='task')
 
-3.解析以及验证请求
-~~~~~~~~~~~~~~~~~~
+13.3 解析以及验证请求
+~~~~~~~~~~~~~~~~~~~~~
 
 当我在以前的文章中实现此服务器的时候，我自己对请求的数据进行验证。例如，在之前版本中如何处理
 PUT 的:
@@ -1674,8 +3754,8 @@ TaskAPI 资源的参数处理是同样的方式，但是有少许不同。PUT
 使用 Flask-RESTful 来处理验证的另一个好处就是没有必要单独地处理类似 HTTP
 400 错误，Flask-RESTful 会来处理这些。
 
-4.生成响应
-~~~~~~~~~~
+13.4 生成响应
+~~~~~~~~~~~~~
 
 原来设计的 REST 服务器使用 Flask 的 jsonify 函数来生成响应。
 
@@ -1951,8 +4031,8 @@ task_fields 结构用于作为 marshal 函数的模板。fields.Uri
        "result": true
    }
 
-5.认证
-~~~~~~
+13.5 认证
+~~~~~~~~~
 
 在 REST 服务器中的路由都是由 HTTP
 基本身份验证保护着。在最初的那个服务器是通过使用 Flask-HTTPAuth
@@ -1978,8 +4058,8 @@ task_fields 结构用于作为 marshal 函数的模板。fields.Uri
        decorators = [auth.login_required]
        # ...
 
-6.在flask-restful中添加日志
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+13.6 在flask-restful中添加日志
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 在\ ``flask-restful``\ 中，\ ``logger``\ 的使用有更优雅的方式，来看示例
 
@@ -2173,16 +4253,38 @@ https://www.yuque.com/keep_running/python/hyegx6#iiVXa
 
 https://blog.csdn.net/djstavaV/article/details/112261872
 
-5. 跨域访问
+13.7 使用 Flask 设计 RESTful 的认证
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+http://www.pythondoc.com/flask-restful/third.html
+
+使用Flask设计带认证token的RESTful API接口
+
+https://www.cnblogs.com/vovlie/p/4182814.html
+
+参考demo
+
+https://www.bookstack.cn/read/flask-restful/spilt.1.dc04892e18a3e9e6.md
+
+https://gitee.com/hujianli94net/flask-rest-auth-demo
+
+14.Flask + PyJWT 实现基于JWT的用户认证授权
+------------------------------------------
+
+https://blog.csdn.net/yilovexing/article/details/104010890
+
+https://www.yuque.com/keep_running/python/fnlswf
+
+15.跨域访问
 -----------
 
-什么是跨域？
-~~~~~~~~~~~~
+15.1 什么是跨域？
+~~~~~~~~~~~~~~~~~
 
 跨域是指，浏览器从服务器\ ``A``\ 获取的静态资源，包括\ ``html``\ 、\ ``css``\ 、\ ``javascript``\ ，然后在\ ``javascript``\ 中通过\ ``ajax``\ 访问服务器\ ``B``\ 的静态资源或请求。
 
-CORS
-~~~~
+15.2 CORS
+~~~~~~~~~
 
 ``w3c``\ 组织制定了
 ``[Cross Origin Resource Sharing](https://www.w3.org/TR/cors/)``
@@ -2192,7 +4294,7 @@ CORS
 
 前端页面\ ``index.html``
 
-::
+.. code:: html
 
    <html>
    <body>
@@ -2218,8 +4320,8 @@ CORS
 
 .. image:: ../../../_static/image-20220905175806809.png
 
-Flask配置cors
-~~~~~~~~~~~~~
+15.3 Flask配置cors
+~~~~~~~~~~~~~~~~~~
 
 ``CORS``\ 需要在后端应用中进行配置。在\ ``flask``\ 中，可以使用扩展\ ``flask-cors``\ ，首先安装
 
@@ -2229,7 +4331,7 @@ Flask配置cors
 
 接下来来到\ ``app.py``\ ，导入模块，并将\ ``flask``\ 应用包括起来就可以了，如下
 
-::
+.. code:: python
 
    from flask_cors import CORS
    app = Flask(__name__)
@@ -2238,25 +4340,3 @@ Flask配置cors
 重新启动应用，再次访问\ ``index.html``\ ，这时候，返回的结果就正常了
 
 .. image:: ../../../_static/image-20220905180049136.png
-
-6.模型 Model
-------------
-
-在Flask Web应用程序中使用原始SQL对数据库执行CRUD操作可能很繁琐。
-
-相反， **SQLAlchemy** ，Python工具包是一个强大的\ **OR
-Mapper**\ ，它为应用程序开发人员提供了SQL的全部功能和灵活性。
-
-Flask-SQLAlchemy是Flask扩展，它将对SQLAlchemy的支持添加到Flask应用程序中。
-
-使用 Flask设计RESTful 的认证
-----------------------------
-
-1. flask-jwt-extended
-~~~~~~~~~~~~~~~~~~~~~
-
-https://www.yuque.com/keep_running/python/fnlswf
-
-使用Flask设计带认证token的RESTful API接口
-
-https://www.cnblogs.com/vovlie/p/4182814.html
