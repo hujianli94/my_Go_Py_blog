@@ -1347,7 +1347,7 @@ Flask文件上传：app.py
 
 Flask文件上传：upload.html
 
-.. code:: html
+::
 
    <!DOCTYPE html>
    <html lang="en">
@@ -2156,20 +2156,54 @@ Python语言的3.x完全不向前兼容，导致在Python
 
 **最常用的SQLAlchemy列选项**
 
-+-------------+-------------------------------------------------------+
-| 选项名      | 说明                                                  |
-+=============+=======================================================+
-| primary_key | 如果设为 True，列为表的主键                           |
-+-------------+-------------------------------------------------------+
-| unique      | 如果设为 True，列不允许出现重复的值                   |
-+-------------+-------------------------------------------------------+
-| index       | 如果设为 True，为列创建索引，提升查询效率             |
-+-------------+-------------------------------------------------------+
-| nullable    | 如果设为 True，列允许使用空值；如果设为               |
-|             | False，列不允许使用空值                               |
-+-------------+-------------------------------------------------------+
-| default     | 为列定义默认值                                        |
-+-------------+-------------------------------------------------------+
++---------------+-----------------------------------------------------+
+| 选项名        | 说明                                                |
++===============+=====================================================+
+| primary_key   | 如果设为 True，列为表的主键                         |
++---------------+-----------------------------------------------------+
+| unique        | 如果设为 True，列不允许出现重复的值                 |
++---------------+-----------------------------------------------------+
+| index         | 如果设为 True，为列创建索引，提升查询效率           |
++---------------+-----------------------------------------------------+
+| nullable      | 如果设为 True，列允许使用空值；如果设为             |
+|               | False，列不允许使用空值                             |
++---------------+-----------------------------------------------------+
+| autoincrement | 如果设为 True，主键设置自增长                       |
++---------------+-----------------------------------------------------+
+| default       | 为列定义默认值                                      |
++---------------+-----------------------------------------------------+
+
+模型定义示例
+
+.. code:: python
+
+   class Members(db.Model):
+       __tablename__ = 'jq_member'
+       uid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+       username = db.Column(db.String(50), nullable=False, unique=True)  # 用户名不能为空,而且必须是唯一的
+       _password = db.Column(db.String(100), nullable=False)  # 密码不能为空
+       email = db.Column(db.String(50), nullable=False, unique=True)  # 用户邮箱不能为空，而且必须是唯一的
+       vatar=db.Column(db.String(80),nullable=True)#用户头像
+       nickname=db.Column(db.String(50),nullable=True)#用户昵称
+       sex = db.Column(db.String(2), default=0)  # 性别
+       telephone = db.Column(db.String(11))  # 电话
+       status = db.Column(db.Integer)  # 状态
+       def __init__(self,username,password,email):
+            self.username=username
+            self.password=password
+            self.email=email
+       #获取密码
+       @property
+       def password(self):
+            return self._password
+       #设置密码
+       @password.setter
+       def password(self,raw_password):
+            self._password=generate_password_hash(raw_password)#密码加密
+       #检查密码
+       def check_password(self,raw_password):
+            result=check_password_hash(self.password,raw_password)#
+            return result
 
 新增一条记录，可以使用下面的方法。在执行下面的方法之前先把db.create_all()这行注释掉。注释以后变为：
 
@@ -2740,8 +2774,479 @@ Flask-Script的作用是可以通过命令行的形式来操作Flask。例如，
 
 创建Manager实例时需要用到Flask对象。
 
+调用manager.run()启动Manager实例接收命令行中的命令。
+
+.. code:: python
+
+    # 导入Manager模块
+   from flask_script import Manager
+
+   # Flask初始化
+   app= Flask(__name__)                                    
+
+   # 这里一般是设置你的app操作 
+   manager= Manager(app)                                                
+
+
+   if __name__== "__main__":
+       # 创建Manager的实例manager
+       manager.run()
+
+10.2 Command子类创建命令
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+定义一个子类继承自Command类，然后在manager.add_command()方法中可以将这个类定义成一些命令，此时的命令应该用单引号或双引号引起来。具体用法如下：
+
+Flask-Scrip工具使用实例：manager.py
+
+.. code:: python
+
+   # -*- coding:utf-8 -*-
+   from flask_script import Manager, Server  # 导入相应模块
+   from flask_script import Command  # 导入Command模块
+   from app import app  # 导入app
+   manager = Manager(app)  # 创建Manager的实例manager
+
+
+   class Hello(Command):  # 定义Hello类
+       'hello world'
+
+       def run(self):  # 定义函数run
+           print('hello world')  # 打印输出
+
+
+       # 自定义命令一：
+   manager.add_command('hello', Hello())  # 把Hello()子类定义为命令hello
+   # 自定义命令二：
+   manager.add_command("runserver", Server())  # 命令是runserver
+   if __name__ == '__main__':
+       manager.run()
+
+Python flask flask_script 报错：ModuleNotFoundError: No module named
+‘flask._compat‘解决方法
+
+**原因：**
+
+可能是更新了\ `Flask <https://so.csdn.net/so/search?q=Flask&spm=1001.2101.3001.7020>`__\ 版本问题，导致\ ``Flask._compat``\ 的目录发生变化。
+
+**解决方法：**
+
+使用如下命令降级；
+
+.. code:: bash
+
+   $ python -m pip uninstall flask
+   $ python -m pip install flask==1.1.4
+   $ python -m pip install markupsafe==2.0.1
+
+或者
+
+::
+
+   不降级则可以尝试修改一下
+   flask_script/__init__.py文件中
+   from ._compat import text_type
+   改成
+   from flask_script._compat import text_type
+
+..
+
+   注意：这里定义的命令hello和runserver使用单引号或双引号均可。
+
+执行如下命令：
+
+.. code:: bash
+
+   $ python manager.py
+   usage: manager.py [-?] {hello,runserver,shell} ...
+
+   positional arguments:
+     {hello,runserver,shell}
+       hello               hello world
+       runserver           Runs the Flask development server i.e. app.run()
+       shell               Runs a Python shell inside Flask application context.
+
+   optional arguments:
+     -?, --help            show this help message and exit
+
+   $ python manager.py hello
+   hello world
+
+
+   $ python manager.py runserver
+    * Serving Flask app 'app'
+    * Debug mode: off
+   WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+    * Running on http://127.0.0.1:5000
+   Press CTRL+C to quit
+
+10.3 使用Command实例的@command修饰符
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+@command添加命令使用实例：manager.py
+
+.. code:: python
+
+   # -*- coding:utf-8 -*-
+   from flask_script import Manager, Server  # 导入相应模块
+   from flask_script import Command  # 导入Command模块
+   from app import app  # 导入app
+   manager = Manager(app)  # 创建Manager的实例manager
+
+
+   @manager.command  # 使用装饰器
+   def hello():  # 定义函数hello()
+       'hello world'
+       print('hello world')  # 打印输出
+
+
+   if __name__ == '__main__':
+       manager.run()
+
+使用Command实例的@command修饰符方法来创建命令和Command类创建命令的运行方式相同。
+
+在命令行输入以下命令，结果如下：
+
+.. code:: bash
+
+   $ python manager.py hello
+   hello world
+
+10.4 使用Command实例的@option修饰符创建命令
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+如果想要添加多个命令，建议使用@option修饰符创建命令，可以有多个@option选项参数。
+
+@option修饰符创建命令使用实例：app.py
+
+.. code:: python
+
+   # -*-coding:utf8-*-
+   from flask_script import Manager  # 导入Manager模块
+   from app import app  # 导入app
+   manager = Manager(app)  # 创建Manager的实例manager
+
+
+   # 创建命令
+   @manager.option('-n', '--name', dest='name', help='Your name', default='world')
+   @manager.option('-u', '--url', dest='url', default='www.csdn.com')  # 创建命令
+   def hello(name, url):  # 定义函数hello 'hello world or hello <setting name>'
+       print('hello', name)  # 打印输出
+       print(url)  # 打印输出
+
+
+   if __name__ == '__main__':
+       manager.run()
+
+输入python manager.py hello，运行结果如下：
+
+::
+
+   python manager.py hello
+   >hello world
+   >www.csdn.com
+
+再输入python manager.py hello-n sissiy-u www.google.com，运行结果如下：
+
+::
+
+   python manager.py hello-n sissiy-u www.google.com
+   > hello sissiy
+   > www.google.com
+
+10.5 Flask循环引用
+~~~~~~~~~~~~~~~~~~
+
+将数据库的model单独写在一个文件中，model类需要继承db.Model，而主文件中需要注册数据库，这样会导致在主文件中引用model，在model中引用主文件的db，造成循环引用。
+
+基本的文件结构如下：
+
+::
+
+   app.py
+   models.py
+
+循环引用问题的出现实例：app.py
+
+.. code:: python
+
+   # encoding:utf-8
+   from flask import Flask  # 导入Flask模块
+   from models import User  # 导入user模块
+   from flask_sqlalchemy import SQLAlchemy  # 导入SQLAlchemy模块
+   import config  # 导入配置文件
+   app = Flask(__name__)  # Flask初始化
+   app.config.from_object(config)  # 初始化配置文件
+   db = SQLAlchemy(app)  # 获取配置参数，将和数据库相关的配置加载到SQLAlchemy对象中
+   # 创建表和字段
+   db.create_all()  # 关系映射
+
+
+   @app.route('/')  # 定义路由
+   def hello_world():  # 定义hello_world函数
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run()
+
+循环引用问题的出现实例：models.py
+
+.. code:: python
+
+   # -*- coding:utf-8 -*-
+   from app import db  # 导入db 对象
+
+
+   class User(db.Model):  # 定义User类
+       __tablename__ = 'user'  # 表的别名
+       id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 定义id字段
+       username = db.Column(db.String(50), nullable=False)  # 定义username字段
+       password = db.Column(db.String(100), nullable=False)  # 定义password字段
+       telephone = db.Column(db.String(11), nullable=False)  # 定义telephone字段
+
+但此时会出现循环引用的错误，也就是你需要我的，我需要你的。解决办法是把db单独写在一个文件中，
+
+然后主文件中引用db并注册，model也引用db，这样就不会造成了循环引用问题。
+
+   注意：出现循环引用的问题往往意味着代码的布局有问题，可以把需要import的资源提取到一个第三方文件中。
+
+新建一个external.py文件结构如下：
+
+::
+
+   app.py
+   models.py
+   external.py
+
+循环引用问题的解决方法实例：external.py
+
+.. code:: python
+
+   # encoding:utf-8
+   from flask_sqlalchemy import SQLAlchemy  # 导入SQLAlchemy模块
+
+   # 此时先不传入app
+   db = SQLAlchemy()
+   HOST = '127.0.0.1'
+   PORT = '3306'
+   USERNAME = 'root'
+   PASSWORD = 'root'
+   DATABASE = 'library'
+   DB_URI = 'mysql+pymysql://{username}:{password}@{host}:{port}/{db}?charset-utf8'.format(username=USERNAME,
+                                                                                           password=PASSWORD,
+                                                                                           host=HOST,
+                                                                                           port=PORT,
+                                                                                           db=DATABASE)
+
+   # 行数据库连接的实例化
+   SQLALCHEMY_DATABASE_URI = DB_URI
+   # 关闭动态跟踪
+   SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+修改后的app.py文件代码如下：
+
+循环引用问题的解决方法实例：app.py
+
+.. code:: python
+
+   # encoding:utf-8#设定编码
+   from flask import Flask  # 导入Flask模块
+   from models import User  # 导入User模块
+   from external import db  # 导入db模块
+   import external  # 导入extenal模块
+
+   app = Flask(__name__)  # Flask初始化
+   app.config.from_object(external)  # 配置文件初始化
+   db.init_app(app)  # 初始化数据库连接
+
+   # 开始创建表和各个字段
+   with app.app_context():  # 手动创建应用上下文
+       db.create_all()  # 建立映射
+
+
+   @app.route('/')  # 定义路由
+   def hello_world():  # 定义视图函数
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+循环引用问题的解决方法实例：models.py
+
+.. code:: python
+
+   from app import db  # 导入db 对象
+
+
+   class User(db.Model):  # 定义User类
+       __tablename__ = 'user'  # 表的别名
+       id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 定义id字段
+       username = db.Column(db.String(50), nullable=False)  # 定义username字段
+       password = db.Column(db.String(100), nullable=False)  # 定义password字段
+       telephone = db.Column(db.String(11), nullable=False)  # 定义telephone字段
+
 11. Flask-Migrate实现数据迁移
 -----------------------------
+
+我们在系统开发过程中，经常碰到需要更新数据库中的表或修改字段等操作。如果通过手工编写alter
+SQL脚本进行处理，经常会发现遗漏，而且修改起来不太方便。
+
+同时，由于在Python中采用db.create_all修改字段时，不会自动将更改写入数据库的表中，只有数据表不存在时，Flask_SQLAlchemy才会创建数据库，所以必须删除数据库相关表，然后重新运行db.create_all才会重新生成表，这肯定与实际情况不符合。
+
+现在我们可以使用Flask-Migrate迁移框架来解决这个问题。使用Flask-Migrate数据库迁移框架，可以保证数据库结构在发生变化时，改变数据库结构不至于丢失数据库的数据。
+
+11.1 安装Flask-Migrate插件
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: bash
+
+   (venv) $ pip install flask-migrate
+
+11.2 使用Flask-Migrate的步骤
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+（1）修改Flask app部分的代码，以增加与Migrate相关的Command。
+
+.. code:: python
+
+   from app import app,db
+   from model import User
+
+   #传入两个对象，一个是Flask的app对象，一个是SQLAlchemy
+   migrate= Migrate(app,db)                
+          
+   #实例化Manager类       
+   manager= Manager(app)                        
+
+   #给manager添加一个db命令且传入一个MigrateCommand的类
+   manager.add_command('db',MigrateCommand)    
+
+（2）准备好数据模型。
+
+（3）初始化和更新迁移数据库操作：
+
+.. code:: bash
+
+   #用于初始化一个迁移脚本的环境
+   $ python manager.py db init
+                 
+   #表示创建迁移仓库
+   $ python manage.py db migrate           
+
+   #更新数据库
+   $ python mange.py db upgrade
+
+Flsak-Migrate数据库迁移实例：model.py
+
+.. code:: python
+
+   #encoding:utf8
+   from flask_sqlalchemy import SQLAlchemy
+   from app import db
+   class User(db.Model):
+       user_id = db.Column(db.Integer, primary_key=True)
+       user_name = db.Column(db.String(60), nullable=False)
+       user_password = db.Column(db.String(30), nullable=False)
+
+新建文件app.py，内容如下：
+
+Flsak-Migrate数据库迁移实例：app.py
+
+.. code:: python
+
+   # encoding:utf-8
+   from flask import Flask
+   from flask_sqlalchemy import SQLAlchemy
+   app = Flask(__name__)
+   app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123456@127.0.0.1:3306/db_6_14'
+   # 'mysql+pymysql://root:root@127.0.0.1:3306/'
+   # 如果设置成 True (默认情况)，Flask-SQLAlchemy 将会追踪对象的修改并且发送信号。这需要额外的内存， 如果不必要的可以禁用它。
+   app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+   db = SQLAlchemy(app)
+
+
+   @app.route('/')
+   def hello_world():
+       return 'Hello World!'
+
+
+   if __name__ == '__main__':
+       app.run()
+
+Flsak-Migrate数据库迁移实例：manager.py
+
+.. code:: python
+
+   # encoding:utf8
+   from flask_script import Manager  # flask 脚本
+   from flask_migrate import Migrate, MigrateCommand  # flask 迁移数据
+   from app import app, db
+   from model import User
+
+   migrate = Migrate(app, db)  # 传入2个对象一个是flask的app对象，一个是SQLAlchemy
+   manager = Manager(app)
+   # 给manager添加一个db命令并且传入一个MigrateCommand的类
+   manager.add_command('db', MigrateCommand)
+   if __name__ == '__main__':
+       manager.run()
+
+requirements.txt
+
+::
+
+   alembic==1.8.1
+   click==7.1.2
+   colorama==0.4.5
+   Flask==1.1.4
+   Flask-Migrate==2.7.0
+   Flask-Script==2.0.6
+   Flask-SQLAlchemy==2.5.1
+   greenlet==1.1.3
+   importlib-metadata==4.12.0
+   importlib-resources==5.9.0
+   itsdangerous==1.1.0
+   Jinja2==2.11.3
+   Mako==1.2.2
+   MarkupSafe==2.0.1
+   PyMySQL==1.0.2
+   SQLAlchemy==1.4.41
+   Werkzeug==1.0.1
+   zipp==3.8.1
+
+接下来就可以进行初始化了，使用命令
+
+.. code:: bash
+
+   $ python manager.py db init
+
+该命令用于初始化一个迁移脚本的环境。这个命令中的’db’是在manager.add_command(‘db’,MigrateComand)这行代码中我们声明的命令行对象名称；
+
+init是Migrate命令，表示初始化迁移数据库仓库，运行完成之后，会在当前工程目录下创建一个migrations文件夹，用于进行迁移的数据库脚本都放在这里。
+
+接着使用命令便可以完成数据库的创建。
+
+如果是对数据库中的表进行更新，同样也是使用下面的两条命令：
+
+.. code:: bash
+
+   $ python manager.py db migrate
+   $ python manager.py db upgrade
+
+在数据库中可以看到数据库已经成功创建了。
+
+不使用\ ``Flask-Script``\ ，使用\ ``flask``\ 命令如下：
+
+::
+
+   初始化数据库：flask db init
+   迁移新更改：flask db migrate
+   升级：flask db upgrade
+
+..
+
+   注意：第一次迁移实际上相当于调用db.create_all()，但在后续迁移中，upgrade命令对表实施更新操作但不会影响表中的内容。
 
 12.使用Python和 Flask设计RESTful APIs
 -------------------------------------
@@ -4340,3 +4845,34 @@ https://www.yuque.com/keep_running/python/fnlswf
 重新启动应用，再次访问\ ``index.html``\ ，这时候，返回的结果就正常了
 
 .. image:: ../../../_static/image-20220905180049136.png
+
+16.网站部署
+-----------
+
+Flask自带的Web服务器是轻量级服务器，以方便程序员开发和调试。但是在实际部署的时候，却不能直接用Flask发布应用，因为Flask自带的Web服务器还不够强壮，无法在生产环境中使用，还需要Web服务和WSGI（Web服务网关接口）。
+
+本章主要涉及的知识点有：
+
+-  Nginx+Gunicorn+Flask服务器的部署方法。
+-  需求文件requirements.txt的创建和使用方法。
+
+16.1 服务器部署
+~~~~~~~~~~~~~~~
+
+服务器部署方案主要有Nginx+Gunicorn+Flask或Nginx+uwsgi+Flask两种方案。
+
+由于Nginx+uwsgi+Flask方案可能存在内存泄漏（内存占用无限增加）以及uwsgi中设置配置文件比较烦琐等问题，因此推荐使用Nginx+Gunicorn+Flask方案。
+
+这里使用Gunicorn作为应用服务器，Nginx作为反向代理服务器。
+
+常用的WSGI容器有Gunicorn和uWSGI，但Gunicorn直接用命令启动，不需要编写配置文件，相对uWSGI要容易很多，所以这里推荐使用Gunicorn作为容器。
+
+参考文献
+
+https://www.cnblogs.com/Ray-liang/p/4837850.html
+
+https://www.vuln.cn/8832
+
+How To Serve Flask Applications with Gunicorn and Nginx on Ubuntu 20.04
+
+https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-20-04
