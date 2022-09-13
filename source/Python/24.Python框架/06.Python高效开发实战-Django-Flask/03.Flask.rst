@@ -2128,8 +2128,7 @@ Python语言的3.x完全不向前兼容，导致在Python
 +--------------+--------------------+--------------------------------+
 | String       | str                | 变长字符串                     |
 +--------------+--------------------+--------------------------------+
-| Text         | str                | 变长字符串，对                 |
-|              |                    | 较长或不限长度的字符串做了优化 |
+| Text         | str                | 长文本 text                    |
 +--------------+--------------------+--------------------------------+
 | Unicode      | unicode            | 变长 Unicode 字符串            |
 +--------------+--------------------+--------------------------------+
@@ -2315,7 +2314,101 @@ Python语言的3.x完全不向前兼容，导致在Python
 
 保存并执行app.py文件，然后进入数据库查看数据是否插入成功。
 
-6.数据的增、删、改、查
+6.创建表 简单的增删改查
+^^^^^^^^^^^^^^^^^^^^^^^
+
+创建表
+
+.. code:: python
+
+   @app.route('/create_table/')
+   def create_table():
+       db.create_all()
+       return 'create_table'
+
+删除表
+
+.. code:: python
+
+   @app.route('/drop_table/')
+   def drop_table():
+       db.drop_all()
+       return 'drop_table'
+
+添加一条数据 add
+
+.. code:: python
+
+   @app.route('/insert_one/')
+   def insert_one():
+       try:
+           u = User(username='张三',password_hash='zhangsan123456',age=20,sex=False,email='948807313@qq.com',confirm=True)
+           db.session.add(u)
+           db.session.commit() #提交 默认开启了事物
+       except:
+           db.session.rollback() #回滚
+       return 'insert_one'
+
+添加多条数据 add_all
+
+.. code:: python
+
+   #添加多条数据
+   @app.route('/insert_many/')
+   def insert_many():
+       try:
+           u1 = User(username='李四')
+           u2 = User(username='王五')
+           db.session.add_all([u1,u2])
+           db.session.commit() #提交 默认开启了事物
+       except:
+           db.session.rollback() #回滚
+       return 'insert_many'
+
+查询一条数据 get
+
+.. code:: python
+
+   @app.route('/select_one/')
+   def select_one():
+       u = User.query.get(1)
+       print(u.username)
+       print(u.age)
+       print(u.sex)
+       return 'select_one'
+
+修改一条数据 add
+
+.. code:: python
+
+   #修改数据
+   @app.route('/update/')
+   def update():
+       u = User.query.get(1)
+       u.username = '赵六'
+       u.age = 30
+       u.sex = True
+       db.session.add(u)
+       db.session.commit()
+       return 'update'
+
+删除一条数据 delete
+
+.. code:: python
+
+   #删除数据
+   @app.route('/delete/')
+   def delete():
+       u = User.query.get(1)
+       db.session.delete(u)
+       db.session.commit()
+       return 'delete'
+
+更新内容参考
+
+https://blog.csdn.net/qq_42806416/article/details/83794786
+
+7.数据的增、删、改、查
 ^^^^^^^^^^^^^^^^^^^^^^
 
 数据的增、删、改、查等操作，必须确保数据库已经实现建立好，然后使用db.session.add(对象名称)方法，就可以实现数据的插入操作。
@@ -2411,6 +2504,16 @@ Python语言的3.x完全不向前兼容，导致在Python
                                                                                            db=DATABASE)
    SQLALCHEMY_DATABASE_URI = DB_URI
    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+..
+
+   参考文献
+
+   Flask 增删改查
+
+   https://blog.csdn.net/weixin_55959494/article/details/117448727
+
+   https://blog.csdn.net/weixin_52122271/article/details/125816167
 
 9.4 创建一对一的关系表
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -3133,10 +3236,10 @@ SQL脚本进行处理，经常会发现遗漏，而且修改起来不太方便�
    $ python manager.py db init
                  
    #表示创建迁移仓库
-   $ python manage.py db migrate           
+   $ python manager.py db migrate          
 
    #更新数据库
-   $ python mange.py db upgrade
+   $ python manager.py db upgrade
 
 Flsak-Migrate数据库迁移实例：model.py
 
@@ -4309,9 +4412,7 @@ id 转成 uri 并且能够转换其他的参数:
            return { 'task': marshal(task, task_fields) }
 
 task_fields 结构用于作为 marshal 函数的模板。fields.Uri
-是一个用于生成一个 URL 的特定的参数。
-
-它需要的参数是 endpoint。
+是一个用于生成一个 URL 的特定的参数。 它需要的参数是 endpoint。
 
 完整代码如下：
 
@@ -4536,7 +4637,20 @@ task_fields 结构用于作为 marshal 函数的模板。fields.Uri
        "result": true
    }
 
-13.5 认证
+13.5 flask+mysql数据库CURD案例
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+参考demo案例
+
+https://gitee.com/hujianli94net/flask-restful-api-template
+
+参考demo
+
+https://github.com/tomasrasymas/flask-restful-api-template
+
+https://github.com/tomasrasymas/flask-restful-api-template/blob/master/endpoints/todos/resource.py
+
+13.6 认证
 ~~~~~~~~~
 
 在 REST 服务器中的路由都是由 HTTP
@@ -4563,7 +4677,7 @@ task_fields 结构用于作为 marshal 函数的模板。fields.Uri
        decorators = [auth.login_required]
        # ...
 
-13.6 在flask-restful中添加日志
+13.7 在flask-restful中添加日志
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 在\ ``flask-restful``\ 中，\ ``logger``\ 的使用有更优雅的方式，来看示例
@@ -4632,27 +4746,27 @@ task_fields 结构用于作为 marshal 函数的模板。fields.Uri
    app = Flask(__name__)
    api = Api(app, default_mediatype="application/json")
 
+   tasks = [
+       {
+           'id':1,
+           'title':'白鹿原',
+           'description':'这是一定死啦塞啊；阿凯骄傲灵丹安矿鉴定暗访东方三；啊反馈；安静快撒娇扥卡机',
+           'done':False
+       },
+       {
+           'id':2,
+           'title':'嫌疑人',
+           'description':'as大肯借；额看课文静安寺放大反抗航将；来否；付定金奥兰多 看企鹅长恨东澳岛啊；伐开森',
+           'done':False
+       }
+   ]
+
    task_fields = {
        'title': fields.String,
        'description': fields.String,
        'done': fields.Boolean,
        'uri': fields.Url('task')
    }
-
-   tasks = [
-       {
-           'id': 1,
-           'title': u'Buy groceries',
-           'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
-           'done': False
-       },
-       {
-           'id': 2,
-           'title': u'Learn Python',
-           'description': u'Need to find a good Python tutorial on the web',
-           'done': False
-       }
-   ]
 
 
    class TaskListAPI(Resource):
@@ -4758,10 +4872,12 @@ https://www.yuque.com/keep_running/python/hyegx6#iiVXa
 
 https://blog.csdn.net/djstavaV/article/details/112261872
 
-13.7 使用 Flask 设计 RESTful 的认证
+13.8 使用 Flask 设计 RESTful 的认证
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 http://www.pythondoc.com/flask-restful/third.html
+
+https://www.jianshu.com/p/2bbf15db8dda
 
 使用Flask设计带认证token的RESTful API接口
 
